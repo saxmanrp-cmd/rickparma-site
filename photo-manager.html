@@ -81,12 +81,18 @@
   .btn-save:active { background:#3d9e6c; }
   .btn-save:disabled { opacity:0.4; cursor:default; }
   /* ── Date picker (attach flyer to calendar show dates) ── */
-  .date-picker { margin-top:12px; }
-  .date-picker-label { font-size:11px; color:rgba(255,255,255,0.4); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px; }
-  .date-chip-list { display:flex; flex-wrap:wrap; gap:8px; max-height:170px; overflow-y:auto; }
-  .date-chip { background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:20px; padding:7px 12px; font-size:12px; color:rgba(255,255,255,0.7); cursor:pointer; white-space:nowrap; user-select:none; }
+  .date-picker { margin-top:14px; }
+  .date-picker-label { font-size:12px; color:rgba(255,255,255,0.45); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:10px; }
+  /* Straight up-and-down list, no wrapping/no fixed height — it just grows as tall as
+     it needs to (the page scrolls normally) instead of chips reflowing inside a small
+     scroll box, which is what was making them feel like they were "sliding around." */
+  .date-chip-list { display:flex; flex-direction:column; gap:10px; }
+  .date-chip { display:block; width:100%; box-sizing:border-box; background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:10px; padding:14px 16px; font-size:15px; color:rgba(255,255,255,0.75); cursor:pointer; user-select:none; }
   .date-chip.selected { background:#8DB2E5; border-color:#8DB2E5; color:#0d0505; font-weight:700; }
   .date-chip-empty { font-size:12px; color:rgba(255,255,255,0.3); }
+  #photo-list.hidden-while-picking { display:none; }
+  .btn-cancel-preview { display:block; width:100%; margin-top:14px; background:none; border:none; color:rgba(255,255,255,0.4); font-size:13px; padding:10px; cursor:pointer; text-align:center; }
+  .btn-cancel-preview:active { color:rgba(255,255,255,0.7); }
   /* ── Photo list ── */
   .photo-item { display:flex; align-items:center; gap:10px; background:#1a0808; border-radius:8px; padding:10px 12px; margin-bottom:8px; cursor:grab; user-select:none; border:1.5px solid transparent; }
   .photo-item.drag-over { border-color:#8DB2E5; background:#2a1010; }
@@ -183,6 +189,7 @@
         <div class="date-picker-label">Attach to show date(s) — optional, tap all that apply</div>
         <div class="date-chip-list" id="datePickerList"><span class="date-chip-empty">Loading calendar…</span></div>
       </div>
+      <button type="button" class="btn-cancel-preview" onclick="cancelPreview()">Cancel</button>
     </div>
   </div>
   <div id="photo-list"></div>
@@ -590,6 +597,7 @@
       selectedDates = [];
       renderDatePicker();
       document.getElementById("previewArea").classList.add("visible");
+      setPickingMode(true);
 
       chosenFile = null;
       document.getElementById("input-file").value = "";
@@ -617,10 +625,26 @@
     document.getElementById("previewArea").classList.add("visible");
     selectedDates = [];
     renderDatePicker();
+    setPickingMode(true);
     document.getElementById("input-name").focus();
   }
   function showPreviewError() {
     document.getElementById("previewImgWrap").innerHTML = '<div class="preview-error">⚠️ Could not load media.<br>Check the URL and try again.</div>';
+  }
+  // Hides the already-posted-flyers list while picking dates for a new one, so the
+  // date list (which can now run long) has the screen to itself without the whole
+  // gallery pushing everything around underneath it.
+  function setPickingMode(active) {
+    document.getElementById("photo-list").classList.toggle("hidden-while-picking", active);
+  }
+  function cancelPreview() {
+    document.getElementById("input-url").value = "";
+    document.getElementById("input-name").value = "";
+    document.getElementById("previewArea").classList.remove("visible");
+    pendingSrc = "";
+    selectedDates = [];
+    renderDatePicker();
+    setPickingMode(false);
   }
   async function savePhoto() {
     var src  = pendingSrc || document.getElementById("input-url").value.trim();
@@ -634,6 +658,7 @@
     pendingSrc = "";
     selectedDates = [];
     renderDatePicker();
+    setPickingMode(false);
     render();
     await save();
   }
