@@ -1,6 +1,48 @@
 [
   {
-    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785289266647-ECCA0C02-F805-49CE-A9EC-ECE0C7D91C93.jpg",
-    "name": "ECCA0C02-F805-49CE-A9EC-ECE0C7D91C93"
+    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785315508195-rickparma-flyer-1.mp4",
+    "name": "rickparma-flyer-1",
+    "dates": [
+      "2026-07-31"
+    ]
+  },
+  {
+    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785315552660-rickparma-flyer-2.mp4",
+    "name": "rickparma-flyer-2",
+    "dates": [
+      "2026-08-02"
+    ]
+  },
+  {
+    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785315583720-rickparma-flyer-3.mp4",
+    "name": "rickparma-flyer-3",
+    "dates": [
+      "2026-08-16"
+    ]
+  },
+  {
+    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785315627732-rickparma-flyer-4.mp4",
+    "name": "rickparma-flyer-4",
+    "dates": [
+      "2026-08-01"
+    ]
+  },
+  {
+    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785315683162-rickparma-flyer-5.mp4",
+    "name": "rickparma-flyer-5",
+    "dates": [
+      "2026-08-07",
+      "2026-08-21",
+      "2026-08-28"
+    ]
+  },
+  {
+    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785315715592-rickparma-flyer-6.mp4",
+    "name": "rickparma-flyer-6",
+    "dates": [
+      "2026-09-04",
+      "2026-09-05",
+      "2026-09-06"
+    ]
   }
 ]
