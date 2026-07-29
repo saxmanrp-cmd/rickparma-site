@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rick Parma — Video Manager</title>
+<!-- Home screen / PWA icons - same repo now, so relative paths -->
+<link rel="icon" type="image/png" sizes="512x512" href="images/VIDEO MANAGER-icon-512.png">
+<link rel="apple-touch-icon" sizes="192x192" href="images/VIDEO MANAGER-icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/VIDEO MANAGER-icon-180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="images/VIDEO MANAGER-icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="images/VIDEO MANAGER-icon-152.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Video Manager">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d0505;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+  }
+  h1 { font-size: 20px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: #8DB2E5; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 20px; }
+  .sync-badge { font-size:10px; color:rgba(255,255,255,0.4); display:flex; align-items:center; gap:5px; cursor:pointer; margin-bottom:20px; }
+  .sync-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.3); flex-shrink:0; }
+  .sync-dot.synced  { background:#4caf7d; }
+  .sync-dot.syncing { background:#8DB2E5; animation:pulse 1s ease-in-out infinite; }
+  .sync-dot.error   { background:#e05555; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  /* ── GitHub connect panel ── */
+  .connect-panel { background:#1a0808; border-radius:10px; padding:16px; margin-bottom:20px; border:1.5px solid rgba(141,178,229,0.4); display:none; }
+  .connect-panel h2 { font-size:14px; color:#8DB2E5; margin-bottom:8px; letter-spacing:0.04em; }
+  .connect-panel p { font-size:12px; color:rgba(255,255,255,0.55); margin-bottom:12px; line-height:1.5; }
+  .connect-panel input { width:100%; background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:8px; color:#fff; font-size:15px; padding:11px 12px; outline:none; margin-bottom:10px; }
+  .btn-connect { width:100%; background:linear-gradient(135deg,#8DB2E5,#6a94cc); color:#0d0505; border:none; border-radius:8px; font-size:13px; font-weight:900; letter-spacing:0.06em; text-transform:uppercase; padding:12px; cursor:pointer; }
+  .connect-status { font-size:11px; color:#e57a7a; margin-top:8px; min-height:14px; }
+  .token-linked-row { display:none; align-items:center; justify-content:space-between; background:#1a0808; border-radius:8px; padding:10px 14px; margin-bottom:20px; font-size:12px; color:rgba(255,255,255,0.5); }
+  .token-linked-row button { background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); border-radius:6px; font-size:11px; padding:5px 10px; cursor:pointer; }
+  .section-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 10px; }
+  .add-form { background: #1a0808; border-radius: 10px; padding: 20px; margin-bottom: 28px; }
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .form-row input { flex: 1; min-width: 140px; background: #0d0505; border: 1.5px solid rgba(141,178,229,0.3); border-radius: 6px; color: #fff; font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.2s; }
+  .form-row input:focus { border-color: #8DB2E5; }
+  .form-row input::placeholder { color: rgba(255,255,255,0.3); }
+  .btn-add { width: 100%; background: #8DB2E5; color: #0d0505; border: none; border-radius: 6px; font-size: 13px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; padding: 11px; cursor: pointer; transition: background 0.15s; }
+  .btn-add:hover { background: #a8c8f0; }
+  .btn-add:active { background: #7aa0d4; }
+  .tip { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 10px; line-height: 1.5; }
+  .video-list { margin-bottom: 28px; }
+  .video-item { display: flex; align-items: center; gap: 10px; background: #1a0808; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; cursor: grab; user-select: none; transition: background 0.15s; border: 1.5px solid transparent; }
+  .video-item:hover { border-color: rgba(141,178,229,0.2); }
+  .video-item.dragging { opacity: 0.4; }
+  .video-item.drag-over { border-color: #8DB2E5; background: #2a1010; }
+  .drag-handle { color: rgba(255,255,255,0.2); font-size: 16px; flex-shrink: 0; cursor: grab; }
+  .video-thumb { width: 64px; height: 36px; object-fit: cover; border-radius: 4px; background: #2a1010; flex-shrink: 0; }
+  .video-info { flex: 1; min-width: 0; }
+  .video-title { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .video-id { font-size: 11px; color: rgba(255,255,255,0.3); font-family: monospace; }
+  .btn-delete { background: none; border: none; color: rgba(255,255,255,0.25); font-size: 18px; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: color 0.15s, background 0.15s; flex-shrink: 0; line-height: 1; }
+  .btn-delete:hover { color: #e57a7a; background: rgba(229,122,122,0.1); }
+  .empty-state { text-align: center; color: rgba(255,255,255,0.2); font-size: 13px; padding: 24px; }
+  .btn-generate { width: 100%; background: linear-gradient(135deg, #8DB2E5, #6a94cc); color: #0d0505; border: none; border-radius: 8px; font-size: 14px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; padding: 14px; cursor: pointer; margin-bottom: 16px; transition: opacity 0.15s; }
+  .btn-generate:hover { opacity: 0.9; }
+  .btn-generate:active { opacity: 0.75; }
+  .btn-generate:disabled { opacity: 0.4; cursor: default; }
+  .copy-confirm { text-align: center; font-size: 12px; color: #4caf7d; margin-top: 10px; height: 18px; transition: opacity 0.3s; }
+  .loading-screen { position:fixed; inset:0; background:#0d0505; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; z-index:200; }
+  .spinner { width:24px; height:24px; border:3px solid rgba(141,178,229,0.2); border-top-color:#8DB2E5; border-radius:50%; animation:spin 0.7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-screen p { font-size:11px; color:rgba(255,255,255,0.4); letter-spacing:0.12em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+<div class="loading-screen" id="loadingScreen">
+  <div class="spinner"></div>
+  <p>Loading from cloud…</p>
+</div>
+<div id="appWrap" style="display:none">
+  <h1>Rick Parma — Video Manager</h1>
+  <p class="subtitle">Add, remove, and reorder your promo videos, then push them live.</p>
+  <div class="sync-badge" onclick="showConnectPanel()" title="Tap to change GitHub token">
+    <div class="sync-dot" id="syncDot"></div>
+    <span id="syncLabel">Loading…</span>
+  </div>
+
+  <div class="connect-panel" id="connectPanel">
+    <h2>Connect to GitHub</h2>
+    <p>Paste your fine-grained token (Contents: Read and write, scoped to rickparma-site only). Saved only on this device.</p>
+    <input type="password" id="input-token" placeholder="github_pat_…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+    <button class="btn-connect" onclick="saveToken()">Save Token</button>
+    <p class="connect-status" id="connectStatus"></p>
+  </div>
+  <div class="token-linked-row" id="tokenLinkedRow">
+    <span>✓ GitHub connected</span>
+    <button onclick="showConnectPanel()">Change token</button>
+  </div>
+
+  <p class="section-label">Add a video</p>
+  <div class="add-form">
+    <div class="form-row">
+      <input type="text" id="input-id" placeholder="YouTube Video ID (e.g. A7bKax1LS_g)" />
+      <input type="text" id="input-title" placeholder="Title (e.g. Short Promo)" />
+    </div>
+    <button class="btn-add" onclick="addVideo()">+ Add Video</button>
+    <p class="tip">
+      The video ID is the code after <strong>watch?v=</strong> in a YouTube URL.<br>
+      e.g. youtube.com/watch?v=<strong style="color:#8DB2E5">A7bKax1LS_g</strong>
+    </p>
+  </div>
+
+  <p class="section-label">Your videos — drag to reorder</p>
+  <div class="video-list" id="video-list"></div>
+  <button class="btn-generate" onclick="pushToWebsite()">⬆ Push to Website</button>
+  <p class="copy-confirm" id="copy-confirm"></p>
+</div>
+<script>
+  var BIN_API_KEY = "$2a$10$AE8jTzF3OJJNfqTgYPcPK.SzVAdv0Mqi/obwqWTuQjpE0dOkYkCE.";
+  var BIN_BASE    = "https://api.jsonbin.io/v3";
+  var BIN_ID      = "6a6961ef5f4af5e29cf8333"; // dedicated bin for the video list, separate from photos
+
+  var GH_OWNER  = "saxmanrp-cmd";
+  var GH_REPO   = "rickparma-site";
+  var GH_BRANCH = "main";
+  // Same localStorage key as Photo Manager - both apps share this origin (github.io),
+  // so the token you already saved there works here automatically.
+  var GH_TOKEN_KEY = "rp_photo_manager_gh_token";
+  var GH_TOKEN = localStorage.getItem(GH_TOKEN_KEY) || "";
+
+  var DEFAULT_VIDEOS = [
+    { id: "A7bKax1LS_g", title: "Short Promo" },
+    { id: "ePFoNTC85XY", title: "Compilation 1" },
+    { id: "3bvxyLmyKnI", title: "Superstar" },
+    { id: "AGnspowK_Wo", title: "Before I Let Go" },
+    { id: "Ray3e_HnEb8", title: "Silk Sonic" },
+    { id: "GkMce4gh31I", title: "Never Too Much" },
+    { id: "oW9OYt4XuZ8", title: "EWF Medley" },
+    { id: "1RWIZPpbpnk", title: "Stevie Wonder" },
+    { id: "85q58zOzhsQ", title: "Every Little Step I Take" },
+    { id: "3a1gaKA0zKk", title: "AHA" },
+    { id: "UON75LtrKDo", title: "I Do A Lot of Songs" },
+    { id: "6WmPyq6eoRk", title: "Full Band Promo" }
+  ];
+  var videos = [];
+  var dragSrcIndex = null;
+  var isSaving = false;
+
+  function setSyncStatus(state, label) {
+    document.getElementById("syncDot").className = "sync-dot " + state;
+    document.getElementById("syncLabel").textContent = label;
+  }
+  function showConnectPanel() {
+    document.getElementById("connectPanel").style.display = "block";
+    document.getElementById("tokenLinkedRow").style.display = "none";
+    document.getElementById("input-token").focus();
+  }
+  function refreshConnectUI() {
+    if (GH_TOKEN) {
+      document.getElementById("connectPanel").style.display = "none";
+      document.getElementById("tokenLinkedRow").style.display = "flex";
+    } else {
+      document.getElementById("connectPanel").style.display = "block";
+      document.getElementById("tokenLinkedRow").style.display = "none";
+    }
+  }
+  function saveToken() {
+    var val = document.getElementById("input-token").value.trim();
+    if (!val) { document.getElementById("connectStatus").textContent = "Paste a token first."; return; }
+    localStorage.setItem(GH_TOKEN_KEY, val);
+    GH_TOKEN = val;
+    document.getElementById("input-token").value = "";
+    document.getElementById("connectStatus").textContent = "";
+    refreshConnectUI();
+  }
+  function ghHeaders() {
+    return { "Authorization": "token " + GH_TOKEN, "Accept": "application/vnd.github+json" };
+  }
+
+  async function load() {
+    try {
+      var res = await fetch(BIN_BASE + "/b/" + BIN_ID + "/latest", { headers: { "X-Master-Key": BIN_API_KEY } });
+      if (res.ok) {
+        var data = await res.json();
+        videos = data.record.videos || DEFAULT_VIDEOS.slice();
+        setSyncStatus("synced", "Synced ✓");
+      } else { throw new Error("Load failed"); }
+    } catch(e) {
+      videos = DEFAULT_VIDEOS.slice();
+      setSyncStatus("error", "Load failed");
+    }
+  }
+  setInterval(async function() {
+    try {
+      var res = await fetch(BIN_BASE + "/b/" + BIN_ID + "/latest", { headers: { "X-Master-Key": BIN_API_KEY } });
+      if (res.ok) {
+        var data = await res.json();
+        var fresh = data.record.videos || [];
+        if (JSON.stringify(fresh) !== JSON.stringify(videos)) {
+          videos = fresh;
+          render();
+          setSyncStatus("synced", "Synced ✓");
+        }
+      }
+    } catch(e) {}
+  }, 30000);
+  async function save() {
+    if (isSaving) return;
+    isSaving = true;
+    setSyncStatus("syncing", "Saving…");
+    try {
+      var res = await fetch(BIN_BASE + "/b/" + BIN_ID, {
+        method: "PUT",
+        headers: { "Content-Type":"application/json", "X-Master-Key":BIN_API_KEY },
+        body: JSON.stringify({ videos: videos, lastUpdated: new Date().toISOString() })
+      });
+      if (!res.ok) throw new Error("Save failed");
+      setSyncStatus("synced", "Saved ✓");
+    } catch(e) { setSyncStatus("error", "Save failed"); }
+    isSaving = false;
+  }
+
+  function render() {
+    var list = document.getElementById("video-list");
+    list.innerHTML = "";
+    if (videos.length === 0) {
+      list.innerHTML = '<div class="empty-state">No videos yet — add one above.</div>';
+      return;
+    }
+    videos.forEach(function(v, i) {
+      var item = document.createElement("div");
+      item.className = "video-item";
+      item.draggable = true;
+      item.dataset.index = i;
+      item.innerHTML =
+        '<span class="drag-handle">⠿</span>' +
+        '<img class="video-thumb" src="https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg" alt="">' +
+        '<div class="video-info">' +
+          '<div class="video-title">' + v.title + '</div>' +
+          '<div class="video-id">' + v.id + '</div>' +
+        '</div>' +
+        '<button class="btn-delete" onclick="removeVideo(' + i + ')" title="Remove">×</button>';
+      item.addEventListener("dragstart", function() {
+        dragSrcIndex = i;
+        setTimeout(function() { item.classList.add("dragging"); }, 0);
+      });
+      item.addEventListener("dragend", function() {
+        item.classList.remove("dragging");
+        document.querySelectorAll(".video-item").forEach(function(el) { el.classList.remove("drag-over"); });
+      });
+      item.addEventListener("dragover", function(e) { e.preventDefault(); item.classList.add("drag-over"); });
+      item.addEventListener("dragleave", function() { item.classList.remove("drag-over"); });
+      item.addEventListener("drop", async function(e) {
+        e.preventDefault();
+        item.classList.remove("drag-over");
+        if (dragSrcIndex === null || dragSrcIndex === i) return;
+        var moved = videos.splice(dragSrcIndex, 1)[0];
+        videos.splice(i, 0, moved);
+        dragSrcIndex = null;
+        render();
+        await save();
+      });
+      list.appendChild(item);
+    });
+    // Touch support for mobile drag-reorder
+    var touchDragIndex = null, touchClone = null, touchOffsetY = 0;
+    list.querySelectorAll(".drag-handle").forEach(function(handle, i) {
+      handle.addEventListener("touchstart", function(e) {
+        e.preventDefault();
+        touchDragIndex = i;
+        var items = list.querySelectorAll(".video-item");
+        var el = items[i];
+        var rect = el.getBoundingClientRect();
+        touchOffsetY = e.touches[0].clientY - rect.top;
+        touchClone = el.cloneNode(true);
+        touchClone.style.cssText = "position:fixed;left:" + rect.left + "px;top:" + rect.top + "px;width:" + rect.width + "px;opacity:0.85;z-index:500;pointer-events:none;background:#2a1010;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.6);";
+        document.body.appendChild(touchClone);
+        el.style.opacity = "0.3";
+      }, { passive: false });
+      handle.addEventListener("touchmove", function(e) {
+        if (touchDragIndex === null) return;
+        e.preventDefault();
+        var y = e.touches[0].clientY;
+        touchClone.style.top = (y - touchOffsetY) + "px";
+        var items = list.querySelectorAll(".video-item");
+        items.forEach(function(el) { el.classList.remove("drag-over"); });
+        for (var j = 0; j < items.length; j++) {
+          var r = items[j].getBoundingClientRect();
+          if (y >= r.top && y <= r.bottom && j !== touchDragIndex) { items[j].classList.add("drag-over"); break; }
+        }
+      }, { passive: false });
+      handle.addEventListener("touchend", async function(e) {
+        if (touchDragIndex === null) return;
+        var y = e.changedTouches[0].clientY;
+        var items = list.querySelectorAll(".video-item");
+        var targetIndex = touchDragIndex;
+        for (var j = 0; j < items.length; j++) {
+          var r = items[j].getBoundingClientRect();
+          if (y >= r.top && y <= r.bottom) { targetIndex = j; break; }
+        }
+        if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
+        items.forEach(function(el) { el.style.opacity = ""; el.classList.remove("drag-over"); });
+        if (targetIndex !== touchDragIndex) {
+          var moved = videos.splice(touchDragIndex, 1)[0];
+          videos.splice(targetIndex, 0, moved);
+          render();
+          await save();
+        }
+        touchDragIndex = null;
+      });
+    });
+  }
+  async function addVideo() {
+    var idInput = document.getElementById("input-id");
+    var titleInput = document.getElementById("input-title");
+    var id = idInput.value.trim().split("&")[0].split("?v=").pop();
+    var title = titleInput.value.trim();
+    if (!id) { alert("Please enter a YouTube video ID."); return; }
+    if (!title) { alert("Please enter a title for the video."); return; }
+    for (var j = 0; j < videos.length; j++) {
+      if (videos[j].id === id) { alert("That video ID is already in the list."); return; }
+    }
+    videos.push({ id: id, title: title });
+    idInput.value = "";
+    titleInput.value = "";
+    idInput.focus();
+    render();
+    await save();
+  }
+  async function removeVideo(index) {
+    if (!confirm('Remove "' + videos[index].title + '"?')) return;
+    videos.splice(index, 1);
+    render();
+    await save();
+  }
+
+  async function pushFlyersVideosJson() {
+    if (!GH_TOKEN) throw new Error("Connect your GitHub token first (tap the sync status at top).");
+    var base = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO;
+    var path = "videos.json";
+    var payload = videos.map(function(v) { return { id: v.id, title: v.title }; });
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+
+    var sha = null;
+    var getRes = await fetch(base + "/contents/" + path + "?ref=" + GH_BRANCH, { headers: ghHeaders() });
+    if (getRes.ok) { sha = (await getRes.json()).sha; }
+    else if (getRes.status !== 404) { throw new Error("Could not read videos.json (" + getRes.status + ")"); }
+
+    var body = { message: "Update videos.json", content: content, branch: GH_BRANCH };
+    if (sha) body.sha = sha;
+    var putRes = await fetch(base + "/contents/" + path, {
+      method: "PUT",
+      headers: Object.assign({ "Content-Type": "application/json" }, ghHeaders()),
+      body: JSON.stringify(body)
+    });
+    if (!putRes.ok) throw new Error("Publish failed (" + putRes.status + ")");
+  }
+  async function pushToWebsite() {
+    if (videos.length === 0) { alert("Add at least one video first."); return; }
+    if (!GH_TOKEN) { showConnectPanel(); return; }
+    var btn = document.querySelector(".btn-generate");
+    btn.disabled = true;
+    try {
+      showConfirm("Publishing…", false);
+      await pushFlyersVideosJson();
+      showConfirm("✓ Live on the site (may take ~30-60s to show up).", false);
+    } catch(err) {
+      showConfirm(err.message || "Publish failed", true);
+    }
+    btn.disabled = false;
+  }
+  function showConfirm(text, isError) {
+    var c = document.getElementById("copy-confirm");
+    c.textContent = text;
+    c.style.color = isError ? "#e57a7a" : "#4caf7d";
+    if (!isError) setTimeout(function(){ if (c.textContent === text) c.textContent = ""; }, 4000);
+  }
+
+  document.getElementById("input-id").addEventListener("keydown", function(e) { if (e.key === "Enter") document.getElementById("input-title").focus(); });
+  document.getElementById("input-title").addEventListener("keydown", function(e) { if (e.key === "Enter") addVideo(); });
+  document.getElementById("input-token").addEventListener("keydown", function(e) { if (e.key === "Enter") saveToken(); });
+
+  setSyncStatus("syncing", "Loading…");
+  load().then(function() {
+    document.getElementById("loadingScreen").style.display = "none";
+    document.getElementById("appWrap").style.display = "block";
+    refreshConnectUI();
+    render();
+  });
+</script>
+</body>
+</html>
