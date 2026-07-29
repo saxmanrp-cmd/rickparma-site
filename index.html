@@ -537,10 +537,10 @@
       .show-track::-webkit-scrollbar{display:none;}
       .show-tile{scroll-snap-align:start;flex:0 0 190px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:left;}
       .show-flyer-thumb{display:block;margin:-16px -16px 0;aspect-ratio:1/1;overflow:hidden;border-radius:14px 14px 0 0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-      .show-flyer-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+      .show-flyer-thumb img,.show-flyer-thumb video{width:100%;height:100%;object-fit:cover;display:block;}
       .cal-flyer-lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:20px;}
       .cal-flyer-lightbox.open{display:flex;}
-      .cal-flyer-lightbox img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;box-shadow:0 16px 80px rgba(0,0,0,.9);display:block;}
+      .cal-flyer-lightbox img,.cal-flyer-lightbox video{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;box-shadow:0 16px 80px rgba(0,0,0,.9);display:block;}
       .cal-flyer-lightbox-close{position:fixed;top:16px;right:16px;width:34px;height:34px;background:#8DB2E5;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#0d0505;font-weight:900;z-index:10000;-webkit-tap-highlight-color:transparent;}
       .show-date-badge{width:52px;height:52px;border-radius:10px;background:linear-gradient(160deg,var(--blue),var(--pink));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#000;}
       .show-date-badge .mon{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;}
@@ -664,8 +664,14 @@
         if (e.location) metaParts.push(e.location);
         var directionsUrl = e.location ? 'https://maps.google.com/?q=' + encodeURIComponent(e.location) : e.htmlLink;
         var flyer = flyerMap[fmtDateKey(d)];
+        var flyerIsVideo = flyer && isVideoSrc(flyer);
+        var flyerMedia = flyer
+          ? (flyerIsVideo
+              ? '<video src="' + flyer + '" muted loop playsinline autoplay></video>'
+              : '<img src="' + flyer + '" alt="Show flyer" loading="lazy">')
+          : '';
         return '<div class="show-tile">' +
-          (flyer ? '<div class="show-flyer-thumb" role="button" tabindex="0" data-flyer="' + escapeHtml(flyer) + '"><img src="' + flyer + '" alt="Show flyer" loading="lazy"></div>' : '') +
+          (flyer ? '<div class="show-flyer-thumb" role="button" tabindex="0" data-flyer="' + escapeHtml(flyer) + '">' + flyerMedia + '</div>' : '') +
           '<div class="show-date-badge"><span class="mon">' + MONTH_NAMES[d.getMonth()].slice(0,3) + '</span><span class="day">' + d.getDate() + '</span></div>' +
           '<p class="venue">' + escapeHtml(e.title) + '</p><p class="meta">' + escapeHtml(metaParts.join(' · ')) + '</p>' +
           '<div class="show-actions"><a href="' + e.htmlLink + '" target="_blank" rel="noopener">+ Calendar</a>' +
@@ -678,6 +684,10 @@
       var d = document.createElement('div');
       d.textContent = s;
       return d.innerHTML;
+    }
+
+    function isVideoSrc(src) {
+      return /\.(mov|mp4|webm|ogg)(\?|$)/i.test(src);
     }
 
     function scrollByTile(dir) {
@@ -696,7 +706,7 @@
       if (flyerLb) return flyerLb;
       flyerLb = document.createElement('div');
       flyerLb.className = 'cal-flyer-lightbox';
-      flyerLb.innerHTML = '<div class="cal-flyer-lightbox-close">✕</div><img alt="Show flyer">';
+      flyerLb.innerHTML = '<div class="cal-flyer-lightbox-close">✕</div><div class="cal-flyer-lightbox-media"></div>';
       document.body.appendChild(flyerLb);
       flyerLb.addEventListener('click', function(e) {
         if (e.target === flyerLb || e.target.className === 'cal-flyer-lightbox-close') closeFlyerLightbox();
@@ -708,12 +718,17 @@
     }
     function openFlyerLightbox(src) {
       var lb = ensureFlyerLightbox();
-      lb.querySelector('img').src = src;
+      var media = lb.querySelector('.cal-flyer-lightbox-media');
+      media.innerHTML = isVideoSrc(src)
+        ? '<video src="' + src + '" controls autoplay playsinline loop></video>'
+        : '<img src="' + src + '" alt="Show flyer">';
       lb.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
     function closeFlyerLightbox() {
       if (!flyerLb) return;
+      var v = flyerLb.querySelector('video');
+      if (v) v.pause();
       flyerLb.classList.remove('open');
       document.body.style.overflow = '';
     }
