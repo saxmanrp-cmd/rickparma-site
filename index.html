@@ -198,10 +198,9 @@
 
 <section id="calendar">
   <!--
-    NOTE: the video src URLs below (rickparma.com/files/...) are still hosted on Bandzoogle's
-    file storage. They'll stop working once the Bandzoogle account is canceled - download these
-    .mov files and re-upload them somewhere else (same GitHub repo, or a video host) before cutover,
-    then swap the URLs in the `photos` array below.
+    Flyer list now lives in flyers.json (same repo, root level) instead of being hardcoded here.
+    The Photo Manager app writes to that file directly when you hit "Push to Website" -
+    this section just reads whatever's currently in it.
   -->
   <style>
     #rp-photo-section{background:rgba(13,5,5,0.5);padding:16px 16px 24px;font-family:Arial,Helvetica,sans-serif;max-width:760px;margin:0 auto;box-sizing:border-box;border:1px solid rgba(200,160,60,0.7);border-radius:10px;box-shadow:0 0 32px rgba(200,160,60,0.4),0 0 8px rgba(200,160,60,0.3),inset 0 0 24px rgba(0,0,0,0.3)}
@@ -239,17 +238,18 @@
     <div class="rpp-dots" id="rpp-dots"></div>
   </div>
   <script>
-  (function(){
-    var photos=[
-      { src: "https://rickparma.com/files/1418924/copy-63935e91-0edc-494a-8b6f-4c11823a2b7d.mov" },
-      { src: "https://rickparma.com/files/1420563/copy-299a0e83-807d-4b57-93ff-941f482a7596.mov" },
-      { src: "https://rickparma.com/files/1419773/copy-9d34f402-cf29-4adf-8eed-cabadfc19927.mov" },
-      { src: "https://rickparma.com/files/1421831/copy-3838b5e3-a9de-4a0c-828b-37b856509e35.mov" },
-      { src: "https://rickparma.com/files/1420552/copy-77530a7a-d763-43d2-a99d-7b5d6adf751f.mov" },
-      { src: "https://rickparma.com/files/1421829/copy-7ba60c49-dc8a-43d4-9307-7e7908c34978.mov" }
-    ];
-    function isVid(s){return /\.(mov|mp4|webm|ogg)(\?|$)/i.test(s);}
+  (async function(){
+    var photos=[];
+    try {
+      var res = await fetch('flyers.json', { cache: 'no-store' });
+      if (res.ok) photos = await res.json();
+    } catch(e) { /* leave photos empty if flyers.json isn't there yet */ }
     var grid=document.getElementById("rpp-grid"),dots=document.getElementById("rpp-dots");
+    if (photos.length === 0) {
+      grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);padding:12px;">No flyers posted yet — check back soon.</p>';
+      return;
+    }
+    function isVid(s){return /\.(mov|mp4|webm|ogg)(\?|$)/i.test(s);}
     window.rppCurrent=0;
     photos.forEach(function(p,i){
       var c=document.createElement("div");c.className="rpp-thumb";c.setAttribute("role","button");c.setAttribute("tabindex","0");
