@@ -40,6 +40,17 @@
     background:linear-gradient(90deg,#3ec8ff,#ff3ec8);color:#000;font-weight:bold;cursor:pointer;}
   #content{display:none;padding:48px 24px;max-width:700px;margin:0 auto;text-align:center;}
   #error{color:#ff3ec8;font-size:.85rem;margin-top:8px;display:none;}
+
+  /* Mobile adaptation (phones - iOS, Android, everything else under ~600px) */
+  @media (max-width:600px){
+    header{padding:16px 18px;gap:12px;}
+    header h1{font-size:1.5rem;}
+    .socials a{width:32px;height:32px;}
+    .page-wrap{padding:16px;}
+  }
+  @media (max-width:380px){
+    header h1{font-size:1.25rem;}
+  }
 </style>
 </head>
 <body>
