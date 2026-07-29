@@ -535,7 +535,21 @@
       .rpc-wrap{max-width:680px;margin:0 auto;}
       .show-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
       .show-track::-webkit-scrollbar{display:none;}
-      .show-tile{scroll-snap-align:start;flex:0 0 190px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:left;}
+      .show-tile{scroll-snap-align:start;flex:0 0 190px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+      .cal-detail-overlay{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.85);align-items:flex-end;justify-content:center;padding:0;}
+      .cal-detail-overlay.open{display:flex;}
+      .cal-detail-sheet{background:var(--panel);border:1px solid var(--border);border-radius:20px 20px 0 0;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;padding:20px;position:relative;text-align:left;}
+      @media(min-width:600px){.cal-detail-overlay{align-items:center;padding:20px;} .cal-detail-sheet{border-radius:16px;max-height:80vh;}}
+      .cal-detail-close{position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;z-index:2;-webkit-tap-highlight-color:transparent;}
+      .cal-detail-flyer{width:100%;border-radius:12px;overflow:hidden;margin-bottom:16px;max-height:340px;background:#000;}
+      .cal-detail-flyer img,.cal-detail-flyer video{width:100%;height:100%;object-fit:cover;display:block;max-height:340px;}
+      .cal-detail-date{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+      .cal-detail-venue{font-family:var(--font-display);font-weight:900;font-size:1.4rem;margin:0 0 10px;color:var(--text);}
+      .cal-detail-meta{font-size:.9rem;color:var(--muted);margin:0 0 20px;line-height:1.6;}
+      .cal-detail-actions{display:flex;gap:10px;}
+      .cal-detail-actions a{flex:1;text-align:center;padding:13px;border-radius:30px;font-weight:bold;text-decoration:none;font-size:.85rem;}
+      .cal-detail-actions a.primary{background:var(--blue);color:#000;}
+      .cal-detail-actions a.alt{background:transparent;border:1px solid var(--border);color:var(--text);}
       .show-flyer-thumb{display:block;margin:-16px -16px 0;aspect-ratio:1/1;overflow:hidden;border-radius:14px 14px 0 0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
       .show-flyer-thumb img,.show-flyer-thumb video{width:100%;height:100%;object-fit:cover;display:block;}
       .cal-flyer-lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:20px;}
@@ -605,6 +619,17 @@
       return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     }
 
+    // OS-aware maps link: Apple Maps on iPhone/iPad, Google Maps everywhere else
+    // (Android, desktop, etc.) so tapping "Directions" opens whichever maps app
+    // the person is actually going to have on their phone.
+    function getDirectionsUrl(location, fallbackUrl) {
+      if (!location) return fallbackUrl || '#';
+      var ua = navigator.userAgent || navigator.vendor || '';
+      var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+      var encoded = encodeURIComponent(location);
+      return isIOS ? ('https://maps.apple.com/?q=' + encoded) : ('https://www.google.com/maps/search/?api=1&query=' + encoded);
+    }
+
     function fetchFlyers() {
       return fetch('flyers.json?bust=' + Date.now(), { cache: 'no-store' })
         .then(function(r) { return r.ok ? r.json() : []; })
@@ -649,20 +674,25 @@
       });
     }
 
+    var currentEvents = [];
+    var currentFlyerMap = {};
+
     function renderCards(events, flyerMap) {
       flyerMap = flyerMap || {};
+      currentEvents = events;
+      currentFlyerMap = flyerMap;
       if (!events.length) {
         trackEl.innerHTML = '<div class="rpc-empty">No upcoming shows booked right now — check back soon!</div>';
         return;
       }
-      trackEl.innerHTML = events.map(function(e) {
+      trackEl.innerHTML = events.map(function(e, i) {
         var d = e.start;
         var dow = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()];
         var timeStr = e.allDay ? '' : d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
         var metaParts = [dow];
         if (timeStr) metaParts.push(timeStr);
         if (e.location) metaParts.push(e.location);
-        var directionsUrl = e.location ? 'https://maps.google.com/?q=' + encodeURIComponent(e.location) : e.htmlLink;
+        var directionsUrl = getDirectionsUrl(e.location, e.htmlLink);
         var flyer = flyerMap[fmtDateKey(d)];
         var flyerIsVideo = flyer && isVideoSrc(flyer);
         var flyerMedia = flyer
@@ -670,7 +700,7 @@
               ? '<video src="' + flyer + '" muted loop playsinline autoplay></video>'
               : '<img src="' + flyer + '" alt="Show flyer" loading="lazy">')
           : '';
-        return '<div class="show-tile">' +
+        return '<div class="show-tile" data-idx="' + i + '" role="button" tabindex="0">' +
           (flyer ? '<div class="show-flyer-thumb" role="button" tabindex="0" data-flyer="' + escapeHtml(flyer) + '">' + flyerMedia + '</div>' : '') +
           '<div class="show-date-badge"><span class="mon">' + MONTH_NAMES[d.getMonth()].slice(0,3) + '</span><span class="day">' + d.getDate() + '</span></div>' +
           '<p class="venue">' + escapeHtml(e.title) + '</p><p class="meta">' + escapeHtml(metaParts.join(' · ')) + '</p>' +
@@ -732,14 +762,71 @@
       flyerLb.classList.remove('open');
       document.body.style.overflow = '';
     }
+    // ---- Card detail sheet: tap anywhere on a tile (that isn't the flyer thumb or an
+    // action button) to see the full details — full venue name, full address, full date/time.
+    var detailOverlay = null;
+    function ensureDetailOverlay() {
+      if (detailOverlay) return detailOverlay;
+      detailOverlay = document.createElement('div');
+      detailOverlay.className = 'cal-detail-overlay';
+      detailOverlay.innerHTML = '<div class="cal-detail-sheet"><div class="cal-detail-close">✕</div><div class="cal-detail-body"></div></div>';
+      document.body.appendChild(detailOverlay);
+      detailOverlay.addEventListener('click', function(e) {
+        if (e.target === detailOverlay || e.target.className === 'cal-detail-close') closeDetailSheet();
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && detailOverlay.classList.contains('open')) closeDetailSheet();
+      });
+      return detailOverlay;
+    }
+    function openDetailSheet(idx) {
+      var e = currentEvents[idx];
+      if (!e) return;
+      var overlay = ensureDetailOverlay();
+      var body = overlay.querySelector('.cal-detail-body');
+      var d = e.start;
+      var dow = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()];
+      var dateStr = MONTH_NAMES[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+      var timeStr = e.allDay ? '' : d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+      var flyer = currentFlyerMap[fmtDateKey(d)];
+      var flyerIsVideo = flyer && isVideoSrc(flyer);
+      var directionsUrl = getDirectionsUrl(e.location, e.htmlLink);
+      body.innerHTML =
+        (flyer ? '<div class="cal-detail-flyer">' + (flyerIsVideo
+            ? '<video src="' + flyer + '" muted loop playsinline autoplay controls></video>'
+            : '<img src="' + flyer + '" alt="Show flyer">') + '</div>' : '') +
+        '<div class="cal-detail-date">' + escapeHtml(dow) + ', ' + escapeHtml(dateStr) + (timeStr ? ' · ' + escapeHtml(timeStr) : '') + '</div>' +
+        '<h3 class="cal-detail-venue">' + escapeHtml(e.title) + '</h3>' +
+        (e.location ? '<p class="cal-detail-meta">' + escapeHtml(e.location) + '</p>' : '') +
+        '<div class="cal-detail-actions">' +
+          '<a class="primary" href="' + e.htmlLink + '" target="_blank" rel="noopener">+ Add to Calendar</a>' +
+          (e.location ? '<a class="alt" href="' + directionsUrl + '" target="_blank" rel="noopener">Directions</a>' : '') +
+        '</div>';
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDetailSheet() {
+      if (!detailOverlay) return;
+      var v = detailOverlay.querySelector('video');
+      if (v) v.pause();
+      detailOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
     trackEl.addEventListener('click', function(e) {
       var thumb = e.target.closest('.show-flyer-thumb');
-      if (thumb) openFlyerLightbox(thumb.getAttribute('data-flyer'));
+      if (thumb) { openFlyerLightbox(thumb.getAttribute('data-flyer')); return; }
+      if (e.target.closest('.show-actions a')) return; // let the Calendar/Directions links work normally
+      var tile = e.target.closest('.show-tile');
+      if (tile) openDetailSheet(parseInt(tile.getAttribute('data-idx'), 10));
     });
     trackEl.addEventListener('keydown', function(e) {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       var thumb = e.target.closest('.show-flyer-thumb');
-      if (thumb) { e.preventDefault(); openFlyerLightbox(thumb.getAttribute('data-flyer')); }
+      if (thumb) { e.preventDefault(); openFlyerLightbox(thumb.getAttribute('data-flyer')); return; }
+      if (e.target.closest('.show-actions a')) return;
+      var tile = e.target.closest('.show-tile');
+      if (tile) { e.preventDefault(); openDetailSheet(parseInt(tile.getAttribute('data-idx'), 10)); }
     });
 
     fetchEvents();
