@@ -541,8 +541,8 @@
       .cal-detail-sheet{background:var(--panel);border:1px solid var(--border);border-radius:20px 20px 0 0;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;padding:20px;position:relative;text-align:left;}
       @media(min-width:600px){.cal-detail-overlay{align-items:center;padding:20px;} .cal-detail-sheet{border-radius:16px;max-height:80vh;}}
       .cal-detail-close{position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;z-index:2;-webkit-tap-highlight-color:transparent;}
-      .cal-detail-flyer{width:100%;border-radius:12px;overflow:hidden;margin-bottom:16px;max-height:340px;background:#000;}
-      .cal-detail-flyer img,.cal-detail-flyer video{width:100%;height:100%;object-fit:cover;display:block;max-height:340px;}
+      .cal-detail-flyer{width:100%;border-radius:12px;overflow:hidden;margin-bottom:16px;background:#000;}
+      .cal-detail-flyer img,.cal-detail-flyer video{width:100%;height:auto;max-height:70vh;object-fit:contain;display:block;}
       .cal-detail-date{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
       .cal-detail-venue{font-family:var(--font-display);font-weight:900;font-size:1.4rem;margin:0 0 10px;color:var(--text);}
       .cal-detail-meta{font-size:.9rem;color:var(--muted);margin:0 0 20px;line-height:1.6;}
@@ -550,12 +550,12 @@
       .cal-detail-actions a{flex:1;text-align:center;padding:13px;border-radius:30px;font-weight:bold;text-decoration:none;font-size:.85rem;}
       .cal-detail-actions a.primary{background:var(--blue);color:#000;}
       .cal-detail-actions a.alt{background:transparent;border:1px solid var(--border);color:var(--text);}
-      .show-flyer-thumb{display:block;margin:-16px -16px 0;aspect-ratio:1/1;overflow:hidden;border-radius:14px 14px 0 0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+      .cal-detail-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px;}
+      .cal-detail-nav button{background:rgba(255,255,255,0.08);border:none;color:var(--text);width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;flex-shrink:0;}
+      .cal-detail-nav button:hover{background:rgba(255,255,255,0.16);}
+      .cal-detail-nav-counter{font-size:.75rem;color:var(--muted);letter-spacing:.04em;min-width:52px;text-align:center;}
+      .show-flyer-thumb{display:block;margin:-16px -16px 0;aspect-ratio:1/1;overflow:hidden;border-radius:14px 14px 0 0;}
       .show-flyer-thumb img,.show-flyer-thumb video{width:100%;height:100%;object-fit:cover;display:block;}
-      .cal-flyer-lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:20px;}
-      .cal-flyer-lightbox.open{display:flex;}
-      .cal-flyer-lightbox img,.cal-flyer-lightbox video{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;box-shadow:0 16px 80px rgba(0,0,0,.9);display:block;}
-      .cal-flyer-lightbox-close{position:fixed;top:16px;right:16px;width:34px;height:34px;background:#8DB2E5;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#0d0505;font-weight:900;z-index:10000;-webkit-tap-highlight-color:transparent;}
       .show-date-badge{width:52px;height:52px;border-radius:10px;background:linear-gradient(160deg,var(--blue),var(--pink));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#000;}
       .show-date-badge .mon{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;}
       .show-date-badge .day{font-size:1.3rem;font-weight:900;line-height:1;}
@@ -701,7 +701,7 @@
               : '<img src="' + flyer + '" alt="Show flyer" loading="lazy">')
           : '';
         return '<div class="show-tile" data-idx="' + i + '" role="button" tabindex="0">' +
-          (flyer ? '<div class="show-flyer-thumb" role="button" tabindex="0" data-flyer="' + escapeHtml(flyer) + '">' + flyerMedia + '</div>' : '') +
+          (flyer ? '<div class="show-flyer-thumb">' + flyerMedia + '</div>' : '') +
           '<div class="show-date-badge"><span class="mon">' + MONTH_NAMES[d.getMonth()].slice(0,3) + '</span><span class="day">' + d.getDate() + '</span></div>' +
           '<p class="venue">' + escapeHtml(e.title) + '</p><p class="meta">' + escapeHtml(metaParts.join(' · ')) + '</p>' +
           '<div class="show-actions"><a href="' + e.htmlLink + '" target="_blank" rel="noopener">+ Calendar</a>' +
@@ -728,60 +728,49 @@
     prevBtn.addEventListener('click', function() { scrollByTile(-1); });
     nextBtn.addEventListener('click', function() { scrollByTile(1); });
 
-    // ---- Flyer lightbox: a plain in-page overlay (no new tab, no hash/history games) ----
-    // so the close button always just removes the overlay and leaves you exactly where
-    // you were on the page — no risk of it "going somewhere else."
-    var flyerLb = null;
-    function ensureFlyerLightbox() {
-      if (flyerLb) return flyerLb;
-      flyerLb = document.createElement('div');
-      flyerLb.className = 'cal-flyer-lightbox';
-      flyerLb.innerHTML = '<div class="cal-flyer-lightbox-close">✕</div><div class="cal-flyer-lightbox-media"></div>';
-      document.body.appendChild(flyerLb);
-      flyerLb.addEventListener('click', function(e) {
-        if (e.target === flyerLb || e.target.className === 'cal-flyer-lightbox-close') closeFlyerLightbox();
-      });
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && flyerLb.classList.contains('open')) closeFlyerLightbox();
-      });
-      return flyerLb;
-    }
-    function openFlyerLightbox(src) {
-      var lb = ensureFlyerLightbox();
-      var media = lb.querySelector('.cal-flyer-lightbox-media');
-      media.innerHTML = isVideoSrc(src)
-        ? '<video src="' + src + '" controls autoplay playsinline loop></video>'
-        : '<img src="' + src + '" alt="Show flyer">';
-      lb.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeFlyerLightbox() {
-      if (!flyerLb) return;
-      var v = flyerLb.querySelector('video');
-      if (v) v.pause();
-      flyerLb.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    // ---- Card detail sheet: tap anywhere on a tile (that isn't the flyer thumb or an
-    // action button) to see the full details — full venue name, full address, full date/time.
+    // ---- Card detail sheet: tap anywhere on a tile (flyer included) to see the full
+    // details — full venue name, full address, full date/time, whole uncropped flyer —
+    // and swipe or use the arrows to browse to the next/previous show without closing.
     var detailOverlay = null;
+    var currentDetailIdx = -1;
     function ensureDetailOverlay() {
       if (detailOverlay) return detailOverlay;
       detailOverlay = document.createElement('div');
       detailOverlay.className = 'cal-detail-overlay';
-      detailOverlay.innerHTML = '<div class="cal-detail-sheet"><div class="cal-detail-close">✕</div><div class="cal-detail-body"></div></div>';
+      detailOverlay.innerHTML = '<div class="cal-detail-sheet">' +
+        '<div class="cal-detail-close">✕</div>' +
+        '<div class="cal-detail-body"></div>' +
+        '<div class="cal-detail-nav">' +
+          '<button id="cal-detail-prev" aria-label="Previous show">&lsaquo;</button>' +
+          '<span class="cal-detail-nav-counter" id="cal-detail-counter"></span>' +
+          '<button id="cal-detail-next" aria-label="Next show">&rsaquo;</button>' +
+        '</div>' +
+      '</div>';
       document.body.appendChild(detailOverlay);
       detailOverlay.addEventListener('click', function(e) {
         if (e.target === detailOverlay || e.target.className === 'cal-detail-close') closeDetailSheet();
       });
+      detailOverlay.querySelector('#cal-detail-prev').addEventListener('click', function() { navigateDetail(-1); });
+      detailOverlay.querySelector('#cal-detail-next').addEventListener('click', function() { navigateDetail(1); });
       document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && detailOverlay.classList.contains('open')) closeDetailSheet();
+        if (!detailOverlay.classList.contains('open')) return;
+        if (e.key === 'Escape') closeDetailSheet();
+        if (e.key === 'ArrowLeft') navigateDetail(-1);
+        if (e.key === 'ArrowRight') navigateDetail(1);
+      });
+      var sheet = detailOverlay.querySelector('.cal-detail-sheet');
+      var touchX = 0;
+      sheet.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; }, { passive: true });
+      sheet.addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) > 50) navigateDetail(dx < 0 ? 1 : -1);
       });
       return detailOverlay;
     }
     function openDetailSheet(idx) {
-      var e = currentEvents[idx];
-      if (!e) return;
+      if (!currentEvents.length) return;
+      currentDetailIdx = (idx + currentEvents.length) % currentEvents.length;
+      var e = currentEvents[currentDetailIdx];
       var overlay = ensureDetailOverlay();
       var body = overlay.querySelector('.cal-detail-body');
       var d = e.start;
@@ -802,8 +791,19 @@
           '<a class="primary" href="' + e.htmlLink + '" target="_blank" rel="noopener">+ Add to Calendar</a>' +
           (e.location ? '<a class="alt" href="' + directionsUrl + '" target="_blank" rel="noopener">Directions</a>' : '') +
         '</div>';
+      var counter = overlay.querySelector('#cal-detail-counter');
+      counter.textContent = (currentDetailIdx + 1) + ' of ' + currentEvents.length;
+      var navRow = overlay.querySelector('.cal-detail-nav');
+      navRow.style.display = currentEvents.length > 1 ? 'flex' : 'none';
       overlay.classList.add('open');
+      overlay.querySelector('.cal-detail-sheet').scrollTop = 0;
       document.body.style.overflow = 'hidden';
+    }
+    function navigateDetail(dir) {
+      if (currentDetailIdx < 0) return;
+      var v = detailOverlay.querySelector('video');
+      if (v) v.pause();
+      openDetailSheet(currentDetailIdx + dir);
     }
     function closeDetailSheet() {
       if (!detailOverlay) return;
@@ -814,16 +814,12 @@
     }
 
     trackEl.addEventListener('click', function(e) {
-      var thumb = e.target.closest('.show-flyer-thumb');
-      if (thumb) { openFlyerLightbox(thumb.getAttribute('data-flyer')); return; }
       if (e.target.closest('.show-actions a')) return; // let the Calendar/Directions links work normally
       var tile = e.target.closest('.show-tile');
       if (tile) openDetailSheet(parseInt(tile.getAttribute('data-idx'), 10));
     });
     trackEl.addEventListener('keydown', function(e) {
       if (e.key !== 'Enter' && e.key !== ' ') return;
-      var thumb = e.target.closest('.show-flyer-thumb');
-      if (thumb) { e.preventDefault(); openFlyerLightbox(thumb.getAttribute('data-flyer')); return; }
       if (e.target.closest('.show-actions a')) return;
       var tile = e.target.closest('.show-tile');
       if (tile) { e.preventDefault(); openDetailSheet(parseInt(tile.getAttribute('data-idx'), 10)); }
