@@ -62,17 +62,16 @@
 
   /*
     BACKGROUND BANDS: each full-bleed section below is a "band" with its own background
-    image + dark overlay so text stays readable. Drop your ChatGPT-generated art into a
-    /bg folder in the repo using these exact filenames and it lights up automatically -
-    no code changes needed:
-      bg/hero-bg.jpg      - behind "Join the Fun" / Song Request / Fan Cam
-      bg/tipjar-bg.jpg    - behind Tip Jar
-      bg/textjoin-bg.jpg  - behind the Text JOIN box
-      bg/music-bg.jpg     - behind Rick's Music player
-      bg/diamond-bg.jpg   - behind Diamond Method course
-    Recommended: 1600x1200px (or larger, same ratio), .jpg, keep file size under ~400KB
-    each so the site stays fast on mobile data. Until a file exists at that path, the
-    band just shows the solid dark background - nothing breaks.
+    image + dark overlay so text stays readable. Art lives in the /images folder using
+    these exact filenames:
+      images/hero-bg.jpg      - behind "Join the Fun" / Song Request / Fan Cam
+      images/tipjar-bg.jpg    - behind Tip Jar
+      images/textjoin-bg.jpg  - behind the Text JOIN box
+      images/music-bg.jpg     - behind Rick's Music player
+      images/diamond-bg.jpg   - behind Diamond Method course
+      images/calendar-bg.jpg  - behind the Calendar
+    Until a file exists at that path, the band just shows the solid dark background -
+    nothing breaks.
   */
   .band{
     position:relative;
@@ -95,11 +94,12 @@
     z-index:0;
   }
   .band-inner{position:relative;z-index:1;max-width:900px;margin:0 auto;}
-  .band-hero{background-image:url('bg/hero-bg.jpg');background-color:var(--bg);}
-  .band-tipjar{background-image:url('bg/tipjar-bg.jpg');background-color:var(--bg);--overlay:0.68;}
-  .band-textjoin{background-image:url('bg/textjoin-bg.jpg');background-color:var(--bg);--overlay:0.55;}
-  .band-music{background-image:url('bg/music-bg.jpg');background-color:var(--bg);--overlay:0.65;}
-  .band-diamond{background-image:url('bg/diamond-bg.jpg');background-color:var(--bg);--overlay:0.65;}
+  .band-hero{background-image:url('images/hero-bg.jpg');background-color:var(--bg);}
+  .band-tipjar{background-image:url('images/tipjar-bg.jpg');background-color:var(--bg);--overlay:0.68;}
+  .band-textjoin{background-image:url('images/textjoin-bg.jpg');background-color:var(--bg);--overlay:0.55;}
+  .band-music{background-image:url('images/music-bg.jpg');background-color:var(--bg);--overlay:0.65;}
+  .band-diamond{background-image:url('images/diamond-bg.jpg');background-color:var(--bg);--overlay:0.65;}
+  .band-calendar{background-image:url('images/calendar-bg.jpg');background-color:var(--bg);--overlay:0.55;}
 
   .button-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:24px 0;}
   .glow-btn{
@@ -571,18 +571,21 @@
   })();
   </script>
 
-  <hr style="border: none; border-top: 2px solid #ccc; max-width: 800px; margin: 40px auto 24px;">
-  <h2 style="font-size: 28px; color: rgb(255, 255, 255); margin: 0px 0px 12px; text-align: center;">CALENDAR</h2>
-  <div style="font-family: sans-serif; max-width: 800px; margin: 0 auto;">
-    <!-- Calendar embed -->
-    <div style="display: flex; justify-content: center; width: 100%;">
-      <iframe id="rp-calendar-iframe" src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;ctz=America%2FLos_Angeles&amp;showPrint=0&amp;mode=AGENDA&amp;showCalendars=0&amp;showNav=0&amp;showDate=0&amp;showTz=0&amp;showTitle=0&amp;src=ZWU3OWUxNTU3ZTgxN2RkMGU2OTg2ZmFjNTU0NWU5N2NmMzZmM2E5NTM3ODYyNzMxYzdlOWFkYzEyZWE1ODE4NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&amp;color=%23ffffff" style="border-width: 0; max-width: 800px; width: 100%;" height="600" frameborder="0" scrolling="no"></iframe>
-    </div>
-    <!-- Subscribe button -->
-    <div style="text-align: center; margin-top: 24px;">
-      <a id="rp-cal-subscribe" href="https://calendar.google.com/calendar/u/0?cid=ZWU3OWUxNTU3ZTgxN2RkMGU2OTg2ZmFjNTU0NWU5N2NmMzZmM2E5NTM3ODYyNzMxYzdlOWFkYzEyZWE1ODE4NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t" style="display: inline-flex; align-items: center; justify-content: center; padding: 14px 30px; border-radius: 60px; background: #8DB2E5; text-decoration: none; color: #000; white-space: nowrap; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
-        Subscribe to Calendar
-      </a>
+  <div class="band band-calendar">
+    <div class="band-inner">
+      <h2 class="display-heading" style="margin: 0 0 20px;">Calendar</h2>
+      <div style="font-family: sans-serif; max-width: 800px; margin: 0 auto;">
+        <!-- Calendar embed -->
+        <div style="display: flex; justify-content: center; width: 100%;">
+          <iframe id="rp-calendar-iframe" src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;ctz=America%2FLos_Angeles&amp;showPrint=0&amp;mode=AGENDA&amp;showCalendars=0&amp;showNav=0&amp;showDate=0&amp;showTz=0&amp;showTitle=0&amp;src=ZWU3OWUxNTU3ZTgxN2RkMGU2OTg2ZmFjNTU0NWU5N2NmMzZmM2E5NTM3ODYyNzMxYzdlOWFkYzEyZWE1ODE4NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&amp;color=%23ffffff" style="border-width: 0; max-width: 800px; width: 100%;" height="600" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <!-- Subscribe button -->
+        <div style="text-align: center; margin-top: 24px;">
+          <a id="rp-cal-subscribe" href="https://calendar.google.com/calendar/u/0?cid=ZWU3OWUxNTU3ZTgxN2RkMGU2OTg2ZmFjNTU0NWU5N2NmMzZmM2E5NTM3ODYyNzMxYzdlOWFkYzEyZWE1ODE4NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t" style="display: inline-flex; align-items: center; justify-content: center; padding: 14px 30px; border-radius: 60px; background: #8DB2E5; text-decoration: none; color: #000; white-space: nowrap; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+            Subscribe to Calendar
+          </a>
+        </div>
+      </div>
     </div>
   </div>
   <script>
