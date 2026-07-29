@@ -87,7 +87,7 @@
      it needs to (the page scrolls normally) instead of chips reflowing inside a small
      scroll box, which is what was making them feel like they were "sliding around." */
   .date-chip-list { display:flex; flex-direction:column; gap:10px; }
-  .date-chip { display:block; width:100%; box-sizing:border-box; background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:10px; padding:14px 16px; font-size:15px; color:rgba(255,255,255,0.75); cursor:pointer; user-select:none; }
+  .date-chip { display:block; width:100%; box-sizing:border-box; background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:10px; padding:14px 16px; font-size:15px; color:rgba(255,255,255,0.75); cursor:pointer; user-select:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .date-chip.selected { background:#8DB2E5; border-color:#8DB2E5; color:#0d0505; font-weight:700; }
   .date-chip-empty { font-size:12px; color:rgba(255,255,255,0.3); }
   #photo-list.hidden-while-picking { display:none; }
@@ -343,7 +343,8 @@
           d = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
         }
         if (!d) return null;
-        return { dateKey: fmtDateKey(d), label: MONTHS[d.getMonth()] + " " + d.getDate() + " · " + (ev.summary || "Show") };
+        var shortTitle = (ev.summary || "Show").trim().split(/\s+/).slice(0, 2).join(" ");
+        return { dateKey: fmtDateKey(d), label: MONTHS[d.getMonth()] + " " + d.getDate() + " · " + shortTitle };
       }).filter(Boolean);
     } catch(e) {
       calendarEvents = [];
