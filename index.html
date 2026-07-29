@@ -543,11 +543,13 @@
       .cal-detail-close{position:absolute;top:16px;right:16px;width:32px;height:32px;background:rgba(255,255,255,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;z-index:2;-webkit-tap-highlight-color:transparent;}
       .cal-detail-card{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;touch-action:pan-y;will-change:transform;}
       .cal-detail-body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
-      .cal-detail-flyer{flex:1;min-height:0;width:100%;border-radius:12px;overflow:hidden;background:#000;margin:36px 0 10px;display:flex;align-items:center;justify-content:center;}
+      .cal-detail-flyer{flex:1;min-height:0;width:100%;border-radius:12px;overflow:hidden;background:#000;margin:36px 0 10px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
       .cal-detail-flyer img,.cal-detail-flyer video{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;}
+      .cal-detail-flyer-hint{position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:.65rem;font-weight:bold;letter-spacing:.04em;text-transform:uppercase;padding:5px 10px;border-radius:20px;pointer-events:none;}
       .cal-detail-date{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
       .cal-detail-venue{flex-shrink:0;font-family:var(--font-display);font-weight:900;font-size:1.2rem;margin:0 0 4px;color:var(--text);line-height:1.2;}
-      .cal-detail-meta{flex-shrink:0;font-size:.82rem;color:var(--muted);margin:0 0 10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+      .cal-detail-meta{flex-shrink:0;font-size:.82rem;color:var(--muted);margin:0 0 6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+      .cal-detail-desc{flex-shrink:0;font-size:.78rem;color:var(--muted);margin:0 0 10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
       .cal-detail-actions{flex-shrink:0;display:flex;gap:10px;}
       .cal-detail-actions a{flex:1;text-align:center;padding:12px;border-radius:30px;font-weight:bold;text-decoration:none;font-size:.82rem;}
       .cal-detail-actions a.primary{background:var(--blue);color:#000;}
@@ -556,6 +558,10 @@
       .cal-detail-nav button{background:rgba(255,255,255,0.08);border:none;color:var(--text);width:34px;height:34px;border-radius:50%;font-size:1.2rem;cursor:pointer;flex-shrink:0;}
       .cal-detail-nav button:hover{background:rgba(255,255,255,0.16);}
       .cal-detail-nav-counter{font-size:.72rem;color:var(--muted);letter-spacing:.04em;min-width:52px;text-align:center;}
+      .cal-flyer-full{display:none;position:fixed;inset:0;z-index:10000;background:#000;align-items:center;justify-content:center;padding:0;}
+      .cal-flyer-full.open{display:flex;}
+      .cal-flyer-full img,.cal-flyer-full video{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;}
+      .cal-flyer-full-back{position:absolute;top:16px;left:16px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border-radius:30px;padding:9px 18px 9px 14px;cursor:pointer;color:#fff;font-size:.82rem;font-weight:bold;z-index:2;-webkit-tap-highlight-color:transparent;}
       .show-flyer-thumb{display:block;margin:-16px -16px 0;aspect-ratio:1/1;overflow:hidden;border-radius:14px 14px 0 0;}
       .show-flyer-thumb img,.show-flyer-thumb video{width:100%;height:100%;object-fit:cover;display:block;}
       .show-date-badge{width:52px;height:52px;border-radius:10px;background:linear-gradient(160deg,var(--blue),var(--pink));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#000;}
@@ -664,6 +670,7 @@
           return {
             title: ev.summary || 'Show',
             location: ev.location || '',
+            description: ev.description || '',
             htmlLink: ev.htmlLink,
             start: parseEventDate(ev, 'start'),
             end: parseEventDate(ev, 'end'),
@@ -734,8 +741,46 @@
     // details — full venue name, full address, full date/time, whole uncropped flyer —
     // and swipe or use the arrows to browse to the next/previous show without closing.
     var detailOverlay = null;
+    var flyerFullOverlay = null;
     var currentDetailIdx = -1;
     var isSliding = false;
+
+    // Fullscreen flyer view: reached by tapping the flyer inside the card. Shows just
+    // the flyer at true fullscreen with a Back control that returns to the card (not a
+    // full close) — Escape and the Back button both just hide this layer.
+    function ensureFlyerFullOverlay() {
+      if (flyerFullOverlay) return flyerFullOverlay;
+      flyerFullOverlay = document.createElement('div');
+      flyerFullOverlay.className = 'cal-flyer-full';
+      flyerFullOverlay.innerHTML =
+        '<div class="cal-flyer-full-back">&lsaquo; Back</div>' +
+        '<div class="cal-flyer-full-body"></div>';
+      document.body.appendChild(flyerFullOverlay);
+      flyerFullOverlay.querySelector('.cal-flyer-full-back').addEventListener('click', closeFlyerFull);
+      flyerFullOverlay.addEventListener('click', function(e) {
+        if (e.target === flyerFullOverlay) closeFlyerFull();
+      });
+      return flyerFullOverlay;
+    }
+    function openFlyerFull() {
+      var e = currentEvents[currentDetailIdx];
+      if (!e) return;
+      var flyer = currentFlyerMap[fmtDateKey(e.start)];
+      if (!flyer) return;
+      var overlay = ensureFlyerFullOverlay();
+      var isVideo = isVideoSrc(flyer);
+      overlay.querySelector('.cal-flyer-full-body').innerHTML = isVideo
+        ? '<video src="' + flyer + '" muted loop playsinline autoplay controls></video>'
+        : '<img src="' + flyer + '" alt="Show flyer">';
+      overlay.classList.add('open');
+    }
+    function closeFlyerFull() {
+      if (!flyerFullOverlay) return;
+      var v = flyerFullOverlay.querySelector('video');
+      if (v) v.pause();
+      flyerFullOverlay.classList.remove('open');
+      flyerFullOverlay.querySelector('.cal-flyer-full-body').innerHTML = '';
+    }
 
     function ensureDetailOverlay() {
       if (detailOverlay) return detailOverlay;
@@ -754,9 +799,16 @@
       detailOverlay.addEventListener('click', function(e) {
         if (e.target === detailOverlay || e.target.className === 'cal-detail-close') closeDetailSheet();
       });
+      detailOverlay.querySelector('.cal-detail-body').addEventListener('click', function(e) {
+        if (e.target.closest('.cal-detail-flyer')) openFlyerFull();
+      });
       detailOverlay.querySelector('#cal-detail-prev').addEventListener('click', function() { slideTo(-1); });
       detailOverlay.querySelector('#cal-detail-next').addEventListener('click', function() { slideTo(1); });
       document.addEventListener('keydown', function(e) {
+        if (flyerFullOverlay && flyerFullOverlay.classList.contains('open')) {
+          if (e.key === 'Escape') closeFlyerFull();
+          return;
+        }
         if (!detailOverlay.classList.contains('open')) return;
         if (e.key === 'Escape') closeDetailSheet();
         if (e.key === 'ArrowLeft') slideTo(-1);
@@ -814,10 +866,11 @@
       body.innerHTML =
         (flyer ? '<div class="cal-detail-flyer">' + (flyerIsVideo
             ? '<video src="' + flyer + '" muted loop playsinline autoplay></video>'
-            : '<img src="' + flyer + '" alt="Show flyer">') + '</div>' : '') +
+            : '<img src="' + flyer + '" alt="Show flyer">') + '<span class="cal-detail-flyer-hint">Tap to view full screen</span></div>' : '') +
         '<div class="cal-detail-date">' + escapeHtml(dow) + ', ' + escapeHtml(dateStr) + (timeStr ? ' · ' + escapeHtml(timeStr) : '') + '</div>' +
         '<h3 class="cal-detail-venue">' + escapeHtml(e.title) + '</h3>' +
         (e.location ? '<p class="cal-detail-meta">' + escapeHtml(e.location) + '</p>' : '') +
+        (e.description ? '<p class="cal-detail-desc">' + escapeHtml(e.description) + '</p>' : '') +
         '<div class="cal-detail-actions">' +
           '<a class="primary" href="' + e.htmlLink + '" target="_blank" rel="noopener">+ Add to Calendar</a>' +
           (e.location ? '<a class="alt" href="' + directionsUrl + '" target="_blank" rel="noopener">Directions</a>' : '') +
@@ -845,6 +898,7 @@
     // click, keyboard) gets the same smooth motion instead of an instant content swap.
     function finishSlide(dir, card, w) {
       isSliding = true;
+      closeFlyerFull();
       var v = card.querySelector('video'); if (v) v.pause();
       card.style.transition = 'transform 0.2s ease';
       card.style.transform = 'translateX(' + (dir < 0 ? w : -w) + 'px)';
@@ -866,6 +920,7 @@
     }
     function closeDetailSheet() {
       if (!detailOverlay) return;
+      closeFlyerFull();
       var v = detailOverlay.querySelector('video');
       if (v) v.pause();
       detailOverlay.classList.remove('open');
