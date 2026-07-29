@@ -103,13 +103,6 @@
   .band-calendar{background-image:url('images/calendar-bg.jpg');background-color:var(--bg);--overlay:0.5;}
 
   .button-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:24px 0;}
-  .button-row a{
-    -webkit-tap-highlight-color:transparent;
-    display:inline-block;
-    transition:transform .12s ease, filter .12s ease;
-  }
-  .button-row a:hover{filter:brightness(1.08);}
-  .button-row a:active{transform:scale(0.94);filter:brightness(0.8);}
   .glow-btn{
     display:inline-block;
     padding:16px 32px;
@@ -265,6 +258,209 @@
     .text-join-button::before { animation: none; }
   }
 
+  /*
+    SONG REQUEST + FAN CAM buttons - same coded-button shell/mechanics as Text Join
+    (spinning neon border, glass panel, lift-on-hover, push-on-press) with their own
+    color themes since these replace song-request-button.png / fan-cam-button.png.
+  */
+  .song-request-button, .fan-cam-button {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: min(360px, 88vw);
+    min-height: 96px;
+    padding: 14px 40px;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    overflow: hidden;
+    isolation: isolate;
+    color: #ffffff;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+  }
+  .song-request-button {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(62, 200, 255, 0.3), transparent 42%),
+      linear-gradient(180deg, #0f1b38 0%, #070c1d 52%, #02040c 100%);
+    box-shadow:
+      0 0 0 4px #050a0d,
+      0 0 0 7px rgba(62, 200, 255, 0.75),
+      0 0 0 10px rgba(255, 62, 200, 0.65),
+      0 0 0 13px rgba(190, 65, 255, 0.4),
+      0 16px 32px rgba(0, 0, 0, 0.7),
+      0 0 30px rgba(62, 200, 255, 0.55),
+      0 0 45px rgba(255, 62, 200, 0.45),
+      inset 0 3px 5px rgba(255, 255, 255, 0.4),
+      inset 0 -16px 26px rgba(0, 0, 0, 0.72);
+  }
+  .song-request-button::before {
+    content: "";
+    position: absolute;
+    inset: -75%;
+    z-index: -2;
+    background: conic-gradient(from 0deg, #3ec8ff, #7e52ff, #ff3ec8, #db43ff, #3ec8ff);
+    animation: text-join-spin 6s linear infinite;
+  }
+  .song-request-button::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    z-index: -1;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 50% 10%, rgba(62, 200, 255, 0.2), transparent 44%),
+      linear-gradient(180deg, rgba(15, 25, 51, 0.99), rgba(2, 4, 12, 0.99));
+    box-shadow:
+      inset 0 0 22px rgba(62, 200, 255, 0.25),
+      inset 0 0 38px rgba(255, 62, 200, 0.2);
+  }
+  .song-request-main {
+    position: relative; z-index: 2;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(20px, 4.2vw, 30px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    color: #ffffff;
+    text-shadow:
+      0 2px 0 #8ba9b8, 0 4px 0 #263f4a,
+      0 0 8px rgba(255, 255, 255, 0.95),
+      0 0 18px rgba(62, 200, 255, 0.85),
+      0 0 28px rgba(255, 62, 200, 0.55);
+  }
+  .song-request-button:hover {
+    transform: translateY(-4px) scale(1.035);
+    filter: brightness(1.16) saturate(1.2);
+    box-shadow:
+      0 0 0 4px #050a0d,
+      0 0 0 7px rgba(62, 200, 255, 0.95),
+      0 0 0 10px rgba(255, 62, 200, 0.9),
+      0 0 0 13px rgba(198, 67, 255, 0.65),
+      0 22px 38px rgba(0, 0, 0, 0.75),
+      0 0 42px rgba(62, 200, 255, 0.85),
+      0 0 58px rgba(255, 62, 200, 0.72),
+      inset 0 3px 5px rgba(255, 255, 255, 0.5),
+      inset 0 -16px 26px rgba(0, 0, 0, 0.65);
+  }
+  .song-request-button:active {
+    transform: translateY(3px) scale(0.97);
+    filter: brightness(0.88);
+    box-shadow:
+      0 0 0 3px #050a0d,
+      0 0 0 6px rgba(62, 200, 255, 0.8),
+      0 0 0 8px rgba(255, 62, 200, 0.75),
+      0 6px 12px rgba(0, 0, 0, 0.8),
+      0 0 20px rgba(62, 200, 255, 0.65),
+      0 0 30px rgba(255, 62, 200, 0.58),
+      inset 0 10px 20px rgba(0, 0, 0, 0.85);
+  }
+
+  .fan-cam-button {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255, 62, 200, 0.3), transparent 42%),
+      linear-gradient(180deg, #381030 0%, #150710 52%, #04020a 100%);
+    box-shadow:
+      0 0 0 4px #050a0d,
+      0 0 0 7px rgba(255, 62, 200, 0.75),
+      0 0 0 10px rgba(62, 200, 255, 0.65),
+      0 0 0 13px rgba(190, 65, 255, 0.4),
+      0 16px 32px rgba(0, 0, 0, 0.7),
+      0 0 30px rgba(255, 62, 200, 0.55),
+      0 0 45px rgba(62, 200, 255, 0.45),
+      inset 0 3px 5px rgba(255, 255, 255, 0.4),
+      inset 0 -16px 26px rgba(0, 0, 0, 0.72);
+  }
+  .fan-cam-button::before {
+    content: "";
+    position: absolute;
+    inset: -75%;
+    z-index: -2;
+    background: conic-gradient(from 0deg, #ff3ec8, #db43ff, #3ec8ff, #7e52ff, #ff3ec8);
+    animation: text-join-spin 6s linear infinite;
+  }
+  .fan-cam-button::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    z-index: -1;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 50% 10%, rgba(255, 62, 200, 0.2), transparent 44%),
+      linear-gradient(180deg, rgba(51, 15, 41, 0.99), rgba(10, 2, 8, 0.99));
+    box-shadow:
+      inset 0 0 22px rgba(255, 62, 200, 0.25),
+      inset 0 0 38px rgba(62, 200, 255, 0.2);
+  }
+  .fan-cam-main, .fan-cam-sub { position: relative; z-index: 2; }
+  .fan-cam-main {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(20px, 4.2vw, 30px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    color: #ffffff;
+    text-shadow:
+      0 2px 0 #8ba9b8, 0 4px 0 #263f4a,
+      0 0 8px rgba(255, 255, 255, 0.95),
+      0 0 18px rgba(255, 62, 200, 0.85),
+      0 0 28px rgba(62, 200, 255, 0.55);
+  }
+  .fan-cam-sub {
+    margin-top: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(13px, 2.6vw, 16px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 1px;
+    color: #79d4ff;
+    text-shadow:
+      0 0 6px rgba(62, 200, 255, 0.9),
+      0 0 14px rgba(62, 200, 255, 0.7),
+      0 0 24px rgba(255, 62, 200, 0.45);
+  }
+  .fan-cam-button:hover {
+    transform: translateY(-4px) scale(1.035);
+    filter: brightness(1.16) saturate(1.2);
+    box-shadow:
+      0 0 0 4px #050a0d,
+      0 0 0 7px rgba(255, 62, 200, 0.95),
+      0 0 0 10px rgba(62, 200, 255, 0.9),
+      0 0 0 13px rgba(198, 67, 255, 0.65),
+      0 22px 38px rgba(0, 0, 0, 0.75),
+      0 0 42px rgba(255, 62, 200, 0.85),
+      0 0 58px rgba(62, 200, 255, 0.72),
+      inset 0 3px 5px rgba(255, 255, 255, 0.5),
+      inset 0 -16px 26px rgba(0, 0, 0, 0.65);
+  }
+  .fan-cam-button:active {
+    transform: translateY(3px) scale(0.97);
+    filter: brightness(0.88);
+    box-shadow:
+      0 0 0 3px #050a0d,
+      0 0 0 6px rgba(255, 62, 200, 0.8),
+      0 0 0 8px rgba(62, 200, 255, 0.75),
+      0 6px 12px rgba(0, 0, 0, 0.8),
+      0 0 20px rgba(255, 62, 200, 0.65),
+      0 0 30px rgba(62, 200, 255, 0.58),
+      inset 0 10px 20px rgba(0, 0, 0, 0.85);
+  }
+  .song-request-button:focus-visible, .fan-cam-button:focus-visible {
+    outline: 4px solid #ffffff; outline-offset: 12px;
+  }
+  @media (max-width: 540px) {
+    .song-request-button, .fan-cam-button { width: 82vw; min-height: 84px; padding: 12px 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .song-request-button::before, .fan-cam-button::before { animation: none; }
+  }
+
   table.tracklist{width:100%;border-collapse:collapse;text-align:left;margin-top:16px;cursor:pointer;}
   table.tracklist tr:hover td{color:var(--blue);}
   table.tracklist tr.active td{color:var(--pink);font-weight:bold;}
@@ -361,7 +557,6 @@
     h2{font-size:1.5rem;}
     h2.display-heading{font-size:1.6rem;}
     .rpp-section-title,.rp-section-title{font-size:24px !important;}
-    .button-row img{max-width:100% !important;}
     .tip-row{gap:14px;}
     .tip-icon{width:42px;height:42px;}
     table.tracklist td{padding:7px 4px;font-size:.85rem;}
@@ -410,8 +605,13 @@
       <div class="eyebrow">Join the Fun</div>
       <div class="button-row">
         <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
-        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html"><img src="song-request-button.png" alt="Song Request" style="max-width:300px;width:100%;"></a>
-        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html"><img src="fan-cam-button.png" alt="Fan Cam" style="max-width:220px;width:100%;"></a>
+        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html" class="song-request-button">
+          <span class="song-request-main">&#9835; SONG REQUEST &#9835;</span>
+        </a>
+        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html" class="fan-cam-button">
+          <span class="fan-cam-main">FAN CAM</span>
+          <span class="fan-cam-sub">CLICK HERE</span>
+        </a>
       </div>
     </div>
   </div>
