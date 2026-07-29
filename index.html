@@ -657,49 +657,32 @@
 
   <div class="band band-calendar">
     <style>
-      .rpc-wrap{max-width:460px;margin:0 auto;}
-      .show-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;}
-      .show-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;text-align:left;}
-      .show-date-badge{flex-shrink:0;width:56px;height:56px;border-radius:10px;background:linear-gradient(160deg,var(--blue),var(--pink));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#000;}
+      .rpc-wrap{max-width:680px;margin:0 auto;}
+      .show-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+      .show-track::-webkit-scrollbar{display:none;}
+      .show-tile{scroll-snap-align:start;flex:0 0 190px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:left;}
+      .show-date-badge{width:52px;height:52px;border-radius:10px;background:linear-gradient(160deg,var(--blue),var(--pink));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#000;}
       .show-date-badge .mon{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;}
       .show-date-badge .day{font-size:1.3rem;font-weight:900;line-height:1;}
-      .show-info{flex:1;min-width:0;}
-      .show-info .venue{font-weight:bold;font-size:.98rem;margin:0 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
-      .show-info .meta{font-size:.78rem;color:var(--muted);margin:0;}
-      .show-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
-      .show-actions a{font-size:.7rem;font-weight:bold;text-decoration:none;color:#000;background:var(--blue);padding:6px 10px;border-radius:20px;text-align:center;white-space:nowrap;}
+      .show-tile .venue{font-weight:bold;font-size:.95rem;margin:0;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+      .show-tile .meta{font-size:.75rem;color:var(--muted);margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+      .show-actions{display:flex;gap:6px;margin-top:auto;padding-top:2px;}
+      .show-actions a{flex:1;font-size:.68rem;font-weight:bold;text-decoration:none;color:#000;background:var(--blue);padding:7px 4px;border-radius:20px;text-align:center;white-space:nowrap;}
       .show-actions a.alt{background:transparent;color:var(--muted);border:1px solid var(--border);}
-      .rpc-empty{color:var(--muted);font-size:.9rem;text-align:center;padding:20px 0;}
-      .cal-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;}
-      .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-      .cal-nav button{background:rgba(255,255,255,0.08);border:none;color:var(--text);width:30px;height:30px;border-radius:8px;font-size:1rem;cursor:pointer;}
-      .cal-nav .month{font-family:var(--font-display);font-weight:900;font-size:1.1rem;}
-      .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-      .cal-dow{font-size:.65rem;color:var(--muted);text-align:center;padding-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
-      .cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:.85rem;color:var(--muted);position:relative;}
-      .cal-day.muted{opacity:.25;}
-      .cal-day.has-show{color:var(--text);font-weight:bold;cursor:pointer;}
-      .cal-day.has-show::after{content:"";position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:linear-gradient(90deg,var(--blue),var(--pink));}
-      .cal-day.today{border:1px solid var(--blue);}
-      .cal-legend{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);}
-      .cal-legend-item{display:flex;align-items:center;gap:10px;font-size:.82rem;margin-bottom:6px;text-align:left;}
-      .cal-legend-item .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,var(--blue),var(--pink));flex-shrink:0;}
-      .cal-legend-item .t{color:var(--muted);}
-      .rpc-subscribe{display:block;text-align:center;margin-top:20px;}
+      .rpc-empty{color:var(--muted);font-size:.9rem;text-align:center;padding:20px 40px;flex:1 1 100%;}
+      .show-carousel-nav{display:flex;justify-content:center;gap:10px;margin:4px 0 24px;}
+      .show-carousel-nav button{background:rgba(255,255,255,0.08);border:none;color:var(--text);width:34px;height:34px;border-radius:50%;font-size:1.1rem;cursor:pointer;}
+      .show-carousel-nav button:hover{background:rgba(255,255,255,0.16);}
+      .rpc-subscribe{display:block;text-align:center;margin-top:4px;}
       .rpc-subscribe a{display:inline-flex;align-items:center;justify-content:center;padding:14px 30px;border-radius:60px;background:#8DB2E5;text-decoration:none;color:#000;white-space:nowrap;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;}
     </style>
     <div class="band-inner">
       <h2 class="display-heading" style="margin: 0 0 20px;">Calendar</h2>
       <div class="rpc-wrap">
-        <div id="rpc-cards" class="show-cards"><div class="rpc-empty">Loading upcoming shows…</div></div>
-        <div class="cal-card">
-          <div class="cal-nav">
-            <button id="rpc-prev" aria-label="Previous month">&lsaquo;</button>
-            <span class="month" id="rpc-month">—</span>
-            <button id="rpc-next" aria-label="Next month">&rsaquo;</button>
-          </div>
-          <div class="cal-grid" id="rpc-grid"></div>
-          <div class="cal-legend" id="rpc-legend"></div>
+        <div id="rpc-cards" class="show-track"><div class="rpc-empty">Loading upcoming shows…</div></div>
+        <div class="show-carousel-nav">
+          <button id="rpc-prev" aria-label="Scroll to previous shows">&lsaquo;</button>
+          <button id="rpc-next" aria-label="Scroll to next shows">&rsaquo;</button>
         </div>
         <div class="rpc-subscribe">
           <a id="rp-cal-subscribe" href="https://calendar.google.com/calendar/u/0?cid=ZWU3OWUxNTU3ZTgxN2RkMGU2OTg2ZmFjNTU0NWU5N2NmMzZmM2E5NTM3ODYyNzMxYzdlOWFkYzEyZWE1ODE4NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Subscribe to Calendar</a>
@@ -721,23 +704,10 @@
     var RPC_API_KEY = 'AIzaSyCea0FN28V6xlJtKaKYJhwLI3xa9v8Pr6s';
     var RPC_CAL_ID = 'ee79e1557e817dd0e6986fac5545e97cf36f3a9537862731c7e9adc12ea58186@group.calendar.google.com';
     var MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    var DOW = ["S","M","T","W","T","F","S"];
 
-    var cardsEl = document.getElementById('rpc-cards');
-    var gridEl = document.getElementById('rpc-grid');
-    var monthEl = document.getElementById('rpc-month');
-    var legendEl = document.getElementById('rpc-legend');
+    var trackEl = document.getElementById('rpc-cards');
     var prevBtn = document.getElementById('rpc-prev');
     var nextBtn = document.getElementById('rpc-next');
-
-    var today = new Date();
-    var viewYear = today.getFullYear();
-    var viewMonth = today.getMonth(); // 0-indexed
-    var allEvents = []; // cached events from API, each {start:Date, end:Date, title, location, htmlLink}
-
-    function fmtDate(d) {
-      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    }
 
     function parseEventDate(ev, key) {
       var obj = ev[key];
@@ -751,14 +721,14 @@
     }
 
     function fetchEvents() {
-      var timeMin = new Date(today.getFullYear(), today.getMonth()-1, 1).toISOString();
+      var timeMin = new Date().toISOString();
       var url = 'https://www.googleapis.com/calendar/v3/calendars/' + encodeURIComponent(RPC_CAL_ID) +
-        '/events?key=' + RPC_API_KEY + '&singleEvents=true&orderBy=startTime&maxResults=250&timeMin=' + encodeURIComponent(timeMin);
+        '/events?key=' + RPC_API_KEY + '&singleEvents=true&orderBy=startTime&maxResults=25&timeMin=' + encodeURIComponent(timeMin);
       return fetch(url).then(function(r) {
         if (!r.ok) throw new Error('Calendar API error ' + r.status);
         return r.json();
       }).then(function(data) {
-        allEvents = (data.items || []).map(function(ev) {
+        var events = (data.items || []).map(function(ev) {
           return {
             title: ev.summary || 'Show',
             location: ev.location || '',
@@ -768,23 +738,18 @@
             allDay: !(ev.start && ev.start.dateTime)
           };
         }).filter(function(e) { return e.start; });
-        renderCards();
-        renderMonth();
+        renderCards(events);
       }).catch(function(err) {
-        cardsEl.innerHTML = '<div class="rpc-empty">Calendar unavailable right now.</div>';
-        gridEl.innerHTML = '';
-        monthEl.textContent = MONTH_NAMES[viewMonth] + ' ' + viewYear;
+        trackEl.innerHTML = '<div class="rpc-empty">Calendar unavailable right now.</div>';
       });
     }
 
-    function renderCards() {
-      var now = new Date();
-      var upcoming = allEvents.filter(function(e) { return e.end ? e.end >= now : e.start >= now; }).slice(0, 3);
-      if (!upcoming.length) {
-        cardsEl.innerHTML = '<div class="rpc-empty">No upcoming shows booked right now — check back soon!</div>';
+    function renderCards(events) {
+      if (!events.length) {
+        trackEl.innerHTML = '<div class="rpc-empty">No upcoming shows booked right now — check back soon!</div>';
         return;
       }
-      cardsEl.innerHTML = upcoming.map(function(e) {
+      trackEl.innerHTML = events.map(function(e) {
         var d = e.start;
         var dow = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()];
         var timeStr = e.allDay ? '' : d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
@@ -792,9 +757,9 @@
         if (timeStr) metaParts.push(timeStr);
         if (e.location) metaParts.push(e.location);
         var directionsUrl = e.location ? 'https://maps.google.com/?q=' + encodeURIComponent(e.location) : e.htmlLink;
-        return '<div class="show-card">' +
+        return '<div class="show-tile">' +
           '<div class="show-date-badge"><span class="mon">' + MONTH_NAMES[d.getMonth()].slice(0,3) + '</span><span class="day">' + d.getDate() + '</span></div>' +
-          '<div class="show-info"><p class="venue">' + escapeHtml(e.title) + '</p><p class="meta">' + escapeHtml(metaParts.join(' · ')) + '</p></div>' +
+          '<p class="venue">' + escapeHtml(e.title) + '</p><p class="meta">' + escapeHtml(metaParts.join(' · ')) + '</p>' +
           '<div class="show-actions"><a href="' + e.htmlLink + '" target="_blank" rel="noopener">+ Calendar</a>' +
           (e.location ? '<a href="' + directionsUrl + '" target="_blank" rel="noopener" class="alt">Directions</a>' : '') +
           '</div></div>';
@@ -807,60 +772,13 @@
       return d.innerHTML;
     }
 
-    function renderMonth() {
-      monthEl.textContent = MONTH_NAMES[viewMonth] + ' ' + viewYear;
-      var firstDay = new Date(viewYear, viewMonth, 1);
-      var startOffset = firstDay.getDay();
-      var daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
-      var daysInPrevMonth = new Date(viewYear, viewMonth, 0).getDate();
-
-      var eventsByDay = {};
-      allEvents.forEach(function(e) {
-        var key = fmtDate(e.start);
-        if (!eventsByDay[key]) eventsByDay[key] = [];
-        eventsByDay[key].push(e);
-      });
-
-      var cells = DOW.map(function(d) { return '<div class="cal-dow">' + d + '</div>'; });
-
-      for (var i = startOffset - 1; i >= 0; i--) {
-        cells.push('<div class="cal-day muted">' + (daysInPrevMonth - i) + '</div>');
-      }
-      var todayKey = fmtDate(new Date());
-      var legendItems = [];
-      for (var day = 1; day <= daysInMonth; day++) {
-        var key = fmtDate(new Date(viewYear, viewMonth, day));
-        var hasShow = !!eventsByDay[key];
-        var isToday = key === todayKey;
-        var cls = 'cal-day' + (hasShow ? ' has-show' : '') + (isToday ? ' today' : '');
-        cells.push('<div class="' + cls + '">' + day + '</div>');
-        if (hasShow) {
-          eventsByDay[key].forEach(function(e) {
-            legendItems.push('<div class="cal-legend-item"><span class="dot"></span><span class="t">' +
-              escapeHtml(MONTH_NAMES[e.start.getMonth()].slice(0,3) + ' ' + e.start.getDate() + ' · ' + e.title + (e.location ? ', ' + e.location : '')) +
-              '</span></div>');
-          });
-        }
-      }
-      var totalCells = startOffset + daysInMonth;
-      var trailing = (7 - (totalCells % 7)) % 7;
-      for (var t = 1; t <= trailing; t++) {
-        cells.push('<div class="cal-day muted">' + t + '</div>');
-      }
-      gridEl.innerHTML = cells.join('');
-      legendEl.innerHTML = legendItems.length ? legendItems.join('') : '<div class="cal-legend-item"><span class="t">No shows this month</span></div>';
+    function scrollByTile(dir) {
+      var tile = trackEl.querySelector('.show-tile');
+      var step = tile ? (tile.getBoundingClientRect().width + 14) * 2 : 300;
+      trackEl.scrollBy({ left: dir * step, behavior: 'smooth' });
     }
-
-    prevBtn.addEventListener('click', function() {
-      viewMonth--;
-      if (viewMonth < 0) { viewMonth = 11; viewYear--; }
-      renderMonth();
-    });
-    nextBtn.addEventListener('click', function() {
-      viewMonth++;
-      if (viewMonth > 11) { viewMonth = 0; viewYear++; }
-      renderMonth();
-    });
+    prevBtn.addEventListener('click', function() { scrollByTile(-1); });
+    nextBtn.addEventListener('click', function() { scrollByTile(1); });
 
     fetchEvents();
   })();
