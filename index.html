@@ -56,7 +56,8 @@
 
   section{padding:0;max-width:none;margin:0;text-align:center;}
   section#booking,section#calendar,section#promo-videos{padding:48px 24px;max-width:900px;margin:0 auto;}
-  h2{font-family:var(--font-display);font-weight:900;font-size:2rem;margin-bottom:24px;}
+  h2{font-size:1.8rem;margin-bottom:24px;}
+  h2.display-heading{font-family:var(--font-display);font-weight:900;font-size:2.1rem;}
   .eyebrow{color:var(--muted);letter-spacing:3px;text-transform:uppercase;font-size:.85rem;margin-bottom:8px;}
 
   /*
@@ -210,6 +211,7 @@
     section#booking,section#calendar,section#promo-videos{padding:32px 16px;}
     .band{padding:40px 16px;}
     h2{font-size:1.5rem;}
+    h2.display-heading{font-size:1.6rem;}
     .rpp-section-title,.rp-section-title{font-size:24px !important;}
     .button-row img{max-width:100% !important;}
     .tip-row{gap:14px;}
@@ -300,7 +302,7 @@
 <section id="music">
   <div class="band band-music">
     <div class="band-inner">
-      <h2>Rick's Music</h2>
+      <h2 class="display-heading">Rick's Music</h2>
       <!--
         REAL PLAYER: create an "audio" folder in the repo root (same trick used for the
         images folder - type "audio/placeholder.txt" into GitHub's "Create new file" box)
@@ -805,7 +807,7 @@
 <section id="diamond-method">
   <div class="band band-diamond">
     <div class="band-inner">
-      <h2>Diamond Method Singing Course</h2>
+      <h2 class="display-heading">Diamond Method Singing Course</h2>
       <div class="product-card">
         <img src="diamond-method-cover.png" alt="Diamond Singing Method">
         <p>An online video-based course that walks you step by step to a healthier, stronger singing voice — sing higher, lower, and with more style.</p>
@@ -824,7 +826,7 @@
 </section>
 
 <section id="booking">
-  <h2>Booking</h2>
+  <h2 class="display-heading">Booking</h2>
   <p>Please fill out the form and I'll get back to you with a personalized quote.</p>
   <!--
     Static sites can't process form submissions on their own. Formspree's free tier (50 submissions/month)
