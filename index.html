@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rick Parma</title>
 <meta name="description" content="Rick Parma - solo artist, singer, saxophonist, DJ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0a0a0a;
@@ -14,6 +17,7 @@
     --pink:#ff3ec8;
     --blue:#3ec8ff;
     --border:#2a2a2a;
+    --font-display:'Playfair Display',Georgia,'Times New Roman',serif;
   }
   *{box-sizing:border-box;}
   body{
@@ -22,6 +26,7 @@
     color:var(--text);
     font-family:'Helvetica Neue',Arial,sans-serif;
     line-height:1.5;
+    overflow-x:hidden;
   }
   header{
     display:flex;
@@ -35,8 +40,10 @@
   }
   header h1{
     margin:0;
-    font-size:2.2rem;
-    letter-spacing:1px;
+    font-family:var(--font-display);
+    font-weight:900;
+    font-size:2.4rem;
+    letter-spacing:.5px;
   }
   header h1 a{color:var(--text);text-decoration:none;}
   nav{display:flex;gap:20px;flex-wrap:wrap;}
@@ -47,9 +54,51 @@
   .socials a:hover{color:var(--blue);background:rgba(255,255,255,0.12);}
   .socials svg{width:18px;height:18px;}
 
-  section{padding:48px 24px;max-width:900px;margin:0 auto;text-align:center;}
-  h2{font-size:1.8rem;margin-bottom:24px;}
+  section{padding:0;max-width:none;margin:0;text-align:center;}
+  section#booking,section#calendar,section#promo-videos{padding:48px 24px;max-width:900px;margin:0 auto;}
+  h2{font-family:var(--font-display);font-weight:900;font-size:2rem;margin-bottom:24px;}
   .eyebrow{color:var(--muted);letter-spacing:3px;text-transform:uppercase;font-size:.85rem;margin-bottom:8px;}
+
+  /*
+    BACKGROUND BANDS: each full-bleed section below is a "band" with its own background
+    image + dark overlay so text stays readable. Drop your ChatGPT-generated art into a
+    /bg folder in the repo using these exact filenames and it lights up automatically -
+    no code changes needed:
+      bg/hero-bg.jpg      - behind "Join the Fun" / Song Request / Fan Cam
+      bg/tipjar-bg.jpg    - behind Tip Jar
+      bg/textjoin-bg.jpg  - behind the Text JOIN box
+      bg/music-bg.jpg     - behind Rick's Music player
+      bg/diamond-bg.jpg   - behind Diamond Method course
+    Recommended: 1600x1200px (or larger, same ratio), .jpg, keep file size under ~400KB
+    each so the site stays fast on mobile data. Until a file exists at that path, the
+    band just shows the solid dark background - nothing breaks.
+  */
+  .band{
+    position:relative;
+    width:100vw;
+    left:50%;
+    right:50%;
+    margin-left:-50vw;
+    margin-right:-50vw;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    padding:56px 24px;
+    overflow:hidden;
+  }
+  .band::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(5,5,8,var(--overlay,0.6));
+    z-index:0;
+  }
+  .band-inner{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+  .band-hero{background-image:url('bg/hero-bg.jpg');background-color:var(--bg);}
+  .band-tipjar{background-image:url('bg/tipjar-bg.jpg');background-color:var(--bg);--overlay:0.68;}
+  .band-textjoin{background-image:url('bg/textjoin-bg.jpg');background-color:var(--bg);--overlay:0.55;}
+  .band-music{background-image:url('bg/music-bg.jpg');background-color:var(--bg);--overlay:0.65;}
+  .band-diamond{background-image:url('bg/diamond-bg.jpg');background-color:var(--bg);--overlay:0.65;}
 
   .button-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:24px 0;}
   .glow-btn{
@@ -80,11 +129,39 @@
   }
   .join-box a{color:var(--blue);}
 
-  table.tracklist{width:100%;border-collapse:collapse;text-align:left;margin-top:16px;}
+  table.tracklist{width:100%;border-collapse:collapse;text-align:left;margin-top:16px;cursor:pointer;}
+  table.tracklist tr:hover td{color:var(--blue);}
+  table.tracklist tr.active td{color:var(--pink);font-weight:bold;}
   table.tracklist td{padding:8px 4px;border-bottom:1px solid var(--border);font-size:.95rem;}
   table.tracklist td.num{color:var(--muted);width:2em;}
   table.tracklist td.time{color:var(--muted);text-align:right;}
   .player-note{font-size:.8rem;color:var(--muted);margin-top:12px;}
+
+  .rp-player{
+    background:rgba(10,10,10,0.75);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px 20px;
+    max-width:600px;
+    margin:0 auto;
+  }
+  .rp-player-controls{display:flex;align-items:center;gap:14px;}
+  .rp-player-btn{
+    flex-shrink:0;width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,0.08);color:var(--text);display:flex;align-items:center;justify-content:center;
+    transition:background .15s;
+  }
+  .rp-player-btn:hover{background:rgba(255,255,255,0.18);}
+  .rp-player-btn svg{width:16px;height:16px;fill:currentColor;}
+  #rp-playpause{width:48px;height:48px;background:linear-gradient(90deg,var(--blue),var(--pink));color:#000;}
+  #rp-playpause svg{width:18px;height:18px;}
+  .rp-player-track{flex:1;min-width:0;text-align:left;}
+  .rp-player-title{font-weight:bold;font-size:.95rem;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .rp-progress-row{display:flex;align-items:center;gap:8px;}
+  .rp-time{font-size:.7rem;color:var(--muted);flex-shrink:0;width:2.4em;}
+  #rp-time-total{text-align:right;}
+  .rp-progress-bar{flex:1;height:6px;background:rgba(255,255,255,0.12);border-radius:3px;cursor:pointer;position:relative;}
+  .rp-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--pink));border-radius:3px;}
 
   .calendar-wrap iframe{width:100%;height:500px;border:1px solid var(--border);border-radius:8px;}
 
@@ -130,8 +207,9 @@
     header{padding:16px 18px;gap:12px;}
     header h1{font-size:1.5rem;}
     .socials a{width:32px;height:32px;}
-    section{padding:32px 16px;}
-    h2{font-size:1.4rem;}
+    section#booking,section#calendar,section#promo-videos{padding:32px 16px;}
+    .band{padding:40px 16px;}
+    h2{font-size:1.5rem;}
     .rpp-section-title,.rp-section-title{font-size:24px !important;}
     .button-row img{max-width:100% !important;}
     .tip-row{gap:14px;}
@@ -141,10 +219,15 @@
     form.booking{gap:12px;}
     .rp-thumb{flex:0 0 130px !important;}
     #rp-calendar-iframe{height:420px !important;}
+    .rp-player{padding:14px;}
+    .rp-player-controls{gap:8px;}
+    .rp-player-btn{width:34px;height:34px;}
+    #rp-playpause{width:42px;height:42px;}
   }
   @media (max-width:380px){
     header h1{font-size:1.25rem;}
     .glow-btn{padding:14px 24px;font-size:.9rem;}
+    h2{font-size:1.3rem;}
   }
 </style>
 </head>
@@ -172,69 +255,187 @@
 </header>
 
 <section id="top">
-  <div class="eyebrow">Join the Fun</div>
-  <div class="button-row">
-    <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
-    <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html"><img src="song-request-button.png" alt="Song Request" style="max-width:300px;width:100%;"></a>
-    <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html"><img src="fan-cam-button.png" alt="Fan Cam" style="max-width:220px;width:100%;"></a>
+  <div class="band band-hero">
+    <div class="band-inner">
+      <div class="eyebrow">Join the Fun</div>
+      <div class="button-row">
+        <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
+        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html"><img src="song-request-button.png" alt="Song Request" style="max-width:300px;width:100%;"></a>
+        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html"><img src="fan-cam-button.png" alt="Fan Cam" style="max-width:220px;width:100%;"></a>
+      </div>
+    </div>
   </div>
 
-  <div class="eyebrow" style="margin-top:32px;">Tip Jar</div>
-  <div class="tip-row">
-    <a href="https://cash.app/$RickParma">
-      <span class="tip-icon" style="background:#00D64B;"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"><path d="M12 6v12M15 9a3 3 0 0 0-3-1.5c-1.7 0-3 1-3 2.2 0 3 6 1.5 6 4.5 0 1.3-1.3 2.3-3 2.3a3.3 3.3 0 0 1-3-1.5"/></svg></span>
-      <span>Cash App</span>
-    </a>
-    <a href="https://venmo.com/u/RickParma">
-      <span class="tip-icon" style="background:#3D95CE;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5c1.5 4 3 10 4.5 14L18 5"/><path d="M14.5 5c.8 2-.3 4.5-2 6"/></svg></span>
-      <span>Venmo</span>
-    </a>
-    <a href="https://www.paypal.com/paypalme/rickparma">
-      <span class="tip-icon" style="background:#003087;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 18l2-13h5c2.5 0 4 1.3 4 3.3 0 2.8-2.3 4.7-5.3 4.7H10"/></svg></span>
-      <span>PayPal</span>
-    </a>
+  <div class="band band-tipjar">
+    <div class="band-inner">
+      <div class="eyebrow">Tip Jar</div>
+      <div class="tip-row">
+        <a href="https://cash.app/$RickParma">
+          <span class="tip-icon" style="background:#00D64B;"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"><path d="M12 6v12M15 9a3 3 0 0 0-3-1.5c-1.7 0-3 1-3 2.2 0 3 6 1.5 6 4.5 0 1.3-1.3 2.3-3 2.3a3.3 3.3 0 0 1-3-1.5"/></svg></span>
+          <span>Cash App</span>
+        </a>
+        <a href="https://venmo.com/u/RickParma">
+          <span class="tip-icon" style="background:#3D95CE;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5c1.5 4 3 10 4.5 14L18 5"/><path d="M14.5 5c.8 2-.3 4.5-2 6"/></svg></span>
+          <span>Venmo</span>
+        </a>
+        <a href="https://www.paypal.com/paypalme/rickparma">
+          <span class="tip-icon" style="background:#003087;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 18l2-13h5c2.5 0 4 1.3 4 3.3 0 2.8-2.3 4.7-5.3 4.7H10"/></svg></span>
+          <span>PayPal</span>
+        </a>
+      </div>
+    </div>
   </div>
 
-  <div class="join-box">
-    <a href="sms:+18559242976?body=JOIN"><img src="text-join-button.png" alt="Text JOIN to (855) 924-2976" style="max-width:100%;"></a>
-    <br>
-    <span style="font-size:.75rem;color:var(--muted);">Msg &amp; data rates may apply. Reply STOP to cancel, HELP for help.</span>
+  <div class="band band-textjoin">
+    <div class="band-inner">
+      <div class="join-box">
+        <a href="sms:+18559242976?body=JOIN"><img src="text-join-button.png" alt="Text JOIN to (855) 924-2976" style="max-width:100%;"></a>
+        <br>
+        <span style="font-size:.75rem;color:var(--muted);">Msg &amp; data rates may apply. Reply STOP to cancel, HELP for help.</span>
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="music">
-  <h2>Rick's Music</h2>
-  <!--
-    Replace this table + hook up a real player once you have your audio files.
-    Two zero-cost options:
-      1) Upload mp3s into this same repo and use an <audio> element per track.
-      2) Upload the tracks to Bandcamp or SoundCloud (both free) and embed their player instead -
-         usually easier than building a custom player, and they handle streaming for you.
-  -->
-  <table class="tracklist">
-    <tr><td class="num">1</td><td>You Need A Lover</td><td class="time">4:20</td></tr>
-    <tr><td class="num">2</td><td>All Eyes On Us</td><td class="time">5:22</td></tr>
-    <tr><td class="num">3</td><td>All Night</td><td class="time">3:34</td></tr>
-    <tr><td class="num">4</td><td>Time and Space</td><td class="time">4:32</td></tr>
-    <tr><td class="num">5</td><td>Party Starter</td><td class="time">5:01</td></tr>
-    <tr><td class="num">6</td><td>Sing To You</td><td class="time">6:37</td></tr>
-    <tr><td class="num">7</td><td>I Want It All</td><td class="time">4:07</td></tr>
-    <tr><td class="num">8</td><td>Piece of Heaven</td><td class="time">4:48</td></tr>
-    <tr><td class="num">9</td><td>Hey Girl</td><td class="time">3:48</td></tr>
-    <tr><td class="num">10</td><td>Every Time You're Around (feat. Willie Bradley)</td><td class="time">4:21</td></tr>
-    <tr><td class="num">11</td><td>Love a Little Longer (feat. Ginetta's Vendetta)</td><td class="time">5:44</td></tr>
-    <tr><td class="num">12</td><td>Besame Caliente (Remix) [feat. Greg Adams]</td><td class="time">4:30</td></tr>
-    <tr><td class="num">13</td><td>Chocolate Cake (feat. Dean Grech)</td><td class="time">4:23</td></tr>
-    <tr><td class="num">14</td><td>Rising Fire (feat. Matthew Kerr)</td><td class="time">4:49</td></tr>
-    <tr><td class="num">15</td><td>Smash Hit</td><td class="time">5:44</td></tr>
-    <tr><td class="num">16</td><td>Give Up (feat. Dean Grech)</td><td class="time">5:26</td></tr>
-    <tr><td class="num">17</td><td>Redemption</td><td class="time">4:25</td></tr>
-    <tr><td class="num">18</td><td>Just Gettin Started</td><td class="time">5:43</td></tr>
-    <tr><td class="num">19</td><td>Thinkin of You</td><td class="time">7:00</td></tr>
-    <tr><td class="num">20</td><td>Gotta Keep Movin</td><td class="time">3:54</td></tr>
-  </table>
-  <div class="player-note">Player not wired up yet — see comment in the HTML source for the two free ways to add real playback.</div>
+  <div class="band band-music">
+    <div class="band-inner">
+      <h2>Rick's Music</h2>
+      <!--
+        REAL PLAYER: create an "audio" folder in the repo root (same trick used for the
+        images folder - type "audio/placeholder.txt" into GitHub's "Create new file" box)
+        and upload mp3s using the EXACT filenames listed in the tracks array below
+        (e.g. audio/01-you-need-a-lover.mp3). Once a file exists at that path it plays
+        automatically - no code changes needed. Tracks with no uploaded file yet will
+        show "Audio coming soon" instead of erroring.
+      -->
+      <div class="rp-player" id="rp-audio-player">
+        <audio id="rp-audio" preload="none"></audio>
+        <div class="rp-player-controls">
+          <button class="rp-player-btn" id="rp-prev" aria-label="Previous track">
+            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          <button class="rp-player-btn" id="rp-playpause" aria-label="Play">
+            <svg id="rp-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="rp-pause-icon" viewBox="0 0 24 24" style="display:none;"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+          </button>
+          <button class="rp-player-btn" id="rp-next" aria-label="Next track">
+            <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
+          </button>
+          <div class="rp-player-track">
+            <div class="rp-player-title" id="rp-current-title">You Need A Lover</div>
+            <div class="rp-progress-row">
+              <span class="rp-time" id="rp-time-current">0:00</span>
+              <div class="rp-progress-bar" id="rp-progress-bar"><div class="rp-progress-fill" id="rp-progress-fill"></div></div>
+              <span class="rp-time" id="rp-time-total">4:20</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <table class="tracklist" id="rp-tracklist"></table>
+    </div>
+  </div>
 </section>
+<script>
+(function(){
+  var tracks = [
+    {t:"You Need A Lover",time:"4:20",src:"audio/01-you-need-a-lover.mp3"},
+    {t:"All Eyes On Us",time:"5:22",src:"audio/02-all-eyes-on-us.mp3"},
+    {t:"All Night",time:"3:34",src:"audio/03-all-night.mp3"},
+    {t:"Time and Space",time:"4:32",src:"audio/04-time-and-space.mp3"},
+    {t:"Party Starter",time:"5:01",src:"audio/05-party-starter.mp3"},
+    {t:"Sing To You",time:"6:37",src:"audio/06-sing-to-you.mp3"},
+    {t:"I Want It All",time:"4:07",src:"audio/07-i-want-it-all.mp3"},
+    {t:"Piece of Heaven",time:"4:48",src:"audio/08-piece-of-heaven.mp3"},
+    {t:"Hey Girl",time:"3:48",src:"audio/09-hey-girl.mp3"},
+    {t:"Every Time You're Around (feat. Willie Bradley)",time:"4:21",src:"audio/10-every-time-youre-around.mp3"},
+    {t:"Love a Little Longer (feat. Ginetta's Vendetta)",time:"5:44",src:"audio/11-love-a-little-longer.mp3"},
+    {t:"Besame Caliente (Remix) [feat. Greg Adams]",time:"4:30",src:"audio/12-besame-caliente-remix.mp3"},
+    {t:"Chocolate Cake (feat. Dean Grech)",time:"4:23",src:"audio/13-chocolate-cake.mp3"},
+    {t:"Rising Fire (feat. Matthew Kerr)",time:"4:49",src:"audio/14-rising-fire.mp3"},
+    {t:"Smash Hit",time:"5:44",src:"audio/15-smash-hit.mp3"},
+    {t:"Give Up (feat. Dean Grech)",time:"5:26",src:"audio/16-give-up.mp3"},
+    {t:"Redemption",time:"4:25",src:"audio/17-redemption.mp3"},
+    {t:"Just Gettin Started",time:"5:43",src:"audio/18-just-gettin-started.mp3"},
+    {t:"Thinkin of You",time:"7:00",src:"audio/19-thinkin-of-you.mp3"},
+    {t:"Gotta Keep Movin",time:"3:54",src:"audio/20-gotta-keep-movin.mp3"}
+  ];
+  var audio = document.getElementById("rp-audio");
+  var playBtn = document.getElementById("rp-playpause");
+  var playIcon = document.getElementById("rp-play-icon");
+  var pauseIcon = document.getElementById("rp-pause-icon");
+  var titleEl = document.getElementById("rp-current-title");
+  var curTimeEl = document.getElementById("rp-time-current");
+  var totalTimeEl = document.getElementById("rp-time-total");
+  var fill = document.getElementById("rp-progress-fill");
+  var bar = document.getElementById("rp-progress-bar");
+  var tbody = document.getElementById("rp-tracklist");
+  var current = 0;
+
+  tracks.forEach(function(tr, i){
+    var row = document.createElement("tr");
+    row.innerHTML = '<td class="num">'+(i+1)+'</td><td>'+tr.t+'</td><td class="time">'+tr.time+'</td>';
+    row.addEventListener("click", function(){ loadTrack(i, true); });
+    tbody.appendChild(row);
+  });
+
+  function fmtTime(sec){
+    if(!isFinite(sec)) return "0:00";
+    var m = Math.floor(sec/60), s = Math.floor(sec%60);
+    return m+":"+(s<10?"0":"")+s;
+  }
+
+  function loadTrack(i, autoplay){
+    current = i;
+    var tr = tracks[i];
+    titleEl.textContent = tr.t;
+    totalTimeEl.textContent = tr.time;
+    curTimeEl.textContent = "0:00";
+    fill.style.width = "0%";
+    Array.prototype.forEach.call(tbody.children, function(row, idx){
+      row.classList.toggle("active", idx === i);
+    });
+    audio.src = tr.src;
+    if(autoplay){
+      audio.play().catch(function(){ /* file probably not uploaded yet */ });
+    }
+  }
+
+  playBtn.addEventListener("click", function(){
+    if(!audio.src){ loadTrack(current, true); return; }
+    if(audio.paused){ audio.play().catch(function(){}); } else { audio.pause(); }
+  });
+  document.getElementById("rp-prev").addEventListener("click", function(){
+    loadTrack((current-1+tracks.length)%tracks.length, true);
+  });
+  document.getElementById("rp-next").addEventListener("click", function(){
+    loadTrack((current+1)%tracks.length, true);
+  });
+  audio.addEventListener("play", function(){ playIcon.style.display="none"; pauseIcon.style.display="block"; });
+  audio.addEventListener("pause", function(){ playIcon.style.display="block"; pauseIcon.style.display="none"; });
+  audio.addEventListener("timeupdate", function(){
+    curTimeEl.textContent = fmtTime(audio.currentTime);
+    if(audio.duration) fill.style.width = (audio.currentTime/audio.duration*100)+"%";
+  });
+  audio.addEventListener("loadedmetadata", function(){
+    totalTimeEl.textContent = fmtTime(audio.duration);
+  });
+  audio.addEventListener("ended", function(){
+    loadTrack((current+1)%tracks.length, true);
+  });
+  audio.addEventListener("error", function(){
+    titleEl.textContent = tracks[current].t + " — audio coming soon";
+  });
+  bar.addEventListener("click", function(e){
+    if(!audio.duration) return;
+    var rect = bar.getBoundingClientRect();
+    var pct = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pct * audio.duration;
+  });
+
+  loadTrack(0, false);
+})();
+</script>
 
 <section id="calendar">
   <!--
@@ -602,19 +803,23 @@
 </section>
 
 <section id="diamond-method">
-  <h2>Diamond Method Singing Course</h2>
-  <div class="product-card">
-    <img src="diamond-method-cover.png" alt="Diamond Singing Method">
-    <p>An online video-based course that walks you step by step to a healthier, stronger singing voice — sing higher, lower, and with more style.</p>
-    <div class="price">$20.00</div>
-    <!--
-      Replace this href with a real payment link. Cheapest no-monthly-fee options:
-        - PayPal.me with a fixed amount (works today, zero setup): https://paypal.me/rickparma/20
-        - Stripe Payment Link (buy.stripe.com/...) if you want card checkout - free to create, ~2.9%+30c per sale, no monthly fee
-        - Gumroad if you want automatic delivery of the course video link after purchase - no monthly fee, ~10% + fees per sale
-      PayPal.me is the fastest to stand up since you already use PayPal; Gumroad is worth it once you want delivery automated.
-    -->
-    <a class="buy-btn" href="https://paypal.me/rickparma/20">Buy Now — $20</a>
+  <div class="band band-diamond">
+    <div class="band-inner">
+      <h2>Diamond Method Singing Course</h2>
+      <div class="product-card">
+        <img src="diamond-method-cover.png" alt="Diamond Singing Method">
+        <p>An online video-based course that walks you step by step to a healthier, stronger singing voice — sing higher, lower, and with more style.</p>
+        <div class="price">$20.00</div>
+        <!--
+          Replace this href with a real payment link. Cheapest no-monthly-fee options:
+            - PayPal.me with a fixed amount (works today, zero setup): https://paypal.me/rickparma/20
+            - Stripe Payment Link (buy.stripe.com/...) if you want card checkout - free to create, ~2.9%+30c per sale, no monthly fee
+            - Gumroad if you want automatic delivery of the course video link after purchase - no monthly fee, ~10% + fees per sale
+          PayPal.me is the fastest to stand up since you already use PayPal; Gumroad is worth it once you want delivery automated.
+        -->
+        <a class="buy-btn" href="https://paypal.me/rickparma/20">Buy Now — $20</a>
+      </div>
+    </div>
   </div>
 </section>
 
