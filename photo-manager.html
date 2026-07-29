@@ -80,6 +80,13 @@
   .btn-save { background:#4caf7d; color:#0d0505; border:none; border-radius:8px; font-size:13px; font-weight:900; padding:0 16px; cursor:pointer; flex-shrink:0; white-space:nowrap; }
   .btn-save:active { background:#3d9e6c; }
   .btn-save:disabled { opacity:0.4; cursor:default; }
+  /* ── Date picker (attach flyer to calendar show dates) ── */
+  .date-picker { margin-top:12px; }
+  .date-picker-label { font-size:11px; color:rgba(255,255,255,0.4); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px; }
+  .date-chip-list { display:flex; flex-wrap:wrap; gap:8px; max-height:170px; overflow-y:auto; }
+  .date-chip { background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:20px; padding:7px 12px; font-size:12px; color:rgba(255,255,255,0.7); cursor:pointer; white-space:nowrap; user-select:none; }
+  .date-chip.selected { background:#8DB2E5; border-color:#8DB2E5; color:#0d0505; font-weight:700; }
+  .date-chip-empty { font-size:12px; color:rgba(255,255,255,0.3); }
   /* ── Photo list ── */
   .photo-item { display:flex; align-items:center; gap:10px; background:#1a0808; border-radius:8px; padding:10px 12px; margin-bottom:8px; cursor:grab; user-select:none; border:1.5px solid transparent; }
   .photo-item.drag-over { border-color:#8DB2E5; background:#2a1010; }
@@ -92,6 +99,7 @@
   .photo-name { font-size:12px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:1px; }
   .photo-num  { font-size:10px; color:#8DB2E5; letter-spacing:0.1em; font-weight:700; margin-bottom:1px; }
   .photo-url  { font-size:10px; color:rgba(255,255,255,0.3); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .photo-dates { font-size:10px; color:#8DB2E5; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .btn-delete { background:none; border:none; color:rgba(255,255,255,0.25); font-size:20px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; }
   .btn-delete:active { color:#e57a7a; }
   .empty-state { text-align:center; color:rgba(255,255,255,0.2); font-size:13px; padding:32px 0; }
@@ -171,6 +179,10 @@
         <input type="text" id="input-name" placeholder="Flyer name (optional)…" autocorrect="off" autocapitalize="words" spellcheck="false">
         <button class="btn-save" id="btnSave" onclick="savePhoto()">Save</button>
       </div>
+      <div class="date-picker">
+        <div class="date-picker-label">Attach to show date(s) — optional, tap all that apply</div>
+        <div class="date-chip-list" id="datePickerList"><span class="date-chip-empty">Loading calendar…</span></div>
+      </div>
     </div>
   </div>
   <div id="photo-list"></div>
@@ -191,6 +203,12 @@
   var GH_MEDIA_PATH = "media"; // files land in /media/ inside the repo
   var GH_TOKEN_KEY = "rp_photo_manager_gh_token";
   var GH_TOKEN = localStorage.getItem(GH_TOKEN_KEY) || "";
+
+  // ── Calendar config (same public-restricted API key used on the live site) ──
+  var CAL_API_KEY = "AIzaSyCea0FN28V6xlJtKaKYJhwLI3xa9v8Pr6s";
+  var CAL_ID = "ee79e1557e817dd0e6986fac5545e97cf36f3a9537862731c7e9adc12ea58186@group.calendar.google.com";
+  var calendarEvents = []; // [{dateKey:'YYYY-MM-DD', label:'JUL 31 · Soundz Seafood Bar'}]
+  var selectedDates = [];  // dateKeys currently checked in the picker for the item being added
 
   var photos = [];
   var dragSrcIndex = null;
@@ -290,6 +308,56 @@
   // ── Media helpers ───────────────────────────────────────────
   function isVideo(src) {
     return /\.(mov|mp4|webm|ogg)(\?|$)/i.test(src);
+  }
+
+  // ── Calendar date-picker ─────────────────────────────────────
+  function fmtDateKey(d) {
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function fmtDateShort(key) {
+    var parts = key.split("-");
+    var d = new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
+    return d.toLocaleDateString("en-US", { month:"short", day:"numeric" });
+  }
+  async function fetchCalendarEvents() {
+    try {
+      var timeMin = new Date().toISOString();
+      var url = "https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(CAL_ID) +
+        "/events?key=" + CAL_API_KEY + "&singleEvents=true&orderBy=startTime&maxResults=25&timeMin=" + encodeURIComponent(timeMin);
+      var res = await fetch(url);
+      if (!res.ok) throw new Error("Calendar fetch failed");
+      var data = await res.json();
+      var MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+      calendarEvents = (data.items || []).map(function(ev) {
+        var d = null;
+        if (ev.start && ev.start.dateTime) d = new Date(ev.start.dateTime);
+        else if (ev.start && ev.start.date) {
+          var p = ev.start.date.split("-");
+          d = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
+        }
+        if (!d) return null;
+        return { dateKey: fmtDateKey(d), label: MONTHS[d.getMonth()] + " " + d.getDate() + " · " + (ev.summary || "Show") };
+      }).filter(Boolean);
+    } catch(e) {
+      calendarEvents = [];
+    }
+  }
+  function renderDatePicker() {
+    var el = document.getElementById("datePickerList");
+    if (!el) return;
+    if (calendarEvents.length === 0) {
+      el.innerHTML = '<span class="date-chip-empty">No upcoming shows on the calendar.</span>';
+      return;
+    }
+    el.innerHTML = calendarEvents.map(function(ev) {
+      var sel = selectedDates.indexOf(ev.dateKey) !== -1;
+      return '<span class="date-chip' + (sel ? " selected" : "") + '" onclick="toggleDateChip(\'' + ev.dateKey + '\')">' + ev.label + "</span>";
+    }).join("");
+  }
+  function toggleDateChip(dateKey) {
+    var idx = selectedDates.indexOf(dateKey);
+    if (idx === -1) selectedDates.push(dateKey); else selectedDates.splice(idx, 1);
+    renderDatePicker();
   }
 
   // ── File → base64 helper ────────────────────────────────────
@@ -507,17 +575,28 @@
       }
 
       var url = await uploadFileToGitHub(fileToUpload, function(msg) { setUploadStatus(msg); });
-      setUploadStatus("Uploaded ✓ — now saving to gallery…");
+
+      // Drop the uploaded file into the same preview + date-picker flow as a pasted URL,
+      // so it isn't saved to the gallery until show date(s) are picked and Save is tapped.
+      pendingSrc = url;
       var name = chosenFile.name.replace(/\.[^.]+$/, "");
-      photos.push({ src: url, name: name });
+      var wrap = document.getElementById("previewImgWrap");
+      if (isVid) {
+        wrap.innerHTML = '<video src="' + url + '" controls playsinline loop style="width:100%;max-height:280px;display:block;border-radius:8px;"></video>';
+      } else {
+        wrap.innerHTML = '<img src="' + url + '" alt="" onerror="showPreviewError()" style="width:100%;max-height:280px;object-fit:contain;display:block;border-radius:8px;">';
+      }
+      document.getElementById("input-name").value = name;
+      selectedDates = [];
+      renderDatePicker();
+      document.getElementById("previewArea").classList.add("visible");
+
       chosenFile = null;
       document.getElementById("input-file").value = "";
       var pickerBtn = document.getElementById("filePickerBtn");
       pickerBtn.textContent = "Choose photo or video…";
       pickerBtn.classList.remove("has-file");
-      render();
-      await save();
-      setUploadStatus("Saved ✓ — hit \"Push to Website\" below when you're ready to publish.");
+      setUploadStatus("Uploaded ✓ — pick show date(s) below, then hit Save.");
     } catch(err) {
       setUploadStatus(err.message || "Upload failed", true);
     }
@@ -536,6 +615,8 @@
       wrap.innerHTML = '<img src="' + src + '" alt="" onerror="showPreviewError()" style="width:100%;max-height:280px;object-fit:contain;display:block;border-radius:8px;">';
     }
     document.getElementById("previewArea").classList.add("visible");
+    selectedDates = [];
+    renderDatePicker();
     document.getElementById("input-name").focus();
   }
   function showPreviewError() {
@@ -546,11 +627,13 @@
     var name = document.getElementById("input-name").value.trim();
     if (!src) { alert("No image to save."); return; }
     for (var j=0; j<photos.length; j++) { if (photos[j].src===src) { alert("Already in gallery."); return; } }
-    photos.push({ src: src, name: name });
+    photos.push({ src: src, name: name, dates: selectedDates.slice() });
     document.getElementById("input-url").value = "";
     document.getElementById("input-name").value = "";
     document.getElementById("previewArea").classList.remove("visible");
     pendingSrc = "";
+    selectedDates = [];
+    renderDatePicker();
     render();
     await save();
   }
@@ -639,13 +722,14 @@
       var item = document.createElement("div");
       item.className = "photo-item";
       var nameHtml = p.name ? '<div class="photo-name">' + p.name + '</div>' : '';
+      var datesHtml = (p.dates && p.dates.length) ? '<div class="photo-dates">📅 ' + p.dates.map(fmtDateShort).join(", ") + '</div>' : '';
       var thumbHtml = isVideo(p.src)
         ? '<div class="photo-thumb-video" onclick="openOverlay(\'' + p.src.replace(/'/g,"\\'") + '\')">🎬</div>'
         : '<img class="photo-thumb" src="' + p.src + '" onerror="this.className=\'photo-thumb-err\';this.innerHTML=\'❌\'" alt="" onclick="openOverlay(\'' + p.src.replace(/'/g,"\\'") + '\')">';
       item.innerHTML =
         '<span class="drag-handle">⠿</span>' +
         thumbHtml +
-        '<div class="photo-info"><div class="photo-num">PHOTO ' + (i+1) + '</div>' + nameHtml + '<div class="photo-url">' + truncUrl(p.src) + '</div></div>' +
+        '<div class="photo-info"><div class="photo-num">PHOTO ' + (i+1) + '</div>' + nameHtml + '<div class="photo-url">' + truncUrl(p.src) + '</div>' + datesHtml + '</div>' +
         '<button class="btn-delete" onclick="removePhoto(' + i + ')">×</button>';
       var handle = item.querySelector(".drag-handle");
       initTouchDrag(handle, i);
@@ -663,7 +747,7 @@
     if (!GH_TOKEN) throw new Error("Connect your GitHub token first (tap the sync status at top).");
     var base = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO;
     var path = "flyers.json";
-    var payload = photos.map(function(p) { return { src: p.src, name: p.name || "" }; });
+    var payload = photos.map(function(p) { return { src: p.src, name: p.name || "", dates: p.dates || [] }; });
     var content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
     var sha = null;
@@ -710,6 +794,7 @@
   document.getElementById("input-token").addEventListener("keydown", function(e){ if(e.key==="Enter") saveToken(); });
   // ── Init ────────────────────────────────────────────────────
   setSyncStatus("syncing", "Loading…");
+  fetchCalendarEvents().then(renderDatePicker);
   load().then(function() {
     document.getElementById("loadingScreen").style.display = "none";
     document.getElementById("appWrap").style.display = "block";
