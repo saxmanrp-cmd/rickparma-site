@@ -333,7 +333,6 @@
           </div>
         </div>
       </div>
-      <table class="tracklist" id="rp-tracklist"></table>
     </div>
   </div>
 </section>
@@ -370,15 +369,7 @@
   var totalTimeEl = document.getElementById("rp-time-total");
   var fill = document.getElementById("rp-progress-fill");
   var bar = document.getElementById("rp-progress-bar");
-  var tbody = document.getElementById("rp-tracklist");
   var current = 0;
-
-  tracks.forEach(function(tr, i){
-    var row = document.createElement("tr");
-    row.innerHTML = '<td class="num">'+(i+1)+'</td><td>'+tr.t+'</td><td class="time">'+tr.time+'</td>';
-    row.addEventListener("click", function(){ loadTrack(i, true); });
-    tbody.appendChild(row);
-  });
 
   function fmtTime(sec){
     if(!isFinite(sec)) return "0:00";
@@ -393,9 +384,6 @@
     totalTimeEl.textContent = tr.time;
     curTimeEl.textContent = "0:00";
     fill.style.width = "0%";
-    Array.prototype.forEach.call(tbody.children, function(row, idx){
-      row.classList.toggle("active", idx === i);
-    });
     audio.src = tr.src;
     if(autoplay){
       audio.play().catch(function(){ /* file probably not uploaded yet */ });
