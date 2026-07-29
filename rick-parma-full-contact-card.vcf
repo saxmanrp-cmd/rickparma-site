@@ -1,0 +1,15 @@
+BEGIN:VCARD
+VERSION:3.0
+PRODID:-//Apple Inc.//iPhone OS 18.6.2//EN
+N:Parma;Rick;;;
+FN:Rick Parma
+TITLE:Singer Saxophonist 
+EMAIL;type=INTERNET;type=HOME;type=pref:saxman@rickparma.com
+TEL;type=CELL;type=VOICE;type=pref:(877) 200-2651
+item1.URL;type=pref:https://www.facebook.com/share/1EFk98ZwZg/?mibextid=wwXIfr
+item1.X-ABLabel:Facebook
+item2.URL:https://www.instagram.com/rickparmaofficial?igsh=ZXdqYXYyNm9qbDd0&utm_source=qr
+item2.X-ABLabel:Instagram
+item3.URL:http://www.rickparma.com/linkpage
+item3.X-ABLabel:_$!<HomePage>!$_
+END:VCARD
