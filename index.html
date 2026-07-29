@@ -536,24 +536,26 @@
       .show-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
       .show-track::-webkit-scrollbar{display:none;}
       .show-tile{scroll-snap-align:start;flex:0 0 190px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-      .cal-detail-overlay{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.85);align-items:flex-end;justify-content:center;padding:0;}
+      .cal-detail-overlay{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.85);align-items:stretch;justify-content:center;padding:0;}
       .cal-detail-overlay.open{display:flex;}
-      .cal-detail-sheet{background:var(--panel);border:1px solid var(--border);border-radius:20px 20px 0 0;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;padding:20px;position:relative;text-align:left;}
-      @media(min-width:600px){.cal-detail-overlay{align-items:center;padding:20px;} .cal-detail-sheet{border-radius:16px;max-height:80vh;}}
-      .cal-detail-close{position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;z-index:2;-webkit-tap-highlight-color:transparent;}
-      .cal-detail-flyer{width:100%;border-radius:12px;overflow:hidden;margin-bottom:16px;background:#000;}
-      .cal-detail-flyer img,.cal-detail-flyer video{width:100%;height:auto;max-height:70vh;object-fit:contain;display:block;}
-      .cal-detail-date{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
-      .cal-detail-venue{font-family:var(--font-display);font-weight:900;font-size:1.4rem;margin:0 0 10px;color:var(--text);}
-      .cal-detail-meta{font-size:.9rem;color:var(--muted);margin:0 0 20px;line-height:1.6;}
-      .cal-detail-actions{display:flex;gap:10px;}
-      .cal-detail-actions a{flex:1;text-align:center;padding:13px;border-radius:30px;font-weight:bold;text-decoration:none;font-size:.85rem;}
+      .cal-detail-sheet{background:var(--panel);width:100%;max-width:480px;height:100vh;height:100dvh;padding:16px;position:relative;text-align:left;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;}
+      @media(min-width:600px){.cal-detail-overlay{align-items:center;padding:20px;} .cal-detail-sheet{height:min(90vh,760px);border-radius:16px;border:1px solid var(--border);}}
+      .cal-detail-close{position:absolute;top:16px;right:16px;width:32px;height:32px;background:rgba(255,255,255,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;z-index:2;-webkit-tap-highlight-color:transparent;}
+      .cal-detail-card{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;touch-action:pan-y;will-change:transform;}
+      .cal-detail-body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+      .cal-detail-flyer{flex:1;min-height:0;width:100%;border-radius:12px;overflow:hidden;background:#000;margin:36px 0 10px;display:flex;align-items:center;justify-content:center;}
+      .cal-detail-flyer img,.cal-detail-flyer video{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;}
+      .cal-detail-date{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+      .cal-detail-venue{flex-shrink:0;font-family:var(--font-display);font-weight:900;font-size:1.2rem;margin:0 0 4px;color:var(--text);line-height:1.2;}
+      .cal-detail-meta{flex-shrink:0;font-size:.82rem;color:var(--muted);margin:0 0 10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+      .cal-detail-actions{flex-shrink:0;display:flex;gap:10px;}
+      .cal-detail-actions a{flex:1;text-align:center;padding:12px;border-radius:30px;font-weight:bold;text-decoration:none;font-size:.82rem;}
       .cal-detail-actions a.primary{background:var(--blue);color:#000;}
       .cal-detail-actions a.alt{background:transparent;border:1px solid var(--border);color:var(--text);}
-      .cal-detail-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px;}
-      .cal-detail-nav button{background:rgba(255,255,255,0.08);border:none;color:var(--text);width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;flex-shrink:0;}
+      .cal-detail-nav{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:16px;padding-top:10px;}
+      .cal-detail-nav button{background:rgba(255,255,255,0.08);border:none;color:var(--text);width:34px;height:34px;border-radius:50%;font-size:1.2rem;cursor:pointer;flex-shrink:0;}
       .cal-detail-nav button:hover{background:rgba(255,255,255,0.16);}
-      .cal-detail-nav-counter{font-size:.75rem;color:var(--muted);letter-spacing:.04em;min-width:52px;text-align:center;}
+      .cal-detail-nav-counter{font-size:.72rem;color:var(--muted);letter-spacing:.04em;min-width:52px;text-align:center;}
       .show-flyer-thumb{display:block;margin:-16px -16px 0;aspect-ratio:1/1;overflow:hidden;border-radius:14px 14px 0 0;}
       .show-flyer-thumb img,.show-flyer-thumb video{width:100%;height:100%;object-fit:cover;display:block;}
       .show-date-badge{width:52px;height:52px;border-radius:10px;background:linear-gradient(160deg,var(--blue),var(--pink));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#000;}
@@ -733,13 +735,15 @@
     // and swipe or use the arrows to browse to the next/previous show without closing.
     var detailOverlay = null;
     var currentDetailIdx = -1;
+    var isSliding = false;
+
     function ensureDetailOverlay() {
       if (detailOverlay) return detailOverlay;
       detailOverlay = document.createElement('div');
       detailOverlay.className = 'cal-detail-overlay';
       detailOverlay.innerHTML = '<div class="cal-detail-sheet">' +
         '<div class="cal-detail-close">✕</div>' +
-        '<div class="cal-detail-body"></div>' +
+        '<div class="cal-detail-card"><div class="cal-detail-body"></div></div>' +
         '<div class="cal-detail-nav">' +
           '<button id="cal-detail-prev" aria-label="Previous show">&lsaquo;</button>' +
           '<span class="cal-detail-nav-counter" id="cal-detail-counter"></span>' +
@@ -750,28 +754,55 @@
       detailOverlay.addEventListener('click', function(e) {
         if (e.target === detailOverlay || e.target.className === 'cal-detail-close') closeDetailSheet();
       });
-      detailOverlay.querySelector('#cal-detail-prev').addEventListener('click', function() { navigateDetail(-1); });
-      detailOverlay.querySelector('#cal-detail-next').addEventListener('click', function() { navigateDetail(1); });
+      detailOverlay.querySelector('#cal-detail-prev').addEventListener('click', function() { slideTo(-1); });
+      detailOverlay.querySelector('#cal-detail-next').addEventListener('click', function() { slideTo(1); });
       document.addEventListener('keydown', function(e) {
         if (!detailOverlay.classList.contains('open')) return;
         if (e.key === 'Escape') closeDetailSheet();
-        if (e.key === 'ArrowLeft') navigateDetail(-1);
-        if (e.key === 'ArrowRight') navigateDetail(1);
+        if (e.key === 'ArrowLeft') slideTo(-1);
+        if (e.key === 'ArrowRight') slideTo(1);
       });
-      var sheet = detailOverlay.querySelector('.cal-detail-sheet');
-      var touchX = 0;
-      sheet.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; }, { passive: true });
-      sheet.addEventListener('touchend', function(e) {
-        var dx = e.changedTouches[0].clientX - touchX;
-        if (Math.abs(dx) > 50) navigateDetail(dx < 0 ? 1 : -1);
+
+      // Real-time drag tracking for a smooth, native-feeling swipe: the card follows
+      // the finger 1:1 during the gesture, then either finishes the swipe or snaps
+      // back, instead of just detecting a gesture after the fact and hard-cutting content.
+      var card = detailOverlay.querySelector('.cal-detail-card');
+      var startX = 0, startY = 0, dx = 0, dragging = false, vertical = false;
+      card.addEventListener('touchstart', function(e) {
+        if (isSliding) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        dx = 0; dragging = true; vertical = false;
+        card.style.transition = 'none';
+      }, { passive: true });
+      card.addEventListener('touchmove', function(e) {
+        if (!dragging) return;
+        var x = e.touches[0].clientX, y = e.touches[0].clientY;
+        var moveX = x - startX, moveY = y - startY;
+        if (!vertical && Math.abs(moveY) > Math.abs(moveX) + 10) { vertical = true; }
+        if (vertical) return;
+        dx = moveX;
+        card.style.transform = 'translateX(' + dx + 'px)';
+      }, { passive: true });
+      card.addEventListener('touchend', function() {
+        if (!dragging) return;
+        dragging = false;
+        if (vertical) { card.style.transform = ''; return; }
+        var w = card.clientWidth || 1;
+        var threshold = Math.min(90, w * 0.2);
+        if (Math.abs(dx) > threshold && currentEvents.length > 1) {
+          finishSlide(dx < 0 ? 1 : -1, card, w);
+        } else {
+          card.style.transition = 'transform 0.2s ease';
+          card.style.transform = 'translateX(0)';
+        }
       });
       return detailOverlay;
     }
-    function openDetailSheet(idx) {
-      if (!currentEvents.length) return;
-      currentDetailIdx = (idx + currentEvents.length) % currentEvents.length;
-      var e = currentEvents[currentDetailIdx];
-      var overlay = ensureDetailOverlay();
+
+    function renderDetailContent(idx) {
+      var e = currentEvents[idx];
+      var overlay = detailOverlay;
       var body = overlay.querySelector('.cal-detail-body');
       var d = e.start;
       var dow = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()];
@@ -782,7 +813,7 @@
       var directionsUrl = getDirectionsUrl(e.location, e.htmlLink);
       body.innerHTML =
         (flyer ? '<div class="cal-detail-flyer">' + (flyerIsVideo
-            ? '<video src="' + flyer + '" muted loop playsinline autoplay controls></video>'
+            ? '<video src="' + flyer + '" muted loop playsinline autoplay></video>'
             : '<img src="' + flyer + '" alt="Show flyer">') + '</div>' : '') +
         '<div class="cal-detail-date">' + escapeHtml(dow) + ', ' + escapeHtml(dateStr) + (timeStr ? ' · ' + escapeHtml(timeStr) : '') + '</div>' +
         '<h3 class="cal-detail-venue">' + escapeHtml(e.title) + '</h3>' +
@@ -792,18 +823,46 @@
           (e.location ? '<a class="alt" href="' + directionsUrl + '" target="_blank" rel="noopener">Directions</a>' : '') +
         '</div>';
       var counter = overlay.querySelector('#cal-detail-counter');
-      counter.textContent = (currentDetailIdx + 1) + ' of ' + currentEvents.length;
+      counter.textContent = (idx + 1) + ' of ' + currentEvents.length;
       var navRow = overlay.querySelector('.cal-detail-nav');
       navRow.style.display = currentEvents.length > 1 ? 'flex' : 'none';
+    }
+
+    function openDetailSheet(idx) {
+      if (!currentEvents.length) return;
+      currentDetailIdx = (idx + currentEvents.length) % currentEvents.length;
+      var overlay = ensureDetailOverlay();
+      var card = overlay.querySelector('.cal-detail-card');
+      card.style.transition = 'none';
+      card.style.transform = 'translateX(0)';
+      renderDetailContent(currentDetailIdx);
       overlay.classList.add('open');
-      overlay.querySelector('.cal-detail-sheet').scrollTop = 0;
       document.body.style.overflow = 'hidden';
     }
-    function navigateDetail(dir) {
-      if (currentDetailIdx < 0) return;
-      var v = detailOverlay.querySelector('video');
-      if (v) v.pause();
-      openDetailSheet(currentDetailIdx + dir);
+
+    // Slides the current card out, swaps in the next/prev show, then slides it in —
+    // used by both the nav buttons and the drag-release handler so every path (touch,
+    // click, keyboard) gets the same smooth motion instead of an instant content swap.
+    function finishSlide(dir, card, w) {
+      isSliding = true;
+      var v = card.querySelector('video'); if (v) v.pause();
+      card.style.transition = 'transform 0.2s ease';
+      card.style.transform = 'translateX(' + (dir < 0 ? w : -w) + 'px)';
+      setTimeout(function() {
+        currentDetailIdx = (currentDetailIdx + dir + currentEvents.length) % currentEvents.length;
+        renderDetailContent(currentDetailIdx);
+        card.style.transition = 'none';
+        card.style.transform = 'translateX(' + (dir < 0 ? -w : w) + 'px)';
+        card.offsetHeight; // force reflow so the next transform is animated
+        card.style.transition = 'transform 0.2s ease';
+        card.style.transform = 'translateX(0)';
+        setTimeout(function() { isSliding = false; }, 210);
+      }, 200);
+    }
+    function slideTo(dir) {
+      if (isSliding || currentEvents.length < 2 || currentDetailIdx < 0) return;
+      var card = detailOverlay.querySelector('.cal-detail-card');
+      finishSlide(dir, card, card.clientWidth || 1);
     }
     function closeDetailSheet() {
       if (!detailOverlay) return;
