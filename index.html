@@ -152,7 +152,26 @@
   .img-btn:focus-visible{outline:3px solid #ffffff;outline-offset:6px;border-radius:999px;}
   .img-btn img{display:block;width:100%;height:auto;}
 
-  .text-join-button{width:min(480px,88vw);}
+  /*
+    text-join-button.png has a lot of built-in transparent padding around the actual
+    pill graphic (the source file is a big canvas with a small button centered in it).
+    This crops that padding away visually so the button fills its box edge-to-edge,
+    instead of looking small with a big empty border around it.
+  */
+  .text-join-button{
+    width:min(480px,88vw);
+    aspect-ratio:1088/376;
+    overflow:hidden;
+    position:relative;
+  }
+  .text-join-button img{
+    position:absolute;
+    top:-85.11%;
+    left:-20.96%;
+    width:141.18%;
+    max-width:none;
+    height:auto;
+  }
   .song-request-button{width:min(340px,85vw);}
   .fan-cam-button{width:min(220px,55vw);}
 
