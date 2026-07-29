@@ -525,144 +525,23 @@
 
 <section id="calendar">
   <!--
-    Flyer list now lives in flyers.json (same repo, root level) instead of being hardcoded here.
-    The Photo Manager app writes to that file directly when you hit "Push to Website" -
-    this section just reads whatever's currently in it.
+    Flyer list lives in flyers.json (same repo, root level). The Photo Manager app writes
+    to that file when you hit "Push to Website". Flyers are matched to calendar shows by
+    date and shown directly on the calendar tiles below (the old standalone "Show Dates"
+    carousel has been retired now that flyers live in the calendar itself).
   -->
-  <style>
-    #rp-photo-section{background:rgba(13,5,5,0.5);padding:16px 16px 24px;font-family:Arial,Helvetica,sans-serif;max-width:760px;margin:0 auto;box-sizing:border-box;border:1px solid rgba(200,160,60,0.7);border-radius:10px;box-shadow:0 0 32px rgba(200,160,60,0.4),0 0 8px rgba(200,160,60,0.3),inset 0 0 24px rgba(0,0,0,0.3)}
-    #rp-photo-section *{box-sizing:border-box}
-    .rpp-section-title{font-size:33px;font-weight:900;color:#fff;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em;text-align:center}
-    .rpp-carousel-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin:0 0 10px}
-    .rpp-carousel{display:flex;gap:10px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px}
-    .rpp-carousel::-webkit-scrollbar{display:none}
-    .rpp-thumb{flex:0 0 calc(50% - 5px);scroll-snap-align:start;cursor:pointer;border-radius:6px;overflow:hidden;background:#1a0808;border:1.5px solid transparent;transition:border-color .2s,transform .15s;-webkit-tap-highlight-color:transparent}
-    .rpp-thumb:active{transform:scale(.97)}
-    .rpp-thumb:hover{border-color:rgba(141,178,229,.4)}
-    .rpp-thumb-img-wrap{position:relative;width:100%;aspect-ratio:3/4;background:#2a1010;overflow:hidden}
-    .rpp-thumb-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
-    .rpp-thumb:hover .rpp-thumb-img-wrap img{transform:scale(1.06)}
-    .rpp-dots{display:flex;justify-content:center;gap:6px;margin-top:4px}
-    .rpp-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s,transform .2s;cursor:pointer}
-    .rpp-dot.active{background:#8DB2E5;transform:scale(1.3)}
-    .rpp-lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:16px}
-    .rpp-lightbox.open{display:flex}
-    .rpp-lb-inner{position:relative;max-width:92vw;max-height:92vh}
-    .rpp-lb-inner img{max-width:100%;max-height:90vh;object-fit:contain;border-radius:6px;display:block}
-    .rpp-lb-close{position:absolute;top:-13px;right:-13px;width:28px;height:28px;background:#8DB2E5;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#0d0505;font-weight:900;z-index:10}
-    .rpp-lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;background:rgba(0,0,0,.55);border:1px solid rgba(141,178,229,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
-    .rpp-lb-nav svg{width:15px;height:15px;stroke:#8DB2E5;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-    .rpp-lb-prev{left:-52px}.rpp-lb-next{right:-52px}
-    @media(max-width:500px){.rpp-lb-prev{left:-36px}.rpp-lb-next{right:-36px}}
-    .rpp-lb-actions{display:flex;gap:10px;justify-content:center;margin-top:12px;}
-    .rpp-lb-action-btn{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.04em;-webkit-tap-highlight-color:transparent;}
-    .rpp-lb-action-btn:active{background:rgba(255,255,255,0.25);}
-  </style>
-  <div id="rp-photo-section">
-    <h2 class="rpp-section-title">Show Dates</h2>
-    <p class="rpp-carousel-label" style="text-align: center;">Swipe to browse — tap to view</p>
-    <div class="rpp-carousel" id="rpp-grid"></div>
-    <div class="rpp-dots" id="rpp-dots"></div>
-  </div>
-  <script>
-  (async function(){
-    var photos=[];
-    try {
-      var res = await fetch('flyers.json', { cache: 'no-store' });
-      if (res.ok) photos = await res.json();
-    } catch(e) { /* leave photos empty if flyers.json isn't there yet */ }
-    var grid=document.getElementById("rpp-grid"),dots=document.getElementById("rpp-dots");
-    if (photos.length === 0) {
-      grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);padding:12px;">No flyers posted yet — check back soon.</p>';
-      return;
-    }
-    function isVid(s){return /\.(mov|mp4|webm|ogg)(\?|$)/i.test(s);}
-    window.rppCurrent=0;
-    photos.forEach(function(p,i){
-      var c=document.createElement("div");c.className="rpp-thumb";c.setAttribute("role","button");c.setAttribute("tabindex","0");
-      if(isVid(p.src)){
-        c.innerHTML='<div class="rpp-thumb-img-wrap"><video src="'+p.src+'" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;"></video></div>';
-      } else {
-        c.innerHTML='<div class="rpp-thumb-img-wrap"><img src="'+p.src+'" loading="lazy"></div>';
-      }
-      c.addEventListener("click",function(){rppOpenLightbox(i);});
-      c.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();rppOpenLightbox(i);}});
-      grid.appendChild(c);
-      var d=document.createElement("div");d.className="rpp-dot"+(i===0?" active":"");
-      d.addEventListener("click",function(){grid.querySelectorAll(".rpp-thumb")[i].scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"});});
-      dots.appendChild(d);
-    });
-    grid.addEventListener("scroll",function(){
-      var cs=grid.querySelectorAll(".rpp-thumb"),ds=dots.querySelectorAll(".rpp-dot"),cl=0,md=Infinity;
-      cs.forEach(function(c,i){var d=Math.abs(c.offsetLeft-grid.scrollLeft);if(d<md){md=d;cl=i;}});
-      ds.forEach(function(d,i){d.classList.toggle("active",i===cl);});
-    });
-    var lb=document.createElement("div");lb.className="rpp-lightbox";
-    lb.innerHTML='<div class="rpp-lb-inner" id="rpp-lb-inner">'
-      +'<div class="rpp-lb-close" id="rpp-lb-close">✕</div>'
-      +'<div id="rpp-lb-media"></div>'
-      +'<div class="rpp-lb-actions" id="rpp-lb-actions">'
-        +'<button class="rpp-lb-action-btn" id="rpp-lb-share">🔗 Share</button>'
-      +'</div>'
-      +'<button class="rpp-lb-nav rpp-lb-prev" id="rpp-lb-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>'
-      +'<button class="rpp-lb-nav rpp-lb-next" id="rpp-lb-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>'
-    +'</div>';
-    document.body.appendChild(lb);
-    function rppSetMedia(src){
-      var m=document.getElementById("rpp-lb-media");
-      var v=m.querySelector("video");if(v)v.pause();
-      if(isVid(src)){m.innerHTML='<video src="'+src+'" autoplay muted loop playsinline style="max-width:100%;max-height:75vh;border-radius:6px;display:block;"></video>';}
-      else{m.innerHTML='<img src="'+src+'" style="max-width:100%;max-height:75vh;object-fit:contain;border-radius:6px;box-shadow:0 16px 80px rgba(0,0,0,.9);display:block;">';}
-      var idx=window.rppCurrent;
-      if(history.replaceState){history.replaceState(null,"",""+window.location.pathname+window.location.search+"#flyer-"+(idx+1));}
-    }
-    function rppClose(){
-      var v=document.querySelector("#rpp-lb-media video");if(v)v.pause();
-      lb.classList.remove("open");document.body.style.overflow="";
-      if(history.replaceState){history.replaceState(null,"",""+window.location.pathname+window.location.search);}
-    }
-    document.getElementById("rpp-lb-close").addEventListener("click",rppClose);
-    document.getElementById("rpp-lb-prev").addEventListener("click",function(){window.rppCurrent=(window.rppCurrent-1+photos.length)%photos.length;rppSetMedia(photos[window.rppCurrent].src);});
-    document.getElementById("rpp-lb-next").addEventListener("click",function(){window.rppCurrent=(window.rppCurrent+1)%photos.length;rppSetMedia(photos[window.rppCurrent].src);});
-    lb.addEventListener("click",function(e){if(e.target===lb)rppClose();});
-    document.getElementById("rpp-lb-share").addEventListener("click",async function(){
-      var src=photos[window.rppCurrent].src;
-      var isV=isVid(src);
-      if(navigator.share){
-        try{
-          var resp=await fetch(src);
-          var blob=await resp.blob();
-          var ext=isV?"mov":"jpg";
-          var file=new File([blob],"rickparma-flyer-"+(window.rppCurrent+1)+"."+ext,{type:blob.type});
-          if(navigator.canShare&&navigator.canShare({files:[file]})){
-            await navigator.share({files:[file],title:"Rick Parma — Upcoming Gig"});
-          } else {
-            var url=window.location.origin+window.location.pathname+"#flyer-"+(window.rppCurrent+1);
-            await navigator.share({title:"Rick Parma — Upcoming Gig",text:"Check out this upcoming show!",url:url});
-          }
-        }catch(e){}
-      } else if(navigator.clipboard){
-        var url=window.location.origin+window.location.pathname+"#flyer-"+(window.rppCurrent+1);
-        navigator.clipboard.writeText(url).then(function(){alert("Link copied!");});
-      }
-    });
-    window.rppOpenLightbox=function(i){window.rppCurrent=i;rppSetMedia(photos[i].src);lb.classList.add("open");document.body.style.overflow="hidden";};
-    document.addEventListener("keydown",function(e){var o=lb.classList.contains("open");if(e.key==="ArrowLeft"&&o)document.getElementById("rpp-lb-prev").click();if(e.key==="ArrowRight"&&o)document.getElementById("rpp-lb-next").click();if(e.key==="Escape"&&o)rppClose();});
-    var lbTouchX=0;
-    lb.addEventListener("touchstart",function(e){lbTouchX=e.touches[0].clientX;},{passive:true});
-    lb.addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-lbTouchX;if(Math.abs(dx)>40){if(dx<0)document.getElementById("rpp-lb-next").click();else document.getElementById("rpp-lb-prev").click();}});
-    (function(){var h=window.location.hash;var m=h.match(/^#flyer-(\d+)$/);if(m){var idx=parseInt(m[1])-1;if(idx>=0&&idx<photos.length){setTimeout(function(){window.rppOpenLightbox(idx);},300);}}})();
-  })();
-  </script>
-
   <div class="band band-calendar">
     <style>
       .rpc-wrap{max-width:680px;margin:0 auto;}
       .show-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
       .show-track::-webkit-scrollbar{display:none;}
       .show-tile{scroll-snap-align:start;flex:0 0 190px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:left;}
-      .show-flyer-thumb{display:block;margin:-16px -16px 0;aspect-ratio:1/1;overflow:hidden;border-radius:14px 14px 0 0;}
+      .show-flyer-thumb{display:block;margin:-16px -16px 0;aspect-ratio:1/1;overflow:hidden;border-radius:14px 14px 0 0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
       .show-flyer-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+      .cal-flyer-lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:20px;}
+      .cal-flyer-lightbox.open{display:flex;}
+      .cal-flyer-lightbox img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;box-shadow:0 16px 80px rgba(0,0,0,.9);display:block;}
+      .cal-flyer-lightbox-close{position:fixed;top:16px;right:16px;width:34px;height:34px;background:#8DB2E5;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#0d0505;font-weight:900;z-index:10000;-webkit-tap-highlight-color:transparent;}
       .show-date-badge{width:52px;height:52px;border-radius:10px;background:linear-gradient(160deg,var(--blue),var(--pink));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#000;}
       .show-date-badge .mon{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;}
       .show-date-badge .day{font-size:1.3rem;font-weight:900;line-height:1;}
@@ -786,7 +665,7 @@
         var directionsUrl = e.location ? 'https://maps.google.com/?q=' + encodeURIComponent(e.location) : e.htmlLink;
         var flyer = flyerMap[fmtDateKey(d)];
         return '<div class="show-tile">' +
-          (flyer ? '<a class="show-flyer-thumb" href="' + flyer + '" target="_blank" rel="noopener"><img src="' + flyer + '" alt="Show flyer" loading="lazy"></a>' : '') +
+          (flyer ? '<div class="show-flyer-thumb" role="button" tabindex="0" data-flyer="' + escapeHtml(flyer) + '"><img src="' + flyer + '" alt="Show flyer" loading="lazy"></div>' : '') +
           '<div class="show-date-badge"><span class="mon">' + MONTH_NAMES[d.getMonth()].slice(0,3) + '</span><span class="day">' + d.getDate() + '</span></div>' +
           '<p class="venue">' + escapeHtml(e.title) + '</p><p class="meta">' + escapeHtml(metaParts.join(' · ')) + '</p>' +
           '<div class="show-actions"><a href="' + e.htmlLink + '" target="_blank" rel="noopener">+ Calendar</a>' +
@@ -808,6 +687,45 @@
     }
     prevBtn.addEventListener('click', function() { scrollByTile(-1); });
     nextBtn.addEventListener('click', function() { scrollByTile(1); });
+
+    // ---- Flyer lightbox: a plain in-page overlay (no new tab, no hash/history games) ----
+    // so the close button always just removes the overlay and leaves you exactly where
+    // you were on the page — no risk of it "going somewhere else."
+    var flyerLb = null;
+    function ensureFlyerLightbox() {
+      if (flyerLb) return flyerLb;
+      flyerLb = document.createElement('div');
+      flyerLb.className = 'cal-flyer-lightbox';
+      flyerLb.innerHTML = '<div class="cal-flyer-lightbox-close">✕</div><img alt="Show flyer">';
+      document.body.appendChild(flyerLb);
+      flyerLb.addEventListener('click', function(e) {
+        if (e.target === flyerLb || e.target.className === 'cal-flyer-lightbox-close') closeFlyerLightbox();
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && flyerLb.classList.contains('open')) closeFlyerLightbox();
+      });
+      return flyerLb;
+    }
+    function openFlyerLightbox(src) {
+      var lb = ensureFlyerLightbox();
+      lb.querySelector('img').src = src;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeFlyerLightbox() {
+      if (!flyerLb) return;
+      flyerLb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    trackEl.addEventListener('click', function(e) {
+      var thumb = e.target.closest('.show-flyer-thumb');
+      if (thumb) openFlyerLightbox(thumb.getAttribute('data-flyer'));
+    });
+    trackEl.addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var thumb = e.target.closest('.show-flyer-thumb');
+      if (thumb) { e.preventDefault(); openFlyerLightbox(thumb.getAttribute('data-flyer')); }
+    });
 
     fetchEvents();
   })();
