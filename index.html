@@ -135,74 +135,26 @@
   .join-box .fine-print{font-size:.75rem;color:var(--muted);}
 
   /*
-    SIMPLE BUTTONS: Text Join / Song Request / Fan Cam. Plain solid-color pill buttons
-    with text - no glow rings, no spinning border. Just a simple "expand and contract"
-    press effect: they scale up slightly on hover and scale down on click/tap, like a
-    normal app button.
+    ORIGINAL BUTTON IMAGES: Text Join / Song Request / Fan Cam use the real designed
+    PNGs (text-join-button.png, song-request-button.png, fan-cam-button.png) that live
+    in the repo root. Simple "expand and contract" press effect on top - scales up
+    slightly on hover, scales down on click/tap, springs back on release.
   */
-  .text-join-button, .song-request-button, .fan-cam-button {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    border-radius: 999px;
-    color: #000000;
-    -webkit-tap-highlight-color: transparent;
-    transition: transform 120ms ease, filter 120ms ease;
+  .img-btn{
+    display:inline-block;
+    line-height:0;
+    -webkit-tap-highlight-color:transparent;
+    cursor:pointer;
+    transition:transform 120ms ease, filter 120ms ease;
   }
-  .text-join-button:hover, .song-request-button:hover, .fan-cam-button:hover {
-    transform: scale(1.04);
-    filter: brightness(1.08);
-  }
-  .text-join-button:active, .song-request-button:active, .fan-cam-button:active {
-    transform: scale(0.92);
-    filter: brightness(0.85);
-  }
-  .text-join-button:focus-visible, .song-request-button:focus-visible, .fan-cam-button:focus-visible {
-    outline: 3px solid #ffffff; outline-offset: 4px;
-  }
+  .img-btn:hover{transform:scale(1.05);}
+  .img-btn:active{transform:scale(0.92);filter:brightness(0.85);}
+  .img-btn:focus-visible{outline:3px solid #ffffff;outline-offset:6px;border-radius:999px;}
+  .img-btn img{display:block;width:100%;height:auto;}
 
-  .text-join-button {
-    width: min(500px, 88vw);
-    min-height: 90px;
-    padding: 16px 40px;
-    background: linear-gradient(90deg, #37ff8b, #20c8ff);
-  }
-  .text-join-main {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(24px, 5vw, 34px);
-    font-weight: 900;
-    letter-spacing: 2px;
-  }
-  .text-join-number {
-    margin-top: 6px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(15px, 3vw, 20px);
-    font-weight: 700;
-  }
-
-  .song-request-button, .fan-cam-button {
-    width: min(360px, 88vw);
-    min-height: 80px;
-    padding: 14px 30px;
-  }
-  .song-request-button { background: linear-gradient(90deg, var(--blue), var(--pink)); }
-  .fan-cam-button { background: linear-gradient(90deg, var(--pink), var(--blue)); }
-  .song-request-main, .fan-cam-main {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(18px, 4vw, 24px);
-    font-weight: 900;
-    letter-spacing: 1px;
-  }
-  .fan-cam-sub {
-    margin-top: 4px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(11px, 2.2vw, 14px);
-    font-weight: 700;
-  }
+  .text-join-button{width:min(480px,88vw);}
+  .song-request-button{width:min(340px,85vw);}
+  .fan-cam-button{width:min(220px,55vw);}
 
   table.tracklist{width:100%;border-collapse:collapse;text-align:left;margin-top:16px;cursor:pointer;}
   table.tracklist tr:hover td{color:var(--blue);}
@@ -348,12 +300,11 @@
       <div class="eyebrow">Join the Fun</div>
       <div class="button-row">
         <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
-        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html" class="song-request-button">
-          <span class="song-request-main">&#9835; SONG REQUEST &#9835;</span>
+        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html" class="img-btn song-request-button">
+          <img src="song-request-button.png" alt="Song Request">
         </a>
-        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html" class="fan-cam-button">
-          <span class="fan-cam-main">FAN CAM</span>
-          <span class="fan-cam-sub">CLICK HERE</span>
+        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html" class="img-btn fan-cam-button">
+          <img src="fan-cam-button.png" alt="Fan Cam - Click Here">
         </a>
       </div>
     </div>
@@ -382,9 +333,8 @@
   <div class="band band-textjoin">
     <div class="band-inner">
       <div class="join-box">
-        <a href="sms:+18559242976?body=JOIN" class="text-join-button">
-          <span class="text-join-main">TEXT JOIN</span>
-          <span class="text-join-number">(855) 924-2976</span>
+        <a href="sms:+18559242976?body=JOIN" class="img-btn text-join-button">
+          <img src="text-join-button.png" alt="Text JOIN to (855) 924-2976">
         </a>
         <p>Text JOIN to (855) 924-2976 for show updates.</p>
         <span class="fine-print">Msg &amp; data rates may apply. Reply STOP to cancel, HELP for help.</span>
