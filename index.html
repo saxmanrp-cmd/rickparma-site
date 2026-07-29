@@ -509,22 +509,17 @@
     <div class="rp-dots" id="rp-dots"></div>
   </div>
   <script>
-  (function() {
-    var videos = [
-      { id: "A7bKax1LS_g", title: "Short Promo" },
-      { id: "ePFoNTC85XY", title: "Compilation 1" },
-      { id: "3bvxyLmyKnI", title: "Superstar" },
-      { id: "AGnspowK_Wo", title: "Before I Let Go" },
-      { id: "Ray3e_HnEb8", title: "Silk Sonic" },
-      { id: "GkMce4gh31I", title: "Never Too Much" },
-      { id: "oW9OYt4XuZ8", title: "EWF Medley" },
-      { id: "1RWIZPpbpnk", title: "Stevie Wonder" },
-      { id: "85q58zOzhsQ", title: "Every Little Step I Take" },
-      { id: "3a1gaKA0zKk", title: "AHA" },
-      { id: "UON75LtrKDo", title: "I Do A Lot of Songs" },
-      { id: "6WmPyq6eoRk", title: "Full Band Promo" }
-    ];
+  (async function() {
+    var videos = [];
+    try {
+      var vres = await fetch('videos.json', { cache: 'no-store' });
+      if (vres.ok) videos = await vres.json();
+    } catch(e) { /* leave empty if videos.json isn't there yet */ }
     var grid = document.getElementById("rp-grid");
+    if (videos.length === 0) {
+      grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);padding:12px;">No videos posted yet.</p>';
+      return;
+    }
     var player = document.getElementById("rp-main-player");
     var playingTitle = document.getElementById("rp-playing-title");
     var dotsContainer = document.getElementById("rp-dots");
