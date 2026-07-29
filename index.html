@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rick Parma</title>
+<meta name="description" content="Rick Parma - solo artist, singer, saxophonist, DJ.">
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --panel:#141414;
+    --text:#f5f5f5;
+    --muted:#a0a0a0;
+    --pink:#ff3ec8;
+    --blue:#3ec8ff;
+    --border:#2a2a2a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    line-height:1.5;
+  }
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:24px 32px;
+    background:#000;
+    border-bottom:1px solid var(--border);
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  header h1{
+    margin:0;
+    font-size:2.2rem;
+    letter-spacing:1px;
+  }
+  header h1 a{color:var(--text);text-decoration:none;}
+  nav{display:flex;gap:20px;flex-wrap:wrap;}
+  nav a{color:var(--muted);text-decoration:none;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;}
+  nav a:hover{color:var(--pink);}
+  .socials{display:flex;gap:16px;}
+  .socials a{color:var(--muted);text-decoration:none;font-size:1.3rem;}
+  .socials a:hover{color:var(--blue);}
+
+  section{padding:48px 24px;max-width:900px;margin:0 auto;text-align:center;}
+  h2{font-size:1.8rem;margin-bottom:24px;}
+  .eyebrow{color:var(--muted);letter-spacing:3px;text-transform:uppercase;font-size:.85rem;margin-bottom:8px;}
+
+  .button-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:24px 0;}
+  .glow-btn{
+    display:inline-block;
+    padding:16px 32px;
+    border-radius:40px;
+    background:linear-gradient(90deg,var(--blue),var(--pink));
+    color:#000;
+    font-weight:bold;
+    text-decoration:none;
+    letter-spacing:1px;
+  }
+
+  .tip-row{display:flex;justify-content:center;gap:28px;font-size:1.6rem;margin-top:16px;}
+  .tip-row a{color:var(--text);text-decoration:none;}
+  .tip-row a:hover{color:var(--pink);}
+
+  .join-box{
+    border:1px solid var(--border);
+    background:var(--panel);
+    border-radius:12px;
+    padding:24px;
+    max-width:480px;
+    margin:24px auto;
+  }
+  .join-box a{color:var(--blue);}
+
+  table.tracklist{width:100%;border-collapse:collapse;text-align:left;margin-top:16px;}
+  table.tracklist td{padding:8px 4px;border-bottom:1px solid var(--border);font-size:.95rem;}
+  table.tracklist td.num{color:var(--muted);width:2em;}
+  table.tracklist td.time{color:var(--muted);text-align:right;}
+  .player-note{font-size:.8rem;color:var(--muted);margin-top:12px;}
+
+  .calendar-wrap iframe{width:100%;height:500px;border:1px solid var(--border);border-radius:8px;}
+
+  .product-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:24px;
+    max-width:420px;
+    margin:0 auto;
+  }
+  .product-card img{max-width:100%;border-radius:8px;}
+  .price{font-size:1.4rem;margin:12px 0;}
+  .buy-btn{
+    display:inline-block;
+    padding:12px 28px;
+    border-radius:30px;
+    background:var(--pink);
+    color:#000;
+    font-weight:bold;
+    text-decoration:none;
+  }
+
+  form.booking{display:grid;gap:14px;text-align:left;max-width:600px;margin:0 auto;}
+  form.booking label{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;}
+  form.booking input,form.booking select,form.booking textarea{
+    width:100%;padding:10px;background:#000;border:1px solid var(--border);color:var(--text);border-radius:6px;
+  }
+  fieldset{border:1px solid var(--border);border-radius:6px;padding:12px;}
+  fieldset legend{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:0 6px;}
+  .submit-btn{
+    padding:14px;background:linear-gradient(90deg,var(--blue),var(--pink));border:none;border-radius:30px;
+    color:#000;font-weight:bold;cursor:pointer;font-size:1rem;
+  }
+
+  footer{
+    text-align:center;padding:32px 16px;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);
+  }
+  footer a{color:var(--muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><a href="/">Rick Parma</a></h1>
+  <nav>
+    <a href="#top">Linkpage</a>
+    <a href="#calendar">Calendar</a>
+    <a href="#diamond-method">Diamond Method</a>
+    <a href="#booking">Booking</a>
+    <a href="diamonds-only.html">Diamonds Only</a>
+  </nav>
+  <div class="socials">
+    <a href="https://instagram.com/rickparmaofficial" title="Instagram">IG</a>
+    <a href="https://www.facebook.com/rickparmaofficial" title="Facebook">FB</a>
+    <a href="#" title="Save Contact">VCF</a>
+  </div>
+</header>
+
+<section id="top">
+  <div class="eyebrow">Join the Fun</div>
+  <div class="button-row">
+    <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
+    <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html"><img src="song-request-button.png" alt="Song Request" style="max-width:300px;width:100%;"></a>
+    <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html"><img src="fan-cam-button.png" alt="Fan Cam" style="max-width:220px;width:100%;"></a>
+  </div>
+
+  <div class="eyebrow" style="margin-top:32px;">Tip Jar</div>
+  <div class="tip-row">
+    <a href="https://cash.app/$RickParma">Cash App</a>
+    <a href="https://venmo.com/u/RickParma">Venmo</a>
+    <a href="https://www.paypal.com/paypalme/rickparma">PayPal</a>
+  </div>
+
+  <div class="join-box">
+    <a href="sms:+18559242976?body=JOIN"><img src="text-join-button.png" alt="Text JOIN to (855) 924-2976" style="max-width:100%;"></a>
+    <br>
+    <span style="font-size:.75rem;color:var(--muted);">Msg &amp; data rates may apply. Reply STOP to cancel, HELP for help.</span>
+  </div>
+</section>
+
+<section id="music">
+  <h2>Rick's Music</h2>
+  <!--
+    Replace this table + hook up a real player once you have your audio files.
+    Two zero-cost options:
+      1) Upload mp3s into this same repo and use an <audio> element per track.
+      2) Upload the tracks to Bandcamp or SoundCloud (both free) and embed their player instead -
+         usually easier than building a custom player, and they handle streaming for you.
+  -->
+  <table class="tracklist">
+    <tr><td class="num">1</td><td>You Need A Lover</td><td class="time">4:20</td></tr>
+    <tr><td class="num">2</td><td>All Eyes On Us</td><td class="time">5:22</td></tr>
+    <tr><td class="num">3</td><td>All Night</td><td class="time">3:34</td></tr>
+    <tr><td class="num">4</td><td>Time and Space</td><td class="time">4:32</td></tr>
+    <tr><td class="num">5</td><td>Party Starter</td><td class="time">5:01</td></tr>
+    <tr><td class="num">6</td><td>Sing To You</td><td class="time">6:37</td></tr>
+    <tr><td class="num">7</td><td>I Want It All</td><td class="time">4:07</td></tr>
+    <tr><td class="num">8</td><td>Piece of Heaven</td><td class="time">4:48</td></tr>
+    <tr><td class="num">9</td><td>Hey Girl</td><td class="time">3:48</td></tr>
+    <tr><td class="num">10</td><td>Every Time You're Around (feat. Willie Bradley)</td><td class="time">4:21</td></tr>
+    <tr><td class="num">11</td><td>Love a Little Longer (feat. Ginetta's Vendetta)</td><td class="time">5:44</td></tr>
+    <tr><td class="num">12</td><td>Besame Caliente (Remix) [feat. Greg Adams]</td><td class="time">4:30</td></tr>
+    <tr><td class="num">13</td><td>Chocolate Cake (feat. Dean Grech)</td><td class="time">4:23</td></tr>
+    <tr><td class="num">14</td><td>Rising Fire (feat. Matthew Kerr)</td><td class="time">4:49</td></tr>
+    <tr><td class="num">15</td><td>Smash Hit</td><td class="time">5:44</td></tr>
+    <tr><td class="num">16</td><td>Give Up (feat. Dean Grech)</td><td class="time">5:26</td></tr>
+    <tr><td class="num">17</td><td>Redemption</td><td class="time">4:25</td></tr>
+    <tr><td class="num">18</td><td>Just Gettin Started</td><td class="time">5:43</td></tr>
+    <tr><td class="num">19</td><td>Thinkin of You</td><td class="time">7:00</td></tr>
+    <tr><td class="num">20</td><td>Gotta Keep Movin</td><td class="time">3:54</td></tr>
+  </table>
+  <div class="player-note">Player not wired up yet — see comment in the HTML source for the two free ways to add real playback.</div>
+</section>
+
+<section id="calendar">
+  <!--
+    NOTE: the video src URLs below (rickparma.com/files/...) are still hosted on Bandzoogle's
+    file storage. They'll stop working once the Bandzoogle account is canceled - download these
+    .mov files and re-upload them somewhere else (same GitHub repo, or a video host) before cutover,
+    then swap the URLs in the `photos` array below.
+  -->
+  <style>
+    #rp-photo-section{background:rgba(13,5,5,0.5);padding:16px 16px 24px;font-family:Arial,Helvetica,sans-serif;max-width:760px;margin:0 auto;box-sizing:border-box;border:1px solid rgba(200,160,60,0.7);border-radius:10px;box-shadow:0 0 32px rgba(200,160,60,0.4),0 0 8px rgba(200,160,60,0.3),inset 0 0 24px rgba(0,0,0,0.3)}
+    #rp-photo-section *{box-sizing:border-box}
+    .rpp-section-title{font-size:33px;font-weight:900;color:#fff;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em;text-align:center}
+    .rpp-carousel-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin:0 0 10px}
+    .rpp-carousel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 10px}
+    .rpp-carousel::-webkit-scrollbar{display:none}
+    .rpp-thumb{flex:0 0 calc(50% - 5px);scroll-snap-align:start;cursor:pointer;border-radius:6px;overflow:hidden;background:#1a0808;border:1.5px solid transparent;transition:border-color .2s,transform .15s;-webkit-tap-highlight-color:transparent}
+    .rpp-thumb:active{transform:scale(.97)}
+    .rpp-thumb:hover{border-color:rgba(141,178,229,.4)}
+    .rpp-thumb-img-wrap{position:relative;width:100%;aspect-ratio:3/4;background:#2a1010;overflow:hidden}
+    .rpp-thumb-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+    .rpp-thumb:hover .rpp-thumb-img-wrap img{transform:scale(1.06)}
+    .rpp-dots{display:flex;justify-content:center;gap:6px;margin-top:4px}
+    .rpp-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s,transform .2s;cursor:pointer}
+    .rpp-dot.active{background:#8DB2E5;transform:scale(1.3)}
+    .rpp-lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:16px}
+    .rpp-lightbox.open{display:flex}
+    .rpp-lb-inner{position:relative;max-width:92vw;max-height:92vh}
+    .rpp-lb-inner img{max-width:100%;max-height:90vh;object-fit:contain;border-radius:6px;display:block}
+    .rpp-lb-close{position:absolute;top:-13px;right:-13px;width:28px;height:28px;background:#8DB2E5;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#0d0505;font-weight:900;z-index:10}
+    .rpp-lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;background:rgba(0,0,0,.55);border:1px solid rgba(141,178,229,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .rpp-lb-nav svg{width:15px;height:15px;stroke:#8DB2E5;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+    .rpp-lb-prev{left:-52px}.rpp-lb-next{right:-52px}
+    @media(max-width:500px){.rpp-lb-prev{left:-36px}.rpp-lb-next{right:-36px}}
+    .rpp-lb-actions{display:flex;gap:10px;justify-content:center;margin-top:12px;}
+    .rpp-lb-action-btn{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.04em;-webkit-tap-highlight-color:transparent;}
+    .rpp-lb-action-btn:active{background:rgba(255,255,255,0.25);}
+  </style>
+  <div id="rp-photo-section">
+    <h2 class="rpp-section-title">Show Dates</h2>
+    <p class="rpp-carousel-label" style="text-align: center;">Swipe to browse — tap to view</p>
+    <div class="rpp-carousel" id="rpp-grid"></div>
+    <div class="rpp-dots" id="rpp-dots"></div>
+  </div>
+  <script>
+  (function(){
+    var photos=[
+      { src: "https://rickparma.com/files/1418924/copy-63935e91-0edc-494a-8b6f-4c11823a2b7d.mov" },
+      { src: "https://rickparma.com/files/1420563/copy-299a0e83-807d-4b57-93ff-941f482a7596.mov" },
+      { src: "https://rickparma.com/files/1419773/copy-9d34f402-cf29-4adf-8eed-cabadfc19927.mov" },
+      { src: "https://rickparma.com/files/1421831/copy-3838b5e3-a9de-4a0c-828b-37b856509e35.mov" },
+      { src: "https://rickparma.com/files/1420552/copy-77530a7a-d763-43d2-a99d-7b5d6adf751f.mov" },
+      { src: "https://rickparma.com/files/1421829/copy-7ba60c49-dc8a-43d4-9307-7e7908c34978.mov" }
+    ];
+    function isVid(s){return /\.(mov|mp4|webm|ogg)(\?|$)/i.test(s);}
+    var grid=document.getElementById("rpp-grid"),dots=document.getElementById("rpp-dots");
+    window.rppCurrent=0;
+    photos.forEach(function(p,i){
+      var c=document.createElement("div");c.className="rpp-thumb";c.setAttribute("role","button");c.setAttribute("tabindex","0");
+      if(isVid(p.src)){
+        c.innerHTML='<div class="rpp-thumb-img-wrap"><video src="'+p.src+'" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;"></video></div>';
+      } else {
+        c.innerHTML='<div class="rpp-thumb-img-wrap"><img src="'+p.src+'" loading="lazy"></div>';
+      }
+      c.addEventListener("click",function(){rppOpenLightbox(i);});
+      c.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();rppOpenLightbox(i);}});
+      grid.appendChild(c);
+      var d=document.createElement("div");d.className="rpp-dot"+(i===0?" active":"");
+      d.addEventListener("click",function(){grid.querySelectorAll(".rpp-thumb")[i].scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"});});
+      dots.appendChild(d);
+    });
+    grid.addEventListener("scroll",function(){
+      var cs=grid.querySelectorAll(".rpp-thumb"),ds=dots.querySelectorAll(".rpp-dot"),cl=0,md=Infinity;
+      cs.forEach(function(c,i){var d=Math.abs(c.offsetLeft-grid.scrollLeft);if(d<md){md=d;cl=i;}});
+      ds.forEach(function(d,i){d.classList.toggle("active",i===cl);});
+    });
+    var lb=document.createElement("div");lb.className="rpp-lightbox";
+    lb.innerHTML='<div class="rpp-lb-inner" id="rpp-lb-inner">'
+      +'<div class="rpp-lb-close" id="rpp-lb-close">✕</div>'
+      +'<div id="rpp-lb-media"></div>'
+      +'<div class="rpp-lb-actions" id="rpp-lb-actions">'
+        +'<button class="rpp-lb-action-btn" id="rpp-lb-share">🔗 Share</button>'
+      +'</div>'
+      +'<button class="rpp-lb-nav rpp-lb-prev" id="rpp-lb-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>'
+      +'<button class="rpp-lb-nav rpp-lb-next" id="rpp-lb-next"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>'
+    +'</div>';
+    document.body.appendChild(lb);
+    function rppSetMedia(src){
+      var m=document.getElementById("rpp-lb-media");
+      var v=m.querySelector("video");if(v)v.pause();
+      if(isVid(src)){m.innerHTML='<video src="'+src+'" autoplay muted loop playsinline style="max-width:100%;max-height:75vh;border-radius:6px;display:block;"></video>';}
+      else{m.innerHTML='<img src="'+src+'" style="max-width:100%;max-height:75vh;object-fit:contain;border-radius:6px;box-shadow:0 16px 80px rgba(0,0,0,.9);display:block;">';}
+      var idx=window.rppCurrent;
+      if(history.replaceState){history.replaceState(null,"",""+window.location.pathname+window.location.search+"#flyer-"+(idx+1));}
+    }
+    function rppClose(){
+      var v=document.querySelector("#rpp-lb-media video");if(v)v.pause();
+      lb.classList.remove("open");document.body.style.overflow="";
+      if(history.replaceState){history.replaceState(null,"",""+window.location.pathname+window.location.search);}
+    }
+    document.getElementById("rpp-lb-close").addEventListener("click",rppClose);
+    document.getElementById("rpp-lb-prev").addEventListener("click",function(){window.rppCurrent=(window.rppCurrent-1+photos.length)%photos.length;rppSetMedia(photos[window.rppCurrent].src);});
+    document.getElementById("rpp-lb-next").addEventListener("click",function(){window.rppCurrent=(window.rppCurrent+1)%photos.length;rppSetMedia(photos[window.rppCurrent].src);});
+    lb.addEventListener("click",function(e){if(e.target===lb)rppClose();});
+    document.getElementById("rpp-lb-share").addEventListener("click",async function(){
+      var src=photos[window.rppCurrent].src;
+      var isV=isVid(src);
+      if(navigator.share){
+        try{
+          var resp=await fetch(src);
+          var blob=await resp.blob();
+          var ext=isV?"mov":"jpg";
+          var file=new File([blob],"rickparma-flyer-"+(window.rppCurrent+1)+"."+ext,{type:blob.type});
+          if(navigator.canShare&&navigator.canShare({files:[file]})){
+            await navigator.share({files:[file],title:"Rick Parma — Upcoming Gig"});
+          } else {
+            var url=window.location.origin+window.location.pathname+"#flyer-"+(window.rppCurrent+1);
+            await navigator.share({title:"Rick Parma — Upcoming Gig",text:"Check out this upcoming show!",url:url});
+          }
+        }catch(e){}
+      } else if(navigator.clipboard){
+        var url=window.location.origin+window.location.pathname+"#flyer-"+(window.rppCurrent+1);
+        navigator.clipboard.writeText(url).then(function(){alert("Link copied!");});
+      }
+    });
+    window.rppOpenLightbox=function(i){window.rppCurrent=i;rppSetMedia(photos[i].src);lb.classList.add("open");document.body.style.overflow="hidden";};
+    document.addEventListener("keydown",function(e){var o=lb.classList.contains("open");if(e.key==="ArrowLeft"&&o)document.getElementById("rpp-lb-prev").click();if(e.key==="ArrowRight"&&o)document.getElementById("rpp-lb-next").click();if(e.key==="Escape"&&o)rppClose();});
+    var lbTouchX=0;
+    lb.addEventListener("touchstart",function(e){lbTouchX=e.touches[0].clientX;},{passive:true});
+    lb.addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-lbTouchX;if(Math.abs(dx)>40){if(dx<0)document.getElementById("rpp-lb-next").click();else document.getElementById("rpp-lb-prev").click();}});
+    (function(){var h=window.location.hash;var m=h.match(/^#flyer-(\d+)$/);if(m){var idx=parseInt(m[1])-1;if(idx>=0&&idx<photos.length){setTimeout(function(){window.rppOpenLightbox(idx);},300);}}})();
+  })();
+  </script>
+
+  <hr style="border: none; border-top: 2px solid #ccc; max-width: 800px; margin: 40px auto 24px;">
+  <h2 style="font-size: 28px; color: rgb(255, 255, 255); margin: 0px 0px 12px; text-align: center;">CALENDAR</h2>
+  <div style="font-family: sans-serif; max-width: 800px; margin: 0 auto;">
+    <!-- Calendar embed -->
+    <div style="display: flex; justify-content: center; width: 100%;">
+      <iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;ctz=America%2FLos_Angeles&amp;showPrint=0&amp;mode=AGENDA&amp;showCalendars=0&amp;showNav=0&amp;showDate=0&amp;showTz=0&amp;showTitle=0&amp;src=ZWU3OWUxNTU3ZTgxN2RkMGU2OTg2ZmFjNTU0NWU5N2NmMzZmM2E5NTM3ODYyNzMxYzdlOWFkYzEyZWE1ODE4NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&amp;color=%23ffffff" style="border-width: 0; max-width: 800px; width: 100%;" height="600" frameborder="0" scrolling="no"></iframe>
+    </div>
+    <!-- Subscribe button -->
+    <div style="text-align: center; margin-top: 24px;">
+      <a id="rp-cal-subscribe" href="https://calendar.google.com/calendar/u/0?cid=ZWU3OWUxNTU3ZTgxN2RkMGU2OTg2ZmFjNTU0NWU5N2NmMzZmM2E5NTM3ODYyNzMxYzdlOWFkYzEyZWE1ODE4NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t" style="display: inline-flex; align-items: center; justify-content: center; padding: 14px 30px; border-radius: 60px; background: #8DB2E5; text-decoration: none; color: #000; white-space: nowrap; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+        Subscribe to Calendar
+      </a>
+    </div>
+  </div>
+  <script>
+  (function() {
+    var link = document.getElementById('rp-cal-subscribe');
+    var isApple = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isApple) {
+      link.href = 'https://calendar.google.com/calendar/ical/ee79e1557e817dd0e6986fac5545e97cf36f3a9537862731c7e9adc12ea58186%40group.calendar.google.com/public/basic.ics';
+    }
+  })();
+  </script>
+</section>
+
+<section id="promo-videos">
+  <style>
+    #rp-video-section {
+      background: rgba(13, 5, 5, 0.5);
+      padding: 16px 16px 24px;
+      font-family: Arial, Helvetica, sans-serif;
+      max-width: 760px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      border: 1px solid rgba(141, 178, 229, 0.4);
+      border-radius: 12px;
+      box-shadow: 0 0 18px rgba(141, 178, 229, 0.25), 0 0 40px rgba(141, 178, 229, 0.1);
+    }
+    #rp-video-section * { box-sizing: border-box; }
+    .rp-section-title {
+      font-size: 33px;
+      font-weight: 900;
+      color: #ffffff;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+    .rp-featured-wrap {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      background: #1a0808;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .rp-featured-wrap iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+      border-radius: 8px;
+    }
+    .rp-featured-label {
+      font-size: 12px;
+      color: #8DB2E5;
+      margin: 0 0 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding-left: 2px;
+    }
+    .rp-featured-label span {
+      color: rgba(255,255,255,0.5);
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .rp-carousel-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin: 0 0 10px;
+    }
+    .rp-carousel-outer { position: relative; }
+    .rp-carousel {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 4px 2px 10px;
+    }
+    .rp-carousel::-webkit-scrollbar { display: none; }
+    .rp-thumb {
+      flex: 0 0 155px;
+      scroll-snap-align: start;
+      cursor: pointer;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      background: #1a0808;
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (min-width: 420px) { .rp-thumb { flex: 0 0 175px; } }
+    @media (min-width: 600px) { .rp-thumb { flex: 0 0 200px; } }
+    .rp-thumb:active { transform: scale(0.97); }
+    .rp-thumb.active { border-color: #8DB2E5; }
+    .rp-thumb-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #2a1010;
+      overflow: hidden;
+    }
+    .rp-thumb-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .rp-play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.25);
+      transition: background 0.15s;
+    }
+    .rp-thumb:hover .rp-play-overlay { background: rgba(0,0,0,0.1); }
+    .rp-thumb.active .rp-play-overlay { background: rgba(141,178,229,0.15); }
+    .rp-play-btn {
+      width: 30px; height: 30px;
+      background: rgba(255,255,255,0.88);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .rp-play-btn svg { width: 11px; height: 11px; margin-left: 2px; fill: #0d0505; }
+    .rp-thumb.active .rp-play-btn { background: #8DB2E5; }
+    .rp-thumb.active .rp-play-btn svg { fill: #ffffff; }
+    .rp-thumb-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      padding: 7px 8px 8px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #130606;
+    }
+    .rp-thumb.active .rp-thumb-title { color: #8DB2E5; }
+    .rp-dots { display: flex; justify-content: center; gap: 6px; margin-top: 4px; }
+    .rp-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .rp-dot.active { background: #8DB2E5; transform: scale(1.3); }
+  </style>
+  <div id="rp-video-section">
+    <h2 class="rp-section-title">Promo Videos</h2>
+    <div class="rp-featured-wrap" id="rp-player-wrap">
+      <iframe id="rp-main-player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <p class="rp-featured-label" id="rp-now-playing">
+      Now playing: <span id="rp-playing-title">Short Promo</span>
+    </p>
+    <p class="rp-carousel-label">Swipe to browse — tap to play</p>
+    <div class="rp-carousel-outer">
+      <div class="rp-carousel" id="rp-grid"></div>
+    </div>
+    <div class="rp-dots" id="rp-dots"></div>
+  </div>
+  <script>
+  (function() {
+    var videos = [
+      { id: "A7bKax1LS_g", title: "Short Promo" },
+      { id: "ePFoNTC85XY", title: "Compilation 1" },
+      { id: "3bvxyLmyKnI", title: "Superstar" },
+      { id: "AGnspowK_Wo", title: "Before I Let Go" },
+      { id: "Ray3e_HnEb8", title: "Silk Sonic" },
+      { id: "GkMce4gh31I", title: "Never Too Much" },
+      { id: "oW9OYt4XuZ8", title: "EWF Medley" },
+      { id: "1RWIZPpbpnk", title: "Stevie Wonder" },
+      { id: "85q58zOzhsQ", title: "Every Little Step I Take" },
+      { id: "3a1gaKA0zKk", title: "AHA" },
+      { id: "UON75LtrKDo", title: "I Do A Lot of Songs" },
+      { id: "6WmPyq6eoRk", title: "Full Band Promo" }
+    ];
+    var grid = document.getElementById("rp-grid");
+    var player = document.getElementById("rp-main-player");
+    var playingTitle = document.getElementById("rp-playing-title");
+    var dotsContainer = document.getElementById("rp-dots");
+    function embedURL(id, autoplay) {
+      return "https://www.youtube-nocookie.com/embed/" + id + "?rel=0&modestbranding=1" + (autoplay ? "&autoplay=1" : "");
+    }
+    function switchVideo(index) {
+      var v = videos[index];
+      player.src = embedURL(v.id, true);
+      playingTitle.textContent = v.title;
+      document.getElementById("rp-player-wrap").scrollIntoView({ behavior: "smooth", block: "start" });
+      grid.querySelectorAll(".rp-thumb").forEach(function(t, i) { t.classList.toggle("active", i === index); });
+    }
+    player.src = embedURL(videos[0].id, false);
+    function ytThumb(id) { return "https://img.youtube.com/vi/" + id + "/mqdefault.jpg"; }
+    videos.forEach(function(v, i) {
+      var card = document.createElement("div");
+      card.className = "rp-thumb" + (i === 0 ? " active" : "");
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", "Play " + v.title);
+      card.setAttribute("tabindex", "0");
+      card.innerHTML = '<div class="rp-thumb-img-wrap"><img src="' + ytThumb(v.id) + '" alt="' + v.title + '" loading="lazy"><div class="rp-play-overlay"><div class="rp-play-btn"><svg viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div></div></div><div class="rp-thumb-title">' + v.title + '</div>';
+      card.addEventListener("click", function() { switchVideo(i); });
+      card.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchVideo(i); } });
+      grid.appendChild(card);
+      var dot = document.createElement("div");
+      dot.className = "rp-dot" + (i === 0 ? " active" : "");
+      dot.addEventListener("click", function() { grid.querySelectorAll(".rp-thumb")[i].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" }); });
+      dotsContainer.appendChild(dot);
+    });
+    grid.addEventListener("scroll", function() {
+      var cards = grid.querySelectorAll(".rp-thumb");
+      var dots = dotsContainer.querySelectorAll(".rp-dot");
+      var closest = 0, minDist = Infinity;
+      cards.forEach(function(c, i) { var dist = Math.abs(c.offsetLeft - grid.scrollLeft); if (dist < minDist) { minDist = dist; closest = i; } });
+      dots.forEach(function(d, i) { d.classList.toggle("active", i === closest); });
+    });
+  })();
+  </script>
+</section>
+
+<section id="diamond-method">
+  <h2>Diamond Method Singing Course</h2>
+  <div class="product-card">
+    <img src="diamond-method-cover.png" alt="Diamond Singing Method">
+    <p>An online video-based course that walks you step by step to a healthier, stronger singing voice — sing higher, lower, and with more style.</p>
+    <div class="price">$20.00</div>
+    <!--
+      Replace this href with a real payment link. Cheapest no-monthly-fee options:
+        - PayPal.me with a fixed amount (works today, zero setup): https://paypal.me/rickparma/20
+        - Stripe Payment Link (buy.stripe.com/...) if you want card checkout - free to create, ~2.9%+30c per sale, no monthly fee
+        - Gumroad if you want automatic delivery of the course video link after purchase - no monthly fee, ~10% + fees per sale
+      PayPal.me is the fastest to stand up since you already use PayPal; Gumroad is worth it once you want delivery automated.
+    -->
+    <a class="buy-btn" href="https://paypal.me/rickparma/20">Buy Now — $20</a>
+  </div>
+</section>
+
+<section id="booking">
+  <h2>Booking</h2>
+  <p>Please fill out the form and I'll get back to you with a personalized quote.</p>
+  <!--
+    Static sites can't process form submissions on their own. Formspree's free tier (50 submissions/month)
+    emails you each submission with zero backend code - just replace YOUR_FORM_ID below once you create one
+    at formspree.io.
+  -->
+  <form class="booking" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+    <div>
+      <label>Name</label>
+      <input type="text" name="name" required>
+    </div>
+    <div>
+      <label>Email</label>
+      <input type="email" name="email" required>
+    </div>
+    <div>
+      <label>Phone</label>
+      <input type="tel" name="phone">
+    </div>
+    <div>
+      <label>Venue Address</label>
+      <input type="text" name="venue_address">
+    </div>
+    <div>
+      <label>City</label>
+      <input type="text" name="city">
+    </div>
+    <div>
+      <label>State</label>
+      <input type="text" name="state">
+    </div>
+    <div>
+      <label>Zip</label>
+      <input type="text" name="zip">
+    </div>
+    <div>
+      <label>Performance Type</label>
+      <select name="performance_type">
+        <option>Solo: DJ/Singing/Saxophone/Emcee</option>
+        <option>Band: Full 6 piece</option>
+        <option>Combo: Band/DJ</option>
+        <option>Singer/Saxophonist</option>
+      </select>
+    </div>
+    <div>
+      <label>Date of Event</label>
+      <input type="date" name="event_date">
+    </div>
+    <div>
+      <label>Performance Start Time</label>
+      <input type="time" name="start_time">
+    </div>
+    <div>
+      <label>Event Type</label>
+      <select name="event_type">
+        <option>Wedding</option>
+        <option>Private Party</option>
+        <option>Public Restaurant/Club</option>
+        <option>Festival/Concert/Public event</option>
+        <option>Baby/Bridal Shower</option>
+        <option>Anniversary</option>
+        <option>Birthday</option>
+        <option>Celebration of Life</option>
+        <option>Corporate Event</option>
+        <option>Holiday Party</option>
+      </select>
+    </div>
+    <div>
+      <label>Venue Type</label>
+      <select name="venue_type">
+        <option>Residential</option>
+        <option>Private business</option>
+        <option>Restaurant</option>
+        <option>Music Venue</option>
+        <option>Banquet Hall</option>
+        <option>Cruise Ship/Yacht</option>
+        <option>Concert Hall</option>
+        <option>Public Park</option>
+      </select>
+    </div>
+    <div>
+      <label>Guests Attending</label>
+      <select name="guests">
+        <option>1-50</option>
+        <option>50-150</option>
+        <option>150-300</option>
+        <option>300-500</option>
+        <option>500-1,000</option>
+        <option>1,000-5,000</option>
+        <option>5,000-10,000</option>
+        <option>10,000-higher</option>
+      </select>
+    </div>
+    <div>
+      <label>Will Professional Sound Be Included</label>
+      <select name="sound_included">
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+    <div>
+      <label>Will You Need Music In Multiple Areas</label>
+      <select name="multiple_areas">
+        <option>Yes</option>
+        <option>No</option>
+        <option>Maybe</option>
+      </select>
+    </div>
+    <fieldset>
+      <legend>Concessions Offered</legend>
+      <label><input type="checkbox" name="concessions" value="Artisan Cotton Candy" style="width:auto;display:inline;"> Artisan Cotton Candy</label>
+      <label><input type="checkbox" name="concessions" value="Candied Nuts" style="width:auto;display:inline;"> Candied Nuts</label>
+      <label><input type="checkbox" name="concessions" value="Churros" style="width:auto;display:inline;"> Churros</label>
+      <label><input type="checkbox" name="concessions" value="Hot Pretzels" style="width:auto;display:inline;"> Hot Pretzels</label>
+      <label><input type="checkbox" name="concessions" value="Sweets Table" style="width:auto;display:inline;"> Sweets Table</label>
+    </fieldset>
+    <div>
+      <label>How'd You Find Me</label>
+      <select name="referral">
+        <option>Live Performance</option>
+        <option>Social Media</option>
+        <option>Internet Search</option>
+        <option>Personal Referral</option>
+      </select>
+    </div>
+    <button class="submit-btn" type="submit">Submit</button>
+  </form>
+</section>
+
+<footer>
+  &copy; 2026 Richard David Parma &middot; <a href="#">Privacy Policy and Terms and Conditions</a>
+</footer>
+
+</body>
+</html>

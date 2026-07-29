@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rick Parma - Diamonds Only</title>
+<style>
+  body{background:#0a0a0a;color:#f5f5f5;font-family:'Helvetica Neue',Arial,sans-serif;
+    display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+  .gate{text-align:center;max-width:360px;padding:24px;}
+  input{width:100%;padding:12px;margin-top:16px;background:#000;border:1px solid #2a2a2a;color:#fff;border-radius:6px;}
+  button{margin-top:16px;padding:12px 28px;border:none;border-radius:30px;
+    background:linear-gradient(90deg,#3ec8ff,#ff3ec8);color:#000;font-weight:bold;cursor:pointer;}
+  #content{display:none;padding:48px 24px;max-width:700px;margin:0 auto;text-align:center;}
+  #error{color:#ff3ec8;font-size:.85rem;margin-top:8px;display:none;}
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <h2>Diamonds Only</h2>
+  <p>This page is for members only. Enter the password to continue.</p>
+  <input type="password" id="pw" placeholder="Password">
+  <div id="error">Incorrect password, try again.</div>
+  <br>
+  <button onclick="checkPw()">Enter</button>
+</div>
+
+<div id="content">
+  <h2>Welcome, Diamond.</h2>
+  <p>Replace this section with your exclusive fan-club content (early releases, behind-the-scenes video, discount codes, etc.).</p>
+</div>
+
+<script>
+  /*
+    NOTE: this is a simple front-end password gate, same spirit as Bandzoogle's page password
+    but not truly secure - anyone who views the page source can find the password below.
+    Fine for casual fan-club gating. If you want real access control later, look at
+    Cloudflare Access (free for small member counts) instead.
+  */
+  const PASSWORD = "changeme"; // <-- set your real password here
+
+  function checkPw(){
+    const entered = document.getElementById('pw').value;
+    if(entered === PASSWORD){
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    } else {
+      document.getElementById('error').style.display = 'block';
+    }
+  }
+  document.getElementById('pw').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') checkPw();
+  });
+</script>
+
+</body>
+</html>
