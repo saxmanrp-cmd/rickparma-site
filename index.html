@@ -81,26 +81,38 @@
   .band{
     position:relative;
     width:100%;
+    padding:28px 24px;
+    overflow:hidden;
+  }
+  /* blurred background image layer (30% blur) - oversized slightly so the blur's
+     soft edges never peek in past the band's own edges */
+  .band::before{
+    content:"";
+    position:absolute;
+    inset:-16px;
+    background-image:var(--bg-image);
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
-    padding:56px 24px;
-    overflow:hidden;
+    background-color:var(--bg);
+    filter:blur(8px);
+    z-index:0;
   }
-  .band::before{
+  /* dark overlay so text stays readable, sits above the blurred image */
+  .band::after{
     content:"";
     position:absolute;
     inset:0;
     background:rgba(5,5,8,var(--overlay,0.6));
-    z-index:0;
+    z-index:1;
   }
-  .band-inner{position:relative;z-index:1;max-width:900px;margin:0 auto;}
-  .band-hero{background-image:url('images/hero-bg.jpg');background-color:var(--bg);--overlay:0.5;}
-  .band-tipjar{background-image:url('images/tipjar-bg.jpg');background-color:var(--bg);--overlay:0.5;}
-  .band-textjoin{background-image:url('images/textjoin-bg.jpg');background-color:var(--bg);--overlay:0.5;}
-  .band-music{background-image:url('images/music-bg.jpg');background-color:var(--bg);--overlay:0.5;}
-  .band-diamond{background-image:url('images/diamond-bg.jpg');background-color:var(--bg);--overlay:0.5;}
-  .band-calendar{background-image:url('images/calendar-bg.jpg');background-color:var(--bg);--overlay:0.5;}
+  .band-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;}
+  .band-hero{--bg-image:url('images/hero-bg.jpg');--overlay:0.5;}
+  .band-tipjar{--bg-image:url('images/tipjar-bg.jpg');--overlay:0.5;}
+  .band-textjoin{--bg-image:url('images/textjoin-bg.jpg');--overlay:0.5;}
+  .band-music{--bg-image:url('images/music-bg.jpg');--overlay:0.5;}
+  .band-diamond{--bg-image:url('images/diamond-bg.jpg');--overlay:0.5;}
+  .band-calendar{--bg-image:url('images/calendar-bg.jpg');--overlay:0.5;}
 
   .button-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:24px 0;}
   .glow-btn{
@@ -122,7 +134,12 @@
   .tip-row a{-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text);text-decoration:none;width:64px;}
   .tip-row a:hover{color:var(--pink);}
   .tip-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .12s ease, filter .12s ease, box-shadow .12s ease;}
-  .tip-icon svg{width:26px;height:26px;}
+  .tip-icon .brand-mark{
+    width:60%;height:60%;background-color:#fff;
+    -webkit-mask-size:contain;mask-size:contain;
+    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-position:center;mask-position:center;
+  }
   .tip-row a:hover .tip-icon{box-shadow:0 0 0 4px rgba(255,255,255,0.12);}
   .tip-row a:active .tip-icon{transform:scale(0.9);filter:brightness(0.8);}
   .tip-row a span{font-size:.7rem;letter-spacing:.02em;}
@@ -267,7 +284,7 @@
     header h1{font-size:1.5rem;}
     .socials a{width:32px;height:32px;}
     section#booking,section#calendar,section#promo-videos{padding:32px 16px;}
-    .band{padding:40px 16px;}
+    .band{padding:20px 16px;}
     h2{font-size:1.5rem;}
     h2.display-heading{font-size:1.6rem;}
     .rpp-section-title,.rp-section-title{font-size:24px !important;}
@@ -331,18 +348,18 @@
 
   <div class="band band-tipjar">
     <div class="band-inner">
-      <div class="eyebrow">Tip Jar</div>
+      <h2 class="display-heading">Tip Jar</h2>
       <div class="tip-row">
         <a href="https://cash.app/$RickParma">
-          <span class="tip-icon" style="background:#00D64B;"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"><path d="M12 6v12M15 9a3 3 0 0 0-3-1.5c-1.7 0-3 1-3 2.2 0 3 6 1.5 6 4.5 0 1.3-1.3 2.3-3 2.3a3.3 3.3 0 0 1-3-1.5"/></svg></span>
+          <span class="tip-icon" style="background:#00D632;"><span class="brand-mark" style="mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cashapp.svg');-webkit-mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cashapp.svg');"></span></span>
           <span>Cash App</span>
         </a>
         <a href="https://venmo.com/u/RickParma">
-          <span class="tip-icon" style="background:#3D95CE;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5c1.5 4 3 10 4.5 14L18 5"/><path d="M14.5 5c.8 2-.3 4.5-2 6"/></svg></span>
+          <span class="tip-icon" style="background:#3D95CE;"><span class="brand-mark" style="mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/venmo.svg');-webkit-mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/venmo.svg');"></span></span>
           <span>Venmo</span>
         </a>
         <a href="https://www.paypal.com/paypalme/rickparma">
-          <span class="tip-icon" style="background:#003087;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 18l2-13h5c2.5 0 4 1.3 4 3.3 0 2.8-2.3 4.7-5.3 4.7H10"/></svg></span>
+          <span class="tip-icon" style="background:#003087;"><span class="brand-mark" style="mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/paypal.svg');-webkit-mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/paypal.svg');"></span></span>
           <span>PayPal</span>
         </a>
       </div>
