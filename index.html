@@ -135,330 +135,73 @@
   .join-box .fine-print{font-size:.75rem;color:var(--muted);}
 
   /*
-    REAL CODED BUTTON (Rick's own Bandzoogle CSS, ported verbatim) - replaces the old
-    static text-join-button.png image with an actual animated/interactive button:
-    spinning conic-gradient neon border, radial glow, lift-on-hover, push-down-on-press.
+    SIMPLE BUTTONS: Text Join / Song Request / Fan Cam. Plain solid-color pill buttons
+    with text - no glow rings, no spinning border. Just a simple "expand and contract"
+    press effect: they scale up slightly on hover and scale down on click/tap, like a
+    normal app button.
   */
-  .text-join-button {
-    position: relative;
+  .text-join-button, .song-request-button, .fan-cam-button {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: min(620px, 88vw);
-    min-height: 118px;
-    padding: 14px 80px;
-    border: 3px solid rgba(255, 255, 255, 0.9);
-    border-radius: 999px;
-    overflow: hidden;
-    isolation: isolate;
-    color: #ffffff;
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    background:
-      radial-gradient(circle at 50% 0%, rgba(55, 255, 151, 0.3), transparent 42%),
-      linear-gradient(180deg, #102438 0%, #07151d 52%, #02080c 100%);
-    box-shadow:
-      0 0 0 4px #050a0d,
-      0 0 0 7px rgba(48, 255, 139, 0.75),
-      0 0 0 10px rgba(44, 180, 255, 0.65),
-      0 0 0 13px rgba(190, 65, 255, 0.4),
-      0 16px 32px rgba(0, 0, 0, 0.7),
-      0 0 30px rgba(37, 255, 143, 0.55),
-      0 0 45px rgba(42, 172, 255, 0.45),
-      inset 0 3px 5px rgba(255, 255, 255, 0.4),
-      inset 0 -16px 26px rgba(0, 0, 0, 0.72);
+    border-radius: 999px;
+    color: #000000;
     -webkit-tap-highlight-color: transparent;
-    transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+    transition: transform 120ms ease, filter 120ms ease;
   }
-  .text-join-button::before {
-    content: "";
-    position: absolute;
-    inset: -75%;
-    z-index: -2;
-    background: conic-gradient(from 0deg, #37ff8b, #20c8ff, #7e52ff, #db43ff, #20c8ff, #37ff8b);
-    animation: text-join-spin 6s linear infinite;
+  .text-join-button:hover, .song-request-button:hover, .fan-cam-button:hover {
+    transform: scale(1.04);
+    filter: brightness(1.08);
   }
-  .text-join-button::after {
-    content: "";
-    position: absolute;
-    inset: 6px;
-    z-index: -1;
-    border-radius: inherit;
-    background:
-      radial-gradient(circle at 50% 10%, rgba(46, 218, 255, 0.2), transparent 44%),
-      linear-gradient(180deg, rgba(15, 39, 51, 0.99), rgba(2, 10, 14, 0.99));
-    box-shadow:
-      inset 0 0 22px rgba(46, 255, 143, 0.25),
-      inset 0 0 38px rgba(45, 174, 255, 0.2);
+  .text-join-button:active, .song-request-button:active, .fan-cam-button:active {
+    transform: scale(0.92);
+    filter: brightness(0.85);
   }
-  .text-join-main, .text-join-number { position: relative; z-index: 2; }
+  .text-join-button:focus-visible, .song-request-button:focus-visible, .fan-cam-button:focus-visible {
+    outline: 3px solid #ffffff; outline-offset: 4px;
+  }
+
+  .text-join-button {
+    width: min(500px, 88vw);
+    min-height: 90px;
+    padding: 16px 40px;
+    background: linear-gradient(90deg, #37ff8b, #20c8ff);
+  }
   .text-join-main {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(28px, 5vw, 46px);
+    font-size: clamp(24px, 5vw, 34px);
     font-weight: 900;
-    line-height: 1;
-    letter-spacing: 4px;
-    white-space: nowrap;
-    color: #ffffff;
-    text-shadow:
-      0 2px 0 #8ba9b8, 0 4px 0 #263f4a,
-      0 0 8px rgba(255, 255, 255, 0.95),
-      0 0 18px rgba(47, 215, 255, 0.8),
-      0 0 28px rgba(64, 255, 147, 0.55);
+    letter-spacing: 2px;
   }
   .text-join-number {
-    margin-top: 10px;
+    margin-top: 6px;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(18px, 3.5vw, 28px);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: 1px;
-    color: #79ff9e;
-    text-shadow:
-      0 0 6px rgba(70, 255, 139, 0.9),
-      0 0 14px rgba(70, 255, 139, 0.7),
-      0 0 24px rgba(35, 199, 255, 0.45);
-  }
-  .text-join-button:hover {
-    transform: translateY(-4px) scale(1.035);
-    filter: brightness(1.16) saturate(1.2);
-    box-shadow:
-      0 0 0 4px #050a0d,
-      0 0 0 7px rgba(55, 255, 139, 0.95),
-      0 0 0 10px rgba(44, 190, 255, 0.9),
-      0 0 0 13px rgba(198, 67, 255, 0.65),
-      0 22px 38px rgba(0, 0, 0, 0.75),
-      0 0 42px rgba(48, 255, 145, 0.85),
-      0 0 58px rgba(42, 180, 255, 0.72),
-      inset 0 3px 5px rgba(255, 255, 255, 0.5),
-      inset 0 -16px 26px rgba(0, 0, 0, 0.65);
-  }
-  .text-join-button:active {
-    transform: translateY(3px) scale(0.97);
-    filter: brightness(0.88);
-    box-shadow:
-      0 0 0 3px #050a0d,
-      0 0 0 6px rgba(55, 255, 139, 0.8),
-      0 0 0 8px rgba(44, 190, 255, 0.75),
-      0 6px 12px rgba(0, 0, 0, 0.8),
-      0 0 20px rgba(48, 255, 145, 0.65),
-      0 0 30px rgba(42, 180, 255, 0.58),
-      inset 0 10px 20px rgba(0, 0, 0, 0.85);
-  }
-  .text-join-button:focus-visible { outline: 4px solid #ffffff; outline-offset: 12px; }
-  @keyframes text-join-spin { to { transform: rotate(360deg); } }
-  @media (max-width: 540px) {
-    .text-join-button { width: 86vw; min-height: 96px; padding: 12px 35px; }
-    .text-join-main { font-size: clamp(25px, 7vw, 35px); letter-spacing: 3px; }
-    .text-join-number { font-size: clamp(17px, 5vw, 23px); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .text-join-button::before { animation: none; }
+    font-size: clamp(15px, 3vw, 20px);
+    font-weight: 700;
   }
 
-  /*
-    SONG REQUEST + FAN CAM buttons - same coded-button shell/mechanics as Text Join
-    (spinning neon border, glass panel, lift-on-hover, push-on-press) with their own
-    color themes since these replace song-request-button.png / fan-cam-button.png.
-  */
   .song-request-button, .fan-cam-button {
-    position: relative;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     width: min(360px, 88vw);
-    min-height: 96px;
-    padding: 14px 40px;
-    border: 3px solid rgba(255, 255, 255, 0.9);
-    border-radius: 999px;
-    overflow: hidden;
-    isolation: isolate;
-    color: #ffffff;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+    min-height: 80px;
+    padding: 14px 30px;
   }
-  .song-request-button {
-    background:
-      radial-gradient(circle at 50% 0%, rgba(62, 200, 255, 0.3), transparent 42%),
-      linear-gradient(180deg, #0f1b38 0%, #070c1d 52%, #02040c 100%);
-    box-shadow:
-      0 0 0 4px #050a0d,
-      0 0 0 7px rgba(62, 200, 255, 0.75),
-      0 0 0 10px rgba(255, 62, 200, 0.65),
-      0 0 0 13px rgba(190, 65, 255, 0.4),
-      0 16px 32px rgba(0, 0, 0, 0.7),
-      0 0 30px rgba(62, 200, 255, 0.55),
-      0 0 45px rgba(255, 62, 200, 0.45),
-      inset 0 3px 5px rgba(255, 255, 255, 0.4),
-      inset 0 -16px 26px rgba(0, 0, 0, 0.72);
-  }
-  .song-request-button::before {
-    content: "";
-    position: absolute;
-    inset: -75%;
-    z-index: -2;
-    background: conic-gradient(from 0deg, #3ec8ff, #7e52ff, #ff3ec8, #db43ff, #3ec8ff);
-    animation: text-join-spin 6s linear infinite;
-  }
-  .song-request-button::after {
-    content: "";
-    position: absolute;
-    inset: 6px;
-    z-index: -1;
-    border-radius: inherit;
-    background:
-      radial-gradient(circle at 50% 10%, rgba(62, 200, 255, 0.2), transparent 44%),
-      linear-gradient(180deg, rgba(15, 25, 51, 0.99), rgba(2, 4, 12, 0.99));
-    box-shadow:
-      inset 0 0 22px rgba(62, 200, 255, 0.25),
-      inset 0 0 38px rgba(255, 62, 200, 0.2);
-  }
-  .song-request-main {
-    position: relative; z-index: 2;
+  .song-request-button { background: linear-gradient(90deg, var(--blue), var(--pink)); }
+  .fan-cam-button { background: linear-gradient(90deg, var(--pink), var(--blue)); }
+  .song-request-main, .fan-cam-main {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(20px, 4.2vw, 30px);
+    font-size: clamp(18px, 4vw, 24px);
     font-weight: 900;
-    line-height: 1;
-    letter-spacing: 2px;
-    white-space: nowrap;
-    color: #ffffff;
-    text-shadow:
-      0 2px 0 #8ba9b8, 0 4px 0 #263f4a,
-      0 0 8px rgba(255, 255, 255, 0.95),
-      0 0 18px rgba(62, 200, 255, 0.85),
-      0 0 28px rgba(255, 62, 200, 0.55);
-  }
-  .song-request-button:hover {
-    transform: translateY(-4px) scale(1.035);
-    filter: brightness(1.16) saturate(1.2);
-    box-shadow:
-      0 0 0 4px #050a0d,
-      0 0 0 7px rgba(62, 200, 255, 0.95),
-      0 0 0 10px rgba(255, 62, 200, 0.9),
-      0 0 0 13px rgba(198, 67, 255, 0.65),
-      0 22px 38px rgba(0, 0, 0, 0.75),
-      0 0 42px rgba(62, 200, 255, 0.85),
-      0 0 58px rgba(255, 62, 200, 0.72),
-      inset 0 3px 5px rgba(255, 255, 255, 0.5),
-      inset 0 -16px 26px rgba(0, 0, 0, 0.65);
-  }
-  .song-request-button:active {
-    transform: translateY(3px) scale(0.97);
-    filter: brightness(0.88);
-    box-shadow:
-      0 0 0 3px #050a0d,
-      0 0 0 6px rgba(62, 200, 255, 0.8),
-      0 0 0 8px rgba(255, 62, 200, 0.75),
-      0 6px 12px rgba(0, 0, 0, 0.8),
-      0 0 20px rgba(62, 200, 255, 0.65),
-      0 0 30px rgba(255, 62, 200, 0.58),
-      inset 0 10px 20px rgba(0, 0, 0, 0.85);
-  }
-
-  .fan-cam-button {
-    background:
-      radial-gradient(circle at 50% 0%, rgba(255, 62, 200, 0.3), transparent 42%),
-      linear-gradient(180deg, #381030 0%, #150710 52%, #04020a 100%);
-    box-shadow:
-      0 0 0 4px #050a0d,
-      0 0 0 7px rgba(255, 62, 200, 0.75),
-      0 0 0 10px rgba(62, 200, 255, 0.65),
-      0 0 0 13px rgba(190, 65, 255, 0.4),
-      0 16px 32px rgba(0, 0, 0, 0.7),
-      0 0 30px rgba(255, 62, 200, 0.55),
-      0 0 45px rgba(62, 200, 255, 0.45),
-      inset 0 3px 5px rgba(255, 255, 255, 0.4),
-      inset 0 -16px 26px rgba(0, 0, 0, 0.72);
-  }
-  .fan-cam-button::before {
-    content: "";
-    position: absolute;
-    inset: -75%;
-    z-index: -2;
-    background: conic-gradient(from 0deg, #ff3ec8, #db43ff, #3ec8ff, #7e52ff, #ff3ec8);
-    animation: text-join-spin 6s linear infinite;
-  }
-  .fan-cam-button::after {
-    content: "";
-    position: absolute;
-    inset: 6px;
-    z-index: -1;
-    border-radius: inherit;
-    background:
-      radial-gradient(circle at 50% 10%, rgba(255, 62, 200, 0.2), transparent 44%),
-      linear-gradient(180deg, rgba(51, 15, 41, 0.99), rgba(10, 2, 8, 0.99));
-    box-shadow:
-      inset 0 0 22px rgba(255, 62, 200, 0.25),
-      inset 0 0 38px rgba(62, 200, 255, 0.2);
-  }
-  .fan-cam-main, .fan-cam-sub { position: relative; z-index: 2; }
-  .fan-cam-main {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(20px, 4.2vw, 30px);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: 2px;
-    white-space: nowrap;
-    color: #ffffff;
-    text-shadow:
-      0 2px 0 #8ba9b8, 0 4px 0 #263f4a,
-      0 0 8px rgba(255, 255, 255, 0.95),
-      0 0 18px rgba(255, 62, 200, 0.85),
-      0 0 28px rgba(62, 200, 255, 0.55);
+    letter-spacing: 1px;
   }
   .fan-cam-sub {
-    margin-top: 8px;
+    margin-top: 4px;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(13px, 2.6vw, 16px);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: 1px;
-    color: #79d4ff;
-    text-shadow:
-      0 0 6px rgba(62, 200, 255, 0.9),
-      0 0 14px rgba(62, 200, 255, 0.7),
-      0 0 24px rgba(255, 62, 200, 0.45);
-  }
-  .fan-cam-button:hover {
-    transform: translateY(-4px) scale(1.035);
-    filter: brightness(1.16) saturate(1.2);
-    box-shadow:
-      0 0 0 4px #050a0d,
-      0 0 0 7px rgba(255, 62, 200, 0.95),
-      0 0 0 10px rgba(62, 200, 255, 0.9),
-      0 0 0 13px rgba(198, 67, 255, 0.65),
-      0 22px 38px rgba(0, 0, 0, 0.75),
-      0 0 42px rgba(255, 62, 200, 0.85),
-      0 0 58px rgba(62, 200, 255, 0.72),
-      inset 0 3px 5px rgba(255, 255, 255, 0.5),
-      inset 0 -16px 26px rgba(0, 0, 0, 0.65);
-  }
-  .fan-cam-button:active {
-    transform: translateY(3px) scale(0.97);
-    filter: brightness(0.88);
-    box-shadow:
-      0 0 0 3px #050a0d,
-      0 0 0 6px rgba(255, 62, 200, 0.8),
-      0 0 0 8px rgba(62, 200, 255, 0.75),
-      0 6px 12px rgba(0, 0, 0, 0.8),
-      0 0 20px rgba(255, 62, 200, 0.65),
-      0 0 30px rgba(62, 200, 255, 0.58),
-      inset 0 10px 20px rgba(0, 0, 0, 0.85);
-  }
-  .song-request-button:focus-visible, .fan-cam-button:focus-visible {
-    outline: 4px solid #ffffff; outline-offset: 12px;
-  }
-  @media (max-width: 540px) {
-    .song-request-button, .fan-cam-button { width: 82vw; min-height: 84px; padding: 12px 24px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .song-request-button::before, .fan-cam-button::before { animation: none; }
+    font-size: clamp(11px, 2.2vw, 14px);
+    font-weight: 700;
   }
 
   table.tracklist{width:100%;border-collapse:collapse;text-align:left;margin-top:16px;cursor:pointer;}
