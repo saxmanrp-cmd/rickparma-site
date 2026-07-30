@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rick Parma - Diamond Method - You Did It!</title>
+<meta name="color-scheme" content="dark">
+<link rel="stylesheet" href="diamond-course.css">
+</head>
+<body>
+
+<header>
+<h1><a href="/">RICK PARMA</a></h1>
+<div class="socials">
+<a href="https://instagram.com/rickparmaofficial" title="Instagram">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+</a>
+<a href="https://www.facebook.com/rickparmaofficial" title="Facebook">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8h-2a2 2 0 0 0-2 2v10M9 13h5"/><circle cx="12" cy="12" r="9"/></svg>
+</a>
+<a href="rick-parma-full-contact-card.vcf" title="Save Contact">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><path d="M5 16c.5-1.8 2-2.5 3.5-2.5s3 .7 3.5 2.5M14 10h5M14 14h3.5"/></svg>
+</a>
+</div>
+</header>
+
+<div class="dm-wrap">
+  <div class="dm-top-links">
+    <a href="diamond-course.html">Course Home</a>
+    <a href="diamond-account.html">My Account</a>
+    <a href="#" id="logout-link">Log out</a>
+  </div>
+
+  <div class="dm-panel dm-center" id="loading">
+    <p class="dm-muted">Loading...</p>
+  </div>
+
+  <div class="dm-panel" id="lesson-content" style="display:none;">
+    <h2 style="margin-top:0;">13. You Did It!</h2>
+    <div class="dm-video" id="video-mount"></div>
+
+    <p style="margin-top:24px;">I am so happy for your singing future. I know if you use these techniques, you will sing with so much health, confidence, range, power, and style than you ever thought possible.</p>
+    <p>But our interaction doesn't have to stop here. If you ever have any questions, please feel free to email me at <a href="mailto:DiamondSingingMethod@gmail.com" style="color:var(--blue);">DiamondSingingMethod@gmail.com</a> or text me at 877-200-2651.</p>
+
+    <h3 style="margin-top:28px;">Quick Reference &mdash; Rewatch Any Lesson</h3>
+    <ul class="dm-toc" id="recap-list"></ul>
+
+    <div class="dm-lesson-nav">
+      <a class="dm-btn-secondary" href="diamond-lesson-12.html">&larr; Previous Video</a>
+    </div>
+  </div>
+</div>
+
+<script src="diamond-course.js"></script>
+<script>
+var LESSON_CONFIG = {
+  index: 13,
+  videoId: '5V5CbEnJctY'
+};
+
+(async function () {
+  var auth = await dmGuardLesson(LESSON_CONFIG.index);
+  if (!auth) return;
+
+  document.getElementById('video-mount').innerHTML =
+    '<iframe src="https://www.youtube.com/embed/' + LESSON_CONFIG.videoId + '" allowfullscreen></iframe>';
+
+  var list = document.getElementById('recap-list');
+  DM_LESSONS.forEach(function (lesson) {
+    if (lesson.index === LESSON_CONFIG.index) return;
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = lesson.slug;
+    a.innerHTML = '<span class="num">' + lesson.index + '.</span> ' + lesson.title;
+    li.appendChild(a);
+    list.appendChild(li);
+  });
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('lesson-content').style.display = 'block';
+
+  document.getElementById('logout-link').addEventListener('click', function (e) {
+    e.preventDefault();
+    dmClearSession();
+    location.href = 'diamond-login.html';
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+/* Diamond Method course - shared styling. Matches the site-wide dark theme
+   used across rickparma-site (see index.html / diamonds-only.html). */
+:root{
+  --bg:#0a0a0a;
+  --panel:#141414;
+  --text:#f5f5f5;
+  --muted:#a0a0a0;
+  --pink:#ff3ec8;
+  --blue:#3ec8ff;
+  --border:#2a2a2a;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Helvetica Neue',Arial,sans-serif;margin:0;min-height:100vh;}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:24px 32px;background:#000;border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:16px;
+}
+header h1{margin:0;font-size:2.2rem;letter-spacing:1px;}
+header h1 a{color:var(--text);text-decoration:none;}
+.socials{display:flex;gap:14px;align-items:center;}
+.socials a{color:var(--muted);text-decoration:none;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,0.06);transition:background .15s,color .15s;}
+.socials a:hover{color:var(--blue);background:rgba(255,255,255,0.12);}
+.socials svg{width:18px;height:18px;}
+
+.dm-wrap{max-width:720px;margin:0 auto;padding:48px 24px;}
+.dm-panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:32px;}
+.dm-center{text-align:center;}
+.dm-muted{color:var(--muted);}
+
+.dm-btn{
+  display:inline-block;padding:14px 32px;border:none;border-radius:30px;
+  background:linear-gradient(90deg,var(--blue),var(--pink));color:#000;font-weight:bold;
+  cursor:pointer;text-decoration:none;font-size:1rem;text-align:center;
+}
+.dm-btn:disabled{opacity:.5;cursor:default;}
+.dm-btn-secondary{
+  display:inline-block;padding:14px 32px;border:1px solid var(--border);border-radius:30px;
+  background:transparent;color:var(--text);font-weight:bold;cursor:pointer;text-decoration:none;
+  font-size:1rem;text-align:center;
+}
+.dm-btn-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+
+.dm-field{margin-top:16px;text-align:left;}
+.dm-field label{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;}
+.dm-field input{width:100%;padding:12px;background:#000;border:1px solid var(--border);color:#fff;border-radius:6px;font-size:1rem;}
+
+.dm-error{color:var(--pink);font-size:.85rem;margin-top:12px;min-height:1.2em;}
+.dm-status{color:var(--muted);font-size:.85rem;margin-top:12px;min-height:1.2em;}
+
+.dm-video{position:relative;width:100%;padding-bottom:56.25%;height:0;border-radius:10px;overflow:hidden;background:#000;}
+.dm-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+
+.dm-lesson-nav{display:flex;justify-content:space-between;gap:16px;margin-top:28px;flex-wrap:wrap;}
+.dm-lesson-nav .dm-btn, .dm-lesson-nav .dm-btn-secondary{flex:1;min-width:160px;}
+
+.dm-toc{list-style:none;padding:0;margin:24px 0 0;text-align:left;}
+.dm-toc li{margin-bottom:10px;}
+.dm-toc a{display:flex;align-items:center;gap:10px;padding:14px 18px;background:#000;border:1px solid var(--border);border-radius:10px;color:var(--text);text-decoration:none;transition:border-color .15s;}
+.dm-toc a:hover{border-color:var(--blue);}
+.dm-toc .locked{display:flex;align-items:center;gap:10px;padding:14px 18px;background:#000;border:1px solid var(--border);border-radius:10px;color:var(--muted);opacity:.5;}
+.dm-toc .num{font-weight:bold;color:var(--blue);}
+
+.dm-top-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;font-size:.85rem;}
+.dm-top-links a{color:var(--muted);text-decoration:underline;}
+
+#card-container{margin-top:16px;}
+
+@media (max-width:600px){
+  header{padding:16px 18px;gap:12px;}
+  header h1{font-size:1.5rem;}
+  .socials a{width:32px;height:32px;}
+  .dm-wrap{padding:24px 16px;}
+  .dm-panel{padding:22px;}
+}
+@media (max-width:380px){
+  header h1{font-size:1.25rem;}
+}
