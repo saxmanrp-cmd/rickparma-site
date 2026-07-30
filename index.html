@@ -197,26 +197,21 @@
   /*
     ORIGINAL BUTTON IMAGES: Text Join / Song Request / Fan Cam use the real designed
     PNGs (text-join-button.png, song-request-button.png, fan-cam-button.png) that live
-    in the repo root. Simple "expand and contract" press effect on top - scales up
-    slightly on hover, scales down on click/tap, springs back on release.
+    in the repo root. Matches the same simple hover/active press effect used on the
+    main Bandzoogle site: scale + brighten on hover, scale down + darken on press,
+    both eased over 0.18s - no extra pop/bounce, click navigates immediately.
   */
   .img-btn{
     display:inline-block;
     line-height:0;
     -webkit-tap-highlight-color:transparent;
     cursor:pointer;
-    transition:transform 120ms ease, filter 120ms ease;
+    transition:transform 0.18s ease, filter 0.18s ease;
   }
-  .img-btn:hover{transform:scale(1.05);}
-  .img-btn:active{transform:scale(0.92);filter:brightness(0.85);}
+  .img-btn:hover{transform:scale(1.06);filter:brightness(1.15);}
+  .img-btn:active{transform:scale(0.96);filter:brightness(0.85);}
   .img-btn:focus-visible{outline:3px solid #ffffff;outline-offset:6px;border-radius:999px;}
   .img-btn img{display:block;width:100%;height:auto;}
-  .img-btn.press-pop{animation:img-btn-press-pop 340ms ease forwards;}
-  @keyframes img-btn-press-pop{
-    0%{transform:scale(1);}
-    40%{transform:scale(0.86);}
-    100%{transform:scale(1.14);}
-  }
 
   /*
     text-join-button.png has a lot of built-in transparent padding around the actual
@@ -1636,39 +1631,6 @@
 <footer>
   &copy; 2026 Richard David Parma &middot; <a href="privacy-and-terms.html">Privacy Policy and Terms and Conditions</a>
 </footer>
-
-<script>
-(function(){
-  // Song Request / Fan Cam / Text Join: press down, pop back up bigger, THEN navigate -
-  // makes tapping feel like a physical button instead of an instant link jump.
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('.img-btn');
-    if (!btn) return;
-    if (btn.dataset.popAnimating) { e.preventDefault(); return; }
-    e.preventDefault();
-    var href = btn.getAttribute('href');
-    var target = btn.getAttribute('target');
-    btn.dataset.popAnimating = '1';
-    btn.classList.add('press-pop');
-    setTimeout(function(){
-      // Drop the transition just long enough to clear the animation class
-      // without gliding back down to normal size — the button should end
-      // big (down, then up) and navigate, not bounce down a second time.
-      btn.style.transition = 'none';
-      btn.classList.remove('press-pop');
-      btn.offsetHeight; // force reflow so the transition:none actually applies
-      btn.style.transition = '';
-      delete btn.dataset.popAnimating;
-      if (!href) return;
-      if (target === '_blank') {
-        window.open(href, '_blank', 'noopener');
-      } else {
-        window.location.href = href;
-      }
-    }, 340);
-  });
-})();
-</script>
 
 </body>
 </html>
