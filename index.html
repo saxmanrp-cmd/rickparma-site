@@ -34,13 +34,14 @@
   }
   header{
     display:flex;
-    justify-content:space-between;
+    flex-direction:column;
     align-items:center;
-    padding:24px 32px;
+    justify-content:center;
+    text-align:center;
+    padding:44px 24px 34px;
     background:#000;
     border-bottom:1px solid var(--border);
-    flex-wrap:wrap;
-    gap:16px;
+    gap:18px;
   }
   header h1{
     margin:0;
@@ -53,17 +54,19 @@
   nav{display:flex;gap:20px;flex-wrap:wrap;}
   nav a{color:var(--muted);text-decoration:none;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;}
   nav a:hover{color:var(--pink);}
-  .socials{display:flex;gap:14px;align-items:center;}
-  .socials a{-webkit-tap-highlight-color:transparent;color:var(--muted);text-decoration:none;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,0.06);transition:background .15s,color .15s,transform .1s;}
+  .socials{display:flex;gap:18px;align-items:center;justify-content:center;}
+  .socials a{-webkit-tap-highlight-color:transparent;color:var(--muted);text-decoration:none;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,0.06);transition:background .15s,color .15s,transform .1s;}
   .socials a:hover{color:var(--blue);background:rgba(255,255,255,0.12);}
   .socials a:active{transform:scale(0.88);background:rgba(255,255,255,0.2);}
-  .socials svg{width:18px;height:18px;}
+  .socials svg{width:24px;height:24px;}
 
   section{padding:0;max-width:none;margin:0;text-align:center;}
   section#booking,section#calendar,section#promo-videos{padding:48px 24px;max-width:900px;margin:0 auto;}
   h2{font-size:1.8rem;margin-top:0;margin-bottom:24px;}
   h2.display-heading{font-family:var(--font-display);font-weight:900;font-size:2.1rem;}
   .eyebrow{color:var(--muted);letter-spacing:3px;text-transform:uppercase;font-size:.85rem;margin-bottom:8px;}
+  .hero-title{font-weight:900;font-size:2.6rem;letter-spacing:.5px;text-transform:uppercase;margin-bottom:24px;}
+  .hero-title .accent{color:var(--blue);}
 
   /*
     BACKGROUND BANDS: each full-bleed section below is a "band" with its own background
@@ -107,7 +110,7 @@
     z-index:1;
   }
   .band-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;}
-  .band-hero{--bg-image:url('images/hero-bg.jpg');--overlay:0.5;}
+  .band-hero{--bg-image:url('images/hero-bg.jpg');--overlay:0.5;padding:56px 24px 44px;}
   .band-tipjar{--bg-image:url('images/tipjar-bg.jpg');--overlay:0.5;}
   .band-tight{padding-top:14px;padding-bottom:14px;}
   .band-textjoin{--bg-image:url('images/textjoin-bg.jpg');--overlay:0.5;}
@@ -115,7 +118,7 @@
   .band-diamond{--bg-image:url('images/diamond-bg.jpg');--overlay:0.5;}
   .band-calendar{--bg-image:url('images/calendar-bg.jpg');--overlay:0.5;}
 
-  .button-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:24px 0;}
+  .button-row{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin:8px 0 0;}
   .glow-btn{
     display:inline-block;
     padding:16px 32px;
@@ -321,11 +324,14 @@
 
   /* Mobile adaptation (phones - iOS, Android, everything else under ~600px) */
   @media (max-width:600px){
-    header{padding:16px 18px;gap:12px;}
-    header h1{font-size:1.5rem;}
-    .socials a{width:32px;height:32px;}
+    header{padding:32px 20px 26px;gap:16px;}
+    header h1{font-size:2.2rem;}
+    .socials a{width:40px;height:40px;}
+    .socials svg{width:22px;height:22px;}
     section#booking,section#calendar,section#promo-videos{padding:32px 16px;}
     .band{padding:20px 16px;}
+    .band-hero{padding:38px 20px 30px;}
+    .hero-title{font-size:2rem;margin-bottom:18px;}
     h2{font-size:1.5rem;}
     h2.display-heading{font-size:1.6rem;}
     .rpp-section-title,.rp-section-title{font-size:24px !important;}
@@ -347,7 +353,8 @@
     #rp-playpause{width:42px;height:42px;}
   }
   @media (max-width:380px){
-    header h1{font-size:1.25rem;}
+    header h1{font-size:1.9rem;}
+    .hero-title{font-size:1.7rem;}
     .glow-btn{padding:14px 24px;font-size:.9rem;}
     h2{font-size:1.3rem;}
   }
@@ -379,7 +386,7 @@
 <section id="top">
   <div class="band band-hero">
     <div class="band-inner">
-      <div class="eyebrow">Join the Fun</div>
+      <div class="hero-title">Join the <span class="accent">Fun</span></div>
       <div class="button-row">
         <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
         <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html" class="img-btn song-request-button">
