@@ -754,7 +754,13 @@
       });
       return 'https://calendar.google.com/calendar/render?' + params.toString();
     }
-    function buildIcsDataUrl(e) {
+    // Chrome (and most modern browsers) block top-level navigation to a
+    // data: URL, which is why the Apple Calendar link silently did nothing.
+    // A Blob object URL isn't subject to that block, works as a real download
+    // on desktop, and iOS Safari (which ignores the download attribute)
+    // navigates to it and recognizes the text/calendar type, offering its
+    // native "Add to Calendar" prompt instead.
+    function buildIcsBlobUrl(e) {
       var endDt = e.end || e.start;
       var lines = [
         'BEGIN:VCALENDAR',
@@ -775,7 +781,8 @@
         'END:VEVENT',
         'END:VCALENDAR'
       ].filter(Boolean);
-      return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(lines.join('\r\n'));
+      var blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      return URL.createObjectURL(blob);
     }
 
     // Small floating menu used by the Directions / + Calendar buttons so the
@@ -799,10 +806,11 @@
         var a = document.createElement('a');
         a.href = opt.href;
         a.textContent = opt.label;
-        if (opt.href.indexOf('data:') !== 0) {
+        if (opt.href.indexOf('http') === 0) {
           a.target = '_blank';
           a.rel = 'noopener';
-        } else if (opt.download) {
+        }
+        if (opt.download) {
           a.setAttribute('download', opt.download);
         }
         a.addEventListener('click', function() { closeCalChoiceMenu(); });
@@ -836,7 +844,7 @@
       } else if (btn.dataset.calAction === 'calendar') {
         showCalChoiceMenu(btn, [
           { label: 'Google Calendar', href: buildGoogleCalUrl(e) },
-          { label: 'Apple Calendar', href: buildIcsDataUrl(e), download: (e.title || 'event').replace(/[^a-z0-9]+/gi, '-') + '.ics' }
+          { label: 'Apple Calendar', href: buildIcsBlobUrl(e), download: (e.title || 'event').replace(/[^a-z0-9]+/gi, '-') + '.ics' }
         ]);
       }
     });
