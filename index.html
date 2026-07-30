@@ -809,8 +809,13 @@
         menu.appendChild(a);
       });
       document.body.appendChild(menu);
-      var top = rect.bottom + window.scrollY + 6;
-      var left = Math.max(8, Math.min(rect.left + window.scrollX, window.innerWidth - menu.offsetWidth - 8));
+      // menu is position:fixed, so it needs viewport-relative coordinates
+      // (no scrollX/scrollY offset) or it drifts off-screen on a scrolled page.
+      var top = rect.bottom + 6;
+      var left = Math.max(8, Math.min(rect.left, window.innerWidth - menu.offsetWidth - 8));
+      if (top + menu.offsetHeight > window.innerHeight - 8) {
+        top = rect.top - menu.offsetHeight - 6;
+      }
       menu.style.top = top + 'px';
       menu.style.left = left + 'px';
       window.__calChoiceMenu = menu;
