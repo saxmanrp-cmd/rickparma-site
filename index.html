@@ -211,12 +211,11 @@
   .img-btn:active{transform:scale(0.92);filter:brightness(0.85);}
   .img-btn:focus-visible{outline:3px solid #ffffff;outline-offset:6px;border-radius:999px;}
   .img-btn img{display:block;width:100%;height:auto;}
-  .img-btn.press-pop{animation:img-btn-press-pop 340ms ease;}
+  .img-btn.press-pop{animation:img-btn-press-pop 340ms ease forwards;}
   @keyframes img-btn-press-pop{
     0%{transform:scale(1);}
-    35%{transform:scale(0.86);}
-    65%{transform:scale(1.14);}
-    100%{transform:scale(1);}
+    40%{transform:scale(0.86);}
+    100%{transform:scale(1.14);}
   }
 
   /*
@@ -1652,7 +1651,13 @@
     btn.dataset.popAnimating = '1';
     btn.classList.add('press-pop');
     setTimeout(function(){
+      // Drop the transition just long enough to clear the animation class
+      // without gliding back down to normal size — the button should end
+      // big (down, then up) and navigate, not bounce down a second time.
+      btn.style.transition = 'none';
       btn.classList.remove('press-pop');
+      btn.offsetHeight; // force reflow so the transition:none actually applies
+      btn.style.transition = '';
       delete btn.dataset.popAnimating;
       if (!href) return;
       if (target === '_blank') {
