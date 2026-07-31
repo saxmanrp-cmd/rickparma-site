@@ -861,6 +861,20 @@
           { label: 'Google Calendar', href: buildGoogleCalUrl(e) },
           { label: 'Apple Calendar', href: buildIcsBlobUrl(e), download: (e.title || 'event').replace(/[^a-z0-9]+/gi, '-') + '.ics' }
         ]);
+      } else if (btn.dataset.calAction === 'share') {
+        var shareUrl = location.origin + location.pathname + '#calendar';
+        var shareText = e.title + (e.location ? ' @ ' + e.location : '') + ' — ' + e.start.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+        if (navigator.share) {
+          navigator.share({ title: e.title, text: shareText, url: shareUrl }).catch(function () {});
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(shareText + ' — ' + shareUrl).then(function () {
+            var orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(function () { btn.textContent = orig; }, 1500);
+          });
+        } else {
+          window.prompt('Copy this link:', shareUrl);
+        }
       }
     });
 
@@ -940,6 +954,7 @@
           '<p class="venue">' + escapeHtml(e.title) + '</p><p class="meta">' + escapeHtml(metaParts.join(' · ')) + '</p>' +
           '<div class="show-actions"><a href="#" class="cal-action-btn" data-cal-action="calendar" data-idx="' + i + '">+ Calendar</a>' +
           (e.location ? '<a href="#" class="alt cal-action-btn" data-cal-action="directions" data-idx="' + i + '">Directions</a>' : '') +
+          '<a href="#" class="alt cal-action-btn" data-cal-action="share" data-idx="' + i + '">Share</a>' +
           '</div></div>';
       }).join('');
     }
