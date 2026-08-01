@@ -208,11 +208,10 @@
     line-height:0;
     -webkit-tap-highlight-color:transparent;
     cursor:pointer;
-    filter:drop-shadow(0 0 14px rgba(255,62,200,.45)) drop-shadow(0 0 26px rgba(62,200,255,.3));
     transition:transform 0.18s ease, filter 0.18s ease;
   }
-  .img-btn:hover{transform:scale(1.06);filter:brightness(1.15) drop-shadow(0 0 18px rgba(255,62,200,.6)) drop-shadow(0 0 34px rgba(62,200,255,.42));}
-  .img-btn:active{transform:scale(0.96);filter:brightness(0.85) drop-shadow(0 0 10px rgba(255,62,200,.35));}
+  .img-btn:hover{transform:scale(1.06);filter:brightness(1.15);}
+  .img-btn:active{transform:scale(0.96);filter:brightness(0.85);}
   .img-btn:focus-visible{outline:3px solid #ffffff;outline-offset:6px;border-radius:999px;}
   .img-btn img{display:block;width:100%;height:auto;}
 
@@ -408,7 +407,7 @@
     }
   }
 .rp-card-panel{
-    background:var(--panel);
+    background:rgba(20,20,20,.5);
     border:1px solid var(--border);
     border-radius:16px;
     padding:24px 20px 28px;
@@ -536,7 +535,7 @@
 
   <div class="band band-textjoin band-tight reveal-fade">
     <div class="band-inner">
-      <div class="join-box">
+      <div class="join-box rp-card-panel">
         <a href="sms:+18559242976?body=JOIN" class="img-btn text-join-button reveal-item" style="--rd:.1s">
           <img src="text-join-button.png" alt="Text JOIN to (855) 924-2976">
         </a>
