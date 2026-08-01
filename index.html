@@ -926,8 +926,42 @@
         ]);
       } else if (btn.dataset.calAction === 'share') {
         var shareUrl = location.origin + location.pathname + '#calendar';
+        var addr = (function(loc){
+          if (!loc) return null;
+          var parts = loc.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+          var venue = '', street = '', cityStateZip = '';
+          if (parts.length >= 5) {
+            venue = parts[0]; street = parts[1]; cityStateZip = parts[2] + ', ' + parts[3];
+          } else if (parts.length === 4) {
+            var last = parts[3].toUpperCase();
+            if (last === 'USA' || last.indexOf('UNITED STATES') !== -1) {
+              street = parts[0]; cityStateZip = parts[1] + ', ' + parts[2];
+            } else {
+              venue = parts[0]; street = parts[1]; cityStateZip = parts[2] + ', ' + parts[3];
+            }
+          } else if (parts.length === 3) {
+            venue = parts[0]; cityStateZip = parts[1] + ', ' + parts[2];
+          } else if (parts.length === 2) {
+            cityStateZip = parts[0] + ', ' + parts[1];
+          } else {
+            venue = parts[0];
+          }
+          return { venue: venue, street: street, cityStateZip: cityStateZip };
+        })(e.location);
         var shareTimeStr = e.allDay ? '' : e.start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-        var shareText = (e.location || e.title) + ' — ' + e.start.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) + (shareTimeStr ? ' · ' + shareTimeStr : '');
+        var shareLines = [e.title || ''];
+        shareLines.push('');
+        if (addr) {
+          if (addr.venue) shareLines.push(addr.venue);
+          if (addr.street) shareLines.push(addr.street);
+          if (addr.cityStateZip) shareLines.push(addr.cityStateZip);
+        } else if (e.location) {
+          shareLines.push(e.location);
+        }
+        shareLines.push(e.start.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }));
+        if (shareTimeStr) shareLines.push(shareTimeStr);
+        if (e.description) shareLines.push(e.description);
+        var shareText = shareLines.join('\n');
         if (navigator.share) {
           navigator.share({ title: e.title, text: shareText, url: shareUrl }).catch(function () {});
         } else if (navigator.clipboard && navigator.clipboard.writeText) {
