@@ -948,7 +948,7 @@
           }
           return { venue: venue, street: street, cityStateZip: cityStateZip };
         })(e.location);
-        var shareTimeStr = e.allDay ? '' : e.start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        var shareTimeStr = e.allDay ? '' : e.start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + (e.end && e.end.getTime() !== e.start.getTime() ? ' – ' + e.end.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '');
         var shareLines = [];
         if (addr) {
           if (addr.venue) shareLines.push(addr.venue);
@@ -1034,7 +1034,7 @@
       trackEl.innerHTML = events.map(function(e, i) {
         var d = e.start;
         var dow = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()];
-        var timeStr = e.allDay ? '' : d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+        var timeStr = e.allDay ? '' : d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) + (e.end && e.end.getTime() !== d.getTime() ? ' – ' + e.end.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) : '');
         var metaParts = [dow];
         if (timeStr) metaParts.push(timeStr);
         if (e.location) metaParts.push(e.location);
@@ -1201,7 +1201,7 @@
       var d = e.start;
       var dow = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()];
       var dateStr = MONTH_NAMES[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
-      var timeStr = e.allDay ? '' : d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+      var timeStr = e.allDay ? '' : d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) + (e.end && e.end.getTime() !== d.getTime() ? ' – ' + e.end.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) : '');
       var flyer = currentFlyerMap[fmtDateKey(d)];
       var flyerIsVideo = flyer && isVideoSrc(flyer);
       body.innerHTML =
