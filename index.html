@@ -1325,16 +1325,9 @@
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
     line-height:1.3;
   }
-  .rp-carousel-nav{display:flex;justify-content:center;gap:10px;margin:4px 0 0;}
-  .rp-carousel-nav button{
-    background:rgba(255,255,255,.08);border:none;color:var(--text);
-    width:34px;height:34px;border-radius:50%;font-size:1.1rem;cursor:pointer;
-    transition:background .2s ease, color .2s ease;
-  }
-  .rp-carousel-nav button:hover{background:linear-gradient(160deg,var(--blue),var(--pink));color:#000;}
   @media (prefers-reduced-motion: reduce){
     .rp-live-dot{animation:none;}
-    .rp-thumb,.rp-play-btn,.rp-carousel-nav button{transition:none;}
+    .rp-thumb,.rp-play-btn{transition:none;}
   }
   </style>
 
@@ -1347,10 +1340,6 @@
     <p class="rp-carousel-label">Swipe to browse &mdash; tap to play</p>
     <div class="rp-carousel-outer">
       <div class="rp-carousel" id="rp-grid"></div>
-    </div>
-    <div class="rp-carousel-nav">
-      <button id="rp-prev" aria-label="Scroll to previous videos">&lsaquo;</button>
-      <button id="rp-next" aria-label="Scroll to next videos">&rsaquo;</button>
     </div>
   </div>
   <script>
@@ -1390,13 +1379,6 @@
       card.addEventListener("keydown", function(e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchVideo(i); } });
       grid.appendChild(card);
     });
-    function scrollByTile(dir) {
-      var tile = grid.querySelector('.rp-thumb');
-      var step = tile ? (tile.getBoundingClientRect().width + 14) * 2 : 300;
-      grid.scrollBy({ left: dir * step, behavior: 'smooth' });
-    }
-    document.getElementById('rp-prev').addEventListener('click', function() { scrollByTile(-1); });
-    document.getElementById('rp-next').addEventListener('click', function() { scrollByTile(1); });
   })();
   </script>
 </section>
