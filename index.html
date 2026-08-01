@@ -406,6 +406,28 @@
       animation:none;
     }
   }
+.rp-card-panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:24px 20px 28px;
+    max-width:640px;
+    margin:0 auto;
+    position:relative;
+    overflow:hidden;
+  }
+  .rp-card-panel::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    background:radial-gradient(circle at 15% 0%, rgba(255,62,200,.14), transparent 55%), radial-gradient(circle at 90% 100%, rgba(62,200,255,.14), transparent 55%);
+    pointer-events:none;
+  }
+  .band-tipjar::before{
+    background-size:150%;
+    filter:blur(7px);
+  }
 </style>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
@@ -447,6 +469,7 @@
 <section id="top">
   <div class="band band-hero">
     <div class="band-inner">
+      <div class="rp-card-panel">
       <div class="hero-title">Join the <span class="accent">Fun</span></div>
       <div class="button-row">
         <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
@@ -456,12 +479,13 @@
         <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html" class="img-btn fan-cam-button reveal-item" style="--rd:.12s">
           <img src="fan-cam-button.png" alt="Fan Cam - Click Here">
         </a>
-      </div>
+      </div></div>
     </div>
   </div>
 
   <div class="band band-tipjar band-tight reveal-fade">
     <div class="band-inner">
+      <div class="rp-card-panel">
       <div class="tip-amounts" id="tipAmounts">
         <button type="button" class="tip-amt reveal-item" style="--rd:0s" data-amt="5">$5</button>
         <button type="button" class="tip-amt reveal-item" style="--rd:.06s" data-amt="10">$10</button>
@@ -481,7 +505,7 @@
           <span class="tip-icon-wrap"><span class="tip-icon" style="background:#003087;"><span class="brand-mark" style="mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/paypal.svg');-webkit-mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/paypal.svg');"></span></span></span>
           <span>PayPal</span>
         </a>
-      </div>
+      </div></div>
     </div>
   </div>
   <script>
