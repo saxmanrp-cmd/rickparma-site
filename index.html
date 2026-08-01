@@ -381,6 +381,31 @@
       transition:none;
     }
   }
+
+  @keyframes rp-swoosh-in{
+    0%{opacity:0;transform:translateY(34px) scale(.92) rotate(-4deg);}
+    60%{opacity:1;transform:translateY(-4px) scale(1.015) rotate(1deg);}
+    100%{opacity:1;transform:translateY(0) scale(1) rotate(0deg);}
+  }
+  @keyframes rp-title-in{
+    0%{opacity:0;transform:translateX(-32px);}
+    100%{opacity:1;transform:translateX(0);}
+  }
+  .reveal-item{opacity:0;}
+  .reveal-item.is-visible{
+    animation:rp-swoosh-in .85s cubic-bezier(.16,.8,.24,1) both;
+    animation-delay:var(--rd,0s);
+  }
+  .reveal-title{opacity:0;}
+  .reveal-title.is-visible{
+    animation:rp-title-in .75s cubic-bezier(.16,.8,.24,1) both;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal-item, .reveal-title{
+      opacity:1;
+      animation:none;
+    }
+  }
 </style>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
@@ -425,10 +450,10 @@
       <div class="hero-title">Join the <span class="accent">Fun</span></div>
       <div class="button-row">
         <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
-        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html" class="img-btn song-request-button">
+        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/song-request.html" class="img-btn song-request-button reveal-item">
           <img src="song-request-button.png" alt="Song Request">
         </a>
-        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html" class="img-btn fan-cam-button">
+        <a href="https://saxmanrp-cmd.github.io/rickparma-tools/fan-cam.html" class="img-btn fan-cam-button reveal-item" style="--rd:.12s">
           <img src="fan-cam-button.png" alt="Fan Cam - Click Here">
         </a>
       </div>
@@ -438,10 +463,10 @@
   <div class="band band-tipjar band-tight reveal-fade">
     <div class="band-inner">
       <div class="tip-amounts" id="tipAmounts">
-        <button type="button" class="tip-amt" data-amt="5">$5</button>
-        <button type="button" class="tip-amt" data-amt="10">$10</button>
-        <button type="button" class="tip-amt active" data-amt="20">$20</button>
-        <button type="button" class="tip-amt" data-amt="50">$50</button>
+        <button type="button" class="tip-amt reveal-item" style="--rd:0s" data-amt="5">$5</button>
+        <button type="button" class="tip-amt reveal-item" style="--rd:.06s" data-amt="10">$10</button>
+        <button type="button" class="tip-amt active reveal-item" style="--rd:.12s" data-amt="20">$20</button>
+        <button type="button" class="tip-amt reveal-item" style="--rd:.18s" data-amt="50">$50</button>
       </div>
       <div class="tip-row" id="tipRow">
         <a id="tip-cashapp" href="https://cash.app/$RickParma/20" target="_blank" rel="noopener">
@@ -487,7 +512,7 @@
   <div class="band band-textjoin band-tight reveal-fade">
     <div class="band-inner">
       <div class="join-box">
-        <a href="sms:+18559242976?body=JOIN" class="img-btn text-join-button">
+        <a href="sms:+18559242976?body=JOIN" class="img-btn text-join-button reveal-item" style="--rd:.1s">
           <img src="text-join-button.png" alt="Text JOIN to (855) 924-2976">
         </a>
         <p>Text JOIN to (855) 924-2976 for show updates.</p>
@@ -502,7 +527,7 @@
 <section id="music">
   <div class="band band-music reveal-fade">
     <div class="band-inner">
-      <h2 class="display-heading">Rick's Music</h2>
+      <h2 class="display-heading reveal-title">Rick's Music</h2>
       <!--
         REAL PLAYER: create an "audio" folder in the repo root (same trick used for the
         images folder - type "audio/placeholder.txt" into GitHub's "Create new file" box)
@@ -511,7 +536,7 @@
         automatically - no code changes needed. Tracks with no uploaded file yet will
         show "Audio coming soon" instead of erroring.
       -->
-      <div class="rp-player" id="rp-audio-player">
+      <div class="rp-player reveal-item" id="rp-audio-player" style="--rd:.15s">
         <audio id="rp-audio" preload="none"></audio>
         <div class="rp-player-controls">
           <button class="rp-player-btn" id="rp-prev" aria-label="Previous track">
@@ -704,7 +729,7 @@
       .rpc-subscribe a{display:inline-flex;align-items:center;justify-content:center;padding:14px 30px;border-radius:60px;background:#8DB2E5;text-decoration:none;color:#000;white-space:nowrap;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;}
     </style>
     <div class="band-inner">
-      <h2 class="display-heading" style="margin: 0 0 20px;">Calendar</h2>
+      <h2 class="display-heading reveal-title" style="margin: 0 0 20px;">Calendar</h2>
       <div class="rpc-wrap">
         <div id="rpc-cards" class="show-track"><div class="rpc-empty">Loading upcoming shows…</div></div>
         <div class="show-carousel-nav">
@@ -961,7 +986,7 @@
               ? '<video src="' + flyer + '" muted loop playsinline autoplay></video>'
               : '<img src="' + flyer + '" alt="Show flyer" loading="lazy">')
           : '';
-        return '<div class="show-tile" data-idx="' + i + '" role="button" tabindex="0">' +
+        return '<div class="show-tile reveal-item" style="--rd:' + (Math.min(i,8)*0.07) + 's" data-idx="' + i + '" role="button" tabindex="0">' +
           (flyer ? '<div class="show-flyer-thumb">' + flyerMedia + '</div>' : '') +
           '<div class="show-date-badge"><span class="mon">' + MONTH_NAMES[d.getMonth()].slice(0,3) + '</span><span class="day">' + d.getDate() + '</span></div>' +
           '<p class="venue">' + escapeHtml(e.title) + '</p><p class="meta">' + escapeHtml(metaParts.join(' · ')) + '</p>' +
@@ -1332,7 +1357,7 @@
   </style>
 
   <div id="rp-video-section" class="reveal-fade">
-    <h2 class="rp-section-title">Promo Videos</h2>
+    <h2 class="rp-section-title reveal-title">Promo Videos</h2>
     <div class="rp-featured-wrap" id="rp-player-wrap">
       <iframe id="rp-main-player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
@@ -1370,7 +1395,7 @@
     player.src = embedURL(videos[0].id, false);
     videos.forEach(function(v, i) {
       var card = document.createElement("div");
-      card.className = "rp-thumb" + (i === 0 ? " active" : "");
+      card.className = "rp-thumb reveal-item" + (i === 0 ? " active" : ""); card.style.setProperty("--rd", (Math.min(i,8)*0.07) + "s");
       card.setAttribute("role", "button");
       card.setAttribute("aria-label", "Play " + v.title);
       card.setAttribute("tabindex", "0");
@@ -1386,7 +1411,7 @@
 <section id="diamond-method">
   <div class="band band-diamond reveal-fade">
     <div class="band-inner">
-            <div class="product-card">
+            <div class="product-card reveal-item" style="--rd:.15s">
         <img src="diamond-method-cover.png" alt="Diamond Singing Method">
         <p>An online video-based course that walks you step by step to a healthier, stronger singing voice — sing higher, lower, and with more style.</p>
         <div class="price">$20.00</div>
@@ -1400,7 +1425,7 @@
 </section>
 
 <section id="booking" class="reveal-fade">
-  <h2 class="display-heading">Booking</h2>
+  <h2 class="display-heading reveal-title">Booking</h2>
   <p>Please fill out the form and I'll get back to you with a personalized quote.</p>
   <form class="booking" id="booking-form">
     <div>
@@ -1655,7 +1680,7 @@
 
 <script>
 (function(){
-  var els = document.querySelectorAll('.reveal-fade');
+  var els = document.querySelectorAll('.reveal-fade, .reveal-item, .reveal-title');
   if(!els.length) return;
   if(!('IntersectionObserver' in window)){
     els.forEach(function(el){ el.classList.add('is-visible'); });
