@@ -926,7 +926,8 @@
         ]);
       } else if (btn.dataset.calAction === 'share') {
         var shareUrl = location.origin + location.pathname + '#calendar';
-        var shareText = e.title + (e.location ? ' @ ' + e.location : '') + ' — ' + e.start.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+        var shareTimeStr = e.allDay ? '' : e.start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        var shareText = (e.location || e.title) + ' — ' + e.start.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) + (shareTimeStr ? ' · ' + shareTimeStr : '');
         if (navigator.share) {
           navigator.share({ title: e.title, text: shareText, url: shareUrl }).catch(function () {});
         } else if (navigator.clipboard && navigator.clipboard.writeText) {
