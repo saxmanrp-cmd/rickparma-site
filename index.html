@@ -208,10 +208,11 @@
     line-height:0;
     -webkit-tap-highlight-color:transparent;
     cursor:pointer;
+    filter:drop-shadow(0 0 14px rgba(255,62,200,.45)) drop-shadow(0 0 26px rgba(62,200,255,.3));
     transition:transform 0.18s ease, filter 0.18s ease;
   }
-  .img-btn:hover{transform:scale(1.06);filter:brightness(1.15);}
-  .img-btn:active{transform:scale(0.96);filter:brightness(0.85);}
+  .img-btn:hover{transform:scale(1.06);filter:brightness(1.15) drop-shadow(0 0 18px rgba(255,62,200,.6)) drop-shadow(0 0 34px rgba(62,200,255,.42));}
+  .img-btn:active{transform:scale(0.96);filter:brightness(0.85) drop-shadow(0 0 10px rgba(255,62,200,.35));}
   .img-btn:focus-visible{outline:3px solid #ffffff;outline-offset:6px;border-radius:999px;}
   .img-btn img{display:block;width:100%;height:auto;}
 
@@ -719,10 +720,11 @@
       .cal-detail-venue{flex-shrink:0;font-family:var(--font-display);font-weight:900;font-size:1.2rem;margin:0 0 4px;color:var(--text);line-height:1.2;}
       .cal-detail-meta{flex-shrink:0;font-size:.82rem;color:var(--muted);margin:0 0 6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
       .cal-detail-desc{flex-shrink:0;font-size:.78rem;color:var(--muted);margin:0 0 10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-      .cal-detail-actions{flex-shrink:0;display:flex;gap:10px;}
-      .cal-detail-actions a{flex:1;text-align:center;padding:12px;border-radius:30px;font-weight:bold;text-decoration:none;font-size:.82rem;}
-      .cal-detail-actions a.primary{background:var(--blue);color:#000;}
-      .cal-detail-actions a.alt{background:transparent;border:1px solid var(--border);color:var(--text);}
+      .cal-detail-actions{flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+      .cal-detail-actions a{text-align:center;padding:12px;border-radius:30px;font-weight:bold;text-decoration:none;font-size:.82rem;}
+      .cal-detail-actions a.primary{background:var(--blue);color:#000;width:100%;box-sizing:border-box;}
+      .cal-detail-actions-row{display:flex;justify-content:center;gap:10px;}
+      .cal-detail-actions-row a.alt{background:transparent;border:1px solid var(--border);color:var(--text);flex:none;padding:12px 26px;}
       .cal-detail-nav{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:16px;padding-top:10px;}
       .cal-detail-nav button{background:rgba(255,255,255,0.08);border:none;color:var(--text);width:34px;height:34px;border-radius:50%;font-size:1.2rem;cursor:pointer;flex-shrink:0;}
       .cal-detail-nav button:hover{background:rgba(255,255,255,0.16);}
@@ -1179,8 +1181,10 @@
         (e.description ? '<p class="cal-detail-desc">' + escapeHtml(e.description) + '</p>' : '') +
         '<div class="cal-detail-actions">' +
           '<a class="primary cal-action-btn" href="#" data-cal-action="calendar" data-idx="' + idx + '">+ Add to Calendar</a>' +
-          (e.location ? '<a class="alt cal-action-btn" href="#" data-cal-action="directions" data-idx="' + idx + '">Directions</a>' : '') +
-          '<a class="alt cal-action-btn" href="#" data-cal-action="share" data-idx="' + idx + '">Share</a>' +
+          '<div class="cal-detail-actions-row">' +
+            (e.location ? '<a class="alt cal-action-btn" href="#" data-cal-action="directions" data-idx="' + idx + '">Directions</a>' : '') +
+            '<a class="alt cal-action-btn" href="#" data-cal-action="share" data-idx="' + idx + '">Share</a>' +
+          '</div>' +
         '</div>';
       var counter = overlay.querySelector('#cal-detail-counter');
       counter.textContent = (idx + 1) + ' of ' + currentEvents.length;
