@@ -155,20 +155,20 @@
     animation:tipAmtPulse 2.4s ease-in-out infinite;
   }
 
-  .tip-row{display:flex;justify-content:center;gap:34px;margin-top:0;flex-wrap:wrap;}
-  .tip-row a{-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--text);text-decoration:none;width:100px;}
+  .tip-row{display:flex;justify-content:center;gap:14px;margin-top:0;flex-wrap:wrap;}
+  .tip-row a{-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text);text-decoration:none;width:74px;}
   .tip-row a:hover{color:var(--pink);}
 
-  .tip-icon-wrap{position:relative;width:84px;height:84px;animation:tipFloat 3.2s ease-in-out infinite;}
+  .tip-icon-wrap{position:relative;width:56px;height:56px;animation:tipFloat 3.2s ease-in-out infinite;}
   .tip-row a:nth-child(2) .tip-icon-wrap{animation-delay:.35s;}
   .tip-row a:nth-child(3) .tip-icon-wrap{animation-delay:.7s;}
   .tip-icon-wrap::before{
-    content:"";position:absolute;inset:-4px;border-radius:24px;
+    content:"";position:absolute;inset:-3px;border-radius:16px;
     background:conic-gradient(from 0deg,var(--blue),var(--pink),var(--blue));
     animation:tipGlowSpin 4.5s linear infinite;opacity:.5;filter:blur(3px);
   }
   .tip-icon{
-    position:relative;width:100%;height:100%;border-radius:20px;
+    position:relative;width:100%;height:100%;border-radius:14px;
     display:flex;align-items:center;justify-content:center;flex-shrink:0;
     box-shadow:0 4px 18px rgba(0,0,0,.4);
     transition:transform .12s ease, filter .12s ease, box-shadow .12s ease;
@@ -182,7 +182,7 @@
   .tip-row a:hover .tip-icon-wrap::before{opacity:.95;}
   .tip-row a:hover .tip-icon{transform:scale(1.08);box-shadow:0 6px 26px rgba(0,0,0,.5);}
   .tip-row a:active .tip-icon{transform:scale(0.9);filter:brightness(0.82);}
-  .tip-row a span:last-child{font-size:.88rem;letter-spacing:.02em;font-weight:600;}
+  .tip-row a span:last-child{font-size:.72rem;letter-spacing:.01em;font-weight:600;}
   @media (prefers-reduced-motion:reduce){
     .tip-icon-wrap,.tip-icon-wrap::before,.tip-amt.active{animation:none;}
   }
@@ -341,10 +341,10 @@
     .band-tight{padding-top:10px;padding-bottom:10px;}
     .tip-amounts{gap:10px;margin-bottom:18px;}
     .tip-amt{padding:13px 20px;font-size:1rem;}
-    .tip-row{gap:16px;}
-    .tip-row a{width:30%;max-width:110px;}
-    .tip-icon-wrap{width:100%;max-width:76px;height:auto;aspect-ratio:1/1;}
-    .tip-row a span:last-child{font-size:.8rem;}
+    .tip-row{gap:8px;}
+    .tip-row a{width:24%;max-width:74px;}
+    .tip-icon-wrap{width:100%;max-width:52px;height:auto;aspect-ratio:1/1;}
+    .tip-row a span:last-child{font-size:.66rem;}
     table.tracklist td{padding:7px 4px;font-size:.85rem;}
     .calendar-wrap iframe{height:400px;}
     form.booking{gap:12px;}
@@ -1180,6 +1180,7 @@
         '<div class="cal-detail-actions">' +
           '<a class="primary cal-action-btn" href="#" data-cal-action="calendar" data-idx="' + idx + '">+ Add to Calendar</a>' +
           (e.location ? '<a class="alt cal-action-btn" href="#" data-cal-action="directions" data-idx="' + idx + '">Directions</a>' : '') +
+          '<a class="alt cal-action-btn" href="#" data-cal-action="share" data-idx="' + idx + '">Share</a>' +
         '</div>';
       var counter = overlay.querySelector('#cal-detail-counter');
       counter.textContent = (idx + 1) + ' of ' + currentEvents.length;
