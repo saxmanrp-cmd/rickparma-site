@@ -949,8 +949,7 @@
           return { venue: venue, street: street, cityStateZip: cityStateZip };
         })(e.location);
         var shareTimeStr = e.allDay ? '' : e.start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-        var shareLines = [e.title || ''];
-        shareLines.push('');
+        var shareLines = [];
         if (addr) {
           if (addr.venue) shareLines.push(addr.venue);
           if (addr.street) shareLines.push(addr.street);
