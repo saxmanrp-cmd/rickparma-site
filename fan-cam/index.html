@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Fan Cam — Send it to Rick</title>
+
+<!--
+  ============================================================
+  SETUP — fill these in before publishing. None of this needs
+  a server; every value below is safe to expose in client code
+  as long as you configure the matching preset as UNSIGNED on
+  Cloudinary's dashboard.
+
+  1) CLOUDINARY (stores the photo/video, gives back a link)
+     - Sign up free at cloudinary.com
+     - Settings → Upload → Add upload preset → set "Signing Mode"
+       to "Unsigned". Copy the preset name and your cloud name.
+
+  2) JSONBIN (keeps the running list of submissions for your
+     gallery viewer — same pattern as your Photo Gallery Manager)
+     - Create a bin at jsonbin.io containing: []
+     - Copy the Bin ID and your X-Master-Key.
+  ============================================================
+-->
+<script>
+  const CONFIG = {
+    cloudName: "ffgvgf5j",
+    uploadPreset: "e7siodn3",
+    jsonbinId: "6a668bb8f5f4af5e29c51472",
+    jsonbinKey: "$2a$10$AE8jTzF3OJJNfqTgYPcPK.SzVAdv0Mqi/obwqWTuQjpE0dOkYkCE.",
+    maxVideoSeconds: 20
+  };
+</script>
+
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;600;700&family=Lato:wght@400;700&display=swap');
+
+  :root{
+    --bg:#130101;
+    --panel:#1c0606;
+    --accent:#8DB2E5;
+    --white:#F5F0EA;
+    --paper:#EDE7DC;
+    --ink:#2b2320;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--white);
+    font-family:'Lato',sans-serif; -webkit-tap-highlight-color:transparent;}
+  body{height:100dvh; display:flex; flex-direction:column; align-items:center;
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom)); overflow:hidden;}
+
+  .site-link{display:block; width:100%; max-width:420px; margin:0 auto 10px; flex-shrink:0;
+    text-align:left; font-family:'Josefin Sans',sans-serif; font-weight:700;
+    letter-spacing:.04em; font-size:1rem; color:var(--accent); text-decoration:none;}
+  .site-link:active{opacity:.7;}
+
+  /* ---- stage-view frame: the camera lives inside a spotlight ---- */
+  .stage{
+    position:relative; width:100%; max-width:420px; flex:1; min-height:0;
+    border-radius:18px; overflow:hidden; background:#000;
+    box-shadow:0 0 0 1px rgba(141,178,229,.25), 0 30px 60px -20px rgba(0,0,0,.7);
+  }
+  .stage::before{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
+    background:radial-gradient(ellipse at 50% 38%, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%);
+  }
+  video, .shot-preview{width:100%; height:100%; object-fit:cover; display:block;}
+
+  .controls{display:flex; align-items:center; justify-content:center; gap:22px;
+    margin-top:14px; width:100%; max-width:420px; flex-shrink:0;}
+  .flip-btn{
+    background:rgba(141,178,229,.12); border:1px solid rgba(141,178,229,.5); color:var(--accent);
+    width:46px; height:46px; border-radius:50%; font-size:1.55rem; cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .shutter{
+    width:88px; height:88px; border-radius:50%; border:3px solid var(--white);
+    background:#000 url('https://rickparma.com/files/1422423/fan-cam-button.png') center/cover;
+    cursor:pointer; position:relative; flex-shrink:0;
+    box-shadow:0 6px 18px rgba(0,0,0,.5);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .shutter.video-armed{
+    border-color:#e5527a;
+    box-shadow:0 0 0 3px rgba(229,82,122,.45), 0 6px 18px rgba(0,0,0,.5);
+  }
+  .shutter:active{transform:scale(.94);}
+  .shutter:disabled{cursor:default;}
+  #shutterCount{
+    font-family:'Josefin Sans',sans-serif; font-weight:700; font-size:1.15rem; color:#fff;
+    line-height:1;
+  }
+  #shutterCount:not(:empty){
+    background:rgba(19,1,1,.7); padding:3px 9px; border-radius:10px;
+  }
+
+  .mode-toggle{display:flex; flex-direction:column; gap:8px; flex-shrink:0;}
+  .mode-toggle button{
+    width:46px; height:46px; border-radius:50%; cursor:pointer; font-size:1.5rem;
+    background:rgba(141,178,229,.12); border:1px solid rgba(141,178,229,.4); color:var(--white); opacity:.85;
+    display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .mode-toggle button.active{opacity:1; background:var(--accent); color:#0d1420; border-color:var(--accent);}
+
+  /* ---- polaroid review card ---- */
+  .polaroid-wrap{display:none; width:100%; max-width:340px; margin-top:0; flex:1; min-height:0;
+    flex-direction:column; justify-content:center; overflow-y:auto;}
+  .polaroid{
+    background:var(--paper); border-radius:4px; padding:14px 14px 46px;
+    box-shadow:0 20px 40px -12px rgba(0,0,0,.6);
+    transform:translateY(40px) rotate(-2deg); opacity:0;
+    animation:eject .55s cubic-bezier(.2,.8,.3,1.1) forwards;
+  }
+  @keyframes eject{to{transform:translateY(0) rotate(-1.2deg); opacity:1;}}
+  .polaroid img, .polaroid video{width:100%; max-height:38vh; object-fit:contain; display:block; border-radius:2px; background:#000;}
+  .polaroid .caption{
+    font-family:'Josefin Sans',sans-serif; color:var(--ink); text-align:center;
+    margin-top:10px; font-size:.95rem; letter-spacing:.02em;
+  }
+  input[type=text]{
+    width:100%; margin-top:12px; padding:10px 12px; font-size:16px; border-radius:8px;
+    border:1px solid rgba(141,178,229,.4); background:var(--panel); color:var(--white);
+    font-family:'Lato',sans-serif;
+  }
+  input[type=text]::placeholder{color:#a99;}
+
+  .review-actions{display:flex; flex-direction:column; gap:10px; margin-top:14px; width:100%; max-width:340px;}
+  .review-row{display:flex; gap:10px;}
+  .btn{flex:1; padding:13px 10px; border-radius:10px; border:none; font-size:16px;
+    font-family:'Josefin Sans',sans-serif; font-weight:600; letter-spacing:.02em; cursor:pointer;}
+  .btn.primary{background:var(--accent); color:#0d1420;}
+  .btn.ghost{background:transparent; color:var(--white); border:1px solid rgba(245,240,234,.35);}
+  .btn:disabled{opacity:.5;}
+
+  .status{margin-top:16px; font-family:'Josefin Sans',sans-serif; letter-spacing:.02em;
+    text-align:center; min-height:1.4em;}
+  .status.success{color:#7fd8a3;}
+  .status.error{color:#e5527a;}
+
+  .denied{max-width:340px; text-align:center; margin-top:40px; line-height:1.5;}
+</style>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#000000">
+</head>
+<body>
+
+  <a class="site-link" href="https://rickparma.com">← RICKPARMA.COM</a>
+
+  <div class="stage" id="stage">
+    <video id="preview" autoplay playsinline muted></video>
+  </div>
+
+  <div class="controls">
+    <button class="flip-btn" id="flipBtn" aria-label="Switch camera"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
+    <button class="shutter" id="shutterBtn" aria-label="Capture"><span id="shutterCount"></span></button>
+    <div class="mode-toggle">
+      <button id="photoModeBtn" class="active" aria-label="Photo mode"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.6-.8l.4-.53A2 2 0 0 1 10.8 4h2.4a2 2 0 0 1 1.6.67l.4.53a2 2 0 0 0 1.6.8H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.2"/></svg></button>
+      <button id="videoModeBtn" aria-label="Video mode"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 9.5l6-3.2v11.4l-6-3.2z"/></svg></button>
+    </div>
+  </div>
+
+  <div class="polaroid-wrap" id="polaroidWrap">
+    <div class="polaroid">
+      <div id="polaroidMedia"></div>
+      <div class="caption">for Rick 🎷</div>
+    </div>
+    <input type="text" id="nameInput" placeholder="Your name (optional)">
+    <div class="review-actions">
+      <div class="review-row">
+        <button class="btn ghost" id="retakeBtn">Retake</button>
+        <button class="btn ghost" id="saveBtn">Save to device</button>
+      </div>
+      <button class="btn primary" id="sendBtn">Send to Rick</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="denied" id="deniedMsg" style="display:none;">
+    Rick's Fan Cam needs camera access to work. Check your browser's site
+    settings and allow the camera, then reload this page.
+  </div>
+
+<script>
+let stream = null;
+let facingMode = 'environment';
+let mode = 'photo'; // 'photo' | 'video'
+let mediaRecorder = null;
+let recordedChunks = [];
+let recording = false;
+let recTimerInterval = null;
+let recSeconds = 0;
+let capturedBlob = null; // final blob to upload
+let capturedKind = null; // 'image' | 'video'
+
+const videoEl = document.getElementById('preview');
+const shutterBtn = document.getElementById('shutterBtn');
+const flipBtn = document.getElementById('flipBtn');
+const photoModeBtn = document.getElementById('photoModeBtn');
+const videoModeBtn = document.getElementById('videoModeBtn');
+const shutterCount = document.getElementById('shutterCount');
+const polaroidWrap = document.getElementById('polaroidWrap');
+const polaroidMedia = document.getElementById('polaroidMedia');
+const stageEl = document.getElementById('stage');
+const statusEl = document.getElementById('status');
+const nameInput = document.getElementById('nameInput');
+
+async function startCamera(){
+  stopCamera();
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode, width:{ideal:1080}, height:{ideal:1440} },
+      audio: mode === 'video'
+    });
+    videoEl.srcObject = stream;
+    document.getElementById('deniedMsg').style.display = 'none';
+    stageEl.style.display = '';
+  }catch(err){
+    document.getElementById('deniedMsg').style.display = 'block';
+    stageEl.style.display = 'none';
+    document.querySelector('.controls').style.display = 'none';
+  }
+}
+function stopCamera(){
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
+}
+
+flipBtn.addEventListener('click', ()=>{
+  facingMode = facingMode === 'environment' ? 'user' : 'environment';
+  startCamera();
+});
+
+photoModeBtn.addEventListener('click', ()=> setMode('photo'));
+videoModeBtn.addEventListener('click', ()=> setMode('video'));
+function setMode(m){
+  mode = m;
+  photoModeBtn.classList.toggle('active', m==='photo');
+  videoModeBtn.classList.toggle('active', m==='video');
+  shutterBtn.classList.toggle('video-armed', m==='video');
+  startCamera();
+}
+
+shutterBtn.addEventListener('click', ()=>{
+  if(mode === 'photo') takePhoto();
+  else recording ? stopRecording() : startRecording();
+});
+
+function takePhoto(){
+  const canvas = document.createElement('canvas');
+  canvas.width = videoEl.videoWidth;
+  canvas.height = videoEl.videoHeight;
+  const ctx = canvas.getContext('2d');
+  if(facingMode === 'user'){ ctx.translate(canvas.width,0); ctx.scale(-1,1); }
+  ctx.drawImage(videoEl, 0, 0);
+  canvas.toBlob(blob=>{
+    capturedBlob = blob;
+    capturedKind = 'image';
+    showPolaroid(URL.createObjectURL(blob), 'image');
+  }, 'image/jpeg', 0.92);
+}
+
+function pickMimeType(){
+  const candidates = ['video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+  return candidates.find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || '';
+}
+
+function startRecording(){
+  recordedChunks = [];
+  const mimeType = pickMimeType();
+  mediaRecorder = new MediaRecorder(stream, mimeType ? {mimeType} : undefined);
+  mediaRecorder.ondataavailable = e => { if(e.data.size>0) recordedChunks.push(e.data); };
+  mediaRecorder.onstop = ()=>{
+    const blob = new Blob(recordedChunks, {type: mediaRecorder.mimeType || 'video/webm'});
+    capturedBlob = blob;
+    capturedKind = 'video';
+    showPolaroid(URL.createObjectURL(blob), 'video');
+  };
+  mediaRecorder.start();
+  recording = true;
+  shutterBtn.classList.add('video-armed');
+  recSeconds = 0;
+  let remaining = CONFIG.maxVideoSeconds;
+  shutterCount.textContent = remaining;
+  recTimerInterval = setInterval(()=>{
+    recSeconds++;
+    remaining = CONFIG.maxVideoSeconds - recSeconds;
+    shutterCount.textContent = remaining > 0 ? remaining : '';
+    if(recSeconds >= CONFIG.maxVideoSeconds) stopRecording();
+  }, 1000);
+}
+function stopRecording(){
+  if(mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  recording = false;
+  shutterCount.textContent = '';
+  clearInterval(recTimerInterval);
+}
+
+function showPolaroid(url, kind){
+  stopCamera();
+  document.querySelector('.controls').style.display = 'none';
+  stageEl.style.display = 'none';
+  polaroidMedia.innerHTML = kind === 'image'
+    ? `<img src="${url}" alt="your capture">`
+    : `<video src="${url}" controls playsinline></video>`;
+  polaroidWrap.style.display = 'flex';
+  statusEl.textContent = '';
+  statusEl.className = 'status';
+}
+
+document.getElementById('retakeBtn').addEventListener('click', ()=>{
+  capturedBlob = null; capturedKind = null;
+  polaroidWrap.style.display = 'none';
+  stageEl.style.display = '';
+  document.querySelector('.controls').style.display = 'flex';
+  nameInput.value = '';
+  startCamera();
+});
+
+document.getElementById('saveBtn').addEventListener('click', async ()=>{
+  if(!capturedBlob) return;
+  const ext = capturedKind === 'image' ? 'jpg' : (capturedBlob.type.includes('mp4') ? 'mp4' : 'webm');
+  const file = new File([capturedBlob], `fancam-${Date.now()}.${ext}`, {type: capturedBlob.type});
+
+  try{
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file]});
+      return;
+    }
+  }catch(err){
+    if(err.name === 'AbortError') return; // they cancelled the share sheet — nothing else to do
+  }
+
+  // fallback for browsers without file-sharing support — downloads to Files/Downloads instead
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(capturedBlob);
+  a.download = file.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=> URL.revokeObjectURL(a.href), 4000);
+});
+
+document.getElementById('sendBtn').addEventListener('click', sendToRick);
+
+async function sendToRick(){
+  if(!capturedBlob) return;
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.disabled = true;
+  document.getElementById('retakeBtn').disabled = true;
+  statusEl.className = 'status';
+  statusEl.textContent = 'Sending…';
+
+  try{
+    const upload = await uploadToCloudinary(capturedBlob, capturedKind);
+    const name = nameInput.value.trim() || 'A fan';
+    const timestamp = new Date().toISOString();
+
+    await logToJsonbin({ name, mediaUrl: upload.url, deleteToken: upload.deleteToken, kind: capturedKind, timestamp });
+
+    statusEl.className = 'status success';
+    statusEl.textContent = 'Rick got it — thank you! 🎷';
+    setTimeout(()=>{
+      polaroidWrap.style.display = 'none';
+      capturedBlob = null; capturedKind = null;
+      document.querySelector('.controls').style.display = 'flex';
+      stageEl.style.display = '';
+      nameInput.value = '';
+      sendBtn.disabled = false;
+      document.getElementById('retakeBtn').disabled = false;
+      startCamera();
+    }, 2200);
+  }catch(err){
+    console.error(err);
+    statusEl.className = 'status error';
+    statusEl.textContent = "Couldn't send that — check your connection and try again.";
+    sendBtn.disabled = false;
+    document.getElementById('retakeBtn').disabled = false;
+  }
+}
+
+async function uploadToCloudinary(blob, kind){
+  const form = new FormData();
+  const ext = kind === 'image' ? 'jpg' : (blob.type.includes('mp4') ? 'mp4' : 'webm');
+  form.append('file', blob, `fancam-${Date.now()}.${ext}`);
+  form.append('upload_preset', CONFIG.uploadPreset);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CONFIG.cloudName}/auto/upload`, {
+    method: 'POST', body: form
+  });
+  if(!res.ok) throw new Error('Cloudinary upload failed');
+  const data = await res.json();
+  return { url: data.secure_url, deleteToken: data.delete_token || null };
+}
+
+async function logToJsonbin(entry){
+  const base = `https://api.jsonbin.io/v3/b/${CONFIG.jsonbinId}`;
+  const headers = { 'Content-Type': 'application/json', 'X-Master-Key': CONFIG.jsonbinKey };
+  const current = await fetch(`${base}/latest?t=${Date.now()}`, { headers, cache: 'no-store' }).then(r=>r.json());
+  const list = Array.isArray(current.record) ? current.record : [];
+  list.unshift(entry);
+  await fetch(base, { method:'PUT', headers, body: JSON.stringify(list) });
+}
+
+startCamera();
+</script>
+</body>
+</html>
