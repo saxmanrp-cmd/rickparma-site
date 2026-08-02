@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Request a Song — Rick Parma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#130101;
+    --card:rgba(13,5,5,0.55);
+    --card-solid:#1c0808;
+    --accent:#8DB2E5;
+    --white:#F5F3F0;
+    --dim:#C9C2BC;
+    --line:rgba(245,243,240,0.12);
+    --free:#8DB2E5;
+    --general:#E8B84B;
+    --special:#E86B6B;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--white);font-family:'Lato',sans-serif;}
+  html,body{overflow-x:hidden;}
+  body{
+    background-image:
+      radial-gradient(ellipse at top, rgba(141,178,229,0.06), transparent 60%),
+      linear-gradient(180deg, #130101 0%, #0c0000 100%);
+  }
+  h1,h2,h3{font-family:'Josefin Sans',sans-serif; margin:0;}
+  .page-title{font-family:'Josefin Sans',sans-serif; font-weight:700; font-size:1.8rem; letter-spacing:.04em; text-align:center; color:var(--white); padding:20px 16px 6px;}
+
+
+  .controls{position:sticky; top:0; z-index:10; background:rgba(19,1,1,0.94); backdrop-filter:blur(8px); padding:14px 16px 10px; border-bottom:1px solid var(--line);}
+  #search{width:100%; padding:12px 14px; font-size:16px; border-radius:10px; border:1px solid var(--line); background:var(--card-solid); color:var(--white); font-family:'Lato',sans-serif;}
+  #search::placeholder{color:#8a8078;}
+  #search:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  #sortSelect{width:100%; margin-top:8px; padding:11px 14px; font-size:16px; border-radius:10px; border:1px solid var(--line); background:var(--card-solid); color:var(--white); font-family:'Lato',sans-serif;}
+
+  .home-search-wrap{padding:20px 16px 6px;}
+
+  #pollTakeover{
+    position:fixed; inset:0; z-index:900; overflow-y:auto;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:60px 20px 40px;
+    background:
+      radial-gradient(ellipse at top, rgba(255,215,0,0.12), transparent 55%),
+      radial-gradient(ellipse at bottom, rgba(232,107,213,0.14), transparent 55%),
+      linear-gradient(180deg, #150202 0%, #0a0000 100%);
+  }
+  #pollCloseBtn{
+    position:fixed; top:16px; right:16px; z-index:901;
+    width:40px; height:40px; border-radius:50%; border:1px solid var(--line);
+    background:var(--card-solid); color:var(--white); font-size:18px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .poll-takeover-inner{max-width:480px; margin:0 auto; width:100%;}
+  .poll-title{font-size:38px; font-weight:900; letter-spacing:1px; color:#fff; text-align:center; font-family:'Josefin Sans',sans-serif; margin-bottom:14px; text-shadow:0 0 20px rgba(255,215,0,0.5), 0 2px 10px rgba(0,0,0,0.6);}
+  .poll-eyebrow{font-size:13px; letter-spacing:2px; text-transform:uppercase; color:#fff; font-weight:700; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;}
+  .poll-live-dot{width:10px; height:10px; border-radius:50%; background:#ff4d4d; box-shadow:0 0 10px #ff4d4d; animation:pollDotPulse 1.2s ease-in-out infinite;}
+  @keyframes pollDotPulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .poll-question{font-size:26px; font-weight:900; color:var(--white); margin-bottom:26px; font-family:'Josefin Sans',sans-serif; text-align:center; line-height:1.25; text-shadow:0 2px 10px rgba(0,0,0,0.5);}
+  .poll-option{
+    position:relative; padding:18px 18px; border-radius:16px; margin-bottom:12px; cursor:pointer; overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35); border:2px solid rgba(255,255,255,0.25);
+  }
+  .poll-option-fill{position:absolute; top:0; left:0; bottom:0; background:rgba(0,0,0,0.28); transition:width 0.6s ease; z-index:0;}
+  .poll-option-content{position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .poll-option-label{font-size:16px; font-weight:800; color:#0c1420; text-shadow:0 1px 0 rgba(255,255,255,0.25);}
+  .poll-option-pct{font-size:16px; font-weight:900; color:#0c1420; flex:0 0 auto;}
+  .poll-option.voted-for{border-color:#fff; box-shadow:0 0 0 3px rgba(255,255,255,0.5), 0 6px 18px rgba(0,0,0,0.35);}
+  .poll-request-link{display:block; text-align:center; font-size:12.5px; color:var(--dim); margin:-4px 0 12px; text-decoration:underline; cursor:pointer;}
+  .poll-voted-note{font-size:14px; color:var(--white); text-align:center; margin-top:16px; font-weight:700;}
+  .poll-continue-btn{display:block; width:100%; margin-top:20px; padding:14px; border-radius:12px; border:1px solid var(--line); background:var(--card-solid); color:var(--white); font-weight:700; font-size:14px; text-align:center; cursor:pointer;}
+  #homeSearch{width:100%; padding:14px 16px; font-size:16px; border-radius:12px; border:1px solid var(--line); background:var(--card-solid); color:var(--white); font-family:'Lato',sans-serif;}
+  #homeSearch::placeholder{color:#8a8078;}
+  #homeSearch:focus{outline:2px solid var(--accent); outline-offset:1px;}
+
+  .bubble-grid{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; padding:22px 20px 40px;}
+  .bubble{padding:14px 22px; border-radius:999px; border:2px solid var(--accent); background:var(--card-solid); color:var(--white); font-size:15px; font-weight:700; cursor:pointer; font-family:'Lato',sans-serif; text-align:center;}
+  .bubble:active{background:var(--accent); color:#0c1420;}
+  .bubble.bubble-pink{border-color:#E86BD5;}
+  .bubble.bubble-all{border-color:var(--white); font-weight:900;}
+
+  .results-header{position:sticky; top:0; z-index:11; display:flex; align-items:center; gap:12px; padding:16px; background:rgba(19,1,1,0.96); border-bottom:1px solid var(--line);}
+  #backBtn{background:var(--card-solid); border:1px solid var(--line); color:var(--white); padding:9px 14px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Lato',sans-serif;}
+  #resultsLabel{font-size:16px; font-weight:700; color:var(--white); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+  .chips{display:flex; gap:8px; overflow-x:auto; padding:12px 2px 4px; scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{flex:0 0 auto; padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--card-solid); color:var(--dim); font-size:13px; font-weight:700; white-space:nowrap; cursor:pointer; font-family:'Lato',sans-serif;}
+  .chip.active{background:var(--accent); color:#0c1420; border-color:var(--accent);}
+
+  .count-row{padding:10px 20px 0; font-size:12px; color:var(--dim); letter-spacing:0.5px;}
+
+  #list{padding:6px 16px 60px;}
+  .song-row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 4px; border-bottom:1px solid var(--line); cursor:pointer;}
+  .song-row:active{background:rgba(141,178,229,0.06);}
+  .song-info{min-width:0; flex:1;}
+  .song-title{font-size:16px; font-weight:700; color:var(--white); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .song-artist{font-size:13px; color:var(--dim); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .badge{flex:0 0 auto; font-size:11px; font-weight:700; padding:5px 10px; border-radius:7px; display:flex; align-items:center; gap:5px; white-space:nowrap; border:1px solid;}
+  .badge.free{color:var(--free); border-color:var(--free); background:rgba(141,178,229,0.1);}
+  .badge.general{color:var(--general); border-color:var(--general); background:rgba(232,184,75,0.1);}
+  .badge.special{color:var(--special); border-color:var(--special); background:rgba(232,107,107,0.1);}
+
+  .empty-state{text-align:center; padding:60px 20px; color:var(--dim); font-size:14px; line-height:1.6;}
+
+  #overlay{display:none !important;}
+  #sheet{position:fixed; inset:0; background:#160303; display:none; flex-direction:column; padding:16px 20px calc(20px + env(safe-area-inset-bottom)); z-index:101; overflow-y:auto; overflow-x:hidden;}
+  #sheet.show{display:flex;}
+  .sheet-back-btn{align-self:flex-start; background:var(--card-solid); border:1px solid var(--line); color:var(--white); padding:9px 14px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Lato',sans-serif; margin-bottom:10px;}
+  #sheet h2{font-size:20px; color:var(--white);}
+  #sheet .artist{color:var(--dim); font-size:14px; margin-top:4px;}
+  #sheet .tier-line{margin-top:14px; display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700;}
+  .price-tag{font-size:22px; font-weight:900; color:var(--white); font-family:'Josefin Sans',sans-serif;}
+
+  .btn{display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:14px; border-radius:12px; font-size:15px; font-weight:700; font-family:'Lato',sans-serif; border:none; cursor:pointer; margin-top:10px; text-decoration:none; color:var(--white);}
+  .btn-venmo{background:#3D95CE;}
+  .btn-cashapp{background:#00C244; color:#04220f;}
+  .btn-paypal{background:#FFC439; color:#0b2540;}
+  .btn-text{background:var(--accent); color:#0c1420; font-size:16px; padding:16px;}
+
+  .pay-note{font-size:12.5px; color:var(--dim); line-height:1.5; margin-top:14px; padding:12px; background:rgba(245,243,240,0.04); border-radius:10px; border:1px solid var(--line);}
+  .section-label{font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--dim); font-weight:700; margin-top:12px; margin-bottom:2px;}
+  .name-input{width:100%; padding:14px; font-size:16px; border-radius:12px; border:1px solid var(--accent); background:var(--card-solid); color:var(--white); font-family:'Lato',sans-serif; margin-top:8px;}
+  .name-input::placeholder{color:#8a8078;}
+
+  .wheel-wrap{position:relative; margin:14px auto 24px; overflow:hidden;}
+  .wheel-scale-inner{position:absolute; width:280px; height:280px; transform-origin:top left;}
+  .wheel-pointer{position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-size:32px; color:#fff; z-index:4; text-shadow:0 2px 8px rgba(0,0,0,0.7); filter:drop-shadow(0 0 8px rgba(255,255,255,0.7));}
+  .wheel-glow{position:absolute; inset:-14px; border-radius:50%; background:radial-gradient(circle, rgba(255,215,100,0.4), rgba(141,178,229,0.22) 60%, transparent 75%); animation:wheelPulse 2.2s ease-in-out infinite; z-index:0;}
+  @keyframes wheelPulse{
+    0%,100%{ transform:scale(1); opacity:0.7; }
+    50%{ transform:scale(1.07); opacity:1; }
+  }
+  .wheel{
+    width:100%; height:100%; border-radius:50%; position:relative; z-index:1;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(255,255,255,0.4), rgba(255,255,255,0.08) 35%, transparent 55%),
+      radial-gradient(circle at 50% 85%, rgba(0,0,0,0.35), transparent 50%),
+      conic-gradient(from 0deg,
+      #C41E3A 0deg 36deg, #C99A2E 36deg 72deg,
+      #1C6B3A 72deg 108deg, #1450A3 108deg 144deg,
+      #7B2FBF 144deg 180deg, #B8562F 180deg 216deg,
+      #0E7C7B 216deg 252deg, #A31545 252deg 288deg,
+      #2E4172 288deg 324deg, #8C6A1F 324deg 360deg);
+    border:7px solid #2b3a8f;
+    box-shadow:
+      0 0 0 4px #f5c94a,
+      0 0 0 6px #2b3a8f,
+      0 0 34px rgba(255,215,100,0.45),
+      0 10px 28px rgba(0,0,0,0.55),
+      inset 0 0 40px rgba(0,0,0,0.3);
+    transition: transform 4.6s cubic-bezier(0.15,0.7,0.15,1);
+  }
+  .wheel-rivet{position:absolute; top:50%; left:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #fff, #d8b74a 60%, #8a6c1f); box-shadow:0 0 4px rgba(0,0,0,0.5); z-index:2;}
+  .wheel-center-dot{
+    position:absolute; top:50%; left:50%; width:46px; height:46px; margin:-23px 0 0 -23px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #a9c6ff, #3f63c9 55%, #1c2f6b);
+    box-shadow: 0 0 0 3px #f5c94a, 0 0 14px rgba(255,255,255,0.6), inset 0 2px 4px rgba(255,255,255,0.5);
+    z-index:3;
+  }
+  .wheel-label-arm{position:absolute; top:50%; left:50%; width:0; height:0;}
+  .wheel-label{
+    position:absolute; left:0; top:0;
+    font-weight:900; width:44px; text-align:center;
+    color:#111; -webkit-text-stroke:2.5px #fff; paint-order:stroke fill;
+    text-shadow: 1px 2px 0 rgba(0,0,0,0.35);
+  }
+  .wheel-label span{display:block; line-height:0.92;}
+  .sparkle{position:absolute; top:0; left:0; pointer-events:none; z-index:5; color:#fff; text-shadow:0 0 6px #fff, 0 0 12px #ffe680; animation:sparkleTwinkle 1.6s ease-in-out infinite;}
+  @keyframes sparkleTwinkle{
+    0%,100%{ opacity:0; transform:scale(0.4) rotate(0deg); }
+    50%{ opacity:1; transform:scale(1.15) rotate(20deg); }
+  }
+  #spinBtn{margin-top:18px; animation:spinBtnGlow 1.8s ease-in-out infinite;}
+  @keyframes spinBtnGlow{
+    0%,100%{ box-shadow:0 0 0 rgba(141,178,229,0); }
+    50%{ box-shadow:0 0 18px rgba(141,178,229,0.65); }
+  }
+  .spin-result{font-size:14px; font-weight:700; color:var(--white); text-align:center; padding:12px; margin-top:14px; border-radius:10px; background:rgba(245,243,240,0.06); border:1px solid var(--line);}
+  .spin-result-free{color:var(--general); border-color:var(--general);}
+  .spin-result-general{color:var(--accent); border-color:var(--accent);}
+  .spin-result-bogo{color:#E86BD5; border-color:#E86BD5;}
+  .sms-disclaimer{font-size:11px; color:var(--dim); text-align:center; margin-top:6px; opacity:0.85;}
+  .bogo-sort-select{width:100%; margin-top:8px; padding:11px 14px; font-size:16px; border-radius:10px; border:1px solid var(--line); background:var(--card-solid); color:var(--white); font-family:'Lato',sans-serif;}
+  .bogo-results{max-height:200px; overflow-y:auto; border:1px solid var(--line); border-radius:10px; margin-top:8px;}
+  .bogo-result-item{padding:12px 14px; font-size:14px; color:var(--white); border-bottom:1px solid var(--line); cursor:pointer;}
+  .bogo-result-item:last-child{border-bottom:none;}
+  .bogo-result-item:active{background:rgba(141,178,229,0.1);}
+
+  .firework-rocket{position:fixed; bottom:0; left:0; width:5px; height:5px; border-radius:50%; z-index:500; pointer-events:none; box-shadow:0 0 10px 3px currentColor, 0 6px 14px -2px currentColor;}
+  .firework-rocket-big{width:8px; height:8px; box-shadow:0 0 18px 5px currentColor, 0 8px 20px -2px currentColor;}
+  .screen-flash{position:fixed; inset:0; background:radial-gradient(circle at 50% 42%, rgba(255,255,255,0.55), rgba(255,235,150,0.15) 40%, transparent 70%); z-index:499; pointer-events:none; animation:screenFlashFade 0.5s ease-out forwards;}
+  @keyframes screenFlashFade{
+    0%{ opacity:1; }
+    100%{ opacity:0; }
+  }
+  .firework-particle{position:fixed; top:0; left:0; width:6px; height:6px; border-radius:50%; z-index:500; pointer-events:none;}
+  .firework-free-text{
+    position:fixed; top:0; left:0; z-index:501; pointer-events:none;
+    font-weight:900; font-size:68px; letter-spacing:3px;
+    color:#fff; -webkit-text-stroke:4px #E8B84B; paint-order:stroke fill;
+    text-shadow:0 0 22px #FFD700, 0 0 44px #FFD700, 0 0 80px rgba(255,215,0,0.7);
+    animation: freeTextPop 2.2s ease-out forwards;
+  }
+  @keyframes freeTextPop{
+    0%{ transform:translate(-50%,-50%) scale(0); opacity:0; }
+    18%{ transform:translate(-50%,-50%) scale(1.4); opacity:1; }
+    30%{ transform:translate(-50%,-50%) scale(1); opacity:1; }
+    82%{ transform:translate(-50%,-50%) scale(1); opacity:1; }
+    100%{ transform:translate(-50%,-50%) scale(1.05); opacity:0; }
+  }
+
+  #loadingState{text-align:center; padding:80px 20px; color:var(--dim);}
+</style>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#000000">
+</head>
+<body>
+
+<div class="page-title">Request a Song</div>
+
+<div id="loadingState">Loading song list…</div>
+
+<div id="homeScreen" style="display:none;">
+  <div class="home-search-wrap">
+    <input type="text" id="homeSearch" placeholder="Search song or artist…">
+  </div>
+  <div class="bubble-grid" id="bubbleGrid"></div>
+</div>
+
+<div id="pollTakeover" style="display:none;">
+  <button id="pollCloseBtn" onclick="dismissPollTakeover()">✕</button>
+  <div class="poll-takeover-inner">
+    <div class="poll-title">JOIN THE FUN!</div>
+    <div class="poll-eyebrow"><span class="poll-live-dot"></span> LIVE POLL</div>
+    <div class="poll-question" id="pollQuestionText"></div>
+    <div id="pollOptionsArea"></div>
+  </div>
+</div>
+
+<div id="resultsScreen" style="display:none;">
+  <div class="results-header">
+    <button id="backBtn" onclick="goHome()">← Back</button>
+    <div id="resultsLabel"></div>
+  </div>
+  <div class="controls" id="controls">
+    <input type="text" id="search" placeholder="Search song or artist…">
+    <select id="sortSelect">
+      <option value="title-asc">Title A → Z</option>
+      <option value="title-desc">Title Z → A</option>
+      <option value="artist-asc">Artist A → Z</option>
+      <option value="artist-desc">Artist Z → A</option>
+    </select>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="count-row" id="countRow"></div>
+  <div id="list"></div>
+</div>
+
+<div id="overlay" onclick="closeSheet()"></div>
+<div id="sheet">
+  <button class="sheet-back-btn" onclick="closeSheet()">← Back</button>
+  <h2 id="sheetTitle"></h2>
+  <div class="artist" id="sheetArtist"></div>
+  <div class="tier-line" id="sheetTierLine"></div>
+  <div id="sheetBody"></div>
+</div>
+
+<script>
+/* ============ CONFIG ============ */
+// Paste the Bin ID created in the Song Manager app here. Both apps must use the SAME Bin ID.
+const BIN_ID = "6a52d2c6f5f4af5e2982691a";
+const MASTER_KEY = "$2a$10$AE8jTzF3OJJNfqTgYPcPK.SzVAdv0Mqi/obwqWTuQjpE0dOkYkCE.";
+const JSONBIN_BASE = "https://api.jsonbin.io/v3/b";
+
+const CONTACT_NUMBER = "8559242976";
+const APPLE_GPAY_NUMBER = "773-209-1124";
+
+const PAYMENT_LINKS = {
+  venmo: "https://venmo.com/u/RickParma",
+  cashapp: "https://cash.app/$RickParma",
+  paypal: "https://www.paypal.com/paypalme/rickparma"
+};
+
+let DEFAULT_PRICES = { general: 5 };
+let prices = { ...DEFAULT_PRICES };
+let songs = [];
+let ALL_TAGS = [];
+
+// Paste the Poll Bin ID created in the Poll Manager app here. Leave blank to disable live polls.
+const POLL_BIN_ID = "6a65070cda38895dfe8f39bf";
+let pollPollingTimer = null;
+let currentPollId = null;
+let hasVotedThisPoll = false;
+let pollDismissed = false;
+let activeTag = null;
+let searchTerm = "";
+let sortMode = "title-asc";
+
+/* ============ LOAD FROM CLOUD ============ */
+async function loadSongs(){
+  if(!BIN_ID){
+    document.getElementById('loadingState').innerHTML =
+      `Song list isn't connected yet.<br><br>Set up cloud storage in the Song Manager app first, then paste the Bin ID into this page.`;
+    return;
+  }
+  try{
+    const res = await fetch(`${JSONBIN_BASE}/${BIN_ID}/latest`, { headers: { "X-Master-Key": MASTER_KEY } });
+    const data = await res.json();
+    const record = data.record || {};
+    songs = record.songs || [];
+    prices = { ...DEFAULT_PRICES, ...(record.prices || {}) };
+    ALL_TAGS = [...new Set(songs.flatMap(s => s.tags || []))].sort();
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('homeScreen').style.display = 'block';
+    renderBubbles();
+    renderChips();
+    renderList();
+    startPollChecking();
+  } catch(err){
+    console.error(err);
+    document.getElementById('loadingState').innerHTML = `Couldn't load the song list. Check your connection and refresh.`;
+  }
+}
+
+/* ============ RENDER: LIST ============ */
+function renderBubbles(){
+  const grid = document.getElementById('bubbleGrid');
+  grid.innerHTML = '';
+
+  const allBubble = document.createElement('div');
+  allBubble.className = 'bubble bubble-all';
+  allBubble.textContent = '🎶 All Songs';
+  allBubble.onclick = () => { activeTag = null; searchTerm = ''; goResults(); };
+  grid.appendChild(allBubble);
+
+  ALL_TAGS.forEach((tag, i) => {
+    const b = document.createElement('div');
+    b.className = 'bubble' + (i % 2 === 1 ? ' bubble-pink' : '');
+    b.textContent = tag;
+    b.onclick = () => { activeTag = tag; searchTerm = ''; goResults(); };
+    grid.appendChild(b);
+  });
+}
+
+function updateResultsLabel(){
+  const label = document.getElementById('resultsLabel');
+  if(searchTerm.trim()){
+    label.textContent = `🔍 "${searchTerm.trim()}"`;
+  } else if(activeTag){
+    label.textContent = activeTag;
+  } else {
+    label.textContent = 'All Songs';
+  }
+}
+
+function goResults(){
+  document.getElementById('homeScreen').style.display = 'none';
+  document.getElementById('resultsScreen').style.display = 'block';
+  document.getElementById('search').value = searchTerm;
+  updateResultsLabel();
+  renderChips();
+  renderList();
+  window.scrollTo(0, 0);
+}
+
+function goHome(){
+  document.getElementById('resultsScreen').style.display = 'none';
+  document.getElementById('homeScreen').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('homeSearch').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){
+    searchTerm = e.target.value;
+    activeTag = null;
+    goResults();
+  }
+});
+
+function renderChips(){
+  const chipsEl = document.getElementById('chips');
+  chipsEl.innerHTML = '';
+  const allChip = document.createElement('div');
+  allChip.className = 'chip' + (activeTag === null ? ' active' : '');
+  allChip.textContent = 'All';
+  allChip.onclick = () => { activeTag = null; updateResultsLabel(); renderChips(); renderList(); };
+  chipsEl.appendChild(allChip);
+
+  ALL_TAGS.forEach(tag => {
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (activeTag === tag ? ' active' : '');
+    chip.textContent = tag;
+    chip.onclick = () => { activeTag = (activeTag === tag ? null : tag); updateResultsLabel(); renderChips(); renderList(); };
+    chipsEl.appendChild(chip);
+  });
+}
+
+function tierBadge(){
+  return `<span class="badge general">🎵 $${prices.general}</span>`;
+}
+
+function sortSongs(list){
+  const sorted = [...list];
+  sorted.sort((a, b) => {
+    if(sortMode === 'title-asc') return a.t.localeCompare(b.t);
+    if(sortMode === 'title-desc') return b.t.localeCompare(a.t);
+    if(sortMode === 'artist-asc') return (a.a||'').localeCompare(b.a||'');
+    if(sortMode === 'artist-desc') return (b.a||'').localeCompare(a.a||'');
+    return 0;
+  });
+  return sorted;
+}
+
+function renderList(){
+  const listEl = document.getElementById('list');
+  const term = searchTerm.trim().toLowerCase();
+  let filtered = songs.filter(s => {
+    const matchesTag = !activeTag || (s.tags||[]).includes(activeTag);
+    const matchesTerm = !term || s.t.toLowerCase().includes(term) || (s.a||'').toLowerCase().includes(term);
+    return matchesTag && matchesTerm;
+  });
+  filtered = sortSongs(filtered);
+
+  document.getElementById('countRow').textContent = `${filtered.length} song${filtered.length===1?'':'s'}`;
+
+  if(filtered.length === 0){
+    listEl.innerHTML = `<div class="empty-state">No songs match — try a different search or filter.</div>`;
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(s => `
+    <div class="song-row" data-id="${s.id}">
+      <div class="song-info">
+        <div class="song-title">${escapeHtml(s.t)}</div>
+        <div class="song-artist">${escapeHtml(s.a || '')}</div>
+      </div>
+      ${tierBadge()}
+    </div>`).join('');
+
+  [...listEl.querySelectorAll('.song-row')].forEach(row => {
+    row.addEventListener('click', () => openSheet(row.dataset.id));
+  });
+}
+
+function escapeHtml(str){
+  return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+document.getElementById('search').addEventListener('input', e => {
+  searchTerm = e.target.value;
+  updateResultsLabel();
+  renderList();
+});
+
+document.getElementById('sortSelect').addEventListener('change', e => {
+  sortMode = e.target.value;
+  renderList();
+});
+
+/* ============ REQUEST SHEET ============ */
+const WHEEL_SLICES = ['GENERAL','FREE','GENERAL','FREE','GENERAL','FREE','GENERAL','FREE','GENERAL','BOGO'];
+let wheelSpinning = false;
+let wheelRotationTotal = 0;
+
+function fitWheelToViewport(){
+  const sheetEl = document.getElementById('sheet');
+  const wrap = document.querySelector('.wheel-wrap');
+  const inner = document.querySelector('.wheel-scale-inner');
+  if(!sheetEl || !wrap || !inner) return;
+  let guard = 0;
+  while (sheetEl.scrollHeight > sheetEl.clientHeight && guard < 25){
+    const curOuter = parseFloat(wrap.style.width) || 280;
+    const nextOuter = Math.max(150, curOuter - 8);
+    if (nextOuter === curOuter) break;
+    const curPad = parseFloat(inner.style.left) || 0;
+    const nextWheelPx = Math.max(130, nextOuter - curPad*2);
+    const nextScale = (nextWheelPx/280).toFixed(4);
+    const nextPad = Math.round(14*nextScale);
+    const finalOuter = nextWheelPx + nextPad*2;
+    wrap.style.width = finalOuter + 'px';
+    wrap.style.height = finalOuter + 'px';
+    inner.style.transform = 'scale(' + nextScale + ')';
+    inner.style.top = nextPad + 'px';
+    inner.style.left = nextPad + 'px';
+    guard++;
+  }
+}
+
+function openSheet(id){
+  const s = songs.find(x => x.id === id);
+  if(!s) return;
+
+  document.getElementById('sheetTitle').textContent = s.t;
+  document.getElementById('sheetArtist').textContent = s.a || '';
+
+  const nameFieldHtml = `
+    <div class="section-label">🎤 Step 1 — What's your name?</div>
+    <input type="text" id="reqName" class="name-input" placeholder="So I can give you a shout-out on the mic!">
+  `;
+
+  const price = prices.general;
+  const tierLineHtml = `<span class="badge general">🎵 Song Request</span> <span class="price-tag">$${price}</span>`;
+
+    const wheelWrapPx = Math.round(Math.max(210, Math.min(320, window.innerWidth * 0.72, window.innerHeight * 0.40)));
+  const wheelScale = (wheelWrapPx / 280).toFixed(4);
+  const wheelGlowPad = Math.round(14 * wheelScale);
+  const wheelOuterPx = wheelWrapPx + wheelGlowPad * 2;
+  const bodyHtml = `
+    ${nameFieldHtml}
+    <div class="section-label" id="step2Label">Step 2 — Spin to Win a Free Song!</div>
+    <div class="wheel-wrap" style="width:${wheelOuterPx}px;height:${wheelOuterPx}px;">
+      <div class="wheel-scale-inner" style="transform:scale(${wheelScale});top:${wheelGlowPad}px;left:${wheelGlowPad}px;">
+        <div class="wheel-pointer">▼</div>
+        <div class="wheel-glow"></div>
+        <div class="wheel" id="spinWheel">${buildWheelLabels(price)}${buildWheelSparkles()}${buildWheelRivets()}</div>
+        <div class="wheel-center-dot"></div>
+      </div>
+    </div>
+    <button class="btn btn-text" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">🎡 Spin to Win!</button>
+    <div id="spinResultArea"></div>
+  `;
+
+  document.getElementById('sheetTierLine').innerHTML = tierLineHtml;
+  document.getElementById('sheetBody').innerHTML = bodyHtml;
+
+  wheelSpinning = false;
+  wheelRotationTotal = 0;
+  if(document.getElementById('spinWheel')){
+    document.getElementById('spinWheel').style.transform = 'rotate(0deg)';
+  }
+
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('sheet').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  fitWheelToViewport();
+}
+
+function stackedLetters(word, outerRadius){
+  const boxWidth = 44; // matches the .wheel-label CSS width — scaleX multiplies against this
+  const targetWidthStart = 70;
+  const targetWidthEnd = 50;
+  const stretchStart = targetWidthStart / boxWidth;
+  const stretchEnd = targetWidthEnd / boxWidth;
+  const baseFontSize = 26;
+  const shrinkAmount = 5;
+  let r = outerRadius;
+  let html = '';
+  for(let i = 0; i < word.length; i++){
+    const t = word.length > 1 ? i / (word.length - 1) : 0;
+    const fontSize = baseFontSize - shrinkAmount * t;
+    const stretch = (stretchStart + (stretchEnd - stretchStart) * t).toFixed(3);
+    html += `<span style="font-size:${fontSize.toFixed(1)}px; transform:scaleX(${stretch});">${word[i]}</span>`;
+    r -= fontSize * 0.92;
+  }
+  return html;
+}
+
+function buildWheelLabels(price){
+  const outerRadius = 122; // top (biggest letter) sits right at the rim
+  return WHEEL_SLICES.map((label, i) => {
+    const angle = i * 36 + 18;
+    const word = label === 'FREE' ? 'FREE' : label === 'BOGO' ? 'BOGO' : 'PAID';
+    return `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);">
+      <div class="wheel-label" style="transform: translate(-50%, -${outerRadius}px);">${stackedLetters(word, outerRadius)}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildWheelRivets(){
+  const rivetCount = 20;
+  const radius = 133; // sits right on the rim
+  let out = '';
+  for(let i = 0; i < rivetCount; i++){
+    const angle = i * (360 / rivetCount);
+    out += `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);">
+      <div class="wheel-rivet" style="transform: translate(0, -${radius}px);"></div>
+    </div>`;
+  }
+  return out;
+}
+
+function buildWheelSparkles(){
+  const sparkleCount = 16;
+  let out = '';
+  for(let i = 0; i < sparkleCount; i++){
+    const angle = Math.random() * 360;
+    const radius = 20 + Math.random() * 95;
+    const delay = (Math.random() * 1.6).toFixed(2);
+    const size = 10 + Math.round(Math.random() * 10);
+    out += `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);">
+      <span class="sparkle" style="transform: translate(-50%, -${radius}px); font-size:${size}px; animation-delay:${delay}s;">✨</span>
+    </div>`;
+  }
+  return out;
+}
+
+function spinWheel(songId, price){
+  if(wheelSpinning) return;
+  wheelSpinning = true;
+
+  const wheel = document.getElementById('spinWheel');
+  const spinBtn = document.getElementById('spinBtn');
+  spinBtn.disabled = true;
+  spinBtn.style.opacity = '0.6';
+
+  const resultIndex = Math.floor(Math.random() * WHEEL_SLICES.length);
+  const targetSliceCenter = resultIndex * 36 + 18;
+  const extraSpins = 5 * 360;
+  wheelRotationTotal += extraSpins + (360 - targetSliceCenter) - (wheelRotationTotal % 360);
+  wheel.style.transform = `rotate(${wheelRotationTotal}deg)`;
+
+  setTimeout(() => {
+    const outcome = WHEEL_SLICES[resultIndex];
+    revealSpinResult(outcome, songId, price);
+  }, 4300);
+}
+
+function launchFirework(x, apexY, color, isFinale, finaleText){
+  const rocket = document.createElement('div');
+  rocket.className = 'firework-rocket' + (isFinale ? ' firework-rocket-big' : '');
+  rocket.style.left = x + 'px';
+  rocket.style.background = color;
+  rocket.style.color = color;
+  document.body.appendChild(rocket);
+
+  const riseDuration = isFinale ? 1100 : 850 + Math.random() * 450;
+  const anim = rocket.animate([
+    { transform: 'translateY(0)', opacity: 1 },
+    { transform: `translateY(-${apexY}px)`, opacity: 1 }
+  ], { duration: riseDuration, easing: 'cubic-bezier(0.22,0.5,0.35,1)', fill: 'forwards' });
+
+  anim.onfinish = () => {
+    const rect = rocket.getBoundingClientRect();
+    const burstX = isFinale ? window.innerWidth / 2 : rect.left;
+    const burstY = isFinale ? window.innerHeight * 0.42 : rect.top;
+    rocket.remove();
+
+    if(isFinale){
+      screenFlash();
+      burstAt(burstX, burstY, color, true);
+      setTimeout(() => burstAt(burstX, burstY, '#FFFFFF', true), 90);
+      setTimeout(() => burstAt(burstX, burstY, colorPalette[Math.floor(Math.random()*colorPalette.length)], true), 200);
+      setTimeout(() => showFreeText(burstX, burstY, finaleText), 160);
+    } else {
+      burstAt(burstX, burstY, color, false);
+    }
+  };
+}
+
+function screenFlash(){
+  const flash = document.createElement('div');
+  flash.className = 'screen-flash';
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 500);
+}
+
+function burstAt(x, y, color, epic){
+  const particleCount = epic ? 55 : 36;
+  const distRange = epic ? [90, 210] : [60, 130];
+  for(let i = 0; i < particleCount; i++){
+    const p = document.createElement('div');
+    p.className = 'firework-particle';
+    const size = epic ? (5 + Math.random() * 4) : (4 + Math.random() * 3);
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.background = color;
+    p.style.boxShadow = `0 0 ${epic ? 10 : 6}px ${epic ? 3 : 2}px ${color}`;
+    document.body.appendChild(p);
+
+    const angle = Math.random() * Math.PI * 2;
+    const dist = distRange[0] + Math.random() * (distRange[1] - distRange[0]);
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist + (epic ? 45 : 30); // gravity drift downward
+    const duration = (epic ? 950 : 700) + Math.random() * 500;
+
+    const pAnim = p.animate([
+      { transform: 'translate(0,0) scale(1)', opacity: 1 },
+      { transform: `translate(${dx}px, ${dy}px) scale(0.4)`, opacity: 0 }
+    ], { duration, easing: 'cubic-bezier(0.2,0.6,0.4,1)', fill: 'forwards' });
+
+    pAnim.onfinish = () => p.remove();
+  }
+}
+
+function showFreeText(x, y, text){
+  const el = document.createElement('div');
+  el.className = 'firework-free-text';
+  el.textContent = text || 'FREE';
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+}
+
+const colorPalette = ['#FF3B3B', '#FFD700', '#3BA1FF', '#39FF6A', '#FF3BE0', '#B23BFF', '#3BFFF0', '#FFFFFF', '#FF8C3B'];
+
+function launchFireworks(finaleText){
+  const label = finaleText || 'FREE';
+  const count = 12;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  for(let i = 0; i < count; i++){
+    const delay = i * 150 + Math.random() * 110;
+    const x = vw * 0.08 + Math.random() * vw * 0.84;
+    const apexY = vh * 0.36 + Math.random() * vh * 0.34;
+    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+    setTimeout(() => launchFirework(x, apexY, color, false), delay);
+  }
+
+  // Grand finale — always launches last, always lands dead-center
+  const finaleDelay = count * 150 + 500;
+  setTimeout(() => {
+    launchFirework(vw / 2, vh * 0.5, '#FFD700', true, label);
+  }, finaleDelay);
+}
+
+function revealSpinResult(outcome, songId, price){
+  const area = document.getElementById('spinResultArea');
+  const s = songs.find(x => x.id === songId);
+  if(!s || !area) return;
+
+  if(outcome === 'FREE' || outcome === 'BOGO'){ launchFireworks(outcome); }
+
+  function finishReveal(){
+  // The wheel already did its job — hide it once spun so the result/
+  // payment step below has room to breathe without needing to scroll.
+  var wheelWrapEl = document.querySelector('.wheel-wrap');
+  if (wheelWrapEl) wheelWrapEl.style.display = 'none';
+  var spinBtnEl = document.getElementById('spinBtn');
+  if (spinBtnEl) spinBtnEl.style.display = 'none';
+  var step2LabelEl = document.getElementById('step2Label');
+  if (step2LabelEl) step2LabelEl.style.display = 'none';
+
+
+  if(outcome === 'FREE'){
+    area.innerHTML = `
+      <div class="spin-result spin-result-free">🎉 You spun FREE! This one's on the house.</div>
+      <div class="section-label">Step 3 — Send the request</div>
+      <a class="btn btn-text" href="#" target="_top" onclick="return prepareSend(this, '${s.id}', 'FREE')">📱 Text This Request</a>
+      <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
+    `;
+    
+  } else if(outcome === 'BOGO'){
+    area.innerHTML = `
+      <div class="spin-result spin-result-bogo">🎉 You spun BOGO! Pick a second song — it's free.</div>
+      <div class="section-label">Step 3 — Pick your free second song</div>
+      <input type="text" id="bogoSearch" class="name-input" placeholder="Search song or artist…" autocomplete="off">
+      <select id="bogoSort" class="bogo-sort-select">
+        <option value="title-asc">Title A → Z</option>
+        <option value="title-desc">Title Z → A</option>
+        <option value="artist-asc">Artist A → Z</option>
+        <option value="artist-desc">Artist Z → A</option>
+      </select>
+      <div class="chips" id="bogoChips"></div>
+      <div class="count-row" id="bogoCountRow"></div>
+      <div id="bogoResults" class="bogo-results"></div>
+      <div id="bogoNextSteps"></div>
+    `;
+    setupBogoPicker(songId, price);
+    
+  } else {
+    const venmoNote = encodeURIComponent(`${s.t} request`);
+    const venmoAppLink = `venmo://paycharge?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
+    const cashAppLink = `${PAYMENT_LINKS.cashapp}/${price}`;
+    const paypalLink = `${PAYMENT_LINKS.paypal}/${price}`;
+    area.innerHTML = `
+      <div class="spin-result spin-result-general">You spun $${price} — text your request, then send the tip.</div>
+      <div class="section-label">Step 3 — Send the request</div>
+      <a class="btn btn-text" href="#" target="_top" onclick="return prepareSend(this, '${s.id}', 'PAID')">📱 Text This Request</a>
+      <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
+
+      <div class="section-label">Step 4 — Send the tip ($${price})</div>
+      <a class="btn btn-venmo" href="${venmoAppLink}" target="_top">Pay $${price} with Venmo</a>
+      <a class="btn btn-cashapp" href="${cashAppLink}" target="_blank">Pay $${price} with Cash App</a>
+      <a class="btn btn-paypal" href="${paypalLink}" target="_blank">Pay $${price} with PayPal</a>
+    `;
+  }
+  }
+
+  if(outcome === 'FREE' || outcome === 'BOGO'){
+    setTimeout(finishReveal, 4800);
+  } else {
+    finishReveal();
+  }
+}
+
+let bogoFilter = { search: '', sort: 'title-asc', tag: null };
+
+function sortSongsByMode(list, mode){
+  const sorted = [...list];
+  sorted.sort((a, b) => {
+    if(mode === 'title-asc') return a.t.localeCompare(b.t);
+    if(mode === 'title-desc') return b.t.localeCompare(a.t);
+    if(mode === 'artist-asc') return (a.a||'').localeCompare(b.a||'');
+    if(mode === 'artist-desc') return (b.a||'').localeCompare(a.a||'');
+    return 0;
+  });
+  return sorted;
+}
+
+function setupBogoPicker(songAId, price){
+  bogoFilter = { search: '', sort: 'title-asc', tag: null };
+
+  const chipsEl = document.getElementById('bogoChips');
+  chipsEl.innerHTML = '';
+  const allChip = document.createElement('div');
+  allChip.className = 'chip active';
+  allChip.textContent = 'All';
+  allChip.onclick = () => { bogoFilter.tag = null; renderBogoChips(); renderBogoResults(songAId, price); };
+  chipsEl.appendChild(allChip);
+
+  ALL_TAGS.forEach(tag => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = tag;
+    chip.onclick = () => {
+      bogoFilter.tag = (bogoFilter.tag === tag ? null : tag);
+      renderBogoChips();
+      renderBogoResults(songAId, price);
+    };
+    chipsEl.appendChild(chip);
+  });
+
+  document.getElementById('bogoSearch').addEventListener('input', e => {
+    bogoFilter.search = e.target.value;
+    renderBogoResults(songAId, price);
+  });
+  document.getElementById('bogoSort').addEventListener('change', e => {
+    bogoFilter.sort = e.target.value;
+    renderBogoResults(songAId, price);
+  });
+
+  renderBogoResults(songAId, price);
+}
+
+function renderBogoChips(){
+  const chipsEl = document.getElementById('bogoChips');
+  [...chipsEl.children].forEach(chip => {
+    const isAllChip = chip === chipsEl.firstElementChild;
+    chip.classList.toggle('active', isAllChip ? bogoFilter.tag === null : chip.textContent === bogoFilter.tag);
+  });
+}
+
+function renderBogoResults(songAId, price){
+  const term = bogoFilter.search.trim().toLowerCase();
+  let filtered = songs.filter(sg =>
+    sg.id !== songAId &&
+    (!bogoFilter.tag || (sg.tags||[]).includes(bogoFilter.tag)) &&
+    (!term || sg.t.toLowerCase().includes(term) || (sg.a||'').toLowerCase().includes(term))
+  );
+  filtered = sortSongsByMode(filtered, bogoFilter.sort);
+
+  const resultsBox = document.getElementById('bogoResults');
+  const countRow = document.getElementById('bogoCountRow');
+  if(countRow) countRow.textContent = `${filtered.length} song${filtered.length === 1 ? '' : 's'}`;
+
+  if(filtered.length === 0){
+    resultsBox.innerHTML = `<div class="bogo-result-item">No matches</div>`;
+    return;
+  }
+
+  resultsBox.innerHTML = filtered.slice(0, 60).map(sg =>
+    `<div class="bogo-result-item" data-song-id="${sg.id}">${escapeHtml(sg.t)}${sg.a ? ' — ' + escapeHtml(sg.a) : ''}</div>`
+  ).join('');
+
+  [...resultsBox.querySelectorAll('.bogo-result-item')].forEach(item => {
+    item.onclick = () => {
+      const songBId = item.dataset.songId;
+      if(!songBId) return;
+      renderBogoNextSteps(songAId, songBId, price);
+    };
+  });
+}
+
+function renderBogoNextSteps(songAId, songBId, price){
+  const venmoNote = encodeURIComponent(`BOGO request`);
+  const venmoAppLink = `venmo://paycharge?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
+  const cashAppLink = `${PAYMENT_LINKS.cashapp}/${price}`;
+  const paypalLink = `${PAYMENT_LINKS.paypal}/${price}`;
+  const nextSteps = document.getElementById('bogoNextSteps');
+  nextSteps.innerHTML = `
+    <div class="section-label">Step 4 — Send the request</div>
+    <a class="btn btn-text" href="#" target="_top" onclick="return prepareSendBogo(this, '${songAId}', '${songBId}')">📱 Text This Request</a>
+    <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
+
+    <div class="section-label">Step 5 — Send the tip ($${price} for both songs!)</div>
+    <a class="btn btn-venmo" href="${venmoAppLink}" target="_top">Pay $${price} with Venmo</a>
+    <a class="btn btn-cashapp" href="${cashAppLink}" target="_blank">Pay $${price} with Cash App</a>
+    <a class="btn btn-paypal" href="${paypalLink}" target="_blank">Pay $${price} with PayPal</a>
+  `;
+}
+
+function prepareSendBogo(el, songAId, songBId){
+  const sA = songs.find(x => x.id === songAId);
+  const sB = songs.find(x => x.id === songBId);
+  if(!sA || !sB) return false;
+  const nameInput = document.getElementById('reqName');
+  const name = nameInput ? nameInput.value.trim() : '';
+  const namePart = (name ? name : 'Someone').toUpperCase();
+
+  let message = `${namePart} SPUN a BOGO!!!\n${sA.t.toUpperCase()}`;
+  if(sA.a) message += ` by\n${sA.a.toUpperCase()}`;
+  message += `\n+\n${sB.t.toUpperCase()}`;
+  if(sB.a) message += ` by\n${sB.a.toUpperCase()}`;
+
+  const smsBody = encodeURIComponent(message);
+  el.href = `sms:${CONTACT_NUMBER}?&body=${smsBody}`;
+  return true;
+}
+
+function prepareSend(el, id, outcomeType){
+  const s = songs.find(x => x.id === id);
+  if(!s) return false;
+  const nameInput = document.getElementById('reqName');
+  const name = nameInput ? nameInput.value.trim() : '';
+  const namePart = (name ? name : 'Someone').toUpperCase();
+  const songPart = s.t.toUpperCase();
+  const artistPart = (s.a || '').toUpperCase();
+  const typeLabel = outcomeType || 'PAID';
+
+  let message = `${namePart} SPUN a ${typeLabel}!!!\n${songPart}`;
+  if(artistPart) message += ` by\n${artistPart}`;
+
+  const smsBody = encodeURIComponent(message);
+  el.href = `sms:${CONTACT_NUMBER}?&body=${smsBody}`;
+  return true; // let the real click navigate — required for sms: links to fire inside an iframe
+}
+
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('sheet').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+/* ============ LIVE POLLS ============ */
+const POLL_COLORS = ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#B983FF', '#FF9F45'];
+
+function startPollChecking(){
+  if(!POLL_BIN_ID) return; // polls feature not set up yet
+  checkForLivePoll();
+  pollPollingTimer = setInterval(checkForLivePoll, 4000);
+}
+
+async function fetchPollData(){
+  const res = await fetch(`${JSONBIN_BASE}/${POLL_BIN_ID}/latest`, { headers: { "X-Master-Key": MASTER_KEY } });
+  const data = await res.json();
+  return data.record || { polls: [], activePollId: null };
+}
+
+async function checkForLivePoll(){
+  try{
+    const record = await fetchPollData();
+    const activePoll = (record.polls || []).find(p => p.id === record.activePollId && p.status === 'live');
+
+    if(!activePoll){
+      currentPollId = null;
+      pollDismissed = false;
+      document.getElementById('pollTakeover').style.display = 'none';
+      return;
+    }
+
+    if(activePoll.id !== currentPollId){
+      pollDismissed = false; // a new poll just went live — show it fresh
+    }
+    currentPollId = activePoll.id;
+    const votedKey = 'voted_poll_' + activePoll.id;
+    hasVotedThisPoll = !!localStorage.getItem(votedKey);
+    renderPollTakeover(activePoll);
+
+    if(!pollDismissed){
+      document.getElementById('pollTakeover').style.display = 'flex';
+    }
+  } catch(err){
+    console.error('Poll check failed:', err);
+  }
+}
+
+function dismissPollTakeover(){
+  pollDismissed = true;
+  document.getElementById('pollTakeover').style.display = 'none';
+}
+
+function renderPollTakeover(poll){
+  document.getElementById('pollQuestionText').textContent = poll.question;
+  const area = document.getElementById('pollOptionsArea');
+  const totalVotes = poll.options.reduce((sum, o) => sum + (o.votes || 0), 0);
+
+  const optionsHtml = poll.options.map((opt, i) => {
+    const song = songs.find(s => s.id === opt.songId);
+    const label = opt.label || (song ? song.t + (song.a ? ' — ' + song.a : '') : 'Unknown song');
+    const pct = totalVotes > 0 ? Math.round(((opt.votes || 0) / totalVotes) * 100) : 0;
+    const votedForThis = hasVotedThisPoll && localStorage.getItem('voted_poll_' + poll.id) === String(i);
+    const color = POLL_COLORS[i % POLL_COLORS.length];
+
+    const showResults = hasVotedThisPoll;
+    const fillHtml = showResults ? `<div class="poll-option-fill" style="width:${pct}%;"></div>` : '';
+    const pctHtml = showResults ? `<span class="poll-option-pct">${pct}%</span>` : '';
+    const clickAttr = hasVotedThisPoll ? '' : `onclick="castVote('${poll.id}', ${i})"`;
+    const requestLinkText = opt.label
+      ? `Want a specific song instead? Request one — $${prices.general}`
+      : `Want this one anyway? Request it — $${prices.general}`;
+
+    return `
+      <div class="poll-option${votedForThis ? ' voted-for' : ''}" style="background:${color};" ${clickAttr}>
+        ${fillHtml}
+        <div class="poll-option-content">
+          <span class="poll-option-label">${escapeHtml(label)}</span>
+          ${pctHtml}
+        </div>
+      </div>
+      ${hasVotedThisPoll && opt.songId ? `<div class="poll-request-link" onclick="event.stopPropagation(); openSheet('${opt.songId}')">${requestLinkText}</div>` : ''}
+    `;
+  }).join('');
+
+  area.innerHTML = `
+    ${optionsHtml}
+    ${hasVotedThisPoll ? `
+      <div class="poll-voted-note">✓ Your vote is in — thanks!</div>
+      <div class="poll-continue-btn" onclick="dismissPollTakeover()">Continue Browsing</div>
+    ` : ''}
+  `;
+}
+
+async function castVote(pollId, optionIndex){
+  if(hasVotedThisPoll) return;
+  hasVotedThisPoll = true; // optimistic lock so a double-tap can't double-vote
+  localStorage.setItem('voted_poll_' + pollId, String(optionIndex));
+
+  try{
+    const record = await fetchPollData();
+    const poll = (record.polls || []).find(p => p.id === pollId);
+    if(poll && poll.status === 'live'){
+      poll.options[optionIndex].votes = (poll.options[optionIndex].votes || 0) + 1;
+      await fetch(`${JSONBIN_BASE}/${POLL_BIN_ID}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
+        body: JSON.stringify(record)
+      });
+    }
+  } catch(err){
+    console.error('Vote failed to save:', err);
+  }
+
+  checkForLivePoll();
+}
+
+/* ============ INIT ============ */
+loadSongs();
+</script>
+</body>
+</html>
