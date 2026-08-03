@@ -108,17 +108,13 @@
   .polaroid-wrap{display:none; width:100%; max-width:340px; margin-top:0; flex:1; min-height:0;
     flex-direction:column; justify-content:center; overflow-y:auto;}
   .polaroid{
-    background:var(--paper); border-radius:4px; padding:14px 14px 46px;
+    background:#000; border-radius:18px; overflow:hidden;
     box-shadow:0 20px 40px -12px rgba(0,0,0,.6);
-    transform:translateY(40px) rotate(-2deg); opacity:0;
-    animation:eject .55s cubic-bezier(.2,.8,.3,1.1) forwards;
+    opacity:0;
+    animation:eject .4s ease forwards;
   }
-  @keyframes eject{to{transform:translateY(0) rotate(-1.2deg); opacity:1;}}
+  @keyframes eject{to{opacity:1;}}
   .polaroid img, .polaroid video{width:100%; max-height:38vh; object-fit:contain; display:block; border-radius:2px; background:#000;}
-  .polaroid .caption{
-    font-family:'Josefin Sans',sans-serif; color:var(--ink); text-align:center;
-    margin-top:10px; font-size:.95rem; letter-spacing:.02em;
-  }
   input[type=text]{
     width:100%; margin-top:12px; padding:10px 12px; font-size:16px; border-radius:8px;
     border:1px solid rgba(141,178,229,.4); background:var(--panel); color:var(--white);
@@ -172,7 +168,6 @@
   <div class="polaroid-wrap" id="polaroidWrap">
     <div class="polaroid">
       <div id="polaroidMedia"></div>
-      <div class="caption">for Rick 🎷</div>
     </div>
     <input type="text" id="nameInput" placeholder="Your name (optional)">
     <div class="review-actions">
