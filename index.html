@@ -1497,7 +1497,7 @@
 
 <section id="booking" class="reveal-fade">
   <h2 class="display-heading reveal-title">Booking</h2>
-  <p>Please fill out the form and I'll get back to you with a personalized quote.</p>
+  <p id="booking-intro">Please fill out the form and I'll get back to you with a personalized quote.</p>
   <form class="booking" id="booking-form">
     <div>
       <label>Name</label>
@@ -1732,6 +1732,7 @@
       });
     })
     .then(function(){
+      var introEl = document.getElementById('booking-intro'); if (introEl) introEl.style.display = 'none';
       form.innerHTML = '<p style="text-align:center;font-size:1.1rem;">Thanks! Your request has been sent — I\'ll follow up with a quote soon.</p>';
     })
     .catch(function(err){
