@@ -118,7 +118,8 @@
   .band-diamond{--bg-image:url('images/diamond-bg.jpg');--overlay:0.5;}
   .band-calendar{--bg-image:url('images/calendar-bg.jpg');--overlay:0.5;}
 
-  .button-row{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin:8px 0 0;}
+  .button-row{display:flex;flex-direction:column;align-items:center;gap:16px;margin:8px 0 0;}
+  .button-col{display:flex;flex-direction:column;align-items:center;gap:8px;}
   .glow-btn{
     display:inline-block;
     padding:16px 32px;
@@ -474,14 +475,17 @@
       <div class="hero-title">Join the <span class="accent">Fun</span></div>
       <div class="button-row">
         <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
-        <a href="https://rickparma.com/song-request" class="img-btn song-request-button reveal-item">
+        <div class="button-col">
+          <a href="https://rickparma.com/song-request" class="img-btn song-request-button reveal-item">
           <img src="song-request-button.png" alt="Song Request">
-          <span class="btn-caption">Request your favorite song &#8212; I'll try to play it!</span>
         </a>
-        <a href="https://rickparma.com/fan-cam" class="img-btn fan-cam-button reveal-item" style="--rd:.12s">
+            <p class="btn-caption">Request your favorite song and I will play it!</p>
+        </div>
+<div class="button-col">
+  <a href="https://rickparma.com/fan-cam" class="img-btn fan-cam-button reveal-item" style="--rd:.12s">
           <img src="fan-cam-button.png" alt="Fan Cam - Click Here">
-          <span class="btn-caption">Snap pics and videos of me AND your crew!</span>
         </a>
+  <p class="btn-caption">Snap pics and videos of me AND your crew!</p>
       </div></div>
     </div>
   </div>
