@@ -1116,7 +1116,7 @@
       var overlay = ensureFlyerFullOverlay();
       var isVideo = isVideoSrc(flyer);
       overlay.querySelector('.cal-flyer-full-body').innerHTML = isVideo
-        ? '<video src="' + flyer + '" muted loop playsinline autoplay controls></video>'
+        ? '<video src="' + flyer + '" muted loop playsinline autoplay style="pointer-events:none"></video>'
         : '<img src="' + flyer + '" alt="Show flyer">';
       overlay.classList.add('open');
     }
