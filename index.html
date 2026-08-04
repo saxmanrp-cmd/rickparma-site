@@ -1644,9 +1644,7 @@
   var form = document.getElementById('booking-form');
   if (!form) return;
   var TWILIO_URL = 'https://rickparma-booking-8582.twil.io/booking-alert';
-  var BIN_ID = '6a66bc4dda38895dfe942e94';
-  var MASTER_KEY = '$2a$10$AE8jTzF3OJJNfqTgYPcPK.SzVAdv0Mqi/obwqWTuQjpE0dOkYkCE.';
-
+  var INVOICE_SYNC_URL = 'https://rickparma-booking-8582.twil.io/invoice-sync';
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var submitBtn = form.querySelector('.submit-btn');
@@ -1676,75 +1674,62 @@
               }
     } catch (err) {}
 
-    // Write a draft lead into the Invoice Creator's data bin
-    fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest', {
-      headers: { 'X-Master-Key': MASTER_KEY }
-    })
-    .then(function(res){ return res.json(); })
-    .then(function(json){
-      var invoices = (json.record && json.record.invoices) || [];
-      var maxNum = invoices.reduce(function(m, inv){ return Math.max(m, Number(inv.invoiceNumber) || 0); }, 1000);
-      var cityLine = (data.city || data.state || data.zip)
-        ? ('\n' + (data.city || '') + ', ' + (data.state || '') + ' ' + (data.zip || ''))
-        : '';
-      var addressLines = [data.venue_address, data.unit].filter(Boolean).join('\n') + cityLine;
-      var notes = [
-        data.sound_included ? ('Sound included: ' + data.sound_included) : '',
-        data.multiple_areas ? ('Multiple areas: ' + data.multiple_areas) : '',
-        concessions.length ? ('Concessions: ' + concessions.join(', ')) : '',
-        data.referral ? ('Referral: ' + data.referral) : ''
-      ].filter(Boolean).join(' | ');
+      // Send a draft lead into the Invoice Creator via the server-side proxy
+        var cityLine = (data.city || data.state || data.zip)
+          ? ('\n' + (data.city || '') + ', ' + (data.state || '') + ' ' + (data.zip || ''))
+                  : '';
+        var addressLines = [data.venue_address, data.unit].filter(Boolean).join('\n') + cityLine;
+        var notes = [
+                  data.sound_included ? ('Sound included: ' + data.sound_included) : '',
+                  data.multiple_areas ? ('Multiple areas: ' + data.multiple_areas) : '',
+                  concessions.length ? ('Concessions: ' + concessions.join(', ')) : '',
+                  data.referral ? ('Referral: ' + data.referral) : ''
+                ].filter(Boolean).join(' | ');
+  
+        var newInvoice = {
+                  id: 'inv_' + Date.now(),
+                  clientName: data.name || '',
+                  clientEmail: data.email || '',
+                  clientPhone: data.phone || '',
+                  clientAddress: addressLines,
+                  addrStreet: data.venue_address || '',
+                  addrUnit: data.unit || '',
+                  addrCity: data.city || '',
+                  addrState: data.state || '',
+                  addrZip: data.zip || '',
+                  eventName: data.event_name || '',
+                  venueName: data.venue_name || '',
+                  eventType: data.event_type || '',
+                  perfType: data.performance_type || '',
+                  venueType: data.venue_type || '',
+                  guests: data.guests || '',
+                  eventDate: data.event_date || '',
+                  timeStart: data.start_time || '',
+                  timeEnd: data.end_time || '',
+                  lineItems: [],
+                  payments: [],
+                  bookingSource: 'website-form',
+                  bookingNotes: notes
+        };
 
-      var newInvoice = {
-        id: 'inv_' + Date.now(),
-        invoiceNumber: maxNum + 1,
-        createdAt: new Date().toISOString().slice(0, 10),
-        clientName: data.name || '',
-        clientEmail: data.email || '',
-        clientPhone: data.phone || '',
-        clientAddress: addressLines,
-        addrStreet: data.venue_address || '',
-        addrUnit: data.unit || '',
-        addrCity: data.city || '',
-        addrState: data.state || '',
-        addrZip: data.zip || '',
-        eventName: data.event_name || '',
-        venueName: data.venue_name || '',
-        eventType: data.event_type || '',
-        perfType: data.performance_type || '',
-        venueType: data.venue_type || '',
-        guests: data.guests || '',
-        eventDate: data.event_date || '',
-        timeStart: data.start_time || '',
-        timeEnd: data.end_time || '',
-        lineItems: [],
-        payments: [],
-        bookingSource: 'website-form',
-        bookingNotes: notes
-      };
-
-      invoices.push(newInvoice);
-
-      return fetch('https://api.jsonbin.io/v3/b/' + BIN_ID, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': MASTER_KEY
-        },
-        body: JSON.stringify({ invoices: invoices })
-      });
-    })
-    .then(function(){
-      var introEl = document.getElementById('booking-intro'); if (introEl) introEl.style.display = 'none';
-      form.innerHTML = '<p style="text-align:center;font-size:1.1rem;">Thanks! Your request has been sent — I\'ll follow up with a quote soon.</p>';
-    })
-    .catch(function(err){
-      console.error('Booking sync error', err);
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit';
-      statusEl.textContent = 'Something went wrong sending your request — please try again or text/call directly.';
-    });
-  });
+          fetch(INVOICE_SYNC_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ invoice: newInvoice })
+          })
+          .then(function(res){ return res.json(); })
+          .then(function(){
+                    var introEl = document.getElementById('booking-intro'); if (introEl) introEl.style.display = 'none';
+                    form.innerHTML = '<p style="text-align:center;font-size:1.1rem;">Thanks! Your request has been sent — I\'ll follow up with a quote soon.</p>';
+          })
+          .catch(function(err){
+                    console.error('Booking sync error', err);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit';
+                    statusEl.textContent = 'Something went wrong sending your request — please try again or text/call directly.';
+          });
+    
+        });
 })();
 </script>
 
