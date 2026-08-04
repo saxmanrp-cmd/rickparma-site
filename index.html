@@ -1665,6 +1665,7 @@
 
     // Fire-and-forget text notification via Twilio Function
     try {
+              if (data.name || data.phone || data.event_date || data.venue_address) {
       var params = new URLSearchParams();
       params.append('name', data.name || '');
       params.append('phone', data.phone || '');
@@ -1672,6 +1673,7 @@
       params.append('event_type', data.event_type || '');
       params.append('venue_address', data.venue_address || '');
       fetch(TWILIO_URL, { method: 'POST', mode: 'no-cors', body: params }).catch(function(){});
+              }
     } catch (err) {}
 
     // Write a draft lead into the Invoice Creator's data bin
