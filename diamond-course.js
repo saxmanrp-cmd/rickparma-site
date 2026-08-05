@@ -3,7 +3,7 @@
    the JSONBin-backed student roster. Included by every course page. */
 
 var DM_BIN_ID = '6a6a9028da38895dfea1d901';
-var DM_MASTER_KEY = '$2a$10$AE8jTzF3OJJNfqTgYPcPK.SzVAdv0Mqi/obwqWTuQjpE0dOkYkCE.';
+var DM_MASTER_KEY = '$2a$10$R94RuRqthE5DDtsO9.kzqOwjRLyF1eaqAAPX.3Qah3rJ7cXwsR1lK';
 var DM_TOTAL_LESSONS = 13;
 
 async function dmSha256Hex(str) {
