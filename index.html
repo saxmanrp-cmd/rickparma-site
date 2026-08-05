@@ -475,13 +475,13 @@
       <div class="hero-title">Join the <span class="accent">Fun</span></div>
       <div class="button-row">
         <!-- Already self-hosted on GitHub Pages - just link straight to them, no rebuild needed -->
-        <div class="button-col">
+        <div class="button-col" id="songRequestCol">
           <a href="https://rickparma.com/song-request" class="img-btn song-request-button reveal-item">
           <img src="song-request-button.png" alt="Song Request">
         </a>
             <p class="btn-caption">Request your favorite song and I will play it!</p>
         </div>
-<div class="button-col">
+<div class="button-col" id="fanCamCol">
   <a href="https://rickparma.com/fan-cam" class="img-btn fan-cam-button reveal-item" style="--rd:.12s">
           <img src="fan-cam-button.png" alt="Fan Cam - Click Here">
         </a>
@@ -491,7 +491,7 @@
     </div>
   </div>
 
-  <script>(function(){var heroEl=document.getElementById('heroBand');if(!heroEl)return;fetch('https://rickparma-booking-8582.twil.io/hero-status').then(function(r){return r.json();}).then(function(data){if(data&&data.live===false){heroEl.style.display='none';}}).catch(function(err){console.error('hero-status check failed',err);});})();</script><div class="band band-tipjar band-tight reveal-fade">
+  <script>(function(){var heroEl=document.getElementById('heroBand');var songCol=document.getElementById('songRequestCol');var camCol=document.getElementById('fanCamCol');fetch('https://rickparma-booking-8582.twil.io/hero-status').then(function(r){return r.json();}).then(function(data){var songLive=!(data&&data.songRequestLive===false);var camLive=!(data&&data.fanCamLive===false);if(songCol&&!songLive){songCol.style.display='none';}if(camCol&&!camLive){camCol.style.display='none';}if(heroEl&&!songLive&&!camLive){heroEl.style.display='none';}}).catch(function(err){console.error('hero-status check failed',err);});})();</script><div class="band band-tipjar band-tight reveal-fade">
     <div class="band-inner">
       <div class="rp-card-panel">
       <div class="tip-amounts" id="tipAmounts">
