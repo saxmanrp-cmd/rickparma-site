@@ -1065,7 +1065,7 @@
       if (window.rpReveal) { trackEl.querySelectorAll('.reveal-item').forEach(window.rpReveal); }
     }
 
-    function escapeHtml(s) {
+    function linkify(html){var urlPattern=/((https?:\/\/|www\.)[^\s<]+)/gi;return html.replace(urlPattern,function(match){var m=match.match(/^(.*?)([.,;:!?"']*)$/);var core=m[1];var trail=m[2];var href=core.indexOf('http')===0?core:'https://'+core;return '<a href="'+href+'" target="_blank" rel="noopener">'+core+'</a>'+trail;});} function escapeHtml(s) {
       var d = document.createElement('div');
       d.textContent = s;
       return d.innerHTML;
@@ -1219,7 +1219,7 @@
         '<div class="cal-detail-date">' + escapeHtml(dow) + ', ' + escapeHtml(dateStr) + (timeStr ? ' · ' + escapeHtml(timeStr) : '') + '</div>' +
         '<h3 class="cal-detail-venue">' + escapeHtml(e.title) + '</h3>' +
         (e.location ? '<p class="cal-detail-meta">' + escapeHtml(e.location) + '</p>' : '') +
-        (e.description ? '<p class="cal-detail-desc">' + escapeHtml(e.description) + '</p>' : '') +
+        (e.description ? '<p class="cal-detail-desc">' + linkify(escapeHtml(e.description)) + '</p>' : '') +
         '<div class="cal-detail-actions">' +
           '<a class="primary cal-action-btn" href="#" data-cal-action="calendar" data-idx="' + idx + '">+ Add to Calendar</a>' +
           '<div class="cal-detail-actions-row">' +
