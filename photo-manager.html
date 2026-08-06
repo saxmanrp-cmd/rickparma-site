@@ -106,7 +106,7 @@
   .photo-num  { font-size:10px; color:#8DB2E5; letter-spacing:0.1em; font-weight:700; margin-bottom:1px; }
   .photo-url  { font-size:10px; color:rgba(255,255,255,0.3); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .photo-dates { font-size:10px; color:#8DB2E5; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .btn-delete { background:none; border:none; color:rgba(255,255,255,0.25); font-size:20px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; }
+  .btn-delete { background:none; border:none; color:rgba(255,255,255,0.25); font-size:20px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; } .btn-share { background:none; border:none; color:#8DB2E5; font-size:16px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; }
   .btn-delete:active { color:#e57a7a; }
   .empty-state { text-align:center; color:rgba(255,255,255,0.2); font-size:13px; padding:32px 0; }
   .photo-thumb-video { width:40px; height:53px; border-radius:4px; background:#2a1010; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:22px; cursor:pointer; }
@@ -756,13 +756,14 @@
         '<span class="drag-handle">⠿</span>' +
         thumbHtml +
         '<div class="photo-info"><div class="photo-num">PHOTO ' + (i+1) + '</div>' + nameHtml + '<div class="photo-url">' + truncUrl(p.src) + '</div>' + datesHtml + '</div>' +
-        '<button class="btn-delete" onclick="removePhoto(' + i + ')">×</button>';
+        '<button class="btn-share" onclick="shareItem(' + i + ')">🔗</button>' + '<button class="btn-delete" onclick="removePhoto(' + i + ')">×</button>';
       var handle = item.querySelector(".drag-handle");
       initTouchDrag(handle, i);
       list.appendChild(item);
     });
   }
-  async function removePhoto(index) {
+  function buildPhotoCaption(name){ var title = name && name.trim() ? name.trim() : "Live Music Night"; return [title, "", "Come out and join us!", "", "#livemusic #saxophone #rickparma"].join("
+"); } async function shareItem(index){ var p = photos[index]; if(!p) return; var caption = buildPhotoCaption(p.name); try{ var resp = await fetch(p.src); var blob = await resp.blob(); var ext = isVideo(p.src) ? "mov" : "jpg"; var file = new File([blob], "flyer" + (index+1) + "." + ext, { type: blob.type }); if(navigator.canShare && navigator.canShare({ files: [file] })){ await navigator.share({ files: [file], title: p.name || "Flyer", text: caption }); return; } }catch(e){} if(navigator.share){ try{ await navigator.share({ title: p.name || "Flyer", text: caption }); return; }catch(e){} } if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(caption); alert("Caption copied! Open the photo and save/share the image manually."); } } async function removePhoto(index) {
     if (!confirm("Remove photo " + (index+1) + (photos[index].name ? ' "' + photos[index].name + '"' : "") + "?")) return;
     photos.splice(index, 1);
     render();
