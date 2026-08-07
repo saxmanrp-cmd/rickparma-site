@@ -905,7 +905,7 @@ function renderBogoNextSteps(songAId, songBId, price){
 function prepareSendBogo(el, songAId, songBId){
   const sA = songs.find(x => x.id === songAId);
   const sB = songs.find(x => x.id === songBId);
-  if(!sA || !sB) return false;
+  if(!sA || !sB) return false; try{var __p2=new URLSearchParams();__p2.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p2.append('song',sA.t);__p2.append('artist',sA.a||'');__p2.append('outcome','BOGO');__p2.append('song2',sB.t);__p2.append('artist2',sB.a||'');fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p2}).catch(function(){});}catch(__e2){}
   const nameInput = document.getElementById('reqName');
   const name = nameInput ? nameInput.value.trim() : '';
   const namePart = (name ? name : 'Someone').toUpperCase();
@@ -922,7 +922,7 @@ function prepareSendBogo(el, songAId, songBId){
 
 function prepareSend(el, id, outcomeType){
   const s = songs.find(x => x.id === id);
-  if(!s) return false;
+  if(!s) return false; try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){} try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){}
   const nameInput = document.getElementById('reqName');
   const name = nameInput ? nameInput.value.trim() : '';
   const namePart = (name ? name : 'Someone').toUpperCase();
