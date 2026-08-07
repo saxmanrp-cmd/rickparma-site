@@ -188,7 +188,7 @@
   .bogo-results{max-height:200px; overflow-y:auto; border:1px solid var(--line); border-radius:10px; margin-top:8px;}
   .bogo-result-item{padding:12px 14px; font-size:14px; color:var(--white); border-bottom:1px solid var(--line); cursor:pointer;}
   .bogo-result-item:last-child{border-bottom:none;}
-  .bogo-result-item:active{background:rgba(141,178,229,0.1);}
+  .bogo-result-item:active{background:rgba(141,178,229,0.1);} .bogo-result-item.selected{background:rgba(141,178,229,0.18); border-left:3px solid var(--accent);} .bogo-confirm{padding:10px 14px; margin-bottom:10px; background:rgba(141,178,229,0.12); border:1px solid var(--accent); border-radius:8px; font-size:14px; color:var(--white);}
 
   .firework-rocket{position:fixed; bottom:0; left:0; width:5px; height:5px; border-radius:50%; z-index:500; pointer-events:none; box-shadow:0 0 10px 3px currentColor, 0 6px 14px -2px currentColor;}
   .firework-rocket-big{width:8px; height:8px; box-shadow:0 0 18px 5px currentColor, 0 8px 20px -2px currentColor;}
@@ -879,19 +879,19 @@ function renderBogoResults(songAId, price){
     item.onclick = () => {
       const songBId = item.dataset.songId;
       if(!songBId) return;
-      renderBogoNextSteps(songAId, songBId, price);
+      [...resultsBox.querySelectorAll('.bogo-result-item')].forEach(el => el.classList.remove('selected')); item.classList.add('selected'); renderBogoNextSteps(songAId, songBId, price); var nextStepsEl = document.getElementById('bogoNextSteps'); if(nextStepsEl) nextStepsEl.scrollIntoView({behavior:'smooth', block:'start'});
     };
   });
 }
 
-function renderBogoNextSteps(songAId, songBId, price){
+function renderBogoNextSteps(songAId, songBId, price){ const sB = songs.find(x => x.id === songBId);
   const venmoNote = encodeURIComponent(`BOGO request`);
   const venmoAppLink = `venmo://paycharge?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
   const cashAppLink = `${PAYMENT_LINKS.cashapp}/${price}`;
   const paypalLink = `${PAYMENT_LINKS.paypal}/${price}`;
   const nextSteps = document.getElementById('bogoNextSteps');
   nextSteps.innerHTML = `
-    <div class="section-label">Step 4 — Send the request</div>
+    <div class="section-label">Step 4 — Send the request</div><div class="bogo-confirm">✓ Second song: <strong>${sB ? escapeHtml(sB.t) : ''}</strong>${sB && sB.a ? ' — ' + escapeHtml(sB.a) : ''}</div>
     <a class="btn btn-text" href="#" target="_top" onclick="return prepareSendBogo(this, '${songAId}', '${songBId}')">📱 Text This Request</a>
     <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
 
