@@ -405,7 +405,7 @@ function renderChips(){
 }
 
 function tierBadge(){
-  return `<span class="badge general">🎵 $${prices.general}</span>`;
+  return `<span class="badge general"> $${prices.general}</span>`;
 }
 
 function sortSongs(list){
@@ -508,7 +508,7 @@ function openSheet(id){
   `;
 
   const price = prices.general;
-  const tierLineHtml = `<span class="badge general">🎵 Song Request</span> <span class="price-tag">$${price}</span>`;
+  const tierLineHtml = `<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
 
     const wheelWrapPx = Math.round(Math.max(210, Math.min(320, window.innerWidth * 0.72, window.innerHeight * 0.40)));
   const wheelScale = (wheelWrapPx / 280).toFixed(4);
