@@ -922,7 +922,7 @@ function prepareSendBogo(el, songAId, songBId){
 
 function prepareSend(el, id, outcomeType){
   const s = songs.find(x => x.id === id);
-  if(!s) return false; try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){} try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){}
+  if(!s) return false; try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){}
   const nameInput = document.getElementById('reqName');
   const name = nameInput ? nameInput.value.trim() : '';
   const namePart = (name ? name : 'Someone').toUpperCase();
