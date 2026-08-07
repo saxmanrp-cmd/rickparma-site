@@ -276,9 +276,9 @@
 <script>
 /* ============ CONFIG ============ */
 // Paste the Bin ID created in the Song Manager app here. Both apps must use the SAME Bin ID.
-const BIN_ID = "6a52d2c6f5f4af5e2982691a";
-const MASTER_KEY = "$2a$10$R94RuRqthE5DDtsO9.kzqOwjRLyF1eaqAAPX.3Qah3rJ7cXwsR1lK";
-const JSONBIN_BASE = "https://api.jsonbin.io/v3/b";
+const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev"; const BIN_ID = "6a52d2c6f5f4af5e2982691a";
+// MASTER_KEY removed — reads/writes now go through the cached proxy Worker (rickparma-jsonbin-proxy) instead of hitting jsonbin directly.
+
 
 const CONTACT_NUMBER = "8559242976";
 const APPLE_GPAY_NUMBER = "773-209-1124";
@@ -312,7 +312,7 @@ async function loadSongs(){
     return;
   }
   try{
-    const res = await fetch(`${JSONBIN_BASE}/${BIN_ID}/latest`, { headers: { "X-Master-Key": MASTER_KEY } });
+    const res = await fetch(`${PROXY_BASE}/songs`);
     const data = await res.json();
     const record = data.record || {};
     songs = record.songs || [];
@@ -954,7 +954,7 @@ function startPollChecking(){
 }
 
 async function fetchPollData(){
-  const res = await fetch(`${JSONBIN_BASE}/${POLL_BIN_ID}/latest`, { headers: { "X-Master-Key": MASTER_KEY } });
+  const res = await fetch(`${PROXY_BASE}/polls`);
   const data = await res.json();
   return data.record || { polls: [], activePollId: null };
 }
@@ -1043,9 +1043,9 @@ async function castVote(pollId, optionIndex){
     const poll = (record.polls || []).find(p => p.id === pollId);
     if(poll && poll.status === 'live'){
       poll.options[optionIndex].votes = (poll.options[optionIndex].votes || 0) + 1;
-      await fetch(`${JSONBIN_BASE}/${POLL_BIN_ID}`, {
+      await fetch(`${PROXY_BASE}/polls`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(record)
       });
     }
