@@ -35,12 +35,7 @@ let paymentUiInitialized = false;
 
 function showStatus(message) {
   statusEl.textContent = message;
-  statusEl.classList.add("visible");
-}
-
-function clearStatus() {
-  statusEl.textContent = "";
-  statusEl.classList.remove("visible");
+  statusEl.classList.toggle("visible", Boolean(message));
 }
 
 function showRow(id) {
@@ -48,14 +43,13 @@ function showRow(id) {
   if (row) row.classList.remove("hidden");
 }
 
-function dollarsToCents(value) {
-  const n = Number(String(value).replace(/[^0-9.]/g, ""));
-  if (!Number.isFinite(n) || n <= 0) throw new Error("Enter a valid payment amount.");
-  return Math.round(n * 100);
+function centsToDollars(cents) {
+  return (Number(cents || 0) / 100).toFixed(2);
 }
 
-function centsToDollars(cents) {
-  return (Number(cents) / 100).toFixed(2);
+function dollarsToCents(value) {
+  const n = Math.round(Number(value || 0) * 100);
+  return Number.isFinite(n) ? n : 0;
 }
 
 async function api(path, options = {}) {
@@ -192,51 +186,49 @@ async function initializeSquare() {
 
   await loadScript(squareSdk);
 
-  squarePayments = window.Square.payments(config.square.applicationId, config.square.locationId);
+  squarePayments = window.Square.payments(config.square.appId, config.square.locationId);
 
   card = await squarePayments.card();
   await card.attach("#card-container");
 
-  $("#card-pay-button").onclick = async () => {
+  $("#card-pay-button").addEventListener("click", async () => {
     try {
-      showStatus("Opening secure card payment…");
-      const tokenResult = await card.tokenize();
-      if (tokenResult.status !== "OK") throw new Error("Card payment was not completed.");
-      await paySquare(tokenResult.token);
+      showStatus("Processing card payment…");
+      const result = await card.tokenize();
+      if (result.status === "OK") {
+        await paySquare(result.token);
+      } else {
+        showStatus("Card details could not be verified. Please check and try again.");
+      }
     } catch (error) {
       showStatus(error.message || "Card payment failed.");
     }
-  };
+  });
 
   try {
     const applePay = await squarePayments.applePay(buildSquarePaymentRequest());
-    const target = $("#apple-pay-button");
-    target.innerHTML = "";
-    const btn = document.createElement("button");
-    btn.className = "primary";
-    btn.textContent = "Pay with Apple Pay";
-    btn.onclick = async () => {
-      try {
-        const result = await applePay.tokenize();
-        if (result.status !== "OK") throw new Error("Apple Pay was not completed.");
-        await paySquare(result.token);
-      } catch (error) {
-        showStatus(error.message || "Apple Pay failed.");
-      }
-    };
-    target.appendChild(btn);
-    showRow("apple-pay-row");
+    if (await applePay.canMakePayment?.()) {
+      $("#apple-pay-button").addEventListener("click", async () => {
+        try {
+          const result = await applePay.tokenize();
+          if (result.status === "OK") await paySquare(result.token);
+        } catch (error) {
+          showStatus(error.message || "Apple Pay failed.");
+        }
+      });
+      showRow("apple-pay-row");
+    }
   } catch (error) {
     console.info("Apple Pay unavailable:", error?.message || error);
   }
 
   try {
     const googlePay = await squarePayments.googlePay(buildSquarePaymentRequest());
-    await googlePay.attach("#google-pay-button", { buttonColor: "black", buttonType: "long" });
-    $("#google-pay-button").addEventListener("click", async () => {
+    await googlePay.attach("#google-pay-button");
+    googlePay.addEventListener("click", async () => {
       try {
         const result = await googlePay.tokenize();
-        if (result.status !== "OK") throw new Error("Google Pay was not completed.");
+        if (result.status !== "OK") throw new Error("Google Pay could not be completed.");
         await paySquare(result.token);
       } catch (error) {
         showStatus(error.message || "Google Pay failed.");
@@ -248,7 +240,12 @@ async function initializeSquare() {
   }
 
   try {
-    const options = { redirectURL: window.location.href, referenceId: intent.id };
+    // Cash App Pay can do a full-page redirect (desktop browsers without the app).
+    // Point the return trip at ?intent=<id> so boot() can resume this exact intent
+    // on reload and render the success screen (with working nav) instead of a
+    // blank/default page with no way back.
+    const resumeUrl = `${location.origin}${location.pathname}?intent=${encodeURIComponent(intent.id)}`;
+    const options = { redirectURL: resumeUrl, referenceId: intent.id };
     cashAppPay = await squarePayments.cashAppPay(buildSquarePaymentRequest(), options);
 
     cashAppPay.addEventListener("ontokenization", async (event) => {
@@ -271,7 +268,7 @@ async function initializeSquare() {
 }
 
 async function paySquare(sourceId) {
-  showStatus("Processing payment…");
+  showStatus("Confirming payment…");
   const result = await api("/api/square/pay", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -293,20 +290,17 @@ async function initializePayPal() {
   await loadScript(`https://www.paypal.com/sdk/js?${qs}`);
 
   const sharedHandlers = {
-    style: { shape: "rect", height: 48 },
     createOrder: async () => {
-      clearStatus();
-      const result = await api("/api/paypal/orders", {
+      const result = await api("/api/paypal/create-order", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ intentId: intent.id })
       });
-      return result.id;
+      return result.orderId;
     },
-
     onApprove: async (data) => {
-      showStatus("Completing payment…");
-      const result = await api(`/api/paypal/orders/${encodeURIComponent(data.orderID)}/capture`, {
+      showStatus("Confirming PayPal payment…");
+      const result = await api("/api/paypal/capture-order", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ intentId: intent.id })
@@ -316,7 +310,7 @@ async function initializePayPal() {
 
     onError: (err) => {
       console.error(err);
-      showStatus("Checkout could not be completed.");
+      showStatus("PayPal payment could not be completed.");
     }
   };
 
@@ -342,21 +336,29 @@ async function initializePayPal() {
 async function initializePaymentUI() {
   if (paymentUiInitialized) return;
   paymentUiInitialized = true;
-  continueButton.classList.add("hidden");
-  paymentOptions.classList.remove("hidden");
-  showStatus("Loading secure payment options…");
 
-  const results = await Promise.allSettled([initializeSquare(), initializePayPal()]);
-  results.forEach((r, i) => {
-    if (r.status === "rejected") {
-      console.error("Payment provider init failed:", i === 0 ? "square" : "paypal", r.reason);
-    }
-  });
-  const failed = results.filter((r) => r.status === "rejected");
-  if (failed.length === results.length) {
-    showStatus("Payment options could not be loaded. Please refresh and try again.");
-  } else {
-    clearStatus();
+  checkoutForm.classList.add("hidden");
+  paymentOptions.classList.remove("hidden");
+  amountWrap.classList.add("hidden");
+  songFieldWrap.classList.add("hidden");
+  passwordFieldWrap.classList.add("hidden");
+  confirmPasswordFieldWrap.classList.add("hidden");
+  document.querySelector('.field:has(#customer-name)')?.classList.add("hidden");
+  document.querySelector('.field:has(#customer-email)')?.classList.add("hidden");
+  document.querySelector('.field:has(#note)')?.classList.add("hidden");
+
+  showStatus("");
+
+  try {
+    await initializeSquare();
+  } catch (error) {
+    console.error("Square init failed", error);
+  }
+
+  try {
+    await initializePayPal();
+  } catch (error) {
+    console.error("PayPal init failed", error);
   }
 }
 
@@ -390,8 +392,6 @@ document.querySelectorAll("[data-amount]").forEach((button) => {
 
 continueButton.addEventListener("click", async () => {
   try {
-    clearStatus();
-
     if (!intent) {
       showStatus("Creating secure checkout…");
       const mode = params.get("mode") || "tip";
