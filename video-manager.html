@@ -117,9 +117,7 @@
   <p class="copy-confirm" id="copy-confirm"></p>
 </div>
 <script>
-  var BIN_API_KEY = "$2a$10$R94RuRqthE5DDtsO9.kzqOwjRLyF1eaqAAPX.3Qah3rJ7cXwsR1lK";
-  var BIN_BASE    = "https://api.jsonbin.io/v3";
-  var BIN_ID      = "6a69619ef5f4af5e29cf8333"; // dedicated bin for the video list, separate from photos
+  var PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
 
   var GH_OWNER  = "saxmanrp-cmd";
   var GH_REPO   = "rickparma-site";
@@ -180,7 +178,7 @@
 
   async function load() {
     try {
-      var res = await fetch(BIN_BASE + "/b/" + BIN_ID + "/latest", { headers: { "X-Master-Key": BIN_API_KEY } });
+      var res = await fetch(PROXY_BASE + "/videos");
       if (res.ok) {
         var data = await res.json();
         videos = data.record.videos || DEFAULT_VIDEOS.slice();
@@ -193,7 +191,7 @@
   }
   setInterval(async function() {
     try {
-      var res = await fetch(BIN_BASE + "/b/" + BIN_ID + "/latest", { headers: { "X-Master-Key": BIN_API_KEY } });
+      var res = await fetch(PROXY_BASE + "/videos");
       if (res.ok) {
         var data = await res.json();
         var fresh = data.record.videos || [];
@@ -210,9 +208,9 @@
     isSaving = true;
     setSyncStatus("syncing", "Saving…");
     try {
-      var res = await fetch(BIN_BASE + "/b/" + BIN_ID, {
+      var res = await fetch(PROXY_BASE + "/videos", {
         method: "PUT",
-        headers: { "Content-Type":"application/json", "X-Master-Key":BIN_API_KEY },
+        headers: { "Content-Type":"application/json" },
         body: JSON.stringify({ videos: videos, lastUpdated: new Date().toISOString() })
       });
       if (!res.ok) throw new Error("Save failed");
