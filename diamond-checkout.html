@@ -3,161 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rick Parma - Enroll in Diamond Method</title>
+<title>Rick Parma – Enroll in Diamond Method</title>
 <meta name="color-scheme" content="dark">
-<link rel="stylesheet" href="diamond-course.css">
-<!-- PRODUCTION Square Web Payments SDK. -->
-<script type="text/javascript" src="https://web.squarecdn.com/v1/square.js"></script>
+<meta http-equiv="refresh" content="0; url=/pay/?mode=vocal">
+<link rel="canonical" href="/pay/?mode=vocal">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <meta name="theme-color" content="#000000">
+<script>location.replace("/pay/?mode=vocal");</script>
 </head>
 <body>
-
-<header>
-<h1><a href="index.html">RICK PARMA</a></h1>
-<div class="socials">
-<a href="https://instagram.com/rickparmaofficial" title="Instagram">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
-</a>
-<a href="https://www.facebook.com/rickparmaofficial" title="Facebook">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8h-2a2 2 0 0 0-2 2v10M9 13h5"/><circle cx="12" cy="12" r="9"/></svg>
-</a>
-<a href="rick-parma-full-contact-card.vcf" title="Save Contact">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-</a>
-</div>
-</header>
-
-<div class="dm-wrap" style="max-width:480px;">
-  <div class="dm-panel">
-    <h2 style="margin-top:0;text-align:center;">Enroll &mdash; $20</h2>
-    <p class="dm-muted dm-center">Create your account and pay in one step.</p>
-
-    <form id="checkout-form">
-      <div class="dm-field">
-        <label>Email</label>
-        <input type="email" id="email" required autocomplete="email">
-      </div>
-      <div class="dm-field">
-        <label>Create a Password</label>
-        <input type="password" id="password" required autocomplete="new-password" minlength="6">
-      </div>
-      <div class="dm-field">
-        <label>Confirm Password</label>
-        <input type="password" id="confirm-password" required autocomplete="new-password" minlength="6">
-      </div>
-      <div class="dm-field">
-        <label>Card</label>
-        <div id="card-container"></div>
-      </div>
-
-      <div class="dm-btn-row" style="margin-top:20px;">
-        <button type="submit" class="dm-btn" id="pay-button" style="width:100%;">Pay $20 and Enroll</button>
-      </div>
-      <div class="dm-error" id="payment-status"></div>
-    </form>
-
-    <p class="dm-center dm-muted" style="margin-top:20px;font-size:.85rem;">
-      Already enrolled? <a href="diamond-login.html" style="color:var(--blue);">Log in</a>
-    </p>
-  </div>
-</div>
-
-<script src="diamond-course.js"></script>
-<script>
-var SQUARE_APPLICATION_ID = 'sq0idp-uw2VS3_iBzubrXMoj_87TA';
-var SQUARE_LOCATION_ID = '0VVNR7Z8XFQBJ';
-var CHARGE_URL = 'https://rickparma-booking-8582.twil.io/course-charge';
-
-var cardInstance = null;
-
-async function initializeCard(payments) {
-  var card = await payments.card();
-  await card.attach('#card-container');
-  return card;
-}
-
-document.addEventListener('DOMContentLoaded', async function () {
-  var statusEl = document.getElementById('payment-status');
-  var payButton = document.getElementById('pay-button');
-
-  if (!window.Square) {
-    statusEl.textContent = 'Payment form failed to load. Please refresh the page.';
-    payButton.disabled = true;
-    return;
-  }
-
-  try {
-    var payments = window.Square.payments(SQUARE_APPLICATION_ID, SQUARE_LOCATION_ID);
-    cardInstance = await initializeCard(payments);
-  } catch (err) {
-    statusEl.textContent = 'Payment form failed to load: ' + err.message;
-    payButton.disabled = true;
-    return;
-  }
-
-  document.getElementById('checkout-form').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    var email = document.getElementById('email').value.trim();
-    var password = document.getElementById('password').value;
-    var confirmPassword = document.getElementById('confirm-password').value;
-
-    statusEl.textContent = '';
-
-    if (!email || !password) {
-      statusEl.textContent = 'Please fill out your email and password.';
-      return;
-    }
-    if (password.length < 6) {
-      statusEl.textContent = 'Password must be at least 6 characters.';
-      return;
-    }
-    if (password !== confirmPassword) {
-      statusEl.textContent = 'Passwords do not match.';
-      return;
-    }
-
-    payButton.disabled = true;
-    payButton.textContent = 'Processing...';
-
-    try {
-      var result = await cardInstance.tokenize();
-      if (result.status !== 'OK') {
-        var detail = (result.errors && result.errors[0] && result.errors[0].message) || 'Card was declined.';
-        throw new Error(detail);
-      }
-
-      var params = new URLSearchParams();
-      params.append('email', email);
-      params.append('password', password);
-      params.append('nonce', result.token);
-
-      var res = await fetch(CHARGE_URL, { method: 'POST', body: params });
-      var data = await res.json();
-
-      if (data.ok) {
-        dmSaveSession(email, password);
-        location.href = 'diamond-course.html';
-      } else {
-        statusEl.textContent = data.error || 'Payment failed. Please try again.';
-        payButton.disabled = false;
-        payButton.textContent = 'Pay $20 and Enroll';
-      }
-    } catch (err) {
-      statusEl.textContent = err.message || 'Something went wrong. Please try again.';
-      payButton.disabled = false;
-      payButton.textContent = 'Pay $20 and Enroll';
-    }
-  });
-});
-</script>
-
-<footer>
-&copy; 2026 Richard David Parma &middot; <a href="privacy-and-terms.html">Privacy Policy and Terms and Conditions</a>
-</footer>
-
+<p>Redirecting to <a href="/pay/?mode=vocal">the Payment Hub</a>…</p>
 </body>
 </html>
