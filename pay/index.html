@@ -79,22 +79,34 @@
         <div id="status" class="status" aria-live="polite"></div>
 
         <section id="payment-options" class="hidden">
-          <section class="payment-section">
-            <h2>Express pay</h2>
-            <div id="apple-pay-button" class="wallet-slot"></div>
-            <div id="cash-app-pay-button" class="wallet-slot"></div>
-          </section>
+          <h2 class="pay-options-heading">Choose how to pay</h2>
+          <div class="pay-methods">
+            <div class="pay-row hidden" id="apple-pay-row">
+              <div class="pay-row-label"><span class="pay-icon">&#63743;</span>Apple Pay</div>
+              <div id="apple-pay-button" class="wallet-slot"></div>
+            </div>
 
-          <section class="payment-section">
-            <h2>Credit / debit card</h2>
-            <div id="card-container"></div>
-            <button id="card-pay-button" class="primary" type="button">Pay by card</button>
-          </section>
+            <div class="pay-row hidden" id="cash-app-row">
+              <div class="pay-row-label"><span class="pay-icon">$</span>Cash App Pay</div>
+              <div id="cash-app-pay-button" class="wallet-slot"></div>
+            </div>
 
-          <section class="payment-section">
-            <h2>PayPal &amp; Venmo</h2>
-            <div id="paypal-button-container"></div>
-          </section>
+            <div class="pay-row hidden" id="paypal-row">
+              <div class="pay-row-label"><span class="pay-icon">P</span>PayPal</div>
+              <div id="paypal-button-container" class="wallet-slot"></div>
+            </div>
+
+            <div class="pay-row hidden" id="venmo-row">
+              <div class="pay-row-label"><span class="pay-icon">V</span>Venmo</div>
+              <div id="venmo-button-container" class="wallet-slot"></div>
+            </div>
+
+            <div class="pay-row" id="card-row">
+              <div class="pay-row-label"><span class="pay-icon">&#9635;</span>Card</div>
+              <div id="card-container"></div>
+              <button id="card-pay-button" class="primary" type="button">Pay by card</button>
+            </div>
+          </div>
         </section>
       </section>
 
