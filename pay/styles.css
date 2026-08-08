@@ -77,6 +77,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin: 14px 0 8px
   outline: none;
 }
 .field input:focus { border-color: var(--blue); }
+.field input::placeholder, .amount-field input::placeholder, #song::placeholder { color: var(--muted); opacity: .75; }
 .amount-field {
   display: flex; align-items: center;
   border: 1px solid rgba(255,255,255,.16);
