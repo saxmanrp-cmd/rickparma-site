@@ -189,7 +189,22 @@ async function initializeSquare() {
 
   await loadScript(squareSdk);
 
-  squarePayments = window.Square.payments(config.square.appId, config.square.locationId);
+console.info("Square init diagnostics", {
+      appId: config.square.appId,
+      appIdType: typeof config.square.appId,
+      appIdLength: config.square.appId ? config.square.appId.length : null,
+      locationId: config.square.locationId,
+      locationIdType: typeof config.square.locationId,
+      locationIdLength: config.square.locationId ? config.square.locationId.length : null,
+      language: navigator.language,
+      languages: navigator.languages,
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      secureContext: window.isSecureContext,
+      squareExists: Boolean(window.Square),
+      paymentsType: typeof (window.Square && window.Square.payments)
+});
+    squarePayments = window.Square.payments(String(config.square.appId), String(config.square.locationId));
 
 try {
       card = await squarePayments.card();
@@ -358,12 +373,26 @@ async function initializePaymentUI() {
 
   showStatus("");
 
-try {
-      await initializeSquare();
-} catch (error) {
-      console.error("Square init failed", error);
-      showStatus("Payment options could not load. Check your internet connection and reload the page.");
-}
+let squareOk = true;
+    let paypalOk = true;
+
+    try {
+          await initializeSquare();
+    } catch (error) {
+          squareOk = false;
+          console.error("Square init failed", error);
+    }
+
+    try {
+          await initializePayPal();
+    } catch (error) {
+          paypalOk = false;
+          console.error("PayPal init failed", error);
+    }
+
+    if (!squareOk && !paypalOk) {
+          showStatus("Payment options could not load. Check your internet connection and reload the page.");
+    }
 }
 
 function showSuccess(confirmation) {
