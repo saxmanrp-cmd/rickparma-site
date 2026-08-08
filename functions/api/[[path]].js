@@ -25,6 +25,20 @@ function json(data, status = 200) {
   });
 }
 
+// Same as json(), but with an open CORS header. Used only by the small set of
+// endpoints meant to be called directly from browser JS running on a different
+// origin (e.g. rickparma-tools' invoice-creator.html calling /api/invoices/pay-link).
+function corsJson(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      "access-control-allow-origin": "*"
+    }
+  });
+}
+
 function nowIso() {
   return new Date().toISOString();
 }
@@ -204,27 +218,32 @@ async function markFulfillment(env, intentId, status) {
   ).bind(status, nowIso(), intentId).run();
 }
 
+// Records a completed Payment Hub charge back onto the matching invoice in the
+// Invoice Manager's KV store, so Rick sees it in Invoice Creator without any
+// manual re-entry. NOTE: the KV proxy wraps reads in {record:{invoices:[...]}}
+// (jsonbin.io-compatibility shape) and only accepts GET/PUT — invoice-creator.html
+// itself reads/writes the exact same way, so this mirrors that contract exactly.
 async function fulfillInvoice(env, intent) {
   if (!intent.reference) return "SKIPPED_NO_REFERENCE";
   const res = await fetch(`${PROXY_BASE}/invoices`);
   const data = await res.json();
-  const invoices = (data && data.invoices) || [];
+  const invoices = (data && data.record && data.record.invoices) || [];
   const idx = invoices.findIndex((inv) => inv.id === intent.reference);
   if (idx === -1) return "SKIPPED_NOT_FOUND";
 
   const invoice = invoices[idx];
   invoice.payments = invoice.payments || [];
   invoice.payments.push({
+    date: nowIso().slice(0, 10),
     amount: intent.amountCents / 100,
-    method: intent.provider,
-    transactionId: intent.providerPaymentId || intent.providerOrderId || null,
-    date: nowIso(),
-    source: "payment_hub"
+    method: intent.provider === "square" ? "Card" : intent.provider === "paypal" ? "PayPal" : (intent.provider || "Card"),
+    source: "payment_hub",
+    transactionId: intent.providerPaymentId || intent.providerOrderId || null
   });
   invoices[idx] = invoice;
 
   await fetch(`${PROXY_BASE}/invoices`, {
-    method: "POST",
+    method: "PUT",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ invoices })
   });
@@ -411,8 +430,8 @@ function requireBearer(request, expected) {
   return Boolean(expected && supplied && supplied === expected);
 }
 
-// Server-to-server only. Used by Invoice Manager (and future trusted apps) to open
-// a checkout for an exact, browser-uncontrollable amount.
+// Server-to-server only. Used by future trusted apps that already know an exact,
+// browser-uncontrollable amount and hold the shared INTEGRATION_API_KEY.
 async function createIntegrationIntent(request, env) {
   if (!requireBearer(request, env.INTEGRATION_API_KEY)) {
     return json({ error: "Unauthorized." }, 401);
@@ -440,6 +459,57 @@ async function createIntegrationIntent(request, env) {
 
   const base = String(env.PUBLIC_BASE_URL || new URL(request.url).origin).replace(/\/$/, "");
   return json({ intent, checkoutUrl: `${base}/pay/?intent=${encodeURIComponent(intent.id)}` }, 201);
+}
+
+// Called directly from invoice-creator.html's browser JS (a different origin),
+// so it's public + CORS-open — but safe, because the amount charged is looked
+// up and clamped against the REAL invoice balance server-side, never trusted
+// blindly from the client. This is what "Wire Invoice Manager to Payment Hub"
+// wires up: it lets a client pay a real invoice by Card/Apple Pay/PayPal through
+// Square/PayPal (verified, webhook-confirmed) instead of only the honor-system
+// Zelle/Venmo/CashApp deep links Invoice Creator already has.
+async function createInvoicePayLink(request, env) {
+  const body = await request.json().catch(() => ({}));
+  const invoiceId = safeString(body.invoiceId, 100);
+  if (!invoiceId) return corsJson({ error: "Missing invoiceId." }, 400);
+
+  let amountCents;
+  try {
+    amountCents = positiveInteger(body.amountCents);
+  } catch (err) {
+    return corsJson({ error: err.message }, 400);
+  }
+
+  const res = await fetch(`${PROXY_BASE}/invoices`);
+  const data = await res.json();
+  const invoices = (data && data.record && data.record.invoices) || [];
+  const invoice = invoices.find((inv) => inv.id === invoiceId);
+  if (!invoice) return corsJson({ error: "Invoice not found." }, 404);
+
+  const total = (invoice.lineItems || []).reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+  const paidSoFar = (invoice.payments || []).reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+  const balanceCents = Math.round((total - paidSoFar) * 100);
+
+  if (balanceCents <= 0) return corsJson({ error: "This invoice is already paid in full." }, 409);
+  if (amountCents > balanceCents) amountCents = balanceCents;
+
+  const intent = await insertIntent(env, {
+    type: "invoice",
+    originApp: "invoice_manager",
+    amountCents,
+    title: `Invoice payment — ${invoice.clientName || "Client"}`,
+    description: invoice.eventName ? `Event: ${invoice.eventName}` : null,
+    reference: invoice.id,
+    customerName: invoice.clientName,
+    customerEmail: invoice.clientEmail,
+    customerPhone: invoice.clientPhone,
+    metadata: { invoiceNumber: invoice.invoiceNumber }
+  });
+
+  await insertEvent(env, { intentId: intent.id, eventType: "INTENT_CREATED", amountCents: intent.amountCents, payload: { source: "invoice_pay_link" } });
+
+  const base = String(env.PUBLIC_BASE_URL || new URL(request.url).origin).replace(/\/$/, "");
+  return corsJson({ intent, checkoutUrl: `${base}/pay/?intent=${encodeURIComponent(intent.id)}` }, 201);
 }
 
 // --- Square --------------------------------------------------------------
@@ -725,6 +795,20 @@ export async function onRequest(context) {
   const path = url.pathname.replace(/^\/api/, "") || "/";
 
   try {
+    if (path === "/invoices/pay-link" && request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-allow-headers": "Content-Type"
+        }
+      });
+    }
+
+    if (path === "/invoices/pay-link" && request.method === "POST") {
+      return await createInvoicePayLink(request, env);
+    }
+
     if (path === "/config" && request.method === "GET") {
       return json({
         square: {
