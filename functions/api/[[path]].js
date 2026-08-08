@@ -13,6 +13,7 @@
 
 const ALLOWED_PUBLIC_TYPES = new Set(["tip", "song_request", "vocal_tutorial"]);
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
+const SONG_ALERT_URL = "https://rickparma-booking-8582.twil.io/song-alert";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -208,6 +209,28 @@ async function fulfillInvoice(env, intent) {
   return "FULFILLED";
 }
 
+// Fires the same SMS alert the Song Request app used to send on submit — but
+// now only once the Payment Hub has confirmed the payment actually completed
+// (Square/PayPal synchronous response or verified webhook), instead of trusting
+// the browser to report a successful payment.
+async function fulfillSongRequest(env, intent) {
+  try {
+    const params = new URLSearchParams();
+    params.append("name", intent.customerName || "Someone");
+    params.append("song", (intent.metadata && intent.metadata.song) || intent.description || "Song request");
+    params.append("outcome", "PAID");
+
+    await fetch(SONG_ALERT_URL, {
+      method: "POST",
+      body: params
+    });
+    return "FULFILLED";
+  } catch (err) {
+    console.error("fulfillSongRequest error", intent.id, err);
+    return "ERROR";
+  }
+}
+
 async function runFulfillment(env, intent) {
   let outcome = "NOOP";
   try {
@@ -215,8 +238,10 @@ async function runFulfillment(env, intent) {
       outcome = await fulfillInvoice(env, intent);
     } else if (intent.type === "tip") {
       outcome = "FULFILLED"; // nothing to unlock — payment record itself is the fulfillment
-    } else if (intent.type === "song_request" || intent.type === "vocal_tutorial") {
-      // Wired up once Song Request / Diamond Method are updated to create their
+    } else if (intent.type === "song_request") {
+      outcome = await fulfillSongRequest(env, intent);
+    } else if (intent.type === "vocal_tutorial") {
+      // Wired up once Diamond Method is updated to create its
       // linked record before checkout and pass its id through metadata.
       outcome = "PENDING_APP_INTEGRATION";
     }
