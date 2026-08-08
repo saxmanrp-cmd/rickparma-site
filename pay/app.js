@@ -231,7 +231,14 @@ try {
 
   try {
     const applePay = await squarePayments.applePay(buildSquarePaymentRequest());
-          $("#apple-pay-button").addEventListener("click", async () => {
+    const applePayBtn = document.createElement("button");
+    applePayBtn.type = "button";
+    applePayBtn.className = "primary";
+    applePayBtn.style.background = "#000";
+    applePayBtn.style.color = "#fff";
+    applePayBtn.textContent = " Pay";
+    $("#apple-pay-button").appendChild(applePayBtn);
+    applePayBtn.addEventListener("click", async () => {
         try {
           const result = await applePay.tokenize();
           if (result.status === "OK") await paySquare(result.token);
