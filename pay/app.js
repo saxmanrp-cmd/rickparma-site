@@ -308,6 +308,11 @@ async function initializePaymentUI() {
   showStatus("Loading secure payment options…");
 
   const results = await Promise.allSettled([initializeSquare(), initializePayPal()]);
+  results.forEach((r, i) => {
+    if (r.status === "rejected") {
+      console.error("Payment provider init failed:", i === 0 ? "square" : "paypal", r.reason);
+    }
+  });
   const failed = results.filter((r) => r.status === "rejected");
   if (failed.length === results.length) {
     showStatus("Payment options could not be loaded. Please refresh and try again.");
