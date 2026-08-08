@@ -60,16 +60,19 @@ async function api(path, options = {}) {
   return data;
 }
 
-async function loadScript(src) {
-  await new Promise((resolve, reject) => {
-    const existing = [...document.scripts].find((s) => s.src === src);
-    if (existing) return resolve();
-    const script = document.createElement("script");
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
+async function loadScript(src, timeoutMs = 8000) {
+    await new Promise((resolve, reject) => {
+          const existing = [...document.scripts].find((s) => s.src === src);
+          if (existing) return resolve();
+          const script = document.createElement("script");
+          script.src = src;
+          const timer = setTimeout(() => {
+                  reject(new Error("Timed out loading " + src + ". Check your network connection."));
+          }, timeoutMs);
+          script.onload = () => { clearTimeout(timer); resolve(); };
+          script.onerror = () => { clearTimeout(timer); reject(new Error("Failed to load " + src)); };
+          document.head.appendChild(script);
+    });
 }
 
 function setModeUI(mode) {
@@ -355,17 +358,26 @@ async function initializePaymentUI() {
 
   showStatus("");
 
-  try {
-    await initializeSquare();
-  } catch (error) {
-    console.error("Square init failed", error);
-  }
+let squareOk = true;
+    let paypalOk = true;
 
-  try {
-    await initializePayPal();
-  } catch (error) {
-    console.error("PayPal init failed", error);
-  }
+    try {
+          await initializeSquare();
+    } catch (error) {
+          squareOk = false;
+          console.error("Square init failed", error);
+    }
+
+    try {
+          await initializePayPal();
+    } catch (error) {
+          paypalOk = false;
+          console.error("PayPal init failed", error);
+    }
+
+    if (!squareOk && !paypalOk) {
+          showStatus("Payment options could not load. Check your internet connection and reload the page — if this keeps happening, try a different network (e.g. switch between WiFi and cellular).");
+    }
 }
 
 function showSuccess(confirmation) {
