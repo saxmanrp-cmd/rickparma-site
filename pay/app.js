@@ -188,22 +188,28 @@ async function initializeSquare() {
 
   squarePayments = window.Square.payments(config.square.appId, config.square.locationId);
 
-  card = await squarePayments.card();
-  await card.attach("#card-container");
+try {
+      card = await squarePayments.card();
+      await card.attach("#card-container");
 
-  $("#card-pay-button").addEventListener("click", async () => {
-    try {
-      showStatus("Processing card payment…");
-      const result = await card.tokenize();
-      if (result.status === "OK") {
-        await paySquare(result.token);
-      } else {
-        showStatus("Card details could not be verified. Please check and try again.");
-      }
-    } catch (error) {
-      showStatus(error.message || "Card payment failed.");
-    }
-  });
+      $("#card-pay-button").addEventListener("click", async () => {
+              try {
+                        showStatus("Processing card payment…");
+                        const result = await card.tokenize();
+                        if (result.status === "OK") {
+                                    await paySquare(result.token);
+                        } else {
+                                    showStatus("Card details could not be verified. Please check and try again.");
+                        }
+              } catch (error) {
+                        showStatus(error.message || "Card payment failed.");
+              }
+      });
+} catch (error) {
+      console.info("Card element unavailable:", error?.message || error);
+      const cardRowEl = document.getElementById("card-row");
+      if (cardRowEl) cardRowEl.classList.add("hidden");
+}
 
   try {
     const applePay = await squarePayments.applePay(buildSquarePaymentRequest());
