@@ -11,6 +11,10 @@ const amountWrap = $("#amount-wrap");
 const quickAmounts = $("#quick-amounts");
 const songFieldWrap = $("#song-field-wrap");
 const songInput = $("#song");
+const passwordFieldWrap = $("#password-field-wrap");
+const passwordInput = $("#password");
+const confirmPasswordFieldWrap = $("#confirm-password-field-wrap");
+const confirmPasswordInput = $("#confirm-password");
 const nameInput = $("#customer-name");
 const emailInput = $("#customer-email");
 const noteInput = $("#note");
@@ -20,6 +24,7 @@ const intentBadge = $("#intent-badge");
 const successPanel = $("#success-panel");
 const successCopy = $("#success-copy");
 const successConfirmation = $("#success-confirmation");
+const successActions = $("#success-actions");
 
 let config;
 let intent = null;
@@ -77,6 +82,11 @@ function setModeUI(mode) {
   modePicker.classList.add("hidden");
   checkoutForm.classList.remove("hidden");
 
+  songFieldWrap.classList.add("hidden");
+  passwordFieldWrap.classList.add("hidden");
+  confirmPasswordFieldWrap.classList.add("hidden");
+  emailInput.required = false;
+
   if (mode === "tip") {
     pageTitle.textContent = "TIP RICK";
     pageSubtitle.textContent = "Thank you for supporting the music.";
@@ -88,9 +98,12 @@ function setModeUI(mode) {
     quickAmounts.classList.remove("hidden");
   } else if (mode === "vocal") {
     pageTitle.textContent = "VOCAL TUTORIAL";
-    pageSubtitle.textContent = "Secure checkout for the Diamond Method course.";
+    pageSubtitle.textContent = "Create your account and pay in one step.";
     quickAmounts.classList.add("hidden");
     amountInput.readOnly = true;
+    passwordFieldWrap.classList.remove("hidden");
+    confirmPasswordFieldWrap.classList.remove("hidden");
+    emailInput.required = true;
   } else if (mode === "invoice") {
     pageTitle.textContent = "PAY INVOICE";
     pageSubtitle.textContent = "Secure invoice payment.";
@@ -145,6 +158,15 @@ async function createPublicIntent(mode) {
     if (!songInput.value.trim()) throw new Error("Enter the song you are requesting.");
     body.song = songInput.value.trim();
     if (params.get("songRequestId")) body.songRequestId = params.get("songRequestId");
+  }
+
+  if (mode === "vocal") {
+    if (!body.customerEmail) throw new Error("Enter your email to enroll.");
+    const pw = passwordInput.value;
+    const confirmPw = confirmPasswordInput.value;
+    if (!pw || pw.length < 6) throw new Error("Password must be at least 6 characters.");
+    if (pw !== confirmPw) throw new Error("Passwords do not match.");
+    body.password = pw;
   }
 
   return api("/api/intents/public", {
@@ -347,6 +369,17 @@ function showSuccess(confirmation) {
     intent?.type === "vocal_tutorial" ? "You're enrolled — your Diamond Method payment was received." :
     "Your payment was received.";
   successConfirmation.textContent = `Confirmation: ${confirmation || intent?.id || ""}`;
+
+  if (intent?.type === "vocal_tutorial") {
+    if (successActions) successActions.classList.add("hidden");
+    try {
+      localStorage.setItem("dm_session", JSON.stringify({
+        email: (intent.customerEmail || emailInput.value || "").trim().toLowerCase(),
+        password: passwordInput.value
+      }));
+    } catch (_) {}
+    setTimeout(() => { location.href = "/diamond-course.html"; }, 900);
+  }
 }
 
 document.querySelectorAll("[data-amount]").forEach((button) => {
