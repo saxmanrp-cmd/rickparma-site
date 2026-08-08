@@ -355,8 +355,8 @@ async function boot() {
   if (mode === "vocal") {
     amountInput.value = centsToDollars(config.products.vocalTutorialPriceCents);
     continueButton.textContent = `Continue — $${centsToDollars(config.products.vocalTutorialPriceCents)}`;
-    if ((mode === "tip" || mode === "song") && params.get("amount")) { const presetAmt = Number(params.get("amount")); if (Number.isFinite(presetAmt) && presetAmt > 0) amountInput.value = presetAmt.toFixed(2); }
-  }
+    }
+  if ((mode === "tip" || mode === "song") && params.get("amount")) { const presetAmt = Number(params.get("amount")); if (Number.isFinite(presetAmt) && presetAmt > 0) amountInput.value = presetAmt.toFixed(2); }
 }
 
 boot().catch((error) => {
