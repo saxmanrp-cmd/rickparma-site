@@ -161,6 +161,9 @@
   .tip-row a:hover{color:var(--pink);}
 
   .tip-icon-wrap{position:relative;width:56px;height:56px;animation:tipFloat 3.2s ease-in-out infinite;}
+  .tip-cta-btn{display:inline-block;padding:16px 40px;border-radius:34px;background:linear-gradient(90deg,var(--blue),var(--pink));color:#000;font-weight:bold;font-size:1.15rem;text-decoration:none;letter-spacing:.02em;-webkit-tap-highlight-color:transparent;box-shadow:0 6px 26px rgba(0,0,0,.4);transition:transform .12s ease, filter .12s ease, box-shadow .12s ease;}
+  .tip-cta-btn:hover{filter:brightness(1.08);box-shadow:0 8px 30px rgba(0,0,0,.5);}
+  .tip-cta-btn:active{transform:scale(0.95);filter:brightness(0.85);}
   .tip-row a:nth-child(2) .tip-icon-wrap{animation-delay:.35s;}
   .tip-row a:nth-child(3) .tip-icon-wrap{animation-delay:.7s;}
   .tip-icon-wrap::before{
@@ -500,45 +503,12 @@
         <button type="button" class="tip-amt active reveal-item" style="--rd:.12s" data-amt="20">$20</button>
         <button type="button" class="tip-amt reveal-item" style="--rd:.18s" data-amt="50">$50</button>
       </div>
-      <div class="tip-row" id="tipRow">
-        <a id="tip-cashapp" href="https://cash.app/$RickParma/20" target="_blank" rel="noopener">
-          <span class="tip-icon-wrap"><span class="tip-icon" style="background:#00D632;"><span class="brand-mark" style="mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cashapp.svg');-webkit-mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cashapp.svg');"></span></span></span>
-          <span>Cash App</span>
-        </a>
-        <a id="tip-venmo" href="https://venmo.com/RickParma?txn=pay&amp;amount=20&amp;note=Tip%20for%20Rick%20Parma" target="_blank" rel="noopener">
-          <span class="tip-icon-wrap"><span class="tip-icon" style="background:#3D95CE;"><span class="brand-mark" style="mask-image:url('https://api.iconify.design/fa7-brands/venmo-v.svg');-webkit-mask-image:url('https://api.iconify.design/fa7-brands/venmo-v.svg');"></span></span></span>
-          <span>Venmo</span>
-        </a>
-        <a id="tip-paypal" href="https://paypal.me/rickparma/20" target="_blank" rel="noopener">
-          <span class="tip-icon-wrap"><span class="tip-icon" style="background:#003087;"><span class="brand-mark" style="mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/paypal.svg');-webkit-mask-image:url('https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/paypal.svg');"></span></span></span>
-          <span>PayPal</span>
-        </a>
+      <div class="tip-row" id="tipRow"><a id="tip-cta" class="tip-cta-btn" href="/pay/?mode=tip&amp;amount=20">Tip Rick</a>
       </div></div>
     </div>
   </div>
   <script>
-  (function() {
-    // Cash App and PayPal.me both support an amount right in the URL, so those links
-    // open the app/page pre-filled and ready to confirm — no typing needed. Venmo's
-    // web deep link (txn=pay + amount + note) does the same on mobile where the app
-    // is installed; on desktop it lands on venmo.com's pay page with the amount set.
-    var CASHTAG = 'RickParma';
-    var VENMO_USER = 'RickParma';
-    var PAYPAL_ME = 'rickparma';
-    var amtButtons = document.querySelectorAll('#tipAmounts .tip-amt');
-    var cashLink = document.getElementById('tip-cashapp');
-    var venmoLink = document.getElementById('tip-venmo');
-    var paypalLink = document.getElementById('tip-paypal');
-    function setTipAmount(amt) {
-      amtButtons.forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-amt') === String(amt)); });
-      cashLink.href = 'https://cash.app/$' + CASHTAG + '/' + amt;
-      venmoLink.href = 'https://venmo.com/' + VENMO_USER + '?txn=pay&amount=' + amt + '&note=' + encodeURIComponent('Tip for Rick Parma');
-      paypalLink.href = 'https://paypal.me/' + PAYPAL_ME + '/' + amt;
-    }
-    amtButtons.forEach(function(btn) {
-      btn.addEventListener('click', function() { setTipAmount(btn.getAttribute('data-amt')); });
-    });
-  })();
+  (function() { var amtButtons = document.querySelectorAll('#tipAmounts .tip-amt'); var tipLink = document.getElementById('tip-cta'); function setTipAmount(amt) { amtButtons.forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-amt') === String(amt)); }); if (tipLink) tipLink.href = '/pay/?mode=tip&amount=' + amt; } amtButtons.forEach(function(btn) { btn.addEventListener('click', function() { setTipAmount(btn.getAttribute('data-amt')); }); }); })();
   </script>
 
   <div class="band band-textjoin band-tight reveal-fade">
