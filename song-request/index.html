@@ -467,7 +467,7 @@ document.getElementById('sortSelect').addEventListener('change', e => {
 });
 
 /* ============ REQUEST SHEET ============ */
-const WHEEL_SLICES = ['GENERAL','FREE','GENERAL','FREE','GENERAL','FREE','GENERAL','FREE','GENERAL','BOGO'];
+const WHEEL_SLICES = ['GENERAL','FREE','GENERAL','FREE','BOGO','FREE','GENERAL','FREE','GENERAL','BOGO'];
 let wheelSpinning = false;
 let wheelRotationTotal = 0;
 
@@ -781,7 +781,7 @@ function revealSpinResult(outcome, songId, price){
       <a class="btn btn-text" href="#" target="_top" onclick="return prepareSend(this, '${s.id}', 'PAID')">📱 Text This Request</a>
       <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
 
-      <div class="section-label">Step 4 — Send the tip ($${price})</div>
+      <div class="section-label">Step 4 — Pay $${price} (song won't be added until paid)</div>
       <a class="btn btn-venmo" href="${venmoAppLink}" target="_top">Pay $${price} with Venmo</a>
       <a class="btn btn-cashapp" href="${cashAppLink}" target="_blank">Pay $${price} with Cash App</a>
       <a class="btn btn-paypal" href="${paypalLink}" target="_blank">Pay $${price} with PayPal</a>
@@ -895,7 +895,7 @@ function renderBogoNextSteps(songAId, songBId, price){ const sB = songs.find(x =
     <a class="btn btn-text" href="#" target="_top" onclick="return prepareSendBogo(this, '${songAId}', '${songBId}')">📱 Text This Request</a>
     <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
 
-    <div class="section-label">Step 5 — Send the tip ($${price} for both songs!)</div>
+    <div class="section-label">Step 5 — Pay $${price} (songs won't be added until paid)</div>
     <a class="btn btn-venmo" href="${venmoAppLink}" target="_top">Pay $${price} with Venmo</a>
     <a class="btn btn-cashapp" href="${cashAppLink}" target="_blank">Pay $${price} with Cash App</a>
     <a class="btn btn-paypal" href="${paypalLink}" target="_blank">Pay $${price} with PayPal</a>
