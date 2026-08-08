@@ -197,9 +197,7 @@
   <p class="copy-confirm" id="copy-confirm"></p>
 </div>
 <script>
-  var BIN_API_KEY = "$2a$10$R94RuRqthE5DDtsO9.kzqOwjRLyF1eaqAAPX.3Qah3rJ7cXwsR1lK";
-  var BIN_BASE    = "https://api.jsonbin.io/v3";
-  var BIN_ID      = "6a29c91cda38895dfea92f08";
+  var PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
 
   // ── GitHub upload config ────────────────────────────────────
   // The token itself is never stored in this file - it lives only in this browser's
@@ -259,7 +257,7 @@
 
   async function load() {
     try {
-      var res = await fetch(BIN_BASE + "/b/" + BIN_ID + "/latest", { headers: { "X-Master-Key": BIN_API_KEY } });
+      var res = await fetch(PROXY_BASE + "/photos");
       if (res.ok) {
         var data = await res.json();
         photos = data.record.photos || [];
@@ -276,7 +274,7 @@
   // Auto-refresh every 30 seconds to always pull latest
   setInterval(async function() {
     try {
-      var res = await fetch(BIN_BASE + "/b/" + BIN_ID + "/latest", { headers: { "X-Master-Key": BIN_API_KEY } });
+      var res = await fetch(PROXY_BASE + "/photos");
       if (res.ok) {
         var data = await res.json();
         var fresh = data.record.photos || [];
@@ -295,9 +293,9 @@
     setSyncStatus("syncing", "Saving…");
     try {
       var now = new Date().toISOString();
-      var res = await fetch(BIN_BASE + "/b/" + BIN_ID, {
+      var res = await fetch(PROXY_BASE + "/photos", {
         method: "PUT",
-        headers: { "Content-Type":"application/json", "X-Master-Key":BIN_API_KEY },
+        headers: { "Content-Type":"application/json" },
         body: JSON.stringify({ photos: photos, lastUpdated: now })
       });
       if (!res.ok) throw new Error("Save failed");
