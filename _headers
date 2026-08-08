@@ -1,0 +1,8 @@
+/pay/*
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/pay/app.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/pay/styles.css
+  Cache-Control: no-cache, no-store, must-revalidate
