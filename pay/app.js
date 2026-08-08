@@ -358,26 +358,12 @@ async function initializePaymentUI() {
 
   showStatus("");
 
-let squareOk = true;
-    let paypalOk = true;
-
-    try {
-          await initializeSquare();
-    } catch (error) {
-          squareOk = false;
-          console.error("Square init failed", error);
-    }
-
-    try {
-          await initializePayPal();
-    } catch (error) {
-          paypalOk = false;
-          console.error("PayPal init failed", error);
-    }
-
-    if (!squareOk && !paypalOk) {
-          showStatus("Payment options could not load. Check your internet connection and reload the page — if this keeps happening, try a different network (e.g. switch between WiFi and cellular).");
-    }
+try {
+      await initializeSquare();
+} catch (error) {
+      console.error("Square init failed", error);
+      showStatus("Payment options could not load. Check your internet connection and reload the page.");
+}
 }
 
 function showSuccess(confirmation) {
