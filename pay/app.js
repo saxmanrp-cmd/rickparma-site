@@ -351,7 +351,7 @@ function showSuccess(confirmation) {
 
 document.querySelectorAll("[data-amount]").forEach((button) => {
   button.addEventListener("click", () => {
-  amountInput.value = Number(button.dataset.amount).toFixed(2);
+    amountInput.value = Number(button.dataset.amount).toFixed(2);
   });
 });
 
@@ -409,6 +409,9 @@ async function boot() {
   if ((mode === "tip" || mode === "song") && params.get("amount")) {
     const presetAmt = Number(params.get("amount"));
     if (Number.isFinite(presetAmt) && presetAmt > 0) amountInput.value = presetAmt.toFixed(2);
+  }
+  if (mode === "song" && params.get("song")) {
+    songInput.value = params.get("song");
   }
 }
 
