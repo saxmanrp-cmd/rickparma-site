@@ -190,9 +190,9 @@ async function initializeSquare() {
   await loadScript(squareSdk);
 
 console.info("Square init diagnostics", {
-      appId: config.square.appId,
-      appIdType: typeof config.square.appId,
-      appIdLength: config.square.appId ? config.square.appId.length : null,
+      appId: config.square.applicationId,
+      appIdType: typeof config.square.applicationId,
+      appIdLength: config.square.applicationId ? config.square.applicationId.length : null,
       locationId: config.square.locationId,
       locationIdType: typeof config.square.locationId,
       locationIdLength: config.square.locationId ? config.square.locationId.length : null,
@@ -204,7 +204,7 @@ console.info("Square init diagnostics", {
       squareExists: Boolean(window.Square),
       paymentsType: typeof (window.Square && window.Square.payments)
 });
-    squarePayments = window.Square.payments(String(config.square.appId), String(config.square.locationId));
+    squarePayments = window.Square.payments(String(config.square.applicationId), String(config.square.locationId));
 
 try {
       card = await squarePayments.card();
