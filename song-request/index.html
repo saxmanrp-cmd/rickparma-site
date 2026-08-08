@@ -748,8 +748,7 @@ function revealSpinResult(outcome, songId, price){
     area.innerHTML = `
       <div class="spin-result spin-result-free">🎉 You spun FREE! This one's on the house.</div>
       <div class="section-label">Step 3 — Send the request</div>
-      <a class="btn btn-text" href="#" target="_top" onclick="return prepareSend(this, '${s.id}', 'FREE')">📱 Text This Request</a>
-      <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
+      <a class="btn btn-text" href="#" target="_top" onclick="prepareSend(this, '${s.id}', 'FREE'); return false;">Send Request</a>
     `;
     
   } else if(outcome === 'BOGO'){
@@ -778,8 +777,7 @@ function revealSpinResult(outcome, songId, price){
     area.innerHTML = `
       <div class="spin-result spin-result-general">You spun $${price} — text your request, then send the tip.</div>
       <div class="section-label">Step 3 — Send the request</div>
-      <a class="btn btn-text" href="#" target="_top" onclick="return prepareSend(this, '${s.id}', 'PAID')">📱 Text This Request</a>
-      <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
+      <a class="btn btn-text" href="#" target="_top" onclick="prepareSend(this, '${s.id}', 'PAID'); return false;">Send Request</a>
 
       <div class="section-label">Step 4 — Pay $${price} (song won't be added until paid)</div>
       <a class="btn btn-venmo" href="${venmoAppLink}" target="_top">Pay $${price} with Venmo</a>
@@ -892,8 +890,7 @@ function renderBogoNextSteps(songAId, songBId, price){ const sB = songs.find(x =
   const nextSteps = document.getElementById('bogoNextSteps');
   nextSteps.innerHTML = `
     <div class="section-label">Step 4 — Send the request</div>
-    <a class="btn btn-text" href="#" target="_top" onclick="return prepareSendBogo(this, '${songAId}', '${songBId}')">📱 Text This Request</a>
-    <div class="sms-disclaimer">Msg&amp;data rates may apply.</div>
+    <a class="btn btn-text" href="#" target="_top" onclick="prepareSendBogo(this, '${songAId}', '${songBId}'); return false;">Send Request</a>
 
     <div class="section-label">Step 5 — Pay $${price} (songs won't be added until paid)</div>
     <a class="btn btn-venmo" href="${venmoAppLink}" target="_top">Pay $${price} with Venmo</a>
@@ -902,40 +899,23 @@ function renderBogoNextSteps(songAId, songBId, price){ const sB = songs.find(x =
   `;
 }
 
-function prepareSendBogo(el, songAId, songBId){
+async function prepareSendBogo(el, songAId, songBId){
   const sA = songs.find(x => x.id === songAId);
   const sB = songs.find(x => x.id === songBId);
-  if(!sA || !sB) return false; try{var __p2=new URLSearchParams();__p2.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p2.append('song',sA.t);__p2.append('artist',sA.a||'');__p2.append('outcome','BOGO');__p2.append('song2',sB.t);__p2.append('artist2',sB.a||'');fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p2}).catch(function(){});}catch(__e2){}
-  const nameInput = document.getElementById('reqName');
-  const name = nameInput ? nameInput.value.trim() : '';
-  const namePart = (name ? name : 'Someone').toUpperCase();
-
-  let message = `${namePart} SPUN a BOGO!!!\n${sA.t.toUpperCase()}`;
-  if(sA.a) message += ` by\n${sA.a.toUpperCase()}`;
-  message += `\n+\n${sB.t.toUpperCase()}`;
-  if(sB.a) message += ` by\n${sB.a.toUpperCase()}`;
-
-  const smsBody = encodeURIComponent(message);
-  el.href = `sms:${CONTACT_NUMBER}?&body=${smsBody}`;
-  return true;
+  if(!sA || !sB) return false; 
+  el.textContent = 'Sending...';
+  try{var __p2=new URLSearchParams();__p2.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p2.append('song',sA.t);__p2.append('artist',sA.a||'');__p2.append('outcome','BOGO');__p2.append('song2',sB.t);__p2.append('artist2',sB.a||'');await fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p2}).catch(function(){});}catch(__e2){}
+  el.textContent = 'Thanks for the request!';
+  return false;
 }
 
-function prepareSend(el, id, outcomeType){
+async function prepareSend(el, id, outcomeType){
   const s = songs.find(x => x.id === id);
-  if(!s) return false; try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){}
-  const nameInput = document.getElementById('reqName');
-  const name = nameInput ? nameInput.value.trim() : '';
-  const namePart = (name ? name : 'Someone').toUpperCase();
-  const songPart = s.t.toUpperCase();
-  const artistPart = (s.a || '').toUpperCase();
-  const typeLabel = outcomeType || 'PAID';
-
-  let message = `${namePart} SPUN a ${typeLabel}!!!\n${songPart}`;
-  if(artistPart) message += ` by\n${artistPart}`;
-
-  const smsBody = encodeURIComponent(message);
-  el.href = `sms:${CONTACT_NUMBER}?&body=${smsBody}`;
-  return true; // let the real click navigate — required for sms: links to fire inside an iframe
+  if(!s) return false; 
+  el.textContent = 'Sending...';
+  try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');await fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){}
+  el.textContent = 'Thanks for the request!';
+  return false;
 }
 
 function closeSheet(){
