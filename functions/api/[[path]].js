@@ -47,6 +47,28 @@ function safeJsonParse(value, fallback) {
   try { return JSON.parse(value); } catch (_) { return fallback; }
 }
 
+// Matches diamond-course.js's dmSha256Hex exactly — a Diamond Method account created
+// by the Payment Hub must verify identically against the client-side login check.
+async function dmSha256Hex(str) {
+  const enc = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function dmFetchStudents() {
+  const res = await fetch(`${PROXY_BASE}/diamond-students`);
+  const data = await res.json();
+  return (data && data.record && data.record.students) || [];
+}
+
+async function dmSaveStudents(students) {
+  await fetch(`${PROXY_BASE}/diamond-students`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ students })
+  });
+}
+
 function squareBase(env) {
   return env.SQUARE_ENV === "production"
     ? "https://connect.squareup.com"
@@ -231,6 +253,46 @@ async function fulfillSongRequest(env, intent) {
   }
 }
 
+// Creates the Diamond Method student account only once payment is confirmed —
+// mirrors fulfillSongRequest's "never trust the browser" pattern. The password
+// itself was never stored anywhere; only its salted SHA-256 hash (computed at
+// intent-creation time) travels through payment_intents.metadata_json.
+async function fulfillVocalTutorial(env, intent) {
+  try {
+    const email = (intent.customerEmail || "").trim().toLowerCase();
+    const salt = intent.metadata && intent.metadata.dmSalt;
+    const passwordHash = intent.metadata && intent.metadata.dmPasswordHash;
+
+    if (!email || !salt || !passwordHash) {
+      console.error("fulfillVocalTutorial missing account data", intent.id);
+      return "ERROR";
+    }
+
+    const students = await dmFetchStudents();
+
+    if (students.some((s) => (s.email || "").toLowerCase() === email)) {
+      // Already enrolled (e.g. fulfillment re-run via webhook after sync
+      // response already created the account) — idempotent no-op.
+      return "FULFILLED";
+    }
+
+    students.push({
+      email,
+      salt,
+      passwordHash,
+      unlockedUpTo: 1,
+      enrolledAt: nowIso(),
+      source: "payment_hub"
+    });
+
+    await dmSaveStudents(students);
+    return "FULFILLED";
+  } catch (err) {
+    console.error("fulfillVocalTutorial error", intent.id, err);
+    return "ERROR";
+  }
+}
+
 async function runFulfillment(env, intent) {
   let outcome = "NOOP";
   try {
@@ -241,9 +303,7 @@ async function runFulfillment(env, intent) {
     } else if (intent.type === "song_request") {
       outcome = await fulfillSongRequest(env, intent);
     } else if (intent.type === "vocal_tutorial") {
-      // Wired up once Diamond Method is updated to create its
-      // linked record before checkout and pass its id through metadata.
-      outcome = "PENDING_APP_INTEGRATION";
+      outcome = await fulfillVocalTutorial(env, intent);
     }
   } catch (err) {
     console.error("runFulfillment error", intent.id, err);
@@ -303,6 +363,30 @@ async function createPublicIntent(request, env) {
     title = "Diamond Method Vocal Tutorial";
     description = "Rick Parma — Diamond Method course enrollment";
     metadata.product = "diamond_method";
+
+    const email = safeString(body.customerEmail, 200);
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return json({ error: "A valid email is required to enroll." }, 400);
+    }
+    const password = safeString(body.password, 200);
+    if (!password || password.length < 6) {
+      return json({ error: "Password must be at least 6 characters." }, 400);
+    }
+
+    try {
+      const students = await dmFetchStudents();
+      if (students.some((s) => (s.email || "").toLowerCase() === email.toLowerCase())) {
+        return json({ error: "That email is already enrolled. Please log in instead." }, 409);
+      }
+    } catch (err) {
+      console.error("diamond roster lookup failed", err);
+    }
+
+    // Hash immediately — the plaintext password only ever exists in memory
+    // for this one request and is never written to D1 or anywhere else.
+    const salt = crypto.randomUUID();
+    metadata.dmSalt = salt;
+    metadata.dmPasswordHash = await dmSha256Hex(salt + password);
   }
 
   const intent = await insertIntent(env, {
