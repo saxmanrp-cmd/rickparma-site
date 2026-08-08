@@ -360,8 +360,6 @@ async function initializePayPal() {
 async function initializePaymentUI() {
   if (paymentUiInitialized) return;
   paymentUiInitialized = true;
-
-  checkoutForm.classList.add("hidden");
   paymentOptions.classList.remove("hidden");
   amountWrap.classList.add("hidden");
   songFieldWrap.classList.add("hidden");
