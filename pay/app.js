@@ -231,8 +231,7 @@ try {
 
   try {
     const applePay = await squarePayments.applePay(buildSquarePaymentRequest());
-    if (await applePay.canMakePayment?.()) {
-      $("#apple-pay-button").addEventListener("click", async () => {
+          $("#apple-pay-button").addEventListener("click", async () => {
         try {
           const result = await applePay.tokenize();
           if (result.status === "OK") await paySquare(result.token);
@@ -241,7 +240,6 @@ try {
         }
       });
       showRow("apple-pay-row");
-    }
   } catch (error) {
     console.info("Apple Pay unavailable:", error?.message || error);
   }
