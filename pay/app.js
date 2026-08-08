@@ -87,12 +87,12 @@ function setModeUI(mode) {
   if (mode === "tip") {
     pageTitle.textContent = "TIP RICK";
     pageSubtitle.textContent = "Thank you for supporting the music.";
-    quickAmounts.classList.remove("hidden");
+    quickAmounts.classList.add("hidden");
   } else if (mode === "song") {
     pageTitle.textContent = "SONG REQUEST";
     pageSubtitle.textContent = "Send your request and payment together.";
     songFieldWrap.classList.remove("hidden");
-    quickAmounts.classList.remove("hidden");
+    quickAmounts.classList.add("hidden");
   } else if (mode === "vocal") {
     pageTitle.textContent = "VOCAL TUTORIAL";
     pageSubtitle.textContent = "Create your account and pay in one step.";
