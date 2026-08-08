@@ -19,16 +19,15 @@
 
   2) JSONBIN (keeps the running list of submissions for your
      gallery viewer — same pattern as your Photo Gallery Manager)
-     - Create a bin at jsonbin.io containing: []
-     - Copy the Bin ID and your X-Master-Key.
+     - Uses the shared rickparma-jsonbin-proxy Worker (KV-backed) at
+       CONFIG.proxyBase — no per-file API keys needed.
   ============================================================
 -->
 <script>
   const CONFIG = {
     cloudName: "ffgvgf5j",
     uploadPreset: "e7siodn3",
-    jsonbinId: "6a668bb8f5f4af5e29c51472",
-    jsonbinKey: "$2a$10$R94RuRqthE5DDtsO9.kzqOwjRLyF1eaqAAPX.3Qah3rJ7cXwsR1lK",
+    proxyBase: "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev",
     maxVideoSeconds: 20
   };
 </script>
@@ -402,12 +401,11 @@ async function uploadToCloudinary(blob, kind){
 }
 
 async function logToJsonbin(entry){
-  const base = `https://api.jsonbin.io/v3/b/${CONFIG.jsonbinId}`;
-  const headers = { 'Content-Type': 'application/json', 'X-Master-Key': CONFIG.jsonbinKey };
-  const current = await fetch(`${base}/latest?t=${Date.now()}`, { headers, cache: 'no-store' }).then(r=>r.json());
+  const base = `${CONFIG.proxyBase}/fancam`;
+  const current = await fetch(`${base}?t=${Date.now()}`, { cache: 'no-store' }).then(r=>r.json());
   const list = Array.isArray(current.record) ? current.record : [];
   list.unshift(entry);
-  await fetch(base, { method:'PUT', headers, body: JSON.stringify(list) });
+  await fetch(base, { method:'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(list) });
 }
 
 startCamera();
