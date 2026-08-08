@@ -38,6 +38,11 @@ function clearStatus() {
   statusEl.classList.remove("visible");
 }
 
+function showRow(id) {
+  const row = document.getElementById(id);
+  if (row) row.classList.remove("hidden");
+}
+
 function dollarsToCents(value) {
   const n = Number(String(value).replace(/[^0-9.]/g, ""));
   if (!Number.isFinite(n) || n <= 0) throw new Error("Enter a valid payment amount.");
@@ -187,7 +192,7 @@ async function initializeSquare() {
     target.innerHTML = "";
     const btn = document.createElement("button");
     btn.className = "primary";
-    btn.textContent = " Pay";
+    btn.textContent = "Pay with Apple Pay";
     btn.onclick = async () => {
       try {
         const result = await applePay.tokenize();
@@ -198,7 +203,10 @@ async function initializeSquare() {
       }
     };
     target.appendChild(btn);
-  } catch (_) {}
+    showRow("apple-pay-row");
+  } catch (error) {
+    console.info("Apple Pay unavailable:", error?.message || error);
+  }
 
   try {
     const options = { redirectURL: window.location.href, referenceId: intent.id };
@@ -216,7 +224,8 @@ async function initializeSquare() {
       }
     });
 
-    await cashAppPay.attach("#cash-app-pay-button");
+    await cashAppPay.attach("#cash-app-pay-button", { shape: "semiround", width: "full" });
+    showRow("cash-app-row");
   } catch (error) {
     console.info("Cash App Pay unavailable:", error?.message || error);
   }
@@ -244,7 +253,8 @@ async function initializePayPal() {
 
   await loadScript(`https://www.paypal.com/sdk/js?${qs}`);
 
-  window.paypal.Buttons({
+  const sharedHandlers = {
+    style: { shape: "rect", height: 48 },
     createOrder: async () => {
       clearStatus();
       const result = await api("/api/paypal/orders", {
@@ -256,7 +266,7 @@ async function initializePayPal() {
     },
 
     onApprove: async (data) => {
-      showStatus("Completing PayPal/Venmo payment…");
+      showStatus("Completing payment…");
       const result = await api(`/api/paypal/orders/${encodeURIComponent(data.orderID)}/capture`, {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -267,9 +277,27 @@ async function initializePayPal() {
 
     onError: (err) => {
       console.error(err);
-      showStatus("PayPal/Venmo checkout could not be completed.");
+      showStatus("Checkout could not be completed.");
     }
-  }).render("#paypal-button-container");
+  };
+
+  const paypalButtons = window.paypal.Buttons({
+    fundingSource: window.paypal.FUNDING.PAYPAL,
+    ...sharedHandlers
+  });
+  if (await paypalButtons.isEligible()) {
+    await paypalButtons.render("#paypal-button-container");
+    showRow("paypal-row");
+  }
+
+  const venmoButtons = window.paypal.Buttons({
+    fundingSource: window.paypal.FUNDING.VENMO,
+    ...sharedHandlers
+  });
+  if (await venmoButtons.isEligible()) {
+    await venmoButtons.render("#venmo-button-container");
+    showRow("venmo-row");
+  }
 }
 
 async function initializePaymentUI() {
@@ -355,8 +383,11 @@ async function boot() {
   if (mode === "vocal") {
     amountInput.value = centsToDollars(config.products.vocalTutorialPriceCents);
     continueButton.textContent = `Continue — $${centsToDollars(config.products.vocalTutorialPriceCents)}`;
-    }
-  if ((mode === "tip" || mode === "song") && params.get("amount")) { const presetAmt = Number(params.get("amount")); if (Number.isFinite(presetAmt) && presetAmt > 0) amountInput.value = presetAmt.toFixed(2); }
+  }
+  if ((mode === "tip" || mode === "song") && params.get("amount")) {
+    const presetAmt = Number(params.get("amount"));
+    if (Number.isFinite(presetAmt) && presetAmt > 0) amountInput.value = presetAmt.toFixed(2);
+  }
 }
 
 boot().catch((error) => {
