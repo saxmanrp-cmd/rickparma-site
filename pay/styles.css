@@ -153,7 +153,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin: 14px 0 8px
   color: var(--text);
 }
 .wallet-slot:empty { display: none; }
-.wallet-slot { min-height: 52px; }
+.wallet-slot { min-height: 52px; display: flex; align-items: center; justify-content: center; }
 #card-container { min-height: 90px; margin-bottom: 12px; }
 #card-row .primary { margin-top: 0; }
 
