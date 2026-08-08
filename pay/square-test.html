@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square SDK Isolation Test</title>
+      </head>
+        <body style="font-family: -apple-system, sans-serif; padding: 24px; background:#111; color:#eee;">
+          <h1>Square SDK Isolation Test</h1>
+            <p>This page ONLY loads Square's script and calls Square.payments(). No app code, no CSS, no other logic.</p>
+              <pre id="out" style="white-space:pre-wrap; background:#000; color:#9cf; padding:12px; border-radius:8px;">Loading Square SDK...</pre>
+                <script>
+                    const out = document.getElementById('out');
+                    function log(msg) { out.textContent += "\n" + msg; }
+                  </script>
+                    <script src="https://web.squarecdn.com/v1/square.js"></script>
+                    <script>
+                      (function () {
+                            try {
+                                    log("navigator.language: " + navigator.language);
+                                    log("navigator.languages: " + JSON.stringify(navigator.languages));
+                                    log("userAgent: " + navigator.userAgent);
+                                    log("window.isSecureContext: " + window.isSecureContext);
+                                    log("window.Square exists: " + Boolean(window.Square));
+                                    const payments = window.Square.payments("sq0idp-uw2VS3_iBzubrXMoj_87TA", "0VVNR7Z8XFQBJ");
+                                    log("SUCCESS: Square.payments() returned: " + typeof payments);
+                                    out.style.color = "#4f4";
+                            } catch (err) {
+                                    log("FAILED: " + err.name + ": " + err.message);
+                                    log("Stack: " + err.stack);
+                                    out.style.color = "#f66";
+                            }
+                      })();
+                  </script>
+                    </body>
+                    </html>
