@@ -2,8 +2,7 @@
    Handles session storage, password hashing, and access-gating against
    the JSONBin-backed student roster. Included by every course page. */
 
-var DM_BIN_ID = '6a6a9028da38895dfea1d901';
-var DM_MASTER_KEY = '$2a$10$R94RuRqthE5DDtsO9.kzqOwjRLyF1eaqAAPX.3Qah3rJ7cXwsR1lK';
+var DM_PROXY_BASE = 'https://rickparma-jsonbin-proxy.saxmanrp.workers.dev';
 var DM_TOTAL_LESSONS = 13;
 
 async function dmSha256Hex(str) {
@@ -26,17 +25,15 @@ function dmClearSession() {
 }
 
 async function dmFetchStudents() {
-  var res = await fetch('https://api.jsonbin.io/v3/b/' + DM_BIN_ID + '/latest', {
-    headers: { 'X-Master-Key': DM_MASTER_KEY }
-  });
+  var res = await fetch(DM_PROXY_BASE + '/diamond-students');
   var json = await res.json();
   return (json.record && json.record.students) || [];
 }
 
 async function dmSaveStudents(students) {
-  await fetch('https://api.jsonbin.io/v3/b/' + DM_BIN_ID, {
+  await fetch(DM_PROXY_BASE + '/diamond-students', {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'X-Master-Key': DM_MASTER_KEY },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ students: students })
   });
 }
