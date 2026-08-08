@@ -1,128 +1,133 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0a0a0a" />
-  <title>Pay Rick Parma</title>
-  <link rel="stylesheet" href="/pay/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0a0a0a" />
+<title>Pay Rick Parma</title>
+<link rel="stylesheet" href="/pay/styles.css" />
 </head>
 <body>
-  <main class="shell">
-    <section class="card">
-      <header>
-        <div class="eyebrow">RICK PARMA · SECURE CHECKOUT</div>
-        <h1 id="page-title">PAY RICK</h1>
-        <p class="sub" id="page-subtitle">Choose what you're paying for.</p>
-      </header>
+<main class="shell">
+<section class="card">
+<header>
+<div class="eyebrow">RICK PARMA · SECURE CHECKOUT</div>
+<h1 id="page-title">PAY RICK</h1>
+<p class="sub" id="page-subtitle">Choose what you're paying for.</p>
+</header>
 
-      <section id="mode-picker" class="mode-picker">
-        <a class="mode-card" href="/pay/?mode=tip">
-          <strong>TIP RICK</strong>
-          <span>Leave a tip after a performance.</span>
-        </a>
-        <a class="mode-card" href="/pay/?mode=song">
-          <strong>SONG REQUEST</strong>
-          <span>Send a request with your payment.</span>
-        </a>
-        <a class="mode-card" href="/pay/?mode=vocal">
-          <strong>VOCAL TUTORIAL</strong>
-          <span>Enroll in the Diamond Method course.</span>
-        </a>
-        <div class="mode-card muted">
-          <strong>INVOICE</strong>
-          <span>Invoices open from your secure payment link.</span>
-        </div>
-      </section>
+<section id="mode-picker" class="mode-picker">
+<a class="mode-card" href="/pay/?mode=tip">
+<strong>TIP RICK</strong>
+<span>Leave a tip after a performance.</span>
+</a>
+<a class="mode-card" href="/pay/?mode=song">
+<strong>SONG REQUEST</strong>
+<span>Send a request with your payment.</span>
+</a>
+<a class="mode-card" href="/pay/?mode=vocal">
+<strong>VOCAL TUTORIAL</strong>
+<span>Enroll in the Diamond Method course.</span>
+</a>
+<div class="mode-card muted">
+<strong>INVOICE</strong>
+<span>Invoices open from your secure payment link.</span>
+</div>
+</section>
 
-      <section id="checkout-form" class="hidden">
-        <div id="intent-badge" class="intent-badge hidden"></div>
+<section id="checkout-form" class="hidden">
+<div id="intent-badge" class="intent-badge hidden"></div>
 
-        <div class="amount-wrap" id="amount-wrap">
-          <label for="amount">Amount</label>
-          <div class="amount-field">
-            <span>$</span>
-            <input id="amount" inputmode="decimal" autocomplete="off" placeholder="0.00" />
-          </div>
-          <div class="quick-amounts" id="quick-amounts">
-            <button type="button" data-amount="5">$5</button>
-            <button type="button" data-amount="10">$10</button>
-            <button type="button" data-amount="20">$20</button>
-            <button type="button" data-amount="50">$50</button>
-          </div>
-        </div>
+<div class="amount-wrap" id="amount-wrap">
+<label for="amount">Amount</label>
+<div class="amount-field">
+<span>$</span>
+<input id="amount" inputmode="decimal" autocomplete="off" placeholder="0.00" />
+</div>
+<div class="quick-amounts" id="quick-amounts">
+<button type="button" data-amount="5">$5</button>
+<button type="button" data-amount="10">$10</button>
+<button type="button" data-amount="20">$20</button>
+<button type="button" data-amount="50">$50</button>
+</div>
+</div>
 
-        <div class="field hidden" id="song-field-wrap">
-          <label for="song">Song request</label>
-          <input id="song" maxlength="100" placeholder="Song title / artist" />
-        </div>
+<div class="field hidden" id="song-field-wrap">
+<label for="song">Song request</label>
+<input id="song" maxlength="100" placeholder="Song title / artist" />
+</div>
 
-        <div class="field">
-          <label for="customer-name">Name <span class="optional">(optional)</span></label>
-          <input id="customer-name" maxlength="100" autocomplete="name" placeholder="Your name" />
-        </div>
+<div class="field">
+<label for="customer-name">Name <span class="optional">(optional)</span></label>
+<input id="customer-name" maxlength="100" autocomplete="name" placeholder="Your name" />
+</div>
 
-        <div class="field">
-          <label for="customer-email">Email <span class="optional">(optional)</span></label>
-          <input id="customer-email" type="email" maxlength="200" autocomplete="email" placeholder="you@example.com" />
-        </div>
+<div class="field">
+<label for="customer-email">Email <span class="optional">(optional)</span></label>
+<input id="customer-email" type="email" maxlength="200" autocomplete="email" placeholder="you@example.com" />
+</div>
 
-        <div class="field">
-          <label for="note">Note <span class="optional">(optional)</span></label>
-          <input id="note" maxlength="120" placeholder="Table number, event, message, etc." />
-        </div>
+<div class="field">
+<label for="note">Note <span class="optional">(optional)</span></label>
+<input id="note" maxlength="120" placeholder="Table number, event, message, etc." />
+</div>
 
-        <button id="continue-button" class="primary" type="button">
-          Continue to payment
-        </button>
+<button id="continue-button" class="primary" type="button">
+Continue to payment
+</button>
 
-        <div id="status" class="status" aria-live="polite"></div>
+<div id="status" class="status" aria-live="polite"></div>
 
-        <section id="payment-options" class="hidden">
-          <h2 class="pay-options-heading">Choose how to pay</h2>
-          <div class="pay-methods">
-            <div class="pay-row hidden" id="apple-pay-row">
-              <div class="pay-row-label"><span class="pay-icon">&#63743;</span>Apple Pay</div>
-              <div id="apple-pay-button" class="wallet-slot"></div>
-            </div>
+<section id="payment-options" class="hidden">
+<h2 class="pay-options-heading">Choose how to pay</h2>
+<div class="pay-methods">
+<div class="pay-row hidden" id="apple-pay-row">
+<div class="pay-row-label"><span class="pay-icon">&#63743;</span>Apple Pay</div>
+<div id="apple-pay-button" class="wallet-slot"></div>
+</div>
 
-            <div class="pay-row hidden" id="cash-app-row">
-              <div class="pay-row-label"><span class="pay-icon">$</span>Cash App Pay</div>
-              <div id="cash-app-pay-button" class="wallet-slot"></div>
-            </div>
+<div class="pay-row hidden" id="google-pay-row">
+<div class="pay-row-label"><span class="pay-icon">G</span>Google Pay</div>
+<div id="google-pay-button" class="wallet-slot"></div>
+</div>
 
-            <div class="pay-row hidden" id="paypal-row">
-              <div class="pay-row-label"><span class="pay-icon">P</span>PayPal</div>
-              <div id="paypal-button-container" class="wallet-slot"></div>
-            </div>
+<div class="pay-row hidden" id="cash-app-row">
+<div class="pay-row-label"><span class="pay-icon">$</span>Cash App Pay</div>
+<div id="cash-app-pay-button" class="wallet-slot"></div>
+</div>
 
-            <div class="pay-row hidden" id="venmo-row">
-              <div class="pay-row-label"><span class="pay-icon">V</span>Venmo</div>
-              <div id="venmo-button-container" class="wallet-slot"></div>
-            </div>
+<div class="pay-row hidden" id="paypal-row">
+<div class="pay-row-label"><span class="pay-icon">P</span>PayPal</div>
+<div id="paypal-button-container" class="wallet-slot"></div>
+</div>
 
-            <div class="pay-row" id="card-row">
-              <div class="pay-row-label"><span class="pay-icon">&#9635;</span>Card</div>
-              <div id="card-container"></div>
-              <button id="card-pay-button" class="primary" type="button">Pay by card</button>
-            </div>
-          </div>
-        </section>
-      </section>
+<div class="pay-row hidden" id="venmo-row">
+<div class="pay-row-label"><span class="pay-icon">V</span>Venmo</div>
+<div id="venmo-button-container" class="wallet-slot"></div>
+</div>
 
-      <section id="success-panel" class="success hidden">
-        <div class="success-icon">✓</div>
-        <h2>Payment received</h2>
-        <p id="success-copy">Thank you!</p>
-        <div id="success-confirmation" class="confirmation"></div>
-      </section>
+<div class="pay-row" id="card-row">
+<div class="pay-row-label"><span class="pay-icon">&#9635;</span>Card</div>
+<div id="card-container"></div>
+<button id="card-pay-button" class="primary" type="button">Pay by card</button>
+</div>
+</div>
+</section>
+</section>
 
-      <p class="security-note">
-        Payment details are processed securely by Square or PayPal. Card and wallet credentials are never stored on this site.
-      </p>
-    </section>
-  </main>
+<section id="success-panel" class="success hidden">
+<div class="success-icon">✓</div>
+<h2>Payment received</h2>
+<p id="success-copy">Thank you!</p>
+<div id="success-confirmation" class="confirmation"></div>
+</section>
 
-  <script src="/pay/app.js" type="module"></script>
+<p class="security-note">
+Payment details are processed securely by Square or PayPal. Card and wallet credentials are never stored on this site.
+</p>
+</section>
+</main>
+
+<script src="/pay/app.js" type="module"></script>
 </body>
 </html>
