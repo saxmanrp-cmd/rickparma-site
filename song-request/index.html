@@ -772,7 +772,7 @@ function revealSpinResult(outcome, songId, price){
     
   } else {
     const venmoNote = encodeURIComponent(`${s.t} request`);
-    const venmoAppLink = `venmo://paycharge?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
+    const venmoAppLink = `https://venmo.com/?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
     const cashAppLink = `${PAYMENT_LINKS.cashapp}/${price}`;
     const paypalLink = `${PAYMENT_LINKS.paypal}/${price}`;
     area.innerHTML = `
@@ -886,7 +886,7 @@ function renderBogoResults(songAId, price){
 
 function renderBogoNextSteps(songAId, songBId, price){ const sB = songs.find(x => x.id === songBId);
   const venmoNote = encodeURIComponent(`BOGO request`);
-  const venmoAppLink = `venmo://paycharge?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
+  const venmoAppLink = `https://venmo.com/?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
   const cashAppLink = `${PAYMENT_LINKS.cashapp}/${price}`;
   const paypalLink = `${PAYMENT_LINKS.paypal}/${price}`;
   const nextSteps = document.getElementById('bogoNextSteps');
