@@ -209,6 +209,23 @@ async function initializeSquare() {
   }
 
   try {
+    const googlePay = await squarePayments.googlePay(buildSquarePaymentRequest());
+    await googlePay.attach("#google-pay-button", { buttonColor: "black", buttonType: "long" });
+    $("#google-pay-button").addEventListener("click", async () => {
+      try {
+        const result = await googlePay.tokenize();
+        if (result.status !== "OK") throw new Error("Google Pay was not completed.");
+        await paySquare(result.token);
+      } catch (error) {
+        showStatus(error.message || "Google Pay failed.");
+      }
+    });
+    showRow("google-pay-row");
+  } catch (error) {
+    console.info("Google Pay unavailable:", error?.message || error);
+  }
+
+  try {
     const options = { redirectURL: window.location.href, referenceId: intent.id };
     cashAppPay = await squarePayments.cashAppPay(buildSquarePaymentRequest(), options);
 
@@ -334,7 +351,7 @@ function showSuccess(confirmation) {
 
 document.querySelectorAll("[data-amount]").forEach((button) => {
   button.addEventListener("click", () => {
-    amountInput.value = Number(button.dataset.amount).toFixed(2);
+  amountInput.value = Number(button.dataset.amount).toFixed(2);
   });
 });
 
