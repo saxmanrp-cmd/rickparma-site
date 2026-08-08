@@ -30,7 +30,6 @@
   h1,h2,h3{font-family:'Josefin Sans',sans-serif; margin:0;}
   .page-title{font-family:'Josefin Sans',sans-serif; font-weight:700; font-size:1.8rem; letter-spacing:.04em; text-align:center; color:var(--white); padding:20px 16px 6px;}
 
-
   .controls{position:sticky; top:0; z-index:10; background:rgba(19,1,1,0.94); backdrop-filter:blur(8px); padding:14px 16px 10px; border-bottom:1px solid var(--line);}
   #search{width:100%; padding:12px 14px; font-size:16px; border-radius:10px; border:1px solid var(--line); background:var(--card-solid); color:var(--white); font-family:'Lato',sans-serif;}
   #search::placeholder{color:#8a8078;}
@@ -140,11 +139,11 @@
       radial-gradient(circle at 50% 20%, rgba(255,255,255,0.4), rgba(255,255,255,0.08) 35%, transparent 55%),
       radial-gradient(circle at 50% 85%, rgba(0,0,0,0.35), transparent 50%),
       conic-gradient(from 0deg,
-      #C41E3A 0deg 36deg, #C99A2E 36deg 72deg,
-      #1C6B3A 72deg 108deg, #1450A3 108deg 144deg,
-      #7B2FBF 144deg 180deg, #B8562F 180deg 216deg,
-      #0E7C7B 216deg 252deg, #A31545 252deg 288deg,
-      #2E4172 288deg 324deg, #8C6A1F 324deg 360deg);
+        #C41E3A 0deg 36deg, #C99A2E 36deg 72deg,
+        #1C6B3A 72deg 108deg, #1450A3 108deg 144deg,
+        #7B2FBF 144deg 180deg, #B8562F 180deg 216deg,
+        #0E7C7B 216deg 252deg, #A31545 252deg 288deg,
+        #2E4172 288deg 324deg, #8C6A1F 324deg 360deg);
     border:7px solid #2b3a8f;
     box-shadow:
       0 0 0 4px #f5c94a,
@@ -279,15 +278,8 @@
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev"; const BIN_ID = "6a52d2c6f5f4af5e2982691a";
 // MASTER_KEY removed — reads/writes now go through the cached proxy Worker (rickparma-jsonbin-proxy) instead of hitting jsonbin directly.
 
-
 const CONTACT_NUMBER = "8559242976";
 const APPLE_GPAY_NUMBER = "773-209-1124";
-
-const PAYMENT_LINKS = {
-  venmo: "https://venmo.com/u/RickParma",
-  cashapp: "https://cash.app/$RickParma",
-  paypal: "https://www.paypal.com/paypalme/rickparma"
-};
 
 let DEFAULT_PRICES = { general: 5 };
 let prices = { ...DEFAULT_PRICES };
@@ -510,7 +502,7 @@ function openSheet(id){
   const price = prices.general;
   const tierLineHtml = `<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
 
-    const wheelWrapPx = Math.round(Math.max(210, Math.min(320, window.innerWidth * 0.72, window.innerHeight * 0.40)));
+  const wheelWrapPx = Math.round(Math.max(210, Math.min(320, window.innerWidth * 0.72, window.innerHeight * 0.40)));
   const wheelScale = (wheelWrapPx / 280).toFixed(4);
   const wheelGlowPad = Math.round(14 * wheelScale);
   const wheelOuterPx = wheelWrapPx + wheelGlowPad * 2;
@@ -734,57 +726,49 @@ function revealSpinResult(outcome, songId, price){
   if(outcome === 'FREE' || outcome === 'BOGO'){ launchFireworks(outcome); }
 
   function finishReveal(){
-  // The wheel already did its job — hide it once spun so the result/
-  // payment step below has room to breathe without needing to scroll.
-  var wheelWrapEl = document.querySelector('.wheel-wrap');
-  if (wheelWrapEl) wheelWrapEl.style.display = 'none';
-  var spinBtnEl = document.getElementById('spinBtn');
-  if (spinBtnEl) spinBtnEl.style.display = 'none';
-  var step2LabelEl = document.getElementById('step2Label');
-  if (step2LabelEl) step2LabelEl.style.display = 'none';
+    // The wheel already did its job — hide it once spun so the result/
+    // payment step below has room to breathe without needing to scroll.
+    var wheelWrapEl = document.querySelector('.wheel-wrap');
+    if (wheelWrapEl) wheelWrapEl.style.display = 'none';
+    var spinBtnEl = document.getElementById('spinBtn');
+    if (spinBtnEl) spinBtnEl.style.display = 'none';
+    var step2LabelEl = document.getElementById('step2Label');
+    if (step2LabelEl) step2LabelEl.style.display = 'none';
 
+    if(outcome === 'FREE'){
+      area.innerHTML = `
+        <div class="spin-result spin-result-free">🎉 You spun FREE! This one's on the house.</div>
+        <div class="section-label">Step 3 — Send the request</div>
+        <a class="btn btn-text" href="#" target="_top" onclick="prepareSend(this, '${s.id}', 'FREE'); return false;">Send Request</a>
+      `;
 
-  if(outcome === 'FREE'){
-    area.innerHTML = `
-      <div class="spin-result spin-result-free">🎉 You spun FREE! This one's on the house.</div>
-      <div class="section-label">Step 3 — Send the request</div>
-      <a class="btn btn-text" href="#" target="_top" onclick="prepareSend(this, '${s.id}', 'FREE'); return false;">Send Request</a>
-    `;
-    
-  } else if(outcome === 'BOGO'){
-    area.innerHTML = `
-      <div class="spin-result spin-result-bogo">🎉 You spun BOGO! Pick a second song — it's free.</div>
-      <div class="section-label" id="bogoStep3Label">Step 3 — Pick your free second song</div><div id="bogoPickerWrap">
-      <input type="text" id="bogoSearch" class="name-input" placeholder="Search song or artist…" autocomplete="off">
-      <select id="bogoSort" class="bogo-sort-select">
-        <option value="title-asc">Title A → Z</option>
-        <option value="title-desc">Title Z → A</option>
-        <option value="artist-asc">Artist A → Z</option>
-        <option value="artist-desc">Artist Z → A</option>
-      </select>
-      <div class="chips" id="bogoChips"></div>
-      <div class="count-row" id="bogoCountRow"></div>
-      <div id="bogoResults" class="bogo-results"></div>
-      </div><div id="bogoSelectedWrap" style="display:none"></div><div id="bogoNextSteps"></div>
-    `;
-    setupBogoPicker(songId, price);
-    
-  } else {
-    const venmoNote = encodeURIComponent(`${s.t} request`);
-    const venmoAppLink = `https://venmo.com/?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
-    const cashAppLink = `${PAYMENT_LINKS.cashapp}/${price}`;
-    const paypalLink = `${PAYMENT_LINKS.paypal}/${price}`;
-    area.innerHTML = `
-      <div class="spin-result spin-result-general">You spun $${price} — text your request, then send the tip.</div>
-      <div class="section-label">Step 3 — Send the request</div>
-      <a class="btn btn-text" href="#" target="_top" onclick="prepareSend(this, '${s.id}', 'PAID'); return false;">Send Request</a>
+    } else if(outcome === 'BOGO'){
+      area.innerHTML = `
+        <div class="spin-result spin-result-bogo">🎉 You spun BOGO! Pick a second song — it's free.</div>
+        <div class="section-label" id="bogoStep3Label">Step 3 — Pick your free second song</div><div id="bogoPickerWrap">
+        <input type="text" id="bogoSearch" class="name-input" placeholder="Search song or artist…" autocomplete="off">
+        <select id="bogoSort" class="bogo-sort-select">
+          <option value="title-asc">Title A → Z</option>
+          <option value="title-desc">Title Z → A</option>
+          <option value="artist-asc">Artist A → Z</option>
+          <option value="artist-desc">Artist Z → A</option>
+        </select>
+        <div class="chips" id="bogoChips"></div>
+        <div class="count-row" id="bogoCountRow"></div>
+        <div id="bogoResults" class="bogo-results"></div>
+        </div><div id="bogoSelectedWrap" style="display:none"></div><div id="bogoNextSteps"></div>
+      `;
+      setupBogoPicker(songId, price);
 
-      <div class="section-label">Step 4 — Pay $${price} (song won't be added until paid)</div>
-      <a class="btn btn-venmo" href="${venmoAppLink}" target="_top">Pay $${price} with Venmo</a>
-      <a class="btn btn-cashapp" href="${cashAppLink}" target="_blank">Pay $${price} with Cash App</a>
-      <a class="btn btn-paypal" href="${paypalLink}" target="_blank">Pay $${price} with PayPal</a>
-    `;
-  }
+    } else {
+      const songLabel = `${s.t}${s.a ? ' - ' + s.a : ''}`;
+      const payUrl = `/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabel)}`;
+      area.innerHTML = `
+        <div class="spin-result spin-result-general">You spun $${price} — pay securely to send your request.</div>
+        <div class="section-label">Step 3 — Pay $${price} (song won't be added until paid)</div>
+        <a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>
+      `;
+    }
   }
 
   if(outcome === 'FREE' || outcome === 'BOGO'){
@@ -877,41 +861,52 @@ function renderBogoResults(songAId, price){
     item.onclick = () => {
       const songBId = item.dataset.songId;
       if(!songBId) return;
-      [...resultsBox.querySelectorAll('.bogo-result-item')].forEach(el => el.classList.remove('selected')); item.classList.add('selected'); var sA = songs.find(x => x.id === songAId); var sB = songs.find(x => x.id === songBId); var pickerWrap = document.getElementById('bogoPickerWrap'); var selectedWrap = document.getElementById('bogoSelectedWrap'); var step3Label = document.getElementById('bogoStep3Label'); if(pickerWrap) pickerWrap.style.display = 'none'; if(step3Label) step3Label.textContent = 'Step 3 — Your BOGO picks 🎉'; if(selectedWrap){ selectedWrap.innerHTML = '<div class="bogo-picks"><div class="bogo-pick-card">' + (sA ? escapeHtml(sA.t) : '') + (sA && sA.a ? ' — ' + escapeHtml(sA.a) : '') + '</div><div class="bogo-pick-plus">+</div><div class="bogo-pick-card">' + (sB ? escapeHtml(sB.t) : '') + (sB && sB.a ? ' — ' + escapeHtml(sB.a) : '') + '</div></div><button type="button" class="bogo-change-link" id="bogoChangeBtn">Change second song</button>'; selectedWrap.style.display = 'block'; var changeBtn = document.getElementById('bogoChangeBtn'); if(changeBtn) changeBtn.onclick = function(){ selectedWrap.style.display = 'none'; selectedWrap.innerHTML = ''; if(pickerWrap) pickerWrap.style.display = ''; if(step3Label) step3Label.textContent = 'Step 3 — Pick your free second song'; var nextStepsEl2 = document.getElementById('bogoNextSteps'); if(nextStepsEl2) nextStepsEl2.innerHTML = ''; }; } renderBogoNextSteps(songAId, songBId, price); var nextStepsEl = document.getElementById('bogoNextSteps'); if(nextStepsEl) nextStepsEl.scrollIntoView({behavior:'smooth', block:'start'});
+      [...resultsBox.querySelectorAll('.bogo-result-item')].forEach(el => el.classList.remove('selected'));
+      item.classList.add('selected');
+      var sA = songs.find(x => x.id === songAId);
+      var sB = songs.find(x => x.id === songBId);
+      var pickerWrap = document.getElementById('bogoPickerWrap');
+      var selectedWrap = document.getElementById('bogoSelectedWrap');
+      var step3Label = document.getElementById('bogoStep3Label');
+      if(pickerWrap) pickerWrap.style.display = 'none';
+      if(step3Label) step3Label.textContent = 'Step 3 — Your BOGO picks 🎉';
+      if(selectedWrap){
+        selectedWrap.innerHTML = '<div class="bogo-picks"><div class="bogo-pick-card">' + (sA ? escapeHtml(sA.t) : '') + (sA && sA.a ? ' — ' + escapeHtml(sA.a) : '') + '</div><div class="bogo-pick-plus">+</div><div class="bogo-pick-card">' + (sB ? escapeHtml(sB.t) : '') + (sB && sB.a ? ' — ' + escapeHtml(sB.a) : '') + '</div></div><button type="button" class="bogo-change-link" id="bogoChangeBtn">Change second song</button>';
+        selectedWrap.style.display = 'block';
+        var changeBtn = document.getElementById('bogoChangeBtn');
+        if(changeBtn) changeBtn.onclick = function(){
+          selectedWrap.style.display = 'none';
+          selectedWrap.innerHTML = '';
+          if(pickerWrap) pickerWrap.style.display = '';
+          if(step3Label) step3Label.textContent = 'Step 3 — Pick your free second song';
+          var nextStepsEl2 = document.getElementById('bogoNextSteps');
+          if(nextStepsEl2) nextStepsEl2.innerHTML = '';
+        };
+      }
+      renderBogoNextSteps(songAId, songBId, price);
+      var nextStepsEl = document.getElementById('bogoNextSteps');
+      if(nextStepsEl) nextStepsEl.scrollIntoView({behavior:'smooth', block:'start'});
     };
   });
 }
 
-function renderBogoNextSteps(songAId, songBId, price){ const sB = songs.find(x => x.id === songBId);
-  const venmoNote = encodeURIComponent(`BOGO request`);
-  const venmoAppLink = `https://venmo.com/?txn=pay&recipients=RickParma&amount=${price}&note=${venmoNote}`;
-  const cashAppLink = `${PAYMENT_LINKS.cashapp}/${price}`;
-  const paypalLink = `${PAYMENT_LINKS.paypal}/${price}`;
-  const nextSteps = document.getElementById('bogoNextSteps');
-  nextSteps.innerHTML = `
-    <div class="section-label">Step 4 — Send the request</div>
-    <a class="btn btn-text" href="#" target="_top" onclick="prepareSendBogo(this, '${songAId}', '${songBId}'); return false;">Send Request</a>
-
-    <div class="section-label">Step 5 — Pay $${price} (songs won't be added until paid)</div>
-    <a class="btn btn-venmo" href="${venmoAppLink}" target="_top">Pay $${price} with Venmo</a>
-    <a class="btn btn-cashapp" href="${cashAppLink}" target="_blank">Pay $${price} with Cash App</a>
-    <a class="btn btn-paypal" href="${paypalLink}" target="_blank">Pay $${price} with PayPal</a>
-  `;
-}
-
-async function prepareSendBogo(el, songAId, songBId){
+function renderBogoNextSteps(songAId, songBId, price){
   const sA = songs.find(x => x.id === songAId);
   const sB = songs.find(x => x.id === songBId);
-  if(!sA || !sB) return false; 
-  el.textContent = 'Sending...';
-  try{var __p2=new URLSearchParams();__p2.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p2.append('song',sA.t);__p2.append('artist',sA.a||'');__p2.append('outcome','BOGO');__p2.append('song2',sB.t);__p2.append('artist2',sB.a||'');await fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p2}).catch(function(){});}catch(__e2){}
-  el.textContent = 'Thanks for the request!';
-  return false;
+  const labelA = sA ? `${sA.t}${sA.a ? ' - ' + sA.a : ''}` : '';
+  const labelB = sB ? `${sB.t}${sB.a ? ' - ' + sB.a : ''}` : '';
+  const songLabel = `${labelA} + BOGO: ${labelB}`;
+  const payUrl = `/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabel)}`;
+  const nextSteps = document.getElementById('bogoNextSteps');
+  nextSteps.innerHTML = `
+    <div class="section-label">Step 4 — Pay $${price} (songs won't be added until paid)</div>
+    <a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>
+  `;
 }
 
 async function prepareSend(el, id, outcomeType){
   const s = songs.find(x => x.id === id);
-  if(!s) return false; 
+  if(!s) return false;
   el.textContent = 'Sending...';
   try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');await fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){}
   el.textContent = 'Thanks for the request!';
