@@ -15,6 +15,8 @@ const ALLOWED_PUBLIC_TYPES = new Set(["tip", "song_request", "vocal_tutorial"]);
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
 const SONG_ALERT_URL = "https://rickparma-booking-8582.twil.io/song-alert";
 const INVOICE_RECEIPT_URL = "https://rickparma-booking-8582.twil.io/invoice-receipt";
+const SMS_BLAST_URL = "https://sms-blast.saxmanrp.workers.dev";
+const TOOLS_BASE_URL = "https://saxmanrp-cmd.github.io/rickparma-tools/invoice-creator.html";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -531,6 +533,64 @@ async function createInvoicePayLink(request, env) {
   return corsJson({ intent, checkoutUrl: `${base}/pay/?intent=${encodeURIComponent(intent.id)}` }, 201);
 }
 
+  // Builds the same message text Invoice Creator has always used for each share kind,
+// plus a link back to the client-facing invoice-creator.html view for that invoice.
+function buildInvoiceShareText(kind, invoice) {
+    const link = `${TOOLS_BASE_URL}?${kind}=${encodeURIComponent(invoice.id)}`;
+    if (kind === "sign") return `Please review and sign your invoice from Rick Parma: ${link}`;
+    if (kind === "receipt") return `Here is your invoice receipt from Rick Parma: ${link}`;
+    return `Tap to make a payment on your invoice from Rick Parma: ${link}`;
+}
+
+// Called directly from invoice-creator.html's Send Payment Link / Send Receipt /
+// Share for Signature buttons. Looks up the client's real phone number server-side
+// (never trusts a client-supplied number) and sends the text through the sms-blast
+// Worker's own /api/conversations/reply endpoint, using a server-held admin token —
+// so the message goes out from the Twilio toll-free number and shows up in the
+// Messages tab of rickparma-tools/admin.html, instead of opening Rick's own
+// Messages app under his personal number.
+async function sendInvoiceText(request, env) {
+    const body = await request.json().catch(() => ({}));
+    const invoiceId = safeString(body.invoiceId, 100);
+    const kind = safeString(body.kind, 20);
+    if (!invoiceId) return corsJson({ error: "Missing invoiceId." }, 400);
+    if (!["pay", "receipt", "sign"].includes(kind)) return corsJson({ error: "Invalid kind." }, 400);
+
+    const res = await fetch(`${PROXY_BASE}/invoices`);
+    const data = await res.json();
+    const invoices = (data && data.record && data.record.invoices) || [];
+    const invoice = invoices.find((inv) => inv.id === invoiceId);
+    if (!invoice) return corsJson({ error: "Invoice not found." }, 404);
+
+    const phone = safeString(invoice.clientPhone, 40);
+    if (!phone) return corsJson({ error: "This invoice has no client phone number on file." }, 400);
+
+    if (!env.SMS_BLAST_ADMIN_TOKEN) {
+          console.error("SMS_BLAST_ADMIN_TOKEN not configured");
+          return corsJson({ error: "Text sending is not configured yet." }, 500);
+    }
+
+    const message = buildInvoiceShareText(kind, invoice);
+
+    const smsRes = await fetch(`${SMS_BLAST_URL}/api/conversations/reply`, {
+          method: "POST",
+          headers: {
+                  "content-type": "application/json",
+                  "X-Admin-Token": env.SMS_BLAST_ADMIN_TOKEN
+          },
+          body: JSON.stringify({ phone, message })
+    });
+
+    const smsData = await smsRes.json().catch(() => ({}));
+    if (!smsRes.ok) {
+          console.error("sms-blast send error", smsData);
+          return corsJson({ error: smsData?.error || "Failed to send text." }, smsRes.status);
+    }
+
+    return corsJson({ ok: true, phone, message });
+}
+
+
 // --- Square --------------------------------------------------------------
 
 async function createSquarePayment(request, env) {
@@ -827,6 +887,20 @@ export async function onRequest(context) {
     if (path === "/invoices/pay-link" && request.method === "POST") {
       return await createInvoicePayLink(request, env);
     }
+
+        if (path === "/invoices/send-text" && request.method === "OPTIONS") {
+                return new Response(null, {
+                          headers: {
+                                      "access-control-allow-origin": "*",
+                                      "access-control-allow-methods": "POST, OPTIONS",
+                                      "access-control-allow-headers": "Content-Type"
+                          }
+                });
+        }
+
+        if (path === "/invoices/send-text" && request.method === "POST") {
+                return await sendInvoiceText(request, env);
+        }
 
     if (path === "/config" && request.method === "GET") {
       return json({
