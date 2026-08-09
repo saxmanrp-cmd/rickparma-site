@@ -402,8 +402,8 @@ function showSuccess(confirmation) {
   checkoutForm.classList.add("hidden");
   successPanel.classList.remove("hidden");
   successCopy.textContent =
-    intent?.type === "song_request" ? "Your song request and payment were received." :
-    intent?.type === "tip" ? "Thank you for the tip!" :
+        intent?.type === "song_request" ? "Your song request and payment were received. A receipt will be sent — you can now close this page." :
+        intent?.type === "tip" ? "Thank you for the tip! A receipt will be sent — you can now close this page." :
     intent?.type === "vocal_tutorial" ? "You're enrolled — your Diamond Method payment was received." :
     "Your payment was received.";
   successConfirmation.textContent = `Confirmation: ${confirmation || intent?.id || ""}`;
@@ -417,6 +417,8 @@ function showSuccess(confirmation) {
       }));
     } catch (_) {}
     setTimeout(() => { location.href = "/diamond-course.html"; }, 900);
+  } else if (intent?.type === "tip" || intent?.type === "song_request") {
+        setTimeout(() => { location.href = "https://rickparma.com/"; }, 6000);
   }
 }
 
