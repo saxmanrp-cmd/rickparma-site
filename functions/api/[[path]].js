@@ -14,6 +14,7 @@
 const ALLOWED_PUBLIC_TYPES = new Set(["tip", "song_request", "vocal_tutorial"]);
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
 const SONG_ALERT_URL = "https://rickparma-booking-8582.twil.io/song-alert";
+const INVOICE_RECEIPT_URL = "https://rickparma-booking-8582.twil.io/invoice-receipt";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -247,6 +248,24 @@ async function fulfillInvoice(env, intent) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ invoices })
   });
+
+  // If this payment brings the invoice to a zero balance, text the client a
+  // paid-in-full receipt at the phone number already on file for the invoice.
+  const total = (invoice.lineItems || []).reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
+  const paidSoFar = invoice.payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
+  const balance = total - paidSoFar;
+  if (balance <= 0.01 && invoice.clientPhone) {
+    try {
+      const params = new URLSearchParams();
+      params.append("to", invoice.clientPhone);
+      params.append("name", invoice.clientName || "there");
+      params.append("invoiceNumber", invoice.invoiceNumber || invoice.id || "");
+      params.append("total", total.toFixed(2));
+      await fetch(INVOICE_RECEIPT_URL, { method: "POST", body: params });
+    } catch (err) {
+      console.error("invoice receipt SMS error", intent.id, err);
+    }
+  }
   return "FULFILLED";
 }
 
