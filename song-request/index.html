@@ -462,6 +462,29 @@ document.getElementById('sortSelect').addEventListener('change', e => {
 const WHEEL_SLICES = ['GENERAL','FREE','GENERAL','FREE','BOGO','FREE','GENERAL','FREE','GENERAL','BOGO'];
 let wheelSpinning = false;
 let wheelRotationTotal = 0;
+  const SPIN_COOLDOWN_MS = 4 * 60 * 60 * 1000; // one spin per device, then resets after a few hours
+  function getSpinLockRemainingMs(){
+    const last = parseInt(localStorage.getItem('rp_lastSpinAt') || '0', 10);
+    if(!last) return 0;
+    return Math.max(0, SPIN_COOLDOWN_MS - (Date.now() - last));
+  }
+  function lockSpinForThisDevice(){
+    localStorage.setItem('rp_lastSpinAt', String(Date.now()));
+  }
+  function formatSpinLockRemaining(ms){
+    const mins = Math.ceil(ms / 60000);
+    if(mins < 60) return mins + ' minute' + (mins === 1 ? '' : 's');
+    const hrs = Math.floor(mins / 60);
+    const remMins = mins % 60;
+    return hrs + ' hour' + (hrs === 1 ? '' : 's') + (remMins ? ' ' + remMins + 'm' : '');
+  }
+  function skipSpinToPayment(songId, price){
+    const s = songs.find(x => x.id === songId);
+    if(!s) return;
+    const songLabel = s.t + (s.a ? ' - ' + s.a : '');
+    const payUrl = '/pay/?mode=song&amount=' + price + '&song=' + encodeURIComponent(songLabel);
+    window.top.location.href = payUrl;
+  }
 
 function fitWheelToViewport(){
   const sheetEl = document.getElementById('sheet');
@@ -596,8 +619,17 @@ function buildWheelSparkles(){
 }
 
 function spinWheel(songId, price){
+  const spinLockRemaining = getSpinLockRemainingMs();
+  if(spinLockRemaining > 0){
+    var spinLockArea = document.getElementById('spinResultArea');
+    if(spinLockArea){
+      spinLockArea.innerHTML = '<div class="spin-result">You already used your spin on this device. Try again in ' + formatSpinLockRemaining(spinLockRemaining) + ' — or <a href="#" onclick="skipSpinToPayment(\'' + songId + '\', ' + price + '); return false;" style="color:var(--accent);text-decoration:underline;">send this request now for $' + price + '</a>.</div>';
+    }
+    return;
+  }
   if(wheelSpinning) return;
   wheelSpinning = true;
+  lockSpinForThisDevice();
 
   const wheel = document.getElementById('spinWheel');
   const spinBtn = document.getElementById('spinBtn');
