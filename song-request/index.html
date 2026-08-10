@@ -459,7 +459,7 @@ document.getElementById('sortSelect').addEventListener('change', e => {
 });
 
 /* ============ REQUEST SHEET ============ */
-const WHEEL_SLICES = ['GENERAL','FREE','GENERAL','FREE','BOGO','FREE','GENERAL','FREE','GENERAL','BOGO'];
+const WHEEL_SLICES = ['FREE','FREE','FREE','FREE','BOGO','FREE','BOGO','FREE','FREE','BOGO'];
 let wheelSpinning = false;
 let wheelRotationTotal = 0;
   const SPIN_COOLDOWN_MS = 4 * 60 * 60 * 1000; // one spin per device, then resets after a few hours
@@ -511,57 +511,73 @@ function fitWheelToViewport(){
 }
 
 function openSheet(id){
-  const s = songs.find(x => x.id === id);
-  if(!s) return;
+      const s = songs.find(x => x.id === id);
+      if(!s) return;
 
-  document.getElementById('sheetTitle').textContent = s.t;
-  document.getElementById('sheetArtist').textContent = s.a || '';
+      document.getElementById('sheetTitle').textContent = s.t;
+      document.getElementById('sheetArtist').textContent = s.a || '';
 
-  const nameFieldHtml = `
-    <div class="section-label">🎤 Step 1 — What's your name?</div>
-    <input type="text" id="reqName" class="name-input" placeholder="So I can give you a shout-out on the mic!">
-  `;
+      const nameFieldHtml = `
+          <div class="section-label">🎤 Step 1 — What's your name?</div>
+              <input type="text" id="reqName" class="name-input" placeholder="So I can give you a shout-out on the mic!">
+                `;
 
-  const price = prices.general;
-  const tierLineHtml = `<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
+      const price = prices.general;
+      const tierLineHtml = `<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
 
-  const wheelWrapPx = Math.round(Math.max(210, Math.min(320, window.innerWidth * 0.72, window.innerHeight * 0.40)));
-  const wheelScale = (wheelWrapPx / 280).toFixed(4);
-  const wheelGlowPad = Math.round(14 * wheelScale);
-  const wheelOuterPx = wheelWrapPx + wheelGlowPad * 2;
-  const bodyHtml = `
-    ${nameFieldHtml}
-    <div class="section-label" id="step2Label">Step 2 — Spin to Win a Free Song!</div>
-    <div class="wheel-wrap" style="width:${wheelOuterPx}px;height:${wheelOuterPx}px;">
-      <div class="wheel-scale-inner" style="transform:scale(${wheelScale});top:${wheelGlowPad}px;left:${wheelGlowPad}px;">
-        <div class="wheel-pointer">▼</div>
-        <div class="wheel-glow"></div>
-        <div class="wheel" id="spinWheel">${buildWheelLabels(price)}${buildWheelSparkles()}${buildWheelRivets()}</div>
-        <div class="wheel-center-dot"></div>
-      </div>
-    </div>
-    <button class="btn btn-text" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">🎡 Spin to Win!</button>
-    <div id="spinResultArea"></div>
-  `;
+      const wheelWrapPx = Math.round(Math.max(210, Math.min(320, window.innerWidth * 0.72, window.innerHeight * 0.40)));
+      const wheelScale = (wheelWrapPx / 280).toFixed(4);
+      const wheelGlowPad = Math.round(14 * wheelScale);
+      const wheelOuterPx = wheelWrapPx + wheelGlowPad * 2;
 
-  document.getElementById('sheetTierLine').innerHTML = tierLineHtml;
-  document.getElementById('sheetBody').innerHTML = bodyHtml;
+      const spinLockRemaining = getSpinLockRemainingMs();
+      let stepTwoHtml;
+      if(spinLockRemaining > 0){
+            const songLabelForPay = `${s.t}${s.a ? ' - ' + s.a : ''}`;
+            const payUrl = `/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabelForPay)}`;
+            stepTwoHtml = `
+                  <div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div>
+                        <a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>
+                            `;
+      } else {
+            stepTwoHtml = `
+                  <div class="section-label" id="step2Label">Step 2 — Spin to Win a Free Song!</div>
+                        <div style="font-size:12px;opacity:.65;text-align:center;margin:-4px 0 8px;">One spin per show</div>
+                              <div class="wheel-wrap" style="width:${wheelOuterPx}px;height:${wheelOuterPx}px;">
+                                      <div class="wheel-scale-inner" style="transform:scale(${wheelScale});top:${wheelGlowPad}px;left:${wheelGlowPad}px;">
+                                                <div class="wheel-pointer">▼</div>
+                                                          <div class="wheel-glow"></div>
+                                                                    <div class="wheel" id="spinWheel">${buildWheelLabels(price)}${buildWheelSparkles()}${buildWheelRivets()}</div>
+                                                                              <div class="wheel-center-dot"></div>
+                                                                                      </div>
+                                                                                            </div>
+                                                                                                  <button class="btn btn-text" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">🎡 Spin to Win!</button>
+                                                                                                        <div id="spinResultArea"></div>
+                                                                                                            `;
+      }
 
-  wheelSpinning = false;
-  wheelRotationTotal = 0;
-  if(document.getElementById('spinWheel')){
-    document.getElementById('spinWheel').style.transform = 'rotate(0deg)';
+      const bodyHtml = `
+          ${nameFieldHtml}
+              ${stepTwoHtml}
+                `;
+
+      document.getElementById('sheetTierLine').innerHTML = tierLineHtml;
+      document.getElementById('sheetBody').innerHTML = bodyHtml;
+
+      wheelSpinning = false;
+      wheelRotationTotal = 0;
+      if(document.getElementById('spinWheel')){
+            document.getElementById('spinWheel').style.transform = 'rotate(0deg)';
+      }
+
+      document.getElementById('overlay').classList.add('show');
+      document.getElementById('sheet').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      fitWheelToViewport();
   }
-
-  document.getElementById('overlay').classList.add('show');
-  document.getElementById('sheet').classList.add('show');
-  document.body.style.overflow = 'hidden';
-  fitWheelToViewport();
-}
-
 function stackedLetters(word, outerRadius){
-  const boxWidth = 44; // matches the .wheel-label CSS width — scaleX multiplies against this
-  const targetWidthStart = 70;
+    const boxWidth = 44; // matches the .wheel-label CSS width — scaleX multiplies against this
+    const targetWidthStart = 70;
   const targetWidthEnd = 50;
   const stretchStart = targetWidthStart / boxWidth;
   const stretchEnd = targetWidthEnd / boxWidth;
