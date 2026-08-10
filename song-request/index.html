@@ -956,7 +956,13 @@ async function prepareSend(el, id, outcomeType){
   if(!s) return false;
   el.textContent = 'Sending...';
   try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');await fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){}
-  el.textContent = 'Thanks for the request!';
+    el.textContent = 'Thanks for the request!';
+    el.style.pointerEvents = 'none';
+    el.style.opacity = '0.7';
+    var __backWrap = document.createElement('div');
+    __backWrap.style.cssText = 'margin-top:18px;text-align:center;';
+    __backWrap.innerHTML = '<a href="https://rickparma.com" target="_top" style="display:inline-block;padding:16px 30px;background:var(--accent);color:#0c1420;font-weight:900;font-size:18px;border-radius:14px;text-decoration:none;letter-spacing:0.3px;">&larr; Back to RickParma.com</a>';
+    (el.closest('.spin-result') || el.parentElement || el).insertAdjacentElement('afterend', __backWrap);
   return false;
 }
 
