@@ -1,4 +1,0 @@
-/* RickParma.com — Silver Vegas Phase 48
-   Fallback-safe header treatment while the exact hero image asset is installed. */
-html body header{border-bottom:0!important;}
-html body header h1::before,html body header h1::after,html body header h1 a::before,html body header h1 a::after{content:none!important;display:none!important;}
