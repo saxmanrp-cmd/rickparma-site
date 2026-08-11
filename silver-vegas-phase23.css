@@ -1,0 +1,84 @@
+/* RickParma.com — Silver Vegas Phase 23
+   HEADER CHROME REFLECTION REFINEMENT.
+   Presentation only. Replaces the narrow slash-like sheen with a broad,
+   feathered light reflection across the RP medallion. */
+
+/* Keep the reflection clipped to the circular medallion. */
+html body header h1 a{
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+
+/* Replace the old narrow diagonal streak with a wide, soft light bloom. */
+html body header h1 a::after{
+  content:''!important;
+  display:block!important;
+  position:absolute!important;
+  top:-34%!important;
+  bottom:-34%!important;
+  left:-85%!important;
+  width:112%!important;
+  height:auto!important;
+  inset-inline-end:auto!important;
+  border-radius:48%!important;
+  pointer-events:none!important;
+  opacity:0!important;
+  background:
+    linear-gradient(105deg,
+      transparent 0%,
+      rgba(255,255,255,.00) 16%,
+      rgba(185,235,255,.035) 28%,
+      rgba(224,246,255,.11) 40%,
+      rgba(255,255,255,.23) 50%,
+      rgba(218,239,255,.10) 61%,
+      rgba(255,255,255,.025) 72%,
+      transparent 88%)!important;
+  filter:blur(7px)!important;
+  mix-blend-mode:screen!important;
+  transform:translateX(-18%) rotate(-9deg) skewX(-8deg)!important;
+  transform-origin:center!important;
+  will-change:transform,opacity!important;
+}
+
+@keyframes rp23SoftChromeSweep{
+  0%,16%{
+    transform:translateX(-18%) rotate(-9deg) skewX(-8deg);
+    opacity:0;
+  }
+  23%{
+    opacity:.24;
+  }
+  43%{
+    opacity:.42;
+  }
+  63%{
+    opacity:.18;
+  }
+  70%,100%{
+    transform:translateX(205%) rotate(-9deg) skewX(-8deg);
+    opacity:0;
+  }
+}
+
+@media(prefers-reduced-motion:no-preference){
+  html body header h1 a::after{
+    animation:rp23SoftChromeSweep 8.8s cubic-bezier(.22,.68,.25,1) infinite!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body header h1 a::after{
+    animation:none!important;
+    opacity:0!important;
+  }
+}
+
+/* Slightly soften the static medallion glow so the sweep reads as reflection,
+   not as a separate animated object. */
+html body header h1 a{
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.10),
+    0 0 0 4px rgba(99,228,255,.025),
+    0 0 22px rgba(99,228,255,.11),
+    0 0 32px rgba(255,96,216,.045)!important;
+}
