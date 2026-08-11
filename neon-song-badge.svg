@@ -28,6 +28,8 @@
   <circle cx="128" cy="128" r="101" fill="none" stroke="url(#ring)" stroke-width="5.5" opacity=".44" filter="url(#soft)"/>
   <circle cx="128" cy="128" r="101" fill="none" stroke="url(#ring)" stroke-width="4.5" filter="url(#glow)"/>
   <path d="M47 88c25-41 72-66 121-56" fill="none" stroke="#fff" stroke-opacity=".34" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M104 93v77c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V88l82-18v67c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V86l-66 15" fill="none" stroke="url(#glyph)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
-  <path d="M104 93v77c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V88l82-18v67c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V86l-66 15" fill="none" stroke="#fff" stroke-opacity=".24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="matrix(.74 0 0 .74 45.12 29.21)">
+    <path d="M104 93v77c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V88l82-18v67c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V86l-66 15" fill="none" stroke="url(#glyph)" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <path d="M104 93v77c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V88l82-18v67c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V86l-66 15" fill="none" stroke="#fff" stroke-opacity=".24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>
