@@ -1,0 +1,42 @@
+/* RickParma.com — Silver Vegas Phase 38
+   Final icon parity fix: Text Updates is the visual source of truth.
+   Remove legacy ID-specific glow shells that still affected Song Request/Fan Cam. */
+
+/* Phase 26 used ID-specific box-shadow rules on these pseudo-elements.
+   Override those exact selectors so ONLY the SVG artwork is visible. */
+html body #songRequestCol .song-request-button::before,
+html body #fanCamCol .fan-cam-button::before{
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background-color:transparent!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  background-size:contain!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  clip-path:none!important;
+}
+
+html body #songRequestCol .song-request-button::before{
+  content:''!important;
+  background-image:url('neon-song-badge.svg')!important;
+}
+
+html body #fanCamCol .fan-cam-button::before{
+  content:''!important;
+  background-image:url('neon-camera-badge.svg')!important;
+}
+
+/* Keep the hero link itself neutral, matching the clean Text Updates icon shell. */
+html body #songRequestCol .song-request-button,
+html body #fanCamCol .fan-cam-button{
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
