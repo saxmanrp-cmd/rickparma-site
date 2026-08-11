@@ -1,0 +1,27 @@
+/* Phase 67 — use the real HD header source on Retina/mobile and desktop. */
+html body header{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:16 / 9!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  background-color:#010307!important;
+  background-image:-webkit-image-set(url('images/rick-parma-header-approved.jpg?v=67') 1x,url('images/rick-parma-header-approved-hd.avif?v=67') 2x)!important;
+  background-image:image-set(url('images/rick-parma-header-approved.jpg?v=67') 1x,url('images/rick-parma-header-approved-hd.avif?v=67') 2x)!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  transform:none!important;
+  filter:none!important;
+  image-rendering:auto!important;
+}
+html body header::before,html body header::after{content:none!important;display:none!important;}
+html body header h1,html body header h1 a{display:none!important;}
+html body header .socials{display:flex!important;visibility:visible!important;opacity:1!important;position:absolute!important;z-index:20!important;top:6px!important;left:6px!important;right:auto!important;}
+@media(max-width:560px){html body header{aspect-ratio:16 / 9!important;background-position:center center!important;background-size:cover!important;}}
