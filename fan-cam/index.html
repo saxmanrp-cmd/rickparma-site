@@ -219,7 +219,7 @@ async function startCamera(){
   try{
     stream = await navigator.mediaDevices.getUserMedia({
       video:{ facingMode, width:{ideal:1080}, height:{ideal:1440} },
-      audio: mode === 'video'
+      audio: mode === 'video' ? { echoCancellation:false, noiseSuppression:false, autoGainControl:false } : false
     });
     videoEl.srcObject = stream;
     document.getElementById('deniedMsg').style.display = 'none';
