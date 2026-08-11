@@ -29,6 +29,7 @@
 @import url('silver-vegas-phase30.css');
 @import url('silver-vegas-phase31.css');
 @import url('silver-vegas-phase32.css');
+@import url('silver-vegas-phase33.css');
 
 /* Tip section spacing safeguard — keeps heading/subtitle clear of amount buttons */
 html body .band-tipjar .rp-card-panel{
@@ -63,15 +64,11 @@ html body .band-tipjar .tip-amt{
   border-radius:12px!important;
   border-width:1.5px!important;
 }
-html body .band-tipjar .tip-amt[data-amt="20"],
-html body .band-tipjar .tip-amt.active[data-amt="20"]{
+/* $20 keeps only structural safeguards now — no forced selected appearance. */
+html body .band-tipjar .tip-amt[data-amt="20"]{
   display:flex!important;
   visibility:visible!important;
   opacity:1!important;
-  color:#ffffff!important;
-  background:linear-gradient(180deg,rgba(8,12,20,.98),rgba(3,6,12,.99))!important;
-  border:2px solid #49b8ff!important;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 0 0 1px rgba(73,184,255,.55),0 0 16px rgba(73,184,255,.48),0 0 28px rgba(73,184,255,.20)!important;
   font-size:1rem!important;
   font-weight:900!important;
   line-height:1!important;
