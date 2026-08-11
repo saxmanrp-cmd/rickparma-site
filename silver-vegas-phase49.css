@@ -1,0 +1,121 @@
+/* RickParma.com — Silver Vegas Phase 49
+   Final header layering: Vegas photo is the true background, transparent branded art
+   floats above it, and the existing real RP site logo is positioned inside the medallion. */
+
+/* Keep the Vegas scene as the base layer behind all header artwork. */
+html body .band-hero{
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,.04) 0%,
+      rgba(0,0,0,.01) 38%,
+      rgba(0,0,0,.05) 66%,
+      rgba(1,3,7,.42) 100%),
+    url('images/hero-bg-mockup.jpg') center top / cover no-repeat!important;
+}
+
+/* The SVG is now transparent artwork only. */
+html body .band-hero::before{
+  background-image:url('images/rick-parma-header-hero.svg')!important;
+  background-color:transparent!important;
+  background-size:contain!important;
+  background-position:center top!important;
+  background-repeat:no-repeat!important;
+  opacity:1!important;
+  filter:none!important;
+  transform:none!important;
+}
+
+/* Reuse the actual header logo asset, but move it into the large center medallion.
+   These percentages match the medallion coordinates in the 1672x941 header artwork. */
+html body header h1{
+  display:block!important;
+  position:absolute!important;
+  z-index:103!important;
+  top:clamp(26px,6.94vw,68px)!important;
+  left:50%!important;
+  width:clamp(60px,15.79vw,155px)!important;
+  height:clamp(60px,15.79vw,155px)!important;
+  margin:0!important;
+  padding:0!important;
+  transform:translateX(-50%)!important;
+  pointer-events:auto!important;
+  font-size:0!important;
+  line-height:0!important;
+  background:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+html body header h1 a{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:url('apple-touch-icon.png') center / contain no-repeat!important;
+  box-shadow:none!important;
+  font-size:0!important;
+  color:transparent!important;
+  filter:
+    grayscale(1)
+    saturate(0)
+    brightness(1.52)
+    contrast(1.18)
+    drop-shadow(0 6px 9px rgba(0,0,0,.72))!important;
+}
+
+/* No divider or extra framing around the moved logo. */
+html body header,
+html body header h1,
+html body header h1 a{
+  border-top:0!important;
+  border-right:0!important;
+  border-bottom:0!important;
+  border-left:0!important;
+}
+html body header::before,
+html body header::after,
+html body header h1::before,
+html body header h1::after,
+html body header h1 a::before,
+html body header h1 a::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* Social links stay pinned at the far top-left. */
+html body header .socials{
+  position:absolute!important;
+  top:8px!important;
+  left:8px!important;
+  right:auto!important;
+  margin:0!important;
+  z-index:104!important;
+}
+
+@media(max-width:560px){
+  html body .band-hero{
+    background:
+      linear-gradient(180deg,
+        rgba(0,0,0,.03) 0%,
+        rgba(0,0,0,.005) 40%,
+        rgba(0,0,0,.04) 67%,
+        rgba(1,3,7,.38) 100%),
+      url('images/hero-bg-mockup.jpg') center top / cover no-repeat!important;
+  }
+
+  html body header h1{
+    top:6.94vw!important;
+    width:15.79vw!important;
+    height:15.79vw!important;
+    min-width:58px!important;
+    min-height:58px!important;
+  }
+
+  html body header .socials{
+    top:7px!important;
+    left:7px!important;
+  }
+}
