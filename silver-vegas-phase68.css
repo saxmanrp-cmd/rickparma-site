@@ -1,0 +1,49 @@
+/* Phase 68 — header visibility + remove hero black/circle background. */
+html body header{
+  background-color:#010307!important;
+  background-image:url('images/rick-parma-header-approved.jpg?v=68')!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  aspect-ratio:16/9!important;
+  min-height:0!important;
+  height:auto!important;
+}
+html body header::before,html body header::after{content:none!important;display:none!important;}
+html body header h1,html body header h1 a{display:none!important;}
+html body header .socials{display:flex!important;visibility:visible!important;opacity:1!important;position:absolute!important;z-index:20!important;top:6px!important;left:6px!important;}
+
+/* Hero should have no decorative/background artwork at all. */
+html body .band-hero,
+html body #heroBand{
+  --bg-image:none!important;
+  --overlay:0!important;
+  background:#000!important;
+  background-image:none!important;
+}
+html body .band-hero::before,
+html body .band-hero::after,
+html body #heroBand::before,
+html body #heroBand::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  filter:none!important;
+}
+html body .band-hero .band-inner,
+html body #heroBand .band-inner{background:transparent!important;}
+html body .band-hero .rp-card-panel,
+html body #heroBand .rp-card-panel{
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+html body .band-hero .rp-card-panel::before,
+html body .band-hero .rp-card-panel::after,
+html body #heroBand .rp-card-panel::before,
+html body #heroBand .rp-card-panel::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+@media(max-width:560px){html body header{background-position:center center!important;background-size:cover!important;}}
