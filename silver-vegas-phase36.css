@@ -1,0 +1,137 @@
+/* RickParma.com — Silver Vegas Phase 36
+   Restore original silver RP medallion and eliminate residual icon container boxes.
+   Keep the crisp neon rings contained inside the SVG artwork itself. */
+
+/* ==========================================================
+   HEADER — restore the original silver RP medallion asset.
+   Keep the large hero footprint from Phase 25.
+   ========================================================== */
+html body header h1 a{
+  background:url('apple-touch-icon.png') center/contain no-repeat!important;
+  background-color:transparent!important;
+  border:0!important;
+  border-radius:50%!important;
+  box-shadow:none!important;
+  filter:none!important;
+  overflow:visible!important;
+}
+
+/* ==========================================================
+   HERO ICONS — show ONLY the SVG. No square/box shell, no
+   inherited gradient panel, no border, no shadow container.
+   The neon circle is drawn inside each SVG itself.
+   ========================================================== */
+html body .song-request-button::before,
+html body .fan-cam-button::before{
+  content:''!important;
+  display:block!important;
+  padding:0!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background-color:transparent!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  clip-path:none!important;
+}
+html body .song-request-button::before{
+  background-image:url('neon-song-badge.svg')!important;
+}
+html body .fan-cam-button::before{
+  background-image:url('neon-camera-badge.svg')!important;
+}
+
+/* Make sure the clickable hero links themselves do not draw an
+   extra icon box. The surrounding feature CARD remains intact. */
+html body .band-hero .song-request-button,
+html body .band-hero .fan-cam-button{
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  filter:none!important;
+}
+
+/* ==========================================================
+   TEXT UPDATES — restore the neon-circle chat badge and remove
+   every possible rectangular shell around that icon element.
+   ========================================================== */
+html body .text-join-button{
+  background:url('neon-chat-badge.svg') center/contain no-repeat!important;
+  background-color:transparent!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+  clip-path:none!important;
+  overflow:visible!important;
+}
+html body .text-join-button::before,
+html body .text-join-button::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* Preserve the approved icon sizing. */
+@media(min-width:561px){
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:76px!important;
+    height:76px!important;
+    min-width:76px!important;
+    min-height:76px!important;
+  }
+}
+@media(max-width:560px){
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:96px!important;
+    height:96px!important;
+    min-width:96px!important;
+    min-height:96px!important;
+  }
+  html body .text-join-button{
+    width:82px!important;
+    height:82px!important;
+    min-width:82px!important;
+    min-height:82px!important;
+  }
+}
+@media(max-width:430px){
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:88px!important;
+    height:88px!important;
+    min-width:88px!important;
+    min-height:88px!important;
+  }
+  html body .text-join-button{
+    width:76px!important;
+    height:76px!important;
+    min-width:76px!important;
+    min-height:76px!important;
+  }
+}
+@media(max-width:350px){
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:76px!important;
+    height:76px!important;
+    min-width:76px!important;
+    min-height:76px!important;
+  }
+  html body .text-join-button{
+    width:68px!important;
+    height:68px!important;
+    min-width:68px!important;
+    min-height:68px!important;
+  }
+}
