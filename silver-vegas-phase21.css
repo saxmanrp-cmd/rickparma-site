@@ -1,0 +1,369 @@
+/* RickParma.com — Silver Vegas Phase 21
+   CLEANUP + COHESION PASS.
+   Presentation only. Existing JS, APIs, payments, calendar/flyer behavior,
+   booking submission, media behavior and live hero visibility remain untouched. */
+
+:root{
+  --rp21-line:rgba(192,216,243,.16);
+  --rp21-radius:10px;
+  --rp21-cyan:#59e1ff;
+  --rp21-pink:#ff58d1;
+  --rp21-panel-top:rgba(8,14,24,.975);
+  --rp21-panel-bottom:rgba(2,6,12,.992);
+}
+
+/* ==========================================================
+   SINGLE-COLUMN COHESION
+   ========================================================== */
+html body{
+  --rp21-width:min(100% - 12px,760px);
+}
+
+html body .band-inner,
+html body section#booking,
+html body footer{
+  width:var(--rp21-width)!important;
+  max-width:760px!important;
+}
+
+html body .band-tipjar,
+html body .band-textjoin,
+html body .band-music,
+html body #calendar .band-calendar,
+html body section#promo-videos,
+html body .band-diamond{
+  padding-top:2px!important;
+  padding-bottom:2px!important;
+}
+
+html body #music,
+html body #calendar,
+html body #promo-videos,
+html body #diamond-method,
+html body #booking{
+  background:transparent!important;
+}
+
+/* Shared silhouette and restrained glass finish. */
+html body .band-tipjar .rp-card-panel,
+html body .band-textjoin .rp-card-panel,
+html body .rp-player,
+html body #rp-video-section,
+html body .product-card,
+html body section#booking{
+  border-radius:var(--rp21-radius)!important;
+  border:1px solid var(--rp21-line)!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.024),transparent 24%),
+    linear-gradient(180deg,var(--rp21-panel-top),var(--rp21-panel-bottom))!important;
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+
+/* Quiet lower edge glow so cards feel related without looking boxed-in. */
+html body .band-textjoin .rp-card-panel::after,
+html body .rp-player::after,
+html body #rp-video-section::after,
+html body .product-card::after,
+html body section#booking::after{
+  opacity:.34!important;
+  height:1px!important;
+  left:12%!important;
+  right:12%!important;
+  background:linear-gradient(90deg,transparent,var(--rp21-cyan),rgba(255,255,255,.32),var(--rp21-pink),transparent)!important;
+}
+
+/* ==========================================================
+   HERO → TIP HANDOFF
+   ========================================================== */
+html body .band-hero{
+  padding-bottom:3px!important;
+  margin-bottom:0!important;
+}
+html body .band-hero .button-row{
+  margin-bottom:0!important;
+}
+html body .band-tipjar{
+  padding-top:1px!important;
+  margin-top:0!important;
+}
+
+/* ==========================================================
+   SECTION TITLES — compact and uniform
+   ========================================================== */
+html body .band-music h2.display-heading,
+html body #calendar h2.display-heading,
+html body #rp-video-section .rp-section-title,
+html body #booking h2.display-heading{
+  margin:0 0 3px!important;
+  padding:0 1px!important;
+  font-size:clamp(.79rem,3.35vw,.94rem)!important;
+  line-height:1!important;
+  letter-spacing:.09em!important;
+}
+
+/* ==========================================================
+   TIP — keep emphasis without extra vertical weight
+   ========================================================== */
+html body .band-tipjar .tip-amounts{
+  gap:5px!important;
+}
+html body .band-tipjar .tip-amt{
+  min-height:40px!important;
+  border-radius:6px!important;
+}
+html body #tip-cta.tip-cta-btn{
+  border-radius:6px!important;
+  font-size:clamp(.87rem,3.8vw,1rem)!important;
+  letter-spacing:.06em!important;
+}
+html body .band-tipjar .tip-row::before,
+html body .band-tipjar .tip-row::after,
+html body #tip-cta::before,
+html body #tip-cta::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* ==========================================================
+   TEXT JOIN — visually align with player/card heights
+   ========================================================== */
+html body .band-textjoin .rp-card-panel{
+  min-height:84px!important;
+  grid-template-columns:50px minmax(0,1fr)!important;
+  column-gap:8px!important;
+  padding:7px 9px!important;
+}
+html body .text-join-button,
+html body .text-join-button::before{
+  width:48px!important;
+  height:48px!important;
+  min-height:48px!important;
+}
+html body .band-textjoin .rp-card-panel > p:not(.fine-print)::before{
+  margin-bottom:2px!important;
+  font-size:.54rem!important;
+}
+html body .band-textjoin .rp-card-panel > p:not(.fine-print)::after{
+  font-size:clamp(1rem,4.8vw,1.42rem)!important;
+}
+html body .band-textjoin .fine-print{
+  margin-top:2px!important;
+  font-size:.40rem!important;
+  line-height:1.13!important;
+}
+
+/* ==========================================================
+   MUSIC — reduce empty vertical space around controls
+   ========================================================== */
+html body .rp-player{
+  min-height:104px!important;
+  padding:7px!important;
+}
+html body .rp-player-cover,
+html body .rp-player img{
+  max-height:88px!important;
+  border-radius:6px!important;
+}
+html body .rp-player-title{
+  font-size:.76rem!important;
+  line-height:1.04!important;
+}
+html body .rp-player button{
+  min-width:32px!important;
+  min-height:32px!important;
+}
+
+/* ==========================================================
+   CALENDAR — align pair geometry with surrounding modules
+   ========================================================== */
+html body #calendar .show-track{
+  gap:5px!important;
+  padding:0 0 2px!important;
+}
+html body #calendar .show-tile{
+  flex:0 0 calc((100vw - 23px)/2)!important;
+  width:calc((100vw - 23px)/2)!important;
+  max-width:184px!important;
+  min-height:121px!important;
+  border-radius:7px!important;
+  border-color:var(--rp21-line)!important;
+}
+html body #calendar .show-flyer,
+html body #calendar .show-tile img{
+  aspect-ratio:1.66/1!important;
+}
+html body #calendar .show-tile .venue{
+  font-size:.59rem!important;
+  line-height:1.03!important;
+}
+html body #calendar .show-tile .meta{
+  font-size:.46rem!important;
+  line-height:1.08!important;
+}
+html body #calendar .show-carousel-nav{
+  min-height:20px!important;
+}
+
+/* ==========================================================
+   PROMO — keep featured area dominant, thumbnails quieter
+   ========================================================== */
+html body #rp-video-section{
+  padding:6px!important;
+}
+html body #rp-video-section .rp-featured-wrap,
+html body #rp-video-section .rp-featured{
+  border-radius:6px!important;
+}
+html body #rp-video-section .rp-carousel{
+  gap:5px!important;
+  margin-top:5px!important;
+}
+html body #rp-video-section .rp-thumb{
+  flex:0 0 94px!important;
+  width:94px!important;
+  min-height:52px!important;
+  border-radius:5px!important;
+  box-shadow:none!important;
+}
+
+/* ==========================================================
+   DIAMOND — compact, balanced horizontal product row
+   ========================================================== */
+html body .product-card{
+  min-height:87px!important;
+  padding:7px 8px!important;
+  gap:7px!important;
+}
+html body .product-card img{
+  width:60px!important;
+  max-width:60px!important;
+  border-radius:6px!important;
+}
+html body .product-card p{
+  margin:1px 0!important;
+  font-size:.53rem!important;
+  line-height:1.14!important;
+}
+html body .product-card .price{
+  font-size:.88rem!important;
+}
+html body .product-card .dm-btn-row{
+  gap:4px!important;
+}
+html body .product-card .buy-btn{
+  min-height:32px!important;
+  padding:5px 7px!important;
+  border-radius:5px!important;
+  font-size:.59rem!important;
+}
+
+/* ==========================================================
+   BOOKING — preserve all fields, reduce visual fatigue
+   ========================================================== */
+html body section#booking{
+  margin-top:2px!important;
+  margin-bottom:3px!important;
+  padding:8px!important;
+}
+html body #booking-intro{
+  margin:0 0 5px!important;
+  font-size:.53rem!important;
+  line-height:1.16!important;
+}
+html body form.booking{
+  gap:5px!important;
+  row-gap:5px!important;
+}
+html body form.booking label{
+  margin-bottom:1px!important;
+  font-size:.51rem!important;
+}
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  min-height:35px!important;
+  padding:6px 7px!important;
+  border-radius:5px!important;
+  font-size:.69rem!important;
+}
+html body form.booking textarea{
+  min-height:56px!important;
+}
+html body form.booking fieldset{
+  padding:6px!important;
+  border-radius:5px!important;
+}
+html body .submit-btn{
+  min-height:44px!important;
+  border-radius:5px!important;
+  font-size:.75rem!important;
+}
+
+/* ==========================================================
+   FOOTER — compact close
+   ========================================================== */
+html body footer{
+  margin-top:2px!important;
+  padding-top:9px!important;
+  padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;
+}
+html body footer::before{
+  width:42px!important;
+  height:42px!important;
+}
+
+/* ==========================================================
+   PHONE COHESION
+   ========================================================== */
+@media(max-width:559px){
+  html body{
+    --rp21-width:calc(100% - 10px);
+  }
+  html body .band-tipjar,
+  html body .band-textjoin,
+  html body .band-music,
+  html body #calendar .band-calendar,
+  html body section#promo-videos,
+  html body .band-diamond{
+    padding-top:1px!important;
+    padding-bottom:1px!important;
+  }
+  html body .product-card{
+    grid-template-columns:58px minmax(0,1fr)!important;
+  }
+}
+
+@media(max-width:380px){
+  html body{
+    --rp21-width:calc(100% - 8px);
+  }
+  html body .band-textjoin .rp-card-panel{
+    grid-template-columns:46px minmax(0,1fr)!important;
+    column-gap:7px!important;
+    padding-left:7px!important;
+    padding-right:7px!important;
+  }
+  html body .text-join-button,
+  html body .text-join-button::before{
+    width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+  }
+  html body #rp-video-section .rp-thumb{
+    flex-basis:89px!important;
+    width:89px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body .band-tipjar .rp-card-panel,
+  html body .band-textjoin .rp-card-panel,
+  html body .rp-player,
+  html body #rp-video-section,
+  html body .product-card,
+  html body section#booking{
+    transition:none!important;
+  }
+}
