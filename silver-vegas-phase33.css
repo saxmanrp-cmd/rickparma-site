@@ -1,10 +1,9 @@
 /* RickParma.com — Silver Vegas Phase 33
    Tip selector state correction.
-   No amount appears preselected; the clicked amount alone receives the selected glow. */
+   No amount is preselected; the clicked amount alone receives the selected glow. */
 
-/* Every amount starts visually neutral, including the legacy $20 active class in markup. */
-html body .band-tipjar .tip-amt,
-html body .band-tipjar .tip-amt.active{
+/* Neutral base state for every amount. */
+html body .band-tipjar .tip-amt{
   color:#fff!important;
   background:linear-gradient(180deg,rgba(7,10,16,.96),rgba(3,6,12,.98))!important;
   border:1.5px solid rgba(255,255,255,.12)!important;
@@ -12,8 +11,8 @@ html body .band-tipjar .tip-amt.active{
   animation:none!important;
 }
 
-/* A real user interaction activates the currently selected amount. */
-html body .band-tipjar .rp-card-panel:focus-within .tip-amt.active{
+/* Only the amount selected by the real JS state gets the glow. */
+html body .band-tipjar .rp-card-panel.tip-selection-made .tip-amt.active{
   color:#fff!important;
   background:linear-gradient(180deg,rgba(8,12,20,.98),rgba(3,6,12,.99))!important;
   border:2px solid #49b8ff!important;
@@ -24,30 +23,20 @@ html body .band-tipjar .rp-card-panel:focus-within .tip-amt.active{
     0 0 28px rgba(73,184,255,.20)!important;
 }
 
-/* Until the user interacts with an amount, do not let the CTA behave like $20 was chosen. */
-html body .band-tipjar .rp-card-panel:not(:focus-within) #tip-cta.tip-cta-btn{
+/* CTA is visibly inactive until an amount has actually been chosen. */
+html body .band-tipjar #tip-cta.tip-cta-btn[aria-disabled="true"]{
   pointer-events:none!important;
   opacity:.58!important;
   filter:saturate(.58) brightness(.80)!important;
   cursor:default!important;
 }
-html body .band-tipjar .rp-card-panel:not(:focus-within) #tip-cta.tip-cta-btn::before{
-  content:'SELECT AN AMOUNT'!important;
-  font-size:clamp(1.05rem,5.6vw,1.5rem)!important;
-  letter-spacing:.065em!important;
-}
-
-html body .band-tipjar .rp-card-panel:focus-within #tip-cta.tip-cta-btn{
+html body .band-tipjar #tip-cta.tip-cta-btn[aria-disabled="false"]{
   pointer-events:auto!important;
   opacity:1!important;
   filter:none!important;
   cursor:pointer!important;
 }
-html body .band-tipjar .rp-card-panel:focus-within #tip-cta.tip-cta-btn::before{
-  content:'TIP RICK NOW'!important;
-}
 
-/* Keep keyboard/touch focus clean and intentional. */
 html body .band-tipjar .tip-amt:focus{
   outline:none!important;
 }
