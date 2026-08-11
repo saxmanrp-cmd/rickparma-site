@@ -1,0 +1,24 @@
+/* RickParma.com — Silver Vegas Phase 42
+   Match TIP RICK NOW to the exact font-size scale of SHOW SOME LOVE. */
+
+/* Desktop/tablet: use the exact SHOW SOME LOVE size scale from Phase 39. */
+html body #tip-cta.tip-cta-btn::before,
+html body .band-tipjar .tip-cta-btn::before{
+  font-size:clamp(1.58rem,7.2vw,2.08rem)!important;
+  font-weight:1000!important;
+  letter-spacing:.18em!important;
+  text-align:center!important;
+  transform:scaleX(1.12)!important;
+  transform-origin:center center!important;
+}
+
+/* iPhone/mobile: use the exact SHOW SOME LOVE mobile size scale. */
+@media(max-width:420px){
+  html body #tip-cta.tip-cta-btn::before,
+  html body .band-tipjar .tip-cta-btn::before{
+    font-size:clamp(1.42rem,7.1vw,1.78rem)!important;
+    font-weight:1000!important;
+    letter-spacing:.15em!important;
+    transform:scaleX(1.11)!important;
+  }
+}
