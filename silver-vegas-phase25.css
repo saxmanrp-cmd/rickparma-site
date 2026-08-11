@@ -1,0 +1,87 @@
+/* RickParma.com — Silver Vegas Phase 25
+   HERO MEDALLION SCALE + PLACEMENT CORRECTION.
+   Presentation only. No JS, API, payment, calendar, media, or booking behavior changes. */
+
+/* The mockup treats the RP medallion as a hero focal point, not a small header icon. */
+html body header{
+  position:relative!important;
+  min-height:96px!important;
+  padding:8px 14px 0!important;
+  align-items:flex-start!important;
+  overflow:visible!important;
+}
+
+/* Center the medallion independently so the social icons cannot push it sideways. */
+html body header h1{
+  position:absolute!important;
+  left:50%!important;
+  top:4px!important;
+  z-index:6!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0!important;
+  transform:translateX(-50%)!important;
+  pointer-events:auto!important;
+}
+
+html body header h1 a{
+  display:block!important;
+  width:clamp(150px,39vw,195px)!important;
+  height:clamp(150px,39vw,195px)!important;
+  transform:none!important;
+  transform-origin:center center!important;
+  border-radius:50%!important;
+}
+
+/* Keep the social controls visually where they sit in the mockup. */
+html body header .socials{
+  position:relative!important;
+  z-index:8!important;
+  margin-top:30px!important;
+}
+
+/* Let the large medallion overlap into the Vegas scene, then start JOIN just beneath it. */
+html body .band-hero{
+  padding-top:64px!important;
+}
+html body .band-hero .band-inner{
+  padding-top:0!important;
+}
+html body .hero-title{
+  margin-top:0!important;
+  margin-bottom:2px!important;
+}
+
+@media(max-width:420px){
+  html body header{
+    min-height:90px!important;
+    padding-top:6px!important;
+  }
+  html body header h1{
+    top:2px!important;
+  }
+  html body header h1 a{
+    width:clamp(146px,40vw,170px)!important;
+    height:clamp(146px,40vw,170px)!important;
+    transform:none!important;
+  }
+  html body header .socials{
+    margin-top:27px!important;
+  }
+  html body .band-hero{
+    padding-top:58px!important;
+  }
+}
+
+@media(min-width:700px){
+  html body header h1 a{
+    width:195px!important;
+    height:195px!important;
+  }
+  html body header{
+    min-height:112px!important;
+  }
+  html body .band-hero{
+    padding-top:78px!important;
+  }
+}
