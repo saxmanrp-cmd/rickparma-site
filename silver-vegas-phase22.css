@@ -1,0 +1,348 @@
+/* RickParma.com — Silver Vegas Phase 22
+   MOBILE QA + FINAL REFERENCE ALIGNMENT.
+   Presentation only. Existing JS, APIs, payments, calendar/flyer behavior,
+   booking submission, media behavior and live hero visibility remain untouched. */
+
+:root{
+  --rp22-line:rgba(194,218,244,.17);
+  --rp22-cyan:#5be2ff;
+  --rp22-pink:#ff58d2;
+  --rp22-radius:10px;
+}
+
+/* ==========================================================
+   GLOBAL OVERFLOW / BOX SAFETY
+   ========================================================== */
+html,
+html body{
+  max-width:100%;
+  overflow-x:hidden!important;
+}
+html body *,
+html body *::before,
+html body *::after{
+  box-sizing:border-box;
+}
+html body img,
+html body video,
+html body iframe,
+html body canvas{
+  max-width:100%;
+}
+
+/* Keep the benchmark column tight without edge collisions. */
+html body{
+  --rp22-width:min(calc(100% - 10px),760px);
+}
+html body .band-inner,
+html body section#booking,
+html body footer{
+  width:var(--rp22-width)!important;
+  max-width:760px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+/* ==========================================================
+   CONSISTENT PANEL SILHOUETTE
+   ========================================================== */
+html body .band-tipjar .rp-card-panel,
+html body .band-textjoin .rp-card-panel,
+html body .rp-player,
+html body #rp-video-section,
+html body .product-card,
+html body section#booking{
+  border-radius:var(--rp22-radius)!important;
+  border-color:var(--rp22-line)!important;
+}
+
+/* ==========================================================
+   HERO QA — exact stack stays readable on every phone width
+   ========================================================== */
+html body .hero-title{
+  max-width:100%!important;
+  overflow:visible!important;
+}
+html body .hero-title::before,
+html body .hero-title .accent::before{
+  white-space:nowrap!important;
+  overflow:visible!important;
+}
+html body .hero-title::after{
+  max-width:min(92vw,430px)!important;
+  overflow-wrap:anywhere!important;
+}
+html body .band-hero .button-row{
+  min-width:0!important;
+  max-width:100%!important;
+}
+html body .band-hero .button-col,
+html body .song-request-button,
+html body .fan-cam-button{
+  min-width:0!important;
+}
+html body .song-request-button::after,
+html body .fan-cam-button::after{
+  overflow-wrap:anywhere!important;
+}
+
+/* Preserve compact card height but retain a reliable touch target. */
+html body .song-request-button,
+html body .fan-cam-button,
+html body .text-join-button,
+html body .tip-amt,
+html body #tip-cta,
+html body .buy-btn,
+html body .submit-btn,
+html body #calendar button,
+html body #rp-video-section button{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ==========================================================
+   TIP QA — all amounts stay visible; CTA stays one line
+   wrapper safety rules after this import remain authoritative.
+   ========================================================== */
+html body .band-tipjar .tip-amounts{
+  min-width:0!important;
+}
+html body .band-tipjar .tip-amt{
+  min-width:0!important;
+  white-space:nowrap!important;
+}
+html body #tip-cta.tip-cta-btn{
+  overflow:hidden!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+}
+html body .band-tipjar .tip-row::before,
+html body .band-tipjar .tip-row::after,
+html body #tip-cta::before,
+html body #tip-cta::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* ==========================================================
+   TEXT JOIN QA — legal copy wraps cleanly, phone stays intact
+   ========================================================== */
+html body .band-textjoin .rp-card-panel{
+  min-width:0!important;
+}
+html body .band-textjoin .rp-card-panel > p:not(.fine-print)::after{
+  white-space:nowrap!important;
+}
+html body .band-textjoin .fine-print{
+  max-width:100%!important;
+  overflow-wrap:anywhere!important;
+}
+
+/* ==========================================================
+   MUSIC QA — prevent controls / titles from forcing width
+   ========================================================== */
+html body .rp-player,
+html body .rp-player > *,
+html body .rp-player-title{
+  min-width:0!important;
+}
+html body .rp-player-title{
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+html body .rp-player button{
+  flex:0 0 auto!important;
+}
+
+/* ==========================================================
+   CALENDAR QA — smooth horizontal rail, no accidental page width
+   ========================================================== */
+html body #calendar .show-track{
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overscroll-behavior-inline:contain;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+html body #calendar .show-track::-webkit-scrollbar{
+  display:none;
+}
+html body #calendar .show-tile{
+  min-width:0!important;
+}
+html body #calendar .show-tile .venue,
+html body #calendar .show-tile .meta{
+  overflow-wrap:anywhere!important;
+}
+
+/* ==========================================================
+   PROMO QA — rail scrolls inside its own card only
+   ========================================================== */
+html body #rp-video-section{
+  min-width:0!important;
+}
+html body #rp-video-section .rp-carousel{
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overscroll-behavior-inline:contain;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+html body #rp-video-section .rp-carousel::-webkit-scrollbar{
+  display:none;
+}
+html body #rp-video-section .rp-thumb{
+  flex-shrink:0!important;
+}
+
+/* ==========================================================
+   DIAMOND QA — keep the real $20 product compact without clipping
+   ========================================================== */
+html body .product-card,
+html body .product-card > *{
+  min-width:0!important;
+}
+html body .product-card .dm-btn-row{
+  min-width:0!important;
+  flex-wrap:wrap!important;
+}
+html body .product-card .buy-btn{
+  flex:1 1 104px!important;
+  white-space:nowrap!important;
+}
+
+/* ==========================================================
+   BOOKING QA — compact but comfortably tappable
+   ========================================================== */
+html body form.booking,
+html body form.booking > *,
+html body form.booking fieldset{
+  min-width:0!important;
+}
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  width:100%!important;
+  max-width:100%!important;
+}
+html body form.booking input[type='checkbox'],
+html body form.booking input[type='radio']{
+  width:auto!important;
+  max-width:none!important;
+}
+html body .submit-btn{
+  width:100%!important;
+  white-space:normal!important;
+}
+
+/* ==========================================================
+   ACCESSIBILITY / TAP TARGET QA WITHOUT RE-INFLATING THE LAYOUT
+   ========================================================== */
+@media(pointer:coarse){
+  html body .socials a,
+  html body .rp-player button,
+  html body #calendar .show-carousel-nav button{
+    min-width:40px!important;
+    min-height:40px!important;
+  }
+  html body .tip-amt{
+    min-height:44px!important;
+  }
+  html body #tip-cta.tip-cta-btn,
+  html body .submit-btn{
+    min-height:50px!important;
+  }
+}
+
+/* ==========================================================
+   SMALL PHONE QA
+   ========================================================== */
+@media(max-width:420px){
+  html body{
+    --rp22-width:calc(100% - 8px);
+  }
+  html body .hero-title::before{
+    font-size:clamp(3.05rem,17.2vw,4.2rem)!important;
+  }
+  html body .hero-title .accent::before{
+    font-size:clamp(1.88rem,10.2vw,2.55rem)!important;
+  }
+  html body .hero-title::after{
+    font-size:.68rem!important;
+    line-height:1.2!important;
+  }
+  html body .band-hero .button-row{
+    gap:6px!important;
+  }
+  html body .band-hero .button-col{
+    padding-left:7px!important;
+    padding-right:7px!important;
+  }
+  html body .song-request-button,
+  html body .fan-cam-button{
+    grid-template-columns:40px minmax(0,1fr)!important;
+    gap:6px!important;
+  }
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:39px!important;
+    height:39px!important;
+  }
+  html body .band-hero .button-col::after{
+    margin-left:46px!important;
+  }
+  html body .product-card .buy-btn{
+    flex-basis:92px!important;
+  }
+}
+
+@media(max-width:360px){
+  html body{
+    --rp22-width:calc(100% - 6px);
+  }
+  html body .hero-title::before{
+    font-size:2.95rem!important;
+  }
+  html body .hero-title .accent::before{
+    font-size:1.82rem!important;
+  }
+  html body .band-textjoin .rp-card-panel{
+    grid-template-columns:43px minmax(0,1fr)!important;
+    column-gap:6px!important;
+  }
+  html body .text-join-button,
+  html body .text-join-button::before{
+    width:42px!important;
+    height:42px!important;
+    min-height:42px!important;
+  }
+  html body .band-textjoin .rp-card-panel > p:not(.fine-print)::after{
+    font-size:.98rem!important;
+  }
+}
+
+/* ==========================================================
+   LANDSCAPE PHONE QA
+   ========================================================== */
+@media(max-height:500px) and (orientation:landscape){
+  html body .band-hero{
+    min-height:330px!important;
+    padding-top:8px!important;
+  }
+  html body header{
+    min-height:64px!important;
+  }
+  html body header h1 a{
+    width:56px!important;
+    height:56px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body *,
+  html body *::before,
+  html body *::after{
+    scroll-behavior:auto!important;
+  }
+}
