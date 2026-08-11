@@ -1,0 +1,259 @@
+/* RickParma.com — Silver Vegas Phase 14
+   HERO BENCHMARK CORRECTION.
+   Presentation only. Existing JS, APIs, payments, calendar/flyer behavior,
+   booking submission and live hero visibility logic remain untouched. */
+
+:root{
+  --rp14-cyan:#63e4ff;
+  --rp14-pink:#ff60d8;
+  --rp14-chrome:#f8fbff;
+  --rp14-steel:#a7b4c4;
+}
+
+/* ==========================================================
+   TOP CLEANUP — remove the marquee/bulb rail from the header
+   ========================================================== */
+html body header::before{
+  display:none!important;
+  content:none!important;
+  background:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+
+/* Keep the centered medallion, but make the header cleaner. */
+html body header{
+  border-bottom:1px solid rgba(199,220,245,.13)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.34)!important;
+}
+
+/* ==========================================================
+   HERO PROPORTIONS — tighter like the supplied benchmark
+   ========================================================== */
+html body .band-hero{
+  min-height:390px!important;
+  padding:16px 8px 8px!important;
+  align-items:flex-end!important;
+}
+
+html body .band-hero .band-inner{
+  width:100%!important;
+  max-width:760px!important;
+}
+
+html body .band-hero .rp-card-panel{
+  padding:0!important;
+  margin:0!important;
+}
+
+/* ==========================================================
+   EXACT HEADLINE STACK
+
+       JOIN
+       THE FUN
+
+   The existing HTML remains untouched. We suppress its text nodes and
+   rebuild the two visual lines with CSS so all current JS/markup stays safe.
+   ========================================================== */
+html body .hero-title{
+  position:relative!important;
+  display:block!important;
+  width:min(94vw,560px)!important;
+  max-width:560px!important;
+  margin:0 auto 9px!important;
+  padding:0!important;
+  font-size:0!important;
+  line-height:0!important;
+  letter-spacing:0!important;
+  text-align:center!important;
+  overflow:visible!important;
+  animation:none!important;
+  background:none!important;
+  -webkit-text-fill-color:initial!important;
+  color:transparent!important;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,.68)) drop-shadow(0 0 18px rgba(99,228,255,.10))!important;
+  text-shadow:none!important;
+}
+
+/* Line 1 — JOIN */
+html body .hero-title::before{
+  content:'JOIN'!important;
+  position:static!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  transform:none!important;
+  font-family:var(--font-display,'Helvetica Neue',Arial,sans-serif)!important;
+  font-size:clamp(3.55rem,17vw,5.35rem)!important;
+  font-weight:950!important;
+  line-height:.78!important;
+  letter-spacing:.025em!important;
+  text-align:center!important;
+  text-transform:uppercase!important;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fbff 16%,#bec9d7 42%,#77889d 63%,#f4f8fc 82%,#ffffff 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  color:transparent!important;
+  -webkit-text-fill-color:transparent!important;
+  text-shadow:none!important;
+  filter:drop-shadow(0 2px 0 rgba(255,255,255,.08)) drop-shadow(0 7px 15px rgba(0,0,0,.66))!important;
+}
+
+/* Suppress the original FUN text; its span becomes the carrier for line 2. */
+html body .hero-title .accent{
+  display:block!important;
+  width:100%!important;
+  margin:1px 0 0!important;
+  padding:0!important;
+  font-size:0!important;
+  line-height:0!important;
+  color:transparent!important;
+  -webkit-text-fill-color:transparent!important;
+  text-shadow:none!important;
+}
+
+/* Line 2 — THE FUN */
+html body .hero-title .accent::before{
+  content:'THE FUN'!important;
+  display:block!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  font-family:var(--font-display,'Helvetica Neue',Arial,sans-serif)!important;
+  font-size:clamp(2.15rem,10.4vw,3.35rem)!important;
+  font-weight:950!important;
+  line-height:.84!important;
+  letter-spacing:.045em!important;
+  text-align:center!important;
+  text-transform:uppercase!important;
+  background:linear-gradient(180deg,#ffffff 0%,#edf3f9 18%,#afbdcd 46%,#75879c 65%,#edf3f9 84%,#ffffff 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  color:transparent!important;
+  -webkit-text-fill-color:transparent!important;
+  text-shadow:none!important;
+  filter:drop-shadow(0 2px 0 rgba(255,255,255,.07)) drop-shadow(0 6px 13px rgba(0,0,0,.62))!important;
+}
+
+/* Subtitle stays under THE FUN, but no longer creates a giant gap. */
+html body .hero-title::after{
+  content:'Request songs, tip your favorite performer, and stay connected.'!important;
+  position:static!important;
+  display:block!important;
+  width:min(88vw,430px)!important;
+  height:auto!important;
+  margin:8px auto 0!important;
+  padding:0!important;
+  transform:none!important;
+  color:#c4ccd6!important;
+  -webkit-text-fill-color:#c4ccd6!important;
+  background:none!important;
+  font-family:var(--font-ui,'Helvetica Neue',Arial,sans-serif)!important;
+  font-size:clamp(.70rem,2.55vw,.86rem)!important;
+  font-weight:650!important;
+  line-height:1.24!important;
+  letter-spacing:.025em!important;
+  text-align:center!important;
+  text-transform:none!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.76)!important;
+  filter:none!important;
+  opacity:.94!important;
+}
+
+/* ==========================================================
+   BUTTON SPACING — pull controls directly under the headline block
+   ========================================================== */
+html body .band-hero .button-row{
+  width:100%!important;
+  max-width:760px!important;
+  margin:0 auto!important;
+  padding:0!important;
+  gap:8px!important;
+}
+
+html body .band-hero .button-col{
+  min-height:94px!important;
+  padding:9px 10px 8px!important;
+  gap:1px!important;
+  border-radius:13px!important;
+}
+
+html body .band-hero .button-col::after{
+  margin-top:1px!important;
+}
+
+html body .song-request-button,
+html body .fan-cam-button{
+  grid-template-columns:45px 1fr!important;
+  gap:8px!important;
+}
+
+html body .song-request-button::before,
+html body .fan-cam-button::before{
+  width:43px!important;
+  height:43px!important;
+  font-size:1.55rem!important;
+}
+
+html body .song-request-button::after,
+html body .fan-cam-button::after{
+  font-size:clamp(.84rem,3.7vw,1.02rem)!important;
+}
+
+/* One live hero action still centers cleanly when the other is hidden. */
+@supports selector(.button-row:has(.button-col[style*="display: none"])){
+  html body .band-hero .button-row:has(.button-col[style*="display: none"]) {
+    grid-template-columns:minmax(0,420px)!important;
+    justify-content:center!important;
+  }
+}
+
+/* Phone-specific proportions. */
+@media(max-width:559px){
+  html body .band-hero{
+    min-height:372px!important;
+    padding-top:12px!important;
+  }
+  html body .hero-title{
+    margin-bottom:8px!important;
+  }
+  html body .hero-title::before{
+    font-size:clamp(3.45rem,18vw,4.65rem)!important;
+  }
+  html body .hero-title .accent::before{
+    font-size:clamp(2.08rem,10.9vw,2.85rem)!important;
+  }
+  html body .hero-title::after{
+    margin-top:7px!important;
+    width:min(90vw,390px)!important;
+  }
+}
+
+@media(max-width:380px){
+  html body .band-hero{
+    min-height:356px!important;
+  }
+  html body .hero-title::before{
+    font-size:3.25rem!important;
+  }
+  html body .hero-title .accent::before{
+    font-size:1.98rem!important;
+  }
+  html body .band-hero .button-col{
+    min-height:90px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+}
+
+/* Respect reduced-motion preference. */
+@media(prefers-reduced-motion:reduce){
+  html body .hero-title,
+  html body .hero-title::before,
+  html body .hero-title .accent::before{
+    animation:none!important;
+    transition:none!important;
+  }
+}
