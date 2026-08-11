@@ -1,11 +1,11 @@
 name: Install Header Picture V62
 
-on:
+"on":
   push:
     branches:
-      - agent/silver-vegas-redesign
+      - "agent/silver-vegas-redesign"
     paths:
-      - 'tmp/header-picture-v62-ready.txt'
+      - "tmp/header-picture-v62-ready.txt"
 
 permissions:
   contents: write
@@ -16,49 +16,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: agent/silver-vegas-redesign
+          ref: "agent/silver-vegas-redesign"
 
-      - name: Replace CSS background header with real picture image
+      - name: Patch homepage header
         shell: bash
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           import re
 
-          index = Path('index.html')
-          text = index.read_text()
+          path = Path("index.html")
+          text = path.read_text()
+          start = text.find("<header>")
+          end = text.find("</header>", start)
+          if start < 0 or end < 0:
+              raise SystemExit("homepage header not found")
+          end += len("</header>")
 
-          start = text.find('<header>')
-          if start < 0:
-              raise SystemExit('Could not find the existing homepage header')
-          end = text.find('</header>', start)
-          if end < 0:
-              raise SystemExit('Could not find the end of the existing homepage header')
-          end += len('</header>')
+          old = text[start:end]
+          m = re.search(r'  <div class="socials">.*?  </div>\s*</header>', old, re.S)
+          if not m:
+              raise SystemExit("social block not found")
+          socials = m.group(0)
+          socials = socials[:socials.rfind("</header>")].rstrip()
 
-          old_header = text[start:end]
-          social_match = re.search(r'  <div class="socials">.*?  </div>\s*</header>', old_header, flags=re.S)
-          if not social_match:
-              raise SystemExit('Could not preserve the existing social icon block')
-          social_block = social_match.group(0)
-          social_block = social_block[:social_block.rfind('</header>')].rstrip()
-
-          new_header = '''<header class="site-header-hero">
+          new = '''<header class="site-header-hero">
   <picture class="site-header-picture">
     <source type="image/avif" srcset="images/rick-parma-header-approved-hd.avif?v=62">
     <img class="site-header-image" src="images/rick-parma-header-approved.jpg?v=62" alt="Rick Parma — Singer, Saxophonist, Entertainer" fetchpriority="high" decoding="async">
   </picture>
-''' + social_block + '''
+''' + socials + '''
 </header>'''
+          path.write_text(text[:start] + new + text[end:])
 
-          text = text[:start] + new_header + text[end:]
-          index.write_text(text)
-
-          css = '''/* RickParma.com — Silver Vegas Phase 62
-   Header image is a REAL responsive image element, not a CSS background.
-   Social icons are intentionally left untouched and continue to use the
-   positioning/sizing already established by the previous approved phases. */
-
+          css = '''/* RickParma.com — Phase 62: real image header only */
 html body header.site-header-hero{
   position:relative!important;
   display:block!important;
@@ -78,13 +69,11 @@ html body header.site-header-hero{
   filter:none!important;
   contain:none!important;
 }
-
 html body header.site-header-hero::before,
 html body header.site-header-hero::after{
   content:none!important;
   display:none!important;
 }
-
 html body header.site-header-hero .site-header-picture{
   display:block!important;
   width:100%!important;
@@ -93,7 +82,6 @@ html body header.site-header-hero .site-header-picture{
   padding:0!important;
   line-height:0!important;
 }
-
 html body header.site-header-hero .site-header-image{
   display:block!important;
   width:100%!important;
@@ -103,12 +91,11 @@ html body header.site-header-hero .site-header-image{
   padding:0!important;
   border:0!important;
   object-fit:contain!important;
-  object-position:center center!important;
+  object-position:center!important;
   transform:none!important;
   filter:none!important;
   image-rendering:auto!important;
 }
-
 @media(max-width:560px){
   html body header.site-header-hero,
   html body header.site-header-hero .site-header-picture,
@@ -116,29 +103,26 @@ html body header.site-header-hero .site-header-image{
     width:100%!important;
     height:auto!important;
     max-width:none!important;
-    transform:none!important;
-    filter:none!important;
   }
 }
 '''
-          Path('silver-vegas-phase62.css').write_text(css)
+          Path("silver-vegas-phase62.css").write_text(css)
 
-          polish = Path('design-polish.css')
+          polish = Path("design-polish.css")
           p = polish.read_text()
-          import_line = "@import url('silver-vegas-phase62.css');"
-          if import_line not in p:
+          line = "@import url('silver-vegas-phase62.css');"
+          if line not in p:
               anchor = "@import url('silver-vegas-phase55.css');"
               if anchor not in p:
-                  raise SystemExit('Phase 55 import not found; refusing to alter stylesheet chain')
-              p = p.replace(anchor, anchor + '\n' + import_line, 1)
-              polish.write_text(p)
+                  raise SystemExit("phase55 import not found")
+              polish.write_text(p.replace(anchor, anchor + "\n" + line, 1))
           PY
 
-      - name: Commit picture-based header
+      - name: Commit header patch
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html design-polish.css silver-vegas-phase62.css
-          git commit -m "Phase 62 use real responsive header image" || exit 0
+          git commit -m "Phase 62 render header as real image" || exit 0
           git push origin HEAD:agent/silver-vegas-redesign
