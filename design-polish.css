@@ -1,3 +1,32 @@
 /* RickParma.com — layered Silver Vegas stylesheet */
 @import url('silver-vegas-base.css');
 @import url('silver-vegas-phase4.css');
+
+/* Tip section spacing safeguard — keeps heading/subtitle clear of amount buttons */
+html body .band-tipjar .rp-card-panel{
+  padding-top:112px!important;
+}
+html body .band-tipjar .rp-card-panel::before{
+  top:20px!important;
+  line-height:1.05!important;
+}
+html body .band-tipjar .rp-card-panel::after{
+  top:62px!important;
+}
+html body .band-tipjar .tip-amounts{
+  position:relative!important;
+  z-index:3!important;
+  margin-top:0!important;
+}
+
+@media(max-width:420px){
+  html body .band-tipjar .rp-card-panel{
+    padding-top:108px!important;
+  }
+  html body .band-tipjar .rp-card-panel::before{
+    font-size:clamp(1.28rem,6.8vw,1.7rem)!important;
+  }
+  html body .band-tipjar .rp-card-panel::after{
+    top:58px!important;
+  }
+}
