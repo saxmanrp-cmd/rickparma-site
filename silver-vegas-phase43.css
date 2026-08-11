@@ -1,0 +1,65 @@
+/* RickParma.com — Silver Vegas Phase 43
+   Make TIP RICK NOW a true headline CTA: larger, heavier, wider and centered. */
+
+/* TIP RICK NOW should dominate the button, not merely match the section heading. */
+html body #tip-cta.tip-cta-btn::before,
+html body .band-tipjar .tip-cta-btn::before{
+  content:'TIP RICK NOW'!important;
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0 auto!important;
+  padding:0!important;
+  font-family:Impact,'Arial Black','Helvetica Neue',Arial,sans-serif!important;
+  font-size:clamp(2.15rem,9.6vw,3.10rem)!important;
+  font-weight:1000!important;
+  line-height:.86!important;
+  letter-spacing:.105em!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  transform:scaleX(1.06)!important;
+  transform-origin:center center!important;
+  -webkit-text-stroke:.65px #05080c!important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.28),
+    0 2px 1px rgba(0,0,0,.08)!important;
+}
+
+/* Give the oversized display type enough room while keeping the CTA compact. */
+html body .band-tipjar .tip-row > #tip-cta,
+html body .band-tipjar .tip-row > .tip-cta-btn,
+html body #tip-cta.tip-cta-btn{
+  min-height:72px!important;
+  padding:7px 2px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+
+/* Keep the Square trust line attached directly to the CTA. */
+html body .band-tipjar .tip-row::after{
+  margin:0!important;
+  padding:3px 0 0!important;
+}
+
+@media(max-width:420px){
+  html body #tip-cta.tip-cta-btn::before,
+  html body .band-tipjar .tip-cta-btn::before{
+    font-size:clamp(1.90rem,9.7vw,2.40rem)!important;
+    font-weight:1000!important;
+    letter-spacing:.085em!important;
+    transform:scaleX(1.045)!important;
+    -webkit-text-stroke:.55px #05080c!important;
+  }
+
+  html body .band-tipjar .tip-row > #tip-cta,
+  html body .band-tipjar .tip-row > .tip-cta-btn,
+  html body #tip-cta.tip-cta-btn{
+    min-height:68px!important;
+    padding:6px 1px!important;
+  }
+
+  html body .band-tipjar .tip-row::after{
+    padding-top:2px!important;
+  }
+}
