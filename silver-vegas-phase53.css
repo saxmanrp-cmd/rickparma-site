@@ -1,0 +1,79 @@
+/* RickParma.com — Silver Vegas Phase 53
+   Use the approved landscape Rick Parma header as one locked visual.
+   This eliminates portrait-background warping and independent layer drift. */
+
+html body header{
+  position:relative!important;
+  z-index:50!important;
+  display:block!important;
+  width:100%!important;
+  height:clamp(228px,56.28vw,570px)!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  box-shadow:none!important;
+  background-image:url('images/rick-parma-header-approved.jpg')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-color:#010307!important;
+}
+
+/* The approved landscape image already contains the RP medallion and foreground typography.
+   Disable all older duplicate header-art and logo layers. */
+html body header::before,
+html body header::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+
+html body header h1,
+html body header h1 a{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+  margin:0!important;
+  padding:0!important;
+  background:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* Keep the live social/contact links above the image at the far upper-left. */
+html body header .socials{
+  position:absolute!important;
+  top:7px!important;
+  left:7px!important;
+  right:auto!important;
+  z-index:6!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:5px!important;
+  margin:0!important;
+  padding:0!important;
+}
+
+/* Hero below stays actions-only. */
+html body .band-hero{
+  background:#010307!important;
+  padding:10px 8px 12px!important;
+}
+html body .band-hero::before,
+html body .band-hero::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+
+@media(max-width:560px){
+  html body header{
+    height:56.28vw!important;
+    min-height:220px!important;
+    background-size:cover!important;
+    background-position:center center!important;
+  }
+}
