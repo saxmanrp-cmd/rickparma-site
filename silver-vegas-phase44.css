@@ -1,0 +1,65 @@
+/* RickParma.com — Silver Vegas Phase 44
+   Make TIP RICK NOW physically fill the CTA: wider heavy face, larger type,
+   minimal tracking, no wasted side space. Keep Square directly underneath. */
+
+/* The previous condensed headline face looked smaller even at a larger point size.
+   Use a wider ultra-heavy face and let the lettering consume the button width. */
+html body .band-tipjar .tip-row > #tip-cta.tip-cta-btn::before,
+html body .band-tipjar #tip-cta.tip-cta-btn::before{
+  content:'TIP RICK NOW'!important;
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  font-family:'Arial Black','Helvetica Neue',Arial,sans-serif!important;
+  font-size:clamp(2.45rem,10.8vw,3.35rem)!important;
+  font-weight:1000!important;
+  line-height:.82!important;
+  letter-spacing:.005em!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  transform:scaleX(1.10)!important;
+  transform-origin:center center!important;
+  -webkit-text-stroke:.8px #05080c!important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.30),
+    0 2px 1px rgba(0,0,0,.10)!important;
+}
+
+/* Give the lettering the entire interior width of the button. */
+html body .band-tipjar .tip-row > #tip-cta.tip-cta-btn{
+  min-height:74px!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  overflow:hidden!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+/* Keep the payment trust line attached immediately below. */
+html body .band-tipjar .tip-row::after{
+  margin:0!important;
+  padding:2px 0 0!important;
+  line-height:1!important;
+}
+
+@media(max-width:420px){
+  html body .band-tipjar .tip-row > #tip-cta.tip-cta-btn::before,
+  html body .band-tipjar #tip-cta.tip-cta-btn::before{
+    font-size:clamp(2.18rem,10.9vw,2.82rem)!important;
+    letter-spacing:0!important;
+    transform:scaleX(1.10)!important;
+    -webkit-text-stroke:.75px #05080c!important;
+  }
+
+  html body .band-tipjar .tip-row > #tip-cta.tip-cta-btn{
+    min-height:72px!important;
+    padding-left:0!important;
+    padding-right:0!important;
+  }
+
+  html body .band-tipjar .tip-row::after{
+    padding-top:2px!important;
+  }
+}
