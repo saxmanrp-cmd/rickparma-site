@@ -1,0 +1,36 @@
+/* RickParma.com — Silver Vegas Phase 17
+   Tip CTA cleanup only.
+   Keep one line: TIP RICK NOW. Remove any duplicate/secondary Tip Rick text. */
+
+html body .band-tipjar .tip-row::after{
+  content:none!important;
+  display:none!important;
+}
+
+html body #tip-cta.tip-cta-btn,
+html body .band-tipjar .tip-row > #tip-cta,
+html body .band-tipjar .tip-row > .tip-cta-btn{
+  font-size:0!important;
+  line-height:0!important;
+  white-space:nowrap!important;
+}
+
+html body #tip-cta.tip-cta-btn::before,
+html body .band-tipjar .tip-row > #tip-cta::before,
+html body .band-tipjar .tip-row > .tip-cta-btn::before{
+  content:'TIP RICK NOW'!important;
+  display:block!important;
+  font-size:clamp(.92rem,4.2vw,1.08rem)!important;
+  font-weight:950!important;
+  line-height:1!important;
+  letter-spacing:.045em!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+
+html body #tip-cta.tip-cta-btn::after,
+html body .band-tipjar .tip-row > #tip-cta::after,
+html body .band-tipjar .tip-row > .tip-cta-btn::after{
+  content:none!important;
+  display:none!important;
+}
