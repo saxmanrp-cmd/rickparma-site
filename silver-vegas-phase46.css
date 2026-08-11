@@ -1,0 +1,67 @@
+/* RickParma.com — Silver Vegas Phase 46
+   Use the actual mockup-style Vegas fountain / High Roller artwork in the hero. */
+
+html body .band-hero{
+  --bg-image:url('images/hero-bg-mockup.jpg')!important;
+}
+
+html body .band-hero::before{
+  background-image:url('images/hero-bg-mockup.jpg')!important;
+  background-size:cover!important;
+  background-position:center 54%!important;
+  background-repeat:no-repeat!important;
+  inset:0!important;
+  opacity:1!important;
+  filter:brightness(1.08) contrast(1.16) saturate(1.22)!important;
+  transform:scale(1.01)!important;
+}
+
+/* Keep the image visible. The top remains dark enough for JOIN THE FUN,
+   while the fountains / skyline / wheel read through the lower hero. */
+html body .band-hero::after{
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,.14) 0%,
+      rgba(0,0,0,.04) 28%,
+      rgba(0,0,0,.05) 55%,
+      rgba(0,0,0,.16) 78%,
+      rgba(0,0,0,.26) 100%)!important;
+}
+
+/* Slightly more transparent hero cards so the Vegas lights remain part of the scene. */
+html body .band-hero .button-col{
+  background:
+    linear-gradient(118deg,
+      rgba(255,255,255,.13) 0%,
+      rgba(255,255,255,.035) 11%,
+      transparent 27%),
+    linear-gradient(180deg,rgba(5,9,16,.79),rgba(1,4,8,.88))!important;
+}
+
+@media(max-width:560px){
+  html body .band-hero::before{
+    background-size:cover!important;
+    background-position:center 56%!important;
+    filter:brightness(1.10) contrast(1.16) saturate(1.24)!important;
+    transform:scale(1.005)!important;
+  }
+
+  html body .band-hero::after{
+    background:
+      linear-gradient(180deg,
+        rgba(0,0,0,.11) 0%,
+        rgba(0,0,0,.02) 27%,
+        rgba(0,0,0,.04) 54%,
+        rgba(0,0,0,.13) 78%,
+        rgba(0,0,0,.23) 100%)!important;
+  }
+
+  html body .band-hero .button-col{
+    background:
+      linear-gradient(118deg,
+        rgba(255,255,255,.12) 0%,
+        rgba(255,255,255,.03) 11%,
+        transparent 27%),
+      linear-gradient(180deg,rgba(4,8,15,.76),rgba(1,4,8,.86))!important;
+  }
+}
