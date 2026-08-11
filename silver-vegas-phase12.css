@@ -1,0 +1,567 @@
+/* RickParma.com — Silver Vegas Phase 12
+   Decorative spectacle pass only. No JavaScript, API, payment, calendar-data,
+   booking-submission, or hero visibility logic is changed. */
+
+:root{
+  --rp12-cyan:#74ebff;
+  --rp12-blue:#4a8fff;
+  --rp12-pink:#ff67dc;
+  --rp12-violet:#a078ff;
+  --rp12-chrome:#fbfdff;
+  --rp12-steel:#a9b7c7;
+  --rp12-deep:#02050b;
+  --rp12-ease:cubic-bezier(.18,.78,.22,1);
+}
+
+/* ==========================================================
+   GLOBAL SHOWROOM ATMOSPHERE
+   ========================================================== */
+html body{
+  background:
+    radial-gradient(ellipse at 50% -8%,rgba(74,143,255,.22),transparent 34rem),
+    radial-gradient(ellipse at -10% 24%,rgba(116,235,255,.10),transparent 28rem),
+    radial-gradient(ellipse at 110% 30%,rgba(255,103,220,.10),transparent 31rem),
+    radial-gradient(ellipse at 50% 72%,rgba(160,120,255,.075),transparent 36rem),
+    linear-gradient(180deg,#010206 0%,#071420 25%,#030a15 58%,#010307 100%)!important;
+}
+
+/* Soft mirrored-floor reflection language behind the middle/lower page. */
+html body #music,
+html body #calendar,
+html body #promo-videos,
+html body #diamond-method,
+html body #booking{
+  isolation:isolate;
+}
+html body #music::before,
+html body #calendar::before,
+html body #promo-videos::before,
+html body #diamond-method::before,
+html body #booking::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(1080px,96vw);
+  height:78%;
+  transform:translate(-50%,-50%);
+  z-index:-2;
+  pointer-events:none;
+  opacity:.36;
+  background:
+    linear-gradient(90deg,transparent 0 12%,rgba(116,235,255,.035) 12.4%,transparent 13% 38%,rgba(255,255,255,.018) 38.4%,transparent 39% 63%,rgba(255,103,220,.035) 63.4%,transparent 64% 100%),
+    radial-gradient(ellipse at 50% 100%,rgba(74,143,255,.08),transparent 62%);
+  filter:blur(.2px);
+}
+
+/* ==========================================================
+   HEADER — MARQUEE MEDALLION
+   ========================================================== */
+html body header{
+  position:relative!important;
+  overflow:visible!important;
+}
+html body header::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  bottom:-1px;
+  width:min(880px,88vw);
+  height:3px;
+  transform:translateX(-50%);
+  pointer-events:none;
+  opacity:.82;
+  background:
+    radial-gradient(circle at 6px 50%,rgba(255,255,255,.92) 0 1.4px,rgba(116,235,255,.50) 1.6px 2.5px,transparent 2.8px) 0 50%/18px 3px repeat-x;
+  filter:drop-shadow(0 0 5px rgba(116,235,255,.32));
+}
+
+html body header h1 a{
+  transform-style:preserve-3d;
+}
+html body header h1 a:hover{
+  transform:translateY(-1px) scale(1.02)!important;
+  filter:grayscale(1) brightness(1.75) contrast(1.18) drop-shadow(0 0 20px rgba(116,235,255,.20))!important;
+}
+
+/* ==========================================================
+   HERO — SKYLINE, WHEEL, FOUNTAINS, BEAMS
+   ========================================================== */
+html body .band-hero{
+  overflow:hidden!important;
+  min-height:455px!important;
+}
+
+/* Extra skyline silhouette, built entirely from CSS gradients. */
+html body .band-hero .rp-card-panel{
+  position:relative!important;
+  isolation:isolate;
+}
+html body .band-hero .rp-card-panel::before{
+  content:''!important;
+  display:block!important;
+  position:absolute!important;
+  left:50%!important;
+  bottom:-6px!important;
+  width:min(1120px,110vw)!important;
+  height:118px!important;
+  transform:translateX(-50%)!important;
+  z-index:-2!important;
+  pointer-events:none!important;
+  opacity:.74!important;
+  background:
+    linear-gradient(90deg,
+      transparent 0 2%,#03070d 2% 5%,transparent 5% 7%,#050a12 7% 12%,transparent 12% 13%,#03070d 13% 17%,transparent 17% 19%,#050a12 19% 24%,transparent 24% 26%,#03070d 26% 31%,transparent 31% 32%,#050a12 32% 38%,transparent 38% 40%,#03070d 40% 45%,transparent 45% 47%,#050a12 47% 53%,transparent 53% 55%,#03070d 55% 61%,transparent 61% 63%,#050a12 63% 69%,transparent 69% 71%,#03070d 71% 77%,transparent 77% 79%,#050a12 79% 85%,transparent 85% 87%,#03070d 87% 93%,transparent 93% 100%),
+    linear-gradient(180deg,transparent 0 38%,rgba(3,7,13,.90) 39% 100%);
+  clip-path:polygon(0 100%,0 72%,3% 72%,3% 48%,5% 48%,5% 65%,8% 65%,8% 34%,11% 34%,11% 58%,14% 58%,14% 45%,17% 45%,17% 68%,21% 68%,21% 28%,24% 28%,24% 54%,28% 54%,28% 39%,31% 39%,31% 62%,35% 62%,35% 31%,39% 31%,39% 55%,43% 55%,43% 22%,47% 22%,47% 59%,51% 59%,51% 34%,55% 34%,55% 64%,59% 64%,59% 24%,63% 24%,63% 52%,67% 52%,67% 36%,71% 36%,71% 62%,75% 62%,75% 27%,79% 27%,79% 56%,83% 56%,83% 40%,87% 40%,87% 64%,91% 64%,91% 32%,95% 32%,95% 67%,100% 67%,100% 100%);
+  box-shadow:0 -12px 28px rgba(0,0,0,.24);
+}
+
+/* Skyline window sparkle layer. */
+html body .band-hero .rp-card-panel::after{
+  content:''!important;
+  display:block!important;
+  position:absolute!important;
+  left:50%!important;
+  bottom:16px!important;
+  width:min(1080px,106vw)!important;
+  height:80px!important;
+  transform:translateX(-50%)!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+  opacity:.30!important;
+  background:
+    radial-gradient(circle,rgba(116,235,255,.9) 0 1px,transparent 1.4px) 0 0/29px 17px,
+    radial-gradient(circle,rgba(255,103,220,.72) 0 1px,transparent 1.4px) 10px 7px/37px 23px;
+  -webkit-mask:linear-gradient(180deg,transparent,#000 34%,#000 100%);
+          mask:linear-gradient(180deg,transparent,#000 34%,#000 100%);
+}
+
+/* Stronger observation-wheel rim. */
+html body .band-hero .band-inner::before{
+  border:2px solid rgba(179,239,255,.58)!important;
+  box-shadow:
+    0 0 0 5px rgba(116,235,255,.020),
+    0 0 0 9px rgba(255,103,220,.010),
+    inset 0 0 34px rgba(116,235,255,.07),
+    0 0 28px rgba(116,235,255,.20),
+    0 0 62px rgba(255,103,220,.08)!important;
+}
+
+/* Brighter fountain arcs. */
+html body .band-hero .band-inner::after{
+  opacity:.80!important;
+  filter:drop-shadow(0 0 12px rgba(116,235,255,.22)) drop-shadow(0 0 22px rgba(255,103,220,.08))!important;
+}
+
+/* Chrome marquee title shadow and halo. */
+html body .hero-title{
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.15),
+    0 10px 24px rgba(0,0,0,.74),
+    0 0 20px rgba(116,235,255,.11),
+    0 0 34px rgba(255,103,220,.055)!important;
+}
+
+/* Hero cards get illuminated lower rails. */
+html body .band-hero .button-col::before{
+  content:'';
+  position:absolute;
+  left:10%;
+  right:10%;
+  bottom:-1px;
+  height:2px;
+  border-radius:99px;
+  pointer-events:none;
+  opacity:.85;
+  background:linear-gradient(90deg,transparent,var(--rp12-cyan),rgba(255,255,255,.78),var(--rp12-pink),transparent);
+  box-shadow:0 0 12px rgba(116,235,255,.18),0 0 18px rgba(255,103,220,.10);
+}
+
+/* ==========================================================
+   CHROME / MARQUEE SECTION HEADINGS
+   ========================================================== */
+html body .band-music h2.display-heading,
+html body #calendar h2.display-heading,
+html body #rp-video-section .rp-section-title,
+html body #booking h2.display-heading{
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.20),
+    0 8px 18px rgba(0,0,0,.46),
+    0 0 18px rgba(116,235,255,.09),
+    0 0 22px rgba(255,103,220,.05)!important;
+}
+html body .band-music h2.display-heading::before,
+html body #calendar h2.display-heading::before,
+html body #rp-video-section .rp-section-title::before{
+  height:3px!important;
+  width:78px!important;
+  border-radius:99px;
+  background:
+    radial-gradient(circle at 4px 50%,rgba(255,255,255,.94) 0 1px,rgba(116,235,255,.64) 1.2px 2px,transparent 2.3px) 0 50%/12px 3px repeat-x!important;
+  box-shadow:0 0 9px rgba(116,235,255,.25)!important;
+}
+
+/* ==========================================================
+   TIP — DECORATIVE SHEEN ONLY; LAYOUT IS LOCKED IN WRAPPER
+   ========================================================== */
+html body .band-tipjar .rp-card-panel{
+  box-shadow:
+    0 22px 58px rgba(0,0,0,.50),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 0 30px rgba(116,235,255,.025),
+    0 0 24px rgba(116,235,255,.055),
+    0 0 28px rgba(255,103,220,.035)!important;
+}
+html body .band-tipjar .rp-card-panel > *{
+  position:relative;
+  z-index:2;
+}
+html body .band-tipjar .tip-amt{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 7px 18px rgba(0,0,0,.20)!important;
+}
+html body .band-tipjar .tip-amt.active{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.62),
+    0 0 18px rgba(116,235,255,.28),
+    0 0 28px rgba(255,103,220,.16),
+    0 8px 22px rgba(0,0,0,.28)!important;
+}
+
+/* ==========================================================
+   TEXT JOIN — NEON SIGN / HOTEL LOBBY GLASS
+   ========================================================== */
+html body .band-textjoin .rp-card-panel{
+  position:relative!important;
+  overflow:hidden!important;
+  box-shadow:
+    0 20px 52px rgba(0,0,0,.47),
+    inset 0 1px 0 rgba(255,255,255,.06),
+    inset 0 0 34px rgba(116,235,255,.022),
+    0 0 26px rgba(255,103,220,.035)!important;
+}
+html body .band-textjoin .rp-card-panel::before{
+  content:'';
+  position:absolute;
+  inset:-50% -20%;
+  pointer-events:none;
+  opacity:.30;
+  background:linear-gradient(118deg,transparent 38%,rgba(255,255,255,.10) 48%,transparent 58%);
+  transform:translateX(-36%);
+}
+@keyframes rp12JoinGlass{
+  0%,24%{transform:translateX(-42%);}
+  58%,100%{transform:translateX(42%);}
+}
+@media(prefers-reduced-motion:no-preference){
+  html body .band-textjoin .rp-card-panel::before{animation:rp12JoinGlass 8.5s ease-in-out infinite;}
+}
+
+/* ==========================================================
+   MUSIC — JEWELLED PLAYER
+   ========================================================== */
+html body .rp-player{
+  position:relative!important;
+  overflow:hidden!important;
+  border-color:rgba(190,226,255,.22)!important;
+  box-shadow:
+    0 20px 52px rgba(0,0,0,.46),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 0 26px rgba(116,235,255,.025),
+    0 0 22px rgba(116,235,255,.045)!important;
+}
+html body .rp-player::before{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:1px;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--rp12-cyan),rgba(255,255,255,.70),var(--rp12-pink),transparent);
+  box-shadow:0 0 10px rgba(116,235,255,.20);
+}
+html body #rp-playpause{
+  border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.56),
+    0 0 18px rgba(116,235,255,.24),
+    0 0 28px rgba(255,103,220,.10),
+    0 8px 18px rgba(0,0,0,.28)!important;
+}
+
+/* ==========================================================
+   CALENDAR — ELECTRIC SHOW CARDS
+   ========================================================== */
+html body #calendar .show-tile{
+  position:relative!important;
+  overflow:hidden!important;
+  border-color:rgba(195,225,255,.20)!important;
+  box-shadow:
+    0 16px 36px rgba(0,0,0,.36),
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 0 18px rgba(116,235,255,.035)!important;
+}
+html body #calendar .show-tile::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.46;
+  background:
+    linear-gradient(120deg,transparent 0 42%,rgba(255,255,255,.035) 48%,transparent 55%),
+    radial-gradient(circle at 12% 4%,rgba(116,235,255,.075),transparent 26%),
+    radial-gradient(circle at 90% 98%,rgba(255,103,220,.060),transparent 30%);
+}
+html body #calendar .show-tile::after{
+  content:'';
+  position:absolute;
+  left:8%;
+  right:8%;
+  bottom:0;
+  height:2px;
+  opacity:.70;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--rp12-cyan),var(--rp12-pink),transparent);
+  box-shadow:0 0 9px rgba(116,235,255,.14);
+}
+html body #calendar .show-tile:hover{
+  transform:translateY(-4px)!important;
+  box-shadow:
+    0 22px 46px rgba(0,0,0,.43),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 24px rgba(116,235,255,.10),
+    0 0 26px rgba(255,103,220,.055)!important;
+}
+
+/* ==========================================================
+   PROMO VIDEOS — STAGE / LED WALL
+   ========================================================== */
+html body #rp-video-section{
+  position:relative!important;
+  overflow:hidden!important;
+  box-shadow:
+    0 24px 62px rgba(0,0,0,.52),
+    inset 0 1px 0 rgba(255,255,255,.065),
+    0 0 30px rgba(116,235,255,.055),
+    0 0 34px rgba(255,103,220,.035)!important;
+}
+html body #rp-video-section::before{
+  content:'';
+  position:absolute;
+  left:2.5%;
+  right:2.5%;
+  top:0;
+  height:3px;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 5px 50%,rgba(255,255,255,.92) 0 1.2px,rgba(116,235,255,.54) 1.4px 2.2px,transparent 2.5px) 0 50%/16px 3px repeat-x;
+  filter:drop-shadow(0 0 5px rgba(116,235,255,.28));
+}
+html body #rp-video-section .rp-featured-wrap{
+  border-color:rgba(205,232,255,.20)!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.025),
+    0 15px 34px rgba(0,0,0,.36),
+    0 0 24px rgba(116,235,255,.045)!important;
+}
+html body #rp-video-section .rp-thumb.active{
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.34),
+    0 0 0 1px rgba(116,235,255,.13),
+    0 0 22px rgba(255,103,220,.12)!important;
+}
+
+/* ==========================================================
+   DIAMOND — JEWEL CASE
+   ========================================================== */
+html body .product-card{
+  position:relative!important;
+  overflow:hidden!important;
+  border-color:rgba(207,232,255,.22)!important;
+  box-shadow:
+    0 22px 58px rgba(0,0,0,.49),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 0 28px rgba(116,235,255,.055),
+    0 0 28px rgba(160,120,255,.045)!important;
+}
+html body .product-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.30;
+  background:
+    linear-gradient(122deg,transparent 0 34%,rgba(255,255,255,.075) 43%,transparent 52%),
+    radial-gradient(circle at 6% 8%,rgba(116,235,255,.08),transparent 24%),
+    radial-gradient(circle at 96% 92%,rgba(160,120,255,.08),transparent 27%);
+}
+html body .product-card::after{
+  content:'';
+  position:absolute;
+  inset:6px;
+  border-radius:inherit;
+  pointer-events:none;
+  border:1px solid rgba(255,255,255,.025);
+  box-shadow:inset 0 0 24px rgba(116,235,255,.018);
+}
+html body .product-card img{
+  box-shadow:0 12px 28px rgba(0,0,0,.34),0 0 22px rgba(116,235,255,.07)!important;
+}
+
+/* ==========================================================
+   BOOKING — PRIVATE VEGAS LOUNGE
+   ========================================================== */
+html body section#booking{
+  position:relative!important;
+  overflow:hidden!important;
+  border-color:rgba(205,230,255,.20)!important;
+  box-shadow:
+    0 28px 72px rgba(0,0,0,.52),
+    inset 0 1px 0 rgba(255,255,255,.065),
+    inset 0 0 44px rgba(116,235,255,.022),
+    0 0 30px rgba(116,235,255,.045),
+    0 0 30px rgba(255,103,220,.025)!important;
+}
+html body section#booking::before{
+  content:'';
+  position:absolute;
+  inset:-20% -10% 62%;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.58;
+  background:
+    linear-gradient(75deg,transparent 0 32%,rgba(116,235,255,.08) 40%,transparent 48%),
+    linear-gradient(105deg,transparent 0 52%,rgba(255,103,220,.065) 61%,transparent 69%),
+    radial-gradient(ellipse at 50% 0%,rgba(74,143,255,.14),transparent 58%);
+}
+html body section#booking::after{
+  content:'';
+  position:absolute;
+  left:4%;
+  right:4%;
+  bottom:0;
+  height:3px;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 5px 50%,rgba(255,255,255,.88) 0 1.2px,rgba(255,103,220,.48) 1.4px 2.2px,transparent 2.5px) 0 50%/17px 3px repeat-x;
+  filter:drop-shadow(0 0 5px rgba(255,103,220,.20));
+}
+html body form.booking input:focus,
+html body form.booking select:focus,
+html body form.booking textarea:focus{
+  box-shadow:
+    0 0 0 1px rgba(116,235,255,.24),
+    0 0 0 4px rgba(116,235,255,.045),
+    inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+html body .submit-btn{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.52),
+    0 12px 28px rgba(0,0,0,.30),
+    0 0 20px rgba(116,235,255,.16),
+    0 0 26px rgba(255,103,220,.11)!important;
+}
+
+/* ==========================================================
+   FOOTER — FINAL MARQUEE CURTAIN
+   ========================================================== */
+html body footer{
+  position:relative!important;
+  overflow:hidden!important;
+  border-top:1px solid rgba(205,230,255,.13)!important;
+  box-shadow:inset 0 12px 34px rgba(116,235,255,.018)!important;
+}
+html body footer::before{
+  filter:grayscale(1) brightness(1.65) contrast(1.14) drop-shadow(0 0 18px rgba(116,235,255,.12))!important;
+}
+html body footer > *{
+  position:relative;
+  z-index:2;
+}
+
+/* ==========================================================
+   DECORATIVE MOTION — ONLY WHERE USER ALLOWS MOTION
+   ========================================================== */
+@keyframes rp12CardBreath{
+  0%,100%{filter:brightness(1);}
+  50%{filter:brightness(1.028);}
+}
+@keyframes rp12WheelShimmer{
+  0%,100%{opacity:.58;transform:scale(.992) rotate(0deg);}
+  50%{opacity:.78;transform:scale(1.012) rotate(1.2deg);}
+}
+@media(prefers-reduced-motion:no-preference){
+  html body .band-hero .band-inner::before{animation:rp12WheelShimmer 8.4s ease-in-out infinite!important;}
+  html body #calendar .show-tile:nth-child(3n+1){animation:rp12CardBreath 5.8s ease-in-out infinite;}
+  html body #calendar .show-tile:nth-child(3n+2){animation:rp12CardBreath 6.6s ease-in-out .6s infinite;}
+}
+
+/* ==========================================================
+   MOBILE — KEEP THE SPECTACLE, REDUCE THE CLUTTER
+   ========================================================== */
+@media(max-width:559px){
+  html body .band-hero{min-height:445px!important;}
+  html body .band-hero .band-inner::before{
+    width:190px!important;
+    right:-62px!important;
+    top:18px!important;
+    opacity:.48!important;
+  }
+  html body .band-hero .band-inner::after{
+    width:390px!important;
+    left:-90px!important;
+    bottom:27%!important;
+    opacity:.56!important;
+  }
+  html body .band-hero .rp-card-panel::before{
+    width:116vw!important;
+    height:94px!important;
+    bottom:-4px!important;
+    opacity:.58!important;
+  }
+  html body .band-hero .rp-card-panel::after{
+    opacity:.18!important;
+    bottom:12px!important;
+  }
+  html body .hero-title{
+    text-shadow:0 8px 18px rgba(0,0,0,.68),0 0 14px rgba(116,235,255,.08)!important;
+  }
+  html body #calendar .show-tile:hover{transform:none!important;}
+}
+
+@media(max-width:390px){
+  html body .band-hero .band-inner::before{opacity:.38!important;}
+  html body .band-hero .band-inner::after{opacity:.42!important;}
+  html body .band-hero .rp-card-panel::before{opacity:.50!important;}
+}
+
+/* ==========================================================
+   DESKTOP — LET THE SHOWROOM BREATHE
+   ========================================================== */
+@media(min-width:900px){
+  html body .band-hero{min-height:720px!important;}
+  html body .band-hero .band-inner::before{
+    width:min(33vw,340px)!important;
+    right:-1%!important;
+    top:1%!important;
+  }
+  html body .band-hero .band-inner::after{
+    width:min(60vw,610px)!important;
+    height:176px!important;
+    left:-3%!important;
+    bottom:22%!important;
+  }
+  html body .band-hero .rp-card-panel::before{
+    height:152px!important;
+    bottom:-8px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body .band-textjoin .rp-card-panel::before,
+  html body .band-hero .band-inner::before,
+  html body #calendar .show-tile{
+    animation:none!important;
+  }
+}
