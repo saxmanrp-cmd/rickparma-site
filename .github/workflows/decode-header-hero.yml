@@ -1,0 +1,40 @@
+name: Decode header hero asset
+
+on:
+  push:
+    branches:
+      - agent/silver-vegas-redesign
+    paths:
+      - '.github/workflows/decode-header-hero.yml'
+      - 'images/rick-parma-header-hero.jpg.b64'
+
+permissions:
+  contents: write
+
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout redesign branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/silver-vegas-redesign
+          fetch-depth: 0
+
+      - name: Decode optimized JPEG
+        shell: bash
+        run: |
+          base64 --decode images/rick-parma-header-hero.jpg.b64 > images/rick-parma-header-hero.jpg
+          test -s images/rick-parma-header-hero.jpg
+          file images/rick-parma-header-hero.jpg
+
+      - name: Commit real image and remove one-time staging files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add images/rick-parma-header-hero.jpg
+          git rm images/rick-parma-header-hero.jpg.b64
+          git rm .github/workflows/decode-header-hero.yml
+          git commit -m "Install Rick Parma header hero image"
+          git push origin HEAD:agent/silver-vegas-redesign
