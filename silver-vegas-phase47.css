@@ -1,5 +1,5 @@
 /* RickParma.com — Silver Vegas Phase 47
-   Turn the generated Rick Parma Vegas artwork into the visual header/hero.
+   Turn the Rick Parma Vegas artwork into the visual header/hero.
    Preserve the existing navigation bar and action-card functionality below it. */
 
 /* Remove the visible divider around/next to the compact RP navigation logo. */
@@ -16,9 +16,9 @@ html body header h1 a::after{
   border:0!important;
 }
 
-/* The hero now behaves as two clean zones:
-   1) full-width artwork at the top
-   2) JOIN THE FUN + Song Request / Fan Cam controls immediately below. */
+/* The hero is now two clean zones:
+   1) full Rick Parma Vegas header artwork
+   2) JOIN THE FUN + Song Request / Fan Cam controls below it. */
 html body .band-hero{
   position:relative!important;
   display:block!important;
@@ -29,7 +29,7 @@ html body .band-hero{
   overflow:hidden!important;
 }
 
-/* Full artwork, never cropped. 1672×941 = 56.28% aspect ratio. */
+/* Full artwork, never cropped on the phone-first layout. */
 html body .band-hero::before{
   content:''!important;
   display:block!important;
@@ -40,17 +40,18 @@ html body .band-hero::before{
   right:0!important;
   bottom:auto!important;
   height:clamp(211px,56.28vw,553px)!important;
-  background-image:url('images/rick-parma-header-hero.jpg')!important;
-  background-size:100% 100%!important;
+  background-image:url('images/rick-parma-header-hero.svg')!important;
+  background-size:contain!important;
   background-position:center top!important;
   background-repeat:no-repeat!important;
+  background-color:#010307!important;
   opacity:1!important;
   filter:none!important;
   transform:none!important;
   pointer-events:none!important;
 }
 
-/* Soft transition from the image into the interactive hero controls. */
+/* Soft transition from the artwork into the interactive controls. */
 html body .band-hero::after{
   content:''!important;
   position:absolute!important;
@@ -71,7 +72,7 @@ html body .band-hero .band-inner{
   margin:0 auto!important;
 }
 
-/* Keep the action section visually separate from the baked-in Rick Parma header art. */
+/* Keep the action section below the baked-in Rick Parma branding. */
 html body .band-hero .rp-card-panel{
   padding-top:10px!important;
 }
@@ -79,7 +80,6 @@ html body .band-hero .hero-title{
   margin-top:0!important;
 }
 
-/* The artwork itself supplies the Vegas identity; don't let old hero backgrounds leak through. */
 html body .band-hero .band-inner::before,
 html body .band-hero .band-inner::after{
   background:none!important;
@@ -87,14 +87,13 @@ html body .band-hero .band-inner::after{
 
 @media(max-width:560px){
   html body .band-hero{
-    /* Preserve the entire artwork on phones instead of cropping RICK PARMA or the High Roller. */
     padding-top:56.28vw!important;
     padding-left:8px!important;
     padding-right:8px!important;
   }
   html body .band-hero::before{
     height:56.28vw!important;
-    background-size:100% 100%!important;
+    background-size:100% auto!important;
     background-position:center top!important;
   }
   html body .band-hero::after{
