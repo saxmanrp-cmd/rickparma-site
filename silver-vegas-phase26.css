@@ -1,0 +1,217 @@
+/* RickParma.com — Silver Vegas Phase 26
+   Mockup icon-badge + TIP CTA typography correction.
+   Presentation only. Existing links, hero availability logic, SMS behavior,
+   payment behavior and all JavaScript remain untouched. */
+
+:root{
+  --rp26-cyan:#54dfff;
+  --rp26-blue:#59a7ff;
+  --rp26-pink:#ff55d2;
+  --rp26-ink:#050912;
+}
+
+/* ==========================================================
+   TIP RICK NOW — make the WORDS fill the thick CTA like mockup
+   ========================================================== */
+html body #tip-cta.tip-cta-btn,
+html body .band-tipjar .tip-cta-btn{
+  min-height:72px!important;
+  padding-left:10px!important;
+  padding-right:10px!important;
+}
+html body #tip-cta.tip-cta-btn::before,
+html body .band-tipjar .tip-cta-btn::before{
+  content:'TIP RICK NOW'!important;
+  display:block!important;
+  width:auto!important;
+  max-width:96%!important;
+  color:#05080c!important;
+  font-size:clamp(1.38rem,7.15vw,1.92rem)!important;
+  font-weight:950!important;
+  line-height:.92!important;
+  letter-spacing:.075em!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  transform:scaleX(1.045)!important;
+  transform-origin:center!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.16)!important;
+}
+
+/* ==========================================================
+   SONG REQUEST + FAN CAM — same neon circular icon family
+   ========================================================== */
+html body .band-hero .song-request-button,
+html body .band-hero .fan-cam-button{
+  grid-template-columns:64px minmax(0,1fr)!important;
+  gap:9px!important;
+  padding:0!important;
+}
+html body .song-request-button::before,
+html body .fan-cam-button::before{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:60px!important;
+  height:60px!important;
+  min-width:60px!important;
+  min-height:60px!important;
+  margin:0!important;
+  border:2px solid transparent!important;
+  border-radius:50%!important;
+  background:
+    radial-gradient(circle at 38% 30%,rgba(255,255,255,.08),transparent 27%),
+    linear-gradient(180deg,rgba(9,14,24,.98),rgba(3,7,14,.99)) padding-box,
+    conic-gradient(from 215deg,var(--rp26-cyan),var(--rp26-blue) 34%,var(--rp26-pink) 72%,var(--rp26-cyan)) border-box!important;
+  color:#f8fbff!important;
+  font-size:1.72rem!important;
+  font-weight:600!important;
+  line-height:1!important;
+  box-shadow:
+    inset 0 0 16px rgba(80,175,255,.10),
+    0 0 10px rgba(84,223,255,.28),
+    0 0 20px rgba(84,223,255,.18),
+    0 0 22px rgba(255,85,210,.16)!important;
+  text-shadow:
+    0 0 7px rgba(255,255,255,.38),
+    0 0 12px rgba(84,223,255,.42),
+    0 0 12px rgba(255,85,210,.22)!important;
+}
+html body .song-request-button::before{
+  content:'♫'!important;
+}
+html body .fan-cam-button::before{
+  content:'◎'!important;
+  font-size:1.82rem!important;
+}
+
+/* Give each badge a slightly directional glow while keeping the shared ring. */
+html body #songRequestCol .song-request-button::before{
+  box-shadow:
+    inset 0 0 16px rgba(84,223,255,.12),
+    0 0 10px rgba(84,223,255,.35),
+    0 0 22px rgba(84,223,255,.20),
+    0 0 20px rgba(255,85,210,.11)!important;
+}
+html body #fanCamCol .fan-cam-button::before{
+  box-shadow:
+    inset 0 0 16px rgba(255,85,210,.10),
+    0 0 10px rgba(255,85,210,.30),
+    0 0 22px rgba(255,85,210,.18),
+    0 0 18px rgba(84,223,255,.13)!important;
+}
+
+/* ==========================================================
+   TEXT UPDATES — redraw as neon circular chat badge
+   ========================================================== */
+html body .band-textjoin .rp-card-panel{
+  grid-template-columns:82px minmax(0,1fr)!important;
+  column-gap:13px!important;
+  align-items:center!important;
+}
+html body .text-join-button{
+  grid-column:1!important;
+  grid-row:1 / span 3!important;
+  position:relative!important;
+  display:grid!important;
+  place-items:center!important;
+  width:78px!important;
+  height:78px!important;
+  min-width:78px!important;
+  min-height:78px!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  border:2px solid transparent!important;
+  border-radius:50%!important;
+  background:
+    radial-gradient(circle at 38% 30%,rgba(255,255,255,.08),transparent 27%),
+    linear-gradient(180deg,rgba(9,14,24,.98),rgba(3,7,14,.99)) padding-box,
+    conic-gradient(from 215deg,var(--rp26-cyan),var(--rp26-blue) 34%,var(--rp26-pink) 72%,var(--rp26-cyan)) border-box!important;
+  box-shadow:
+    inset 0 0 20px rgba(112,114,255,.08),
+    0 0 12px rgba(84,223,255,.32),
+    0 0 24px rgba(84,223,255,.18),
+    0 0 26px rgba(255,85,210,.19)!important;
+}
+html body .text-join-button::before{
+  content:''!important;
+  display:block!important;
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  width:38px!important;
+  height:27px!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  transform:translate(-50%,-54%)!important;
+  border:2px solid transparent!important;
+  border-radius:7px!important;
+  background:
+    linear-gradient(var(--rp26-ink),var(--rp26-ink)) padding-box,
+    linear-gradient(100deg,var(--rp26-cyan),#7c8cff 48%,var(--rp26-pink)) border-box!important;
+  box-shadow:
+    0 0 8px rgba(84,223,255,.28),
+    0 0 12px rgba(255,85,210,.18)!important;
+}
+html body .text-join-button::after{
+  content:''!important;
+  display:block!important;
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  width:21px!important;
+  height:11px!important;
+  margin:0!important;
+  transform:translate(-50%,-54%)!important;
+  border:0!important;
+  border-radius:0!important;
+  background:
+    linear-gradient(90deg,var(--rp26-cyan),#8ca0ff) 0 0/21px 2px no-repeat,
+    linear-gradient(90deg,#77baff,var(--rp26-pink)) 0 8px/15px 2px no-repeat!important;
+  box-shadow:none!important;
+}
+
+/* ==========================================================
+   PHONE — retain the same visual weight without crowding copy
+   ========================================================== */
+@media(max-width:420px){
+  html body #tip-cta.tip-cta-btn::before,
+  html body .band-tipjar .tip-cta-btn::before{
+    font-size:clamp(1.28rem,6.8vw,1.72rem)!important;
+    letter-spacing:.065em!important;
+  }
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-template-columns:56px minmax(0,1fr)!important;
+    gap:7px!important;
+  }
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:54px!important;
+    height:54px!important;
+    min-width:54px!important;
+    min-height:54px!important;
+    font-size:1.52rem!important;
+  }
+  html body .band-textjoin .rp-card-panel{
+    grid-template-columns:72px minmax(0,1fr)!important;
+    column-gap:10px!important;
+  }
+  html body .text-join-button{
+    width:68px!important;
+    height:68px!important;
+    min-width:68px!important;
+    min-height:68px!important;
+  }
+  html body .text-join-button::before{
+    width:34px!important;
+    height:24px!important;
+  }
+  html body .text-join-button::after{
+    width:18px!important;
+    background:
+      linear-gradient(90deg,var(--rp26-cyan),#8ca0ff) 0 0/18px 2px no-repeat,
+      linear-gradient(90deg,#77baff,var(--rp26-pink)) 0 8px/13px 2px no-repeat!important;
+  }
+}
