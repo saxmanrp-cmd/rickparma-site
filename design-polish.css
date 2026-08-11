@@ -37,6 +37,7 @@
 @import url('silver-vegas-phase38.css');
 @import url('silver-vegas-phase39.css');
 @import url('silver-vegas-phase40.css');
+@import url('silver-vegas-phase41.css');
 
 /* Tip section spacing safeguard — compact final values */
 html body .band-tipjar .rp-card-panel{
@@ -83,7 +84,7 @@ html body .band-tipjar .tip-amt[data-amt="20"]{
   overflow:visible!important;
 }
 
-/* Mobile CTA safeguard — aligned with Phase 40. */
+/* Mobile CTA safeguard — aligned with Phase 41. */
 html body .band-tipjar .tip-row{
   display:flex!important;
   flex-direction:column!important;
@@ -107,10 +108,9 @@ html body #tip-cta.tip-cta-btn{
   width:100%!important;
   max-width:none!important;
   min-width:0!important;
-  min-height:64px!important;
+  min-height:68px!important;
   margin:0 auto!important;
-  padding-left:8px!important;
-  padding-right:8px!important;
+  padding:8px 2px!important;
   box-sizing:border-box!important;
   text-align:center!important;
   white-space:nowrap!important;
@@ -142,12 +142,11 @@ html body #tip-cta.tip-cta-btn{
   html body #tip-cta.tip-cta-btn{
     width:100%!important;
     max-width:none!important;
-    min-height:60px!important;
+    min-height:64px!important;
   }
   html body .band-tipjar .tip-row > #tip-cta,
   html body .band-tipjar .tip-row > .tip-cta-btn,
   html body #tip-cta.tip-cta-btn{
-    padding-left:5px!important;
-    padding-right:5px!important;
+    padding:8px 1px!important;
   }
 }
