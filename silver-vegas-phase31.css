@@ -1,0 +1,212 @@
+/* RickParma.com — Silver Vegas Phase 31
+   Remove cosmetic AVAILABLE pills and rebalance hero cards around icon + title.
+   Presentation only; existing live hero visibility logic remains untouched. */
+
+/* ==========================================================
+   REMOVE COSMETIC STATUS PILLS EVERYWHERE
+   ========================================================== */
+html body .band-hero .button-col::after,
+html body #songRequestCol::after,
+html body #fanCamCol::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* ==========================================================
+   DESKTOP / TABLET — clean single-row feature cards
+   ========================================================== */
+@media (min-width:561px){
+  html body .band-hero .button-col{
+    min-height:112px!important;
+    height:auto!important;
+    padding:10px 15px!important;
+    grid-template-columns:88px minmax(0,1fr)!important;
+    grid-template-rows:1fr!important;
+    column-gap:12px!important;
+    row-gap:0!important;
+    align-items:center!important;
+  }
+
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-column:1 / -1!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-height:90px!important;
+    height:90px!important;
+    display:grid!important;
+    grid-template-columns:88px minmax(0,1fr)!important;
+    gap:12px!important;
+    align-items:center!important;
+    padding:0!important;
+  }
+
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:78px!important;
+    height:78px!important;
+    min-width:78px!important;
+    min-height:78px!important;
+    margin:0 auto!important;
+  }
+
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    width:100%!important;
+    margin:0!important;
+    color:#f8fbff!important;
+    font-size:clamp(1.55rem,3vw,2.08rem)!important;
+    font-weight:950!important;
+    line-height:.86!important;
+    letter-spacing:.015em!important;
+    text-align:center!important;
+    align-self:center!important;
+    justify-self:stretch!important;
+    transform:none!important;
+    transform-origin:center!important;
+  }
+}
+
+/* ==========================================================
+   MOBILE FIRST — fill the card with icon + centered title
+   ========================================================== */
+@media (max-width:560px){
+  html body .band-hero .button-row{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    width:100%!important;
+    max-width:none!important;
+  }
+
+  html body .band-hero .button-col{
+    width:100%!important;
+    min-height:118px!important;
+    height:118px!important;
+    padding:10px 14px!important;
+    grid-template-columns:100px minmax(0,1fr)!important;
+    grid-template-rows:1fr!important;
+    column-gap:12px!important;
+    row-gap:0!important;
+    align-items:center!important;
+    align-content:center!important;
+    border-radius:18px!important;
+  }
+
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-column:1 / -1!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-height:0!important;
+    height:100%!important;
+    display:grid!important;
+    grid-template-columns:100px minmax(0,1fr)!important;
+    gap:12px!important;
+    align-items:center!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:90px!important;
+    height:90px!important;
+    min-width:90px!important;
+    min-height:90px!important;
+    margin:0 auto!important;
+    border-width:2px!important;
+    font-size:2.42rem!important;
+  }
+  html body .fan-cam-button::before{
+    font-size:2.5rem!important;
+  }
+
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0 4px!important;
+    color:#f8fbff!important;
+    font-size:clamp(1.78rem,8.15vw,2.22rem)!important;
+    font-weight:950!important;
+    line-height:.84!important;
+    letter-spacing:.01em!important;
+    text-align:center!important;
+    align-self:center!important;
+    justify-self:stretch!important;
+    transform:none!important;
+    transform-origin:center!important;
+    text-shadow:0 2px 7px rgba(0,0,0,.68),0 0 10px rgba(255,255,255,.035)!important;
+  }
+}
+
+/* Typical iPhone widths. */
+@media (max-width:430px){
+  html body .band-hero .button-col{
+    min-height:112px!important;
+    height:112px!important;
+    padding:9px 12px!important;
+    grid-template-columns:92px minmax(0,1fr)!important;
+    column-gap:10px!important;
+  }
+
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-template-columns:92px minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:84px!important;
+    height:84px!important;
+    min-width:84px!important;
+    min-height:84px!important;
+    font-size:2.24rem!important;
+  }
+  html body .fan-cam-button::before{
+    font-size:2.32rem!important;
+  }
+
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:clamp(1.64rem,8vw,2rem)!important;
+    line-height:.84!important;
+  }
+}
+
+/* Extra-small phones. */
+@media (max-width:350px){
+  html body .band-hero .button-col{
+    min-height:104px!important;
+    height:104px!important;
+    padding:8px 10px!important;
+    grid-template-columns:82px minmax(0,1fr)!important;
+    column-gap:8px!important;
+  }
+
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-template-columns:82px minmax(0,1fr)!important;
+    gap:8px!important;
+  }
+
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:74px!important;
+    height:74px!important;
+    min-width:74px!important;
+    min-height:74px!important;
+    font-size:2rem!important;
+  }
+  html body .fan-cam-button::before{
+    font-size:2.06rem!important;
+  }
+
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:1.48rem!important;
+  }
+}
