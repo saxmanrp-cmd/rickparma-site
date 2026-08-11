@@ -1,0 +1,87 @@
+/* RickParma.com — Silver Vegas Phase 45
+   Bring the Vegas hero artwork back forward: brighter skyline/fountains,
+   clearer color and reflections, lighter mask, still crisp/readable. */
+
+/* The repo's existing hero-bg.jpg is the dedicated JOIN THE FUN / Request / Fan Cam art. */
+html body .band-hero{
+  --bg-image:url('images/hero-bg.jpg')!important;
+  --overlay:.16!important;
+  isolation:isolate!important;
+}
+
+/* Show the actual Vegas art clearly — no blur/fog. */
+html body .band-hero::before{
+  background-image:var(--bg-image)!important;
+  background-size:cover!important;
+  background-position:center 52%!important;
+  background-repeat:no-repeat!important;
+  inset:0!important;
+  opacity:1!important;
+  filter:brightness(1.02) contrast(1.14) saturate(1.18)!important;
+  transform:scale(1.012)!important;
+  transform-origin:center center!important;
+}
+
+/* Much lighter readability mask so the fountains / skyline / wheel actually show. */
+html body .band-hero::after{
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,.22) 0%,
+      rgba(0,0,0,.08) 26%,
+      rgba(0,0,0,.10) 52%,
+      rgba(0,0,0,.24) 78%,
+      rgba(0,0,0,.34) 100%)!important;
+}
+
+/* Keep the hero content above both background layers. */
+html body .band-hero .band-inner{
+  position:relative!important;
+  z-index:2!important;
+}
+
+/* Let a hint of the Vegas scene read through the black-glass action cards. */
+html body .band-hero .button-col{
+  background:
+    linear-gradient(118deg,
+      rgba(255,255,255,.14) 0%,
+      rgba(255,255,255,.04) 11%,
+      transparent 27%),
+    linear-gradient(180deg,rgba(7,11,18,.88),rgba(1,4,8,.94))!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Keep chrome/title separation strong without putting haze over the image. */
+html body .band-hero .hero-title{
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.18),
+    0 3px 8px rgba(0,0,0,.82),
+    0 0 18px rgba(0,0,0,.24)!important;
+}
+
+@media(max-width:560px){
+  html body .band-hero::before{
+    background-position:center 48%!important;
+    filter:brightness(1.05) contrast(1.13) saturate(1.20)!important;
+    transform:scale(1.01)!important;
+  }
+
+  html body .band-hero::after{
+    background:
+      linear-gradient(180deg,
+        rgba(0,0,0,.18) 0%,
+        rgba(0,0,0,.05) 25%,
+        rgba(0,0,0,.08) 52%,
+        rgba(0,0,0,.20) 78%,
+        rgba(0,0,0,.30) 100%)!important;
+  }
+
+  html body .band-hero .button-col{
+    background:
+      linear-gradient(118deg,
+        rgba(255,255,255,.13) 0%,
+        rgba(255,255,255,.035) 11%,
+        transparent 27%),
+      linear-gradient(180deg,rgba(6,10,17,.86),rgba(1,4,8,.93))!important;
+  }
+}
