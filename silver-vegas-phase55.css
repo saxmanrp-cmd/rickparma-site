@@ -1,0 +1,47 @@
+/* RickParma.com — Silver Vegas Phase 55
+   Safari/mobile sharpness fix: render the approved header at its native aspect ratio
+   with no transforms, filters, forced min-height, or oversized background rasterization. */
+
+html body header{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:1672 / 941!important;
+  background-image:url('images/rick-parma-header-approved.jpg?v=55')!important;
+  background-size:100% 100%!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  transform:none!important;
+  filter:none!important;
+  image-rendering:auto!important;
+  -webkit-transform:none!important;
+  will-change:auto!important;
+  contain:none!important;
+}
+
+html body header::before,
+html body header::after{
+  content:none!important;
+  display:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+
+html body header h1,
+html body header h1 a{
+  display:none!important;
+}
+
+@media(max-width:560px){
+  html body header{
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:1672 / 941!important;
+    background-size:100% 100%!important;
+    background-position:center center!important;
+    transform:none!important;
+    filter:none!important;
+    image-rendering:auto!important;
+  }
+}
