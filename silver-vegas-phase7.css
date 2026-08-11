@@ -1,0 +1,470 @@
+/* RickParma.com — Silver Vegas Phase 7
+   Responsive QA + usability hardening only.
+   No JavaScript, API, payment, calendar data, booking submission,
+   or hero visibility behavior is changed. */
+
+:root{
+  --rp7-blue:#5bdcff;
+  --rp7-pink:#ff66dc;
+  --rp7-chrome:#f4f8fc;
+  --rp7-muted:#8e9cad;
+  --rp7-line:rgba(194,218,246,.18);
+  --rp7-ease:cubic-bezier(.2,.78,.24,1);
+}
+
+/* ==========================================================
+   GLOBAL — safe viewport behavior and consistent touch targets
+   ========================================================== */
+html{
+  scroll-padding-top:14px;
+}
+html body{
+  min-height:100vh;
+  min-height:100dvh;
+}
+html body button,
+html body a,
+html body input,
+html body select,
+html body textarea{
+  touch-action:manipulation;
+}
+html body button,
+html body .socials a,
+html body .rp-player-btn,
+html body #calendar .show-carousel-nav button,
+html body .cal-detail-close,
+html body .cal-detail-nav button{
+  min-width:44px;
+  min-height:44px;
+}
+
+/* Keep focus treatment visible against neon gradients. */
+html body a:focus-visible,
+html body button:focus-visible,
+html body input:focus-visible,
+html body select:focus-visible,
+html body textarea:focus-visible,
+html body [role="button"]:focus-visible{
+  outline:2px solid #dff7ff!important;
+  outline-offset:3px!important;
+  box-shadow:0 0 0 4px rgba(91,220,255,.14)!important;
+}
+
+/* ==========================================================
+   HEADER — safe area and tighter responsive lockup
+   ========================================================== */
+html body header{
+  padding-top:max(10px,env(safe-area-inset-top))!important;
+  padding-left:max(12px,env(safe-area-inset-left))!important;
+  padding-right:max(12px,env(safe-area-inset-right))!important;
+}
+html body header h1{
+  min-width:0;
+}
+html body header h1::after{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+html body .socials{
+  flex-shrink:0;
+}
+html body .socials a{
+  flex:0 0 auto;
+}
+
+/* ==========================================================
+   HERO — responsive integrity at every width
+   ========================================================== */
+html body .band-hero .band-inner,
+html body .band-hero .rp-card-panel{
+  width:100%!important;
+}
+html body .hero-title{
+  max-width:min(92vw,860px)!important;
+}
+html body .band-hero .button-row{
+  width:100%!important;
+}
+html body .band-hero .button-col{
+  width:100%!important;
+}
+html body .song-request-button,
+html body .fan-cam-button{
+  min-height:54px!important;
+}
+html body .song-request-button::after,
+html body .fan-cam-button::after{
+  overflow-wrap:anywhere;
+}
+html body .band-hero .btn-caption{
+  text-wrap:balance;
+}
+
+/* If exactly one live control remains, center it deliberately. */
+html body .band-hero .button-row:has(#songRequestCol[style*="display:none"]) #fanCamCol,
+html body .band-hero .button-row:has(#fanCamCol[style*="display:none"]) #songRequestCol{
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+/* ==========================================================
+   SHARED CARD LAYOUT — prevent accidental horizontal overflow
+   ========================================================== */
+html body .rp-card-panel,
+html body .rp-player,
+html body #rp-video-section,
+html body .product-card,
+html body section#booking,
+html body #calendar .show-tile{
+  max-width:100%;
+}
+html body .band-inner,
+html body .join-box,
+html body .rpc-wrap,
+html body form.booking{
+  min-width:0;
+}
+
+/* ==========================================================
+   TEXT JOIN — keep phone number stable on narrow phones
+   ========================================================== */
+html body .text-join-button::before,
+html body .text-join-button::after{
+  max-width:92%;
+}
+html body .text-join-button::after{
+  white-space:nowrap;
+}
+html body .join-box p{
+  text-wrap:pretty;
+}
+html body .join-box .fine-print{
+  max-width:720px;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+/* ==========================================================
+   MUSIC — resilient player spacing
+   ========================================================== */
+html body .rp-player-controls{
+  min-width:0;
+}
+html body .rp-player-track{
+  min-width:0!important;
+}
+html body .rp-progress-row{
+  min-width:0;
+}
+html body .rp-progress-bar{
+  min-width:40px;
+}
+html body .rp-time{
+  font-variant-numeric:tabular-nums;
+}
+
+/* ==========================================================
+   CALENDAR — edge masks, tap size, native-feeling detail sheet
+   ========================================================== */
+html body #calendar .show-track{
+  overscroll-behavior-x:contain;
+  scroll-snap-stop:always;
+}
+html body #calendar .show-tile{
+  min-height:100%;
+}
+html body #calendar .show-actions a{
+  min-height:38px;
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+}
+html body #calendar .show-carousel-nav button{
+  flex:0 0 44px;
+}
+html body #calendar .rpc-subscribe a{
+  min-height:44px;
+  display:inline-flex!important;
+  align-items:center;
+}
+
+html body .cal-detail-overlay{
+  padding-left:env(safe-area-inset-left)!important;
+  padding-right:env(safe-area-inset-right)!important;
+}
+html body .cal-detail-sheet{
+  padding-top:max(16px,env(safe-area-inset-top))!important;
+  padding-bottom:max(16px,env(safe-area-inset-bottom))!important;
+}
+html body .cal-detail-close{
+  top:max(14px,env(safe-area-inset-top))!important;
+  right:max(14px,env(safe-area-inset-right))!important;
+  width:44px!important;
+  height:44px!important;
+}
+html body .cal-detail-nav button{
+  width:44px!important;
+  height:44px!important;
+}
+html body .cal-detail-actions a{
+  min-height:46px;
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+}
+html body .cal-flyer-full{
+  padding-top:env(safe-area-inset-top)!important;
+  padding-right:env(safe-area-inset-right)!important;
+  padding-bottom:env(safe-area-inset-bottom)!important;
+  padding-left:env(safe-area-inset-left)!important;
+}
+html body .cal-flyer-full-back{
+  top:max(14px,env(safe-area-inset-top))!important;
+  left:max(14px,env(safe-area-inset-left))!important;
+  min-height:44px;
+}
+
+/* ==========================================================
+   PROMO VIDEOS — cleaner swipe row and keyboard state
+   ========================================================== */
+html body #rp-video-section .rp-carousel{
+  overscroll-behavior-x:contain;
+  scroll-snap-stop:always;
+}
+html body #rp-video-section .rp-thumb{
+  outline:none;
+}
+html body #rp-video-section .rp-thumb:focus-visible{
+  outline:2px solid rgba(91,220,255,.86)!important;
+  outline-offset:3px!important;
+}
+html body #rp-video-section .rp-play-btn{
+  min-width:40px;
+  min-height:40px;
+}
+
+/* ==========================================================
+   DIAMOND — keep CTA row clean as width changes
+   ========================================================== */
+html body .product-card .dm-btn-row{
+  min-width:0;
+}
+html body .product-card .buy-btn{
+  min-height:44px!important;
+  text-align:center;
+}
+html body .product-card p{
+  text-wrap:pretty;
+}
+
+/* ==========================================================
+   BOOKING — make the long form easier to scan
+   ========================================================== */
+html body form.booking > div{
+  min-width:0;
+}
+html body form.booking label,
+html body form.booking fieldset legend{
+  line-height:1.25!important;
+}
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  width:100%!important;
+  max-width:100%!important;
+}
+html body form.booking input:not([type="checkbox"]),
+html body form.booking select{
+  min-height:48px!important;
+}
+html body form.booking textarea{
+  min-height:112px!important;
+}
+html body form.booking fieldset{
+  min-width:0!important;
+}
+html body form.booking fieldset label{
+  border-radius:8px;
+  padding:5px 6px!important;
+  transition:background .16s var(--rp7-ease);
+}
+html body form.booking fieldset label:hover{
+  background:rgba(91,220,255,.035);
+}
+html body form.booking input[type="checkbox"]{
+  flex:0 0 18px;
+}
+html body .submit-btn{
+  min-height:56px!important;
+}
+
+/* Prevent iOS zoom while preserving readable fields. */
+@media(max-width:767px){
+  html body form.booking input,
+  html body form.booking select,
+  html body form.booking textarea{
+    font-size:16px!important;
+  }
+}
+
+/* ==========================================================
+   FOOTER — safe-area finish
+   ========================================================== */
+html body footer{
+  padding-left:max(14px,env(safe-area-inset-left))!important;
+  padding-right:max(14px,env(safe-area-inset-right))!important;
+  padding-bottom:max(36px,calc(env(safe-area-inset-bottom) + 22px))!important;
+}
+
+/* ==========================================================
+   SMALL PHONES — preserve the design, reduce crowding
+   ========================================================== */
+@media(max-width:359px){
+  html body header{
+    gap:8px!important;
+  }
+  html body header h1 a{
+    width:56px!important;
+    height:56px!important;
+  }
+  html body header h1::after{
+    display:none!important;
+  }
+  html body .socials{
+    gap:5px!important;
+  }
+  html body .socials a{
+    width:40px!important;
+    height:40px!important;
+  }
+  html body .hero-title{
+    font-size:clamp(2rem,12vw,2.65rem)!important;
+  }
+  html body .band-hero .button-row{
+    grid-template-columns:1fr!important;
+  }
+  html body .band-hero .button-col{
+    min-height:118px!important;
+  }
+  html body .band-hero .btn-caption{
+    margin-left:56px!important;
+  }
+  html body .text-join-button::before{
+    font-size:1.22rem!important;
+  }
+  html body .text-join-button::after{
+    font-size:1rem!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  html body #calendar .show-tile{
+    flex-basis:164px!important;
+  }
+  html body #rp-video-section .rp-thumb{
+    flex-basis:138px!important;
+  }
+}
+
+/* ==========================================================
+   PHONE LANDSCAPE — avoid an excessively tall hero
+   ========================================================== */
+@media(max-height:520px) and (orientation:landscape){
+  html body header h1 a{
+    width:52px!important;
+    height:52px!important;
+  }
+  html body .band-hero{
+    min-height:auto!important;
+    padding-top:24px!important;
+    padding-bottom:14px!important;
+  }
+  html body .hero-title{
+    font-size:clamp(2rem,8vw,3rem)!important;
+    margin-bottom:12px!important;
+  }
+  html body .hero-title::before,
+  html body .hero-title::after{
+    margin-top:7px!important;
+    margin-bottom:7px!important;
+  }
+  html body .band-hero .button-col{
+    min-height:108px!important;
+  }
+}
+
+/* ==========================================================
+   TABLET — bridge phone and desktop more intentionally
+   ========================================================== */
+@media(min-width:560px) and (max-width:899px){
+  html body header{
+    max-width:860px;
+    margin:0 auto;
+  }
+  html body .band-hero{
+    min-height:540px!important;
+  }
+  html body .band-hero .button-row{
+    max-width:720px!important;
+  }
+  html body #calendar .show-tile{
+    flex-basis:200px!important;
+  }
+  html body #rp-video-section .rp-thumb{
+    flex-basis:168px!important;
+  }
+  html body section#booking{
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+}
+
+/* ==========================================================
+   DESKTOP — constrain line length and keep controls deliberate
+   ========================================================== */
+@media(min-width:900px){
+  html body .band-tipjar .rp-card-panel,
+  html body .band-textjoin .rp-card-panel,
+  html body .rp-player,
+  html body #rp-video-section,
+  html body .product-card,
+  html body section#booking{
+    max-width:980px!important;
+  }
+  html body #booking-intro{
+    max-width:680px!important;
+  }
+  html body .join-box .fine-print{
+    max-width:760px!important;
+  }
+}
+
+/* ==========================================================
+   HIGH CONTRAST / REDUCED MOTION
+   ========================================================== */
+@media(prefers-contrast:more){
+  html body .rp-card-panel,
+  html body .rp-player,
+  html body #rp-video-section,
+  html body .product-card,
+  html body section#booking,
+  html body #calendar .show-tile{
+    border-color:rgba(235,244,255,.34)!important;
+  }
+  html body .btn-caption,
+  html body .join-box .fine-print,
+  html body #calendar .show-tile .meta{
+    color:#aeb9c8!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important;}
+  html body #calendar .show-track,
+  html body #rp-video-section .rp-carousel{
+    scroll-behavior:auto!important;
+  }
+  html body form.booking fieldset label{
+    transition:none!important;
+  }
+}
