@@ -1,0 +1,100 @@
+/* RickParma.com — Silver Vegas Phase 29
+   Hero card responsive fit/stacking refinement.
+   Keep 2-up where it fits; stack cleanly on smaller phones. */
+
+/* Slightly tighten the 2-up layout on medium phones so cards fit before stacking. */
+@media (max-width: 430px){
+  html body .band-hero .button-row{
+    gap:8px!important;
+  }
+  html body .band-hero .button-col{
+    min-height:106px!important;
+    padding:10px!important;
+  }
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    min-height:72px!important;
+    grid-template-columns:68px minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:62px!important;
+    height:62px!important;
+    min-width:62px!important;
+    min-height:62px!important;
+  }
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:clamp(1.05rem,5.6vw,1.34rem)!important;
+    line-height:.9!important;
+  }
+  html body .band-hero .button-col::after{
+    min-height:28px!important;
+    font-size:.62rem!important;
+    letter-spacing:.06em!important;
+  }
+}
+
+/* On smaller screens, stack the hero cards vertically so nothing feels cramped. */
+@media (max-width: 389px){
+  html body .band-hero .button-row{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+  html body .band-hero .button-col{
+    width:100%!important;
+    min-height:104px!important;
+    padding:10px 11px!important;
+    border-radius:18px!important;
+  }
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    min-height:74px!important;
+    width:100%!important;
+    grid-template-columns:72px minmax(0,1fr)!important;
+    gap:12px!important;
+  }
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:66px!important;
+    height:66px!important;
+    min-width:66px!important;
+    min-height:66px!important;
+  }
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:clamp(1.16rem,5.9vw,1.44rem)!important;
+    line-height:.9!important;
+  }
+  html body .band-hero .button-col::after{
+    min-height:30px!important;
+    font-size:.64rem!important;
+  }
+}
+
+/* Extra-small phones: keep the stacked look but tighten type slightly. */
+@media (max-width: 350px){
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-template-columns:64px minmax(0,1fr)!important;
+    gap:10px!important;
+    min-height:70px!important;
+  }
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:58px!important;
+    height:58px!important;
+    min-width:58px!important;
+    min-height:58px!important;
+  }
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:1.08rem!important;
+  }
+  html body .band-hero .button-col::after{
+    font-size:.6rem!important;
+    min-height:28px!important;
+  }
+}
