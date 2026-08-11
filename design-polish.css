@@ -1,6 +1,7 @@
 /* RickParma.com — layered Silver Vegas stylesheet */
 @import url('silver-vegas-base.css');
 @import url('silver-vegas-phase4.css');
+@import url('silver-vegas-phase5.css');
 
 /* Tip section spacing safeguard — keeps heading/subtitle clear of amount buttons */
 html body .band-tipjar .rp-card-panel{
