@@ -1,0 +1,457 @@
+/* RickParma.com — Silver Vegas Phase 5
+   Interaction and hierarchy refinement only. No JavaScript, API, payment,
+   calendar data, hero-status logic, or booking submission behavior changed. */
+
+:root{
+  --rp5-blue:#49d4ff;
+  --rp5-pink:#ff58d4;
+  --rp5-chrome:#eef4fb;
+  --rp5-muted:#8d99a9;
+  --rp5-ease:cubic-bezier(.2,.78,.24,1);
+}
+
+/* ==========================================================
+   HERO — gracefully handle Song Request / Fan Cam visibility
+   ========================================================== */
+html body .band-hero .button-row{
+  transition:max-width .28s var(--rp5-ease),grid-template-columns .28s var(--rp5-ease)!important;
+}
+
+/* The existing JS writes display:none inline. When either control is hidden,
+   let the remaining live control own the full row instead of sitting at 50%. */
+html body .band-hero .button-row:has(#songRequestCol[style*="display"]),
+html body .band-hero .button-row:has(#fanCamCol[style*="display"]){
+  grid-template-columns:minmax(0,1fr)!important;
+  max-width:440px!important;
+}
+html body .band-hero .button-row:has(#songRequestCol[style*="display"]) #fanCamCol,
+html body .band-hero .button-row:has(#fanCamCol[style*="display"]) #songRequestCol{
+  min-height:132px!important;
+}
+
+html body .band-hero .button-col{
+  transform-origin:center;
+}
+html body .band-hero .button-col::after{
+  content:'';
+  position:absolute;
+  left:14%;
+  right:14%;
+  bottom:0;
+  height:1px;
+  opacity:.55;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+  pointer-events:none;
+}
+
+/* Stronger physical tap state on phones. */
+@media(hover:none) and (pointer:coarse){
+  html body .band-hero .button-col:active{
+    transform:scale(.985)!important;
+    filter:brightness(.96)!important;
+  }
+  html body .song-request-button:active,
+  html body .fan-cam-button:active,
+  html body .text-join-button:active,
+  html body .tip-cta-btn:active,
+  html body .submit-btn:active{
+    transform:scale(.985)!important;
+  }
+}
+
+/* ==========================================================
+   SECTION HEADINGS — consistent editorial hierarchy
+   ========================================================== */
+html body .band-music h2.display-heading,
+html body #calendar h2.display-heading,
+html body #rp-video-section .rp-section-title{
+  position:relative!important;
+  padding-bottom:14px!important;
+}
+html body .band-music h2.display-heading::after,
+html body #calendar h2.display-heading::after,
+html body #rp-video-section .rp-section-title::after{
+  display:block;
+  margin-top:6px;
+  color:var(--rp5-muted)!important;
+  -webkit-text-fill-color:var(--rp5-muted)!important;
+  font-size:.54rem;
+  line-height:1;
+  font-weight:780;
+  letter-spacing:.14em;
+}
+html body .band-music h2.display-heading::after{content:'ORIGINAL MUSIC';}
+html body #calendar h2.display-heading::after{content:'UPCOMING LIVE DATES';}
+html body #rp-video-section .rp-section-title::after{content:'WATCH • LISTEN • FEEL THE VIBE';}
+
+html body .band-music h2.display-heading::before,
+html body #calendar h2.display-heading::before,
+html body #rp-video-section .rp-section-title::before{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:4px;
+  width:54px;
+  height:1px;
+  background:linear-gradient(90deg,var(--rp5-blue),var(--rp5-pink),transparent);
+  box-shadow:0 0 10px rgba(73,212,255,.15);
+}
+
+/* ==========================================================
+   MUSIC PLAYER — better timeline and status affordance
+   ========================================================== */
+html body .rp-player-track{
+  position:relative;
+  padding-right:2px;
+}
+html body .rp-player-title{
+  color:#f0f4f9!important;
+  letter-spacing:.01em;
+}
+html body .rp-progress-bar{
+  min-height:7px!important;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.45)!important;
+}
+html body .rp-progress-bar::after{
+  content:'';
+  position:absolute;
+  inset:-8px 0;
+}
+html body .rp-progress-fill{
+  position:relative;
+}
+html body .rp-progress-fill::after{
+  content:'';
+  position:absolute;
+  right:-3px;
+  top:50%;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  transform:translateY(-50%);
+  background:#f8fbff;
+  box-shadow:0 0 8px rgba(73,212,255,.55);
+}
+
+/* ==========================================================
+   CALENDAR — premium horizontal cards + detail sheet
+   ========================================================== */
+html body #calendar .rpc-wrap{
+  position:relative!important;
+}
+html body #calendar .show-track{
+  scroll-padding-inline:10px!important;
+  padding-left:1px!important;
+  padding-right:1px!important;
+}
+html body #calendar .show-tile{
+  transform-origin:center bottom;
+}
+html body #calendar .show-tile:focus-visible{
+  outline:2px solid rgba(73,212,255,.78)!important;
+  outline-offset:3px!important;
+}
+html body #calendar .show-date-badge{
+  position:relative;
+  overflow:hidden;
+}
+html body #calendar .show-date-badge::after{
+  content:'';
+  position:absolute;
+  inset:1px;
+  border-radius:inherit;
+  pointer-events:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(0,0,0,.12);
+}
+html body #calendar .show-date-badge .mon{
+  letter-spacing:.075em!important;
+}
+
+html body .cal-detail-overlay{
+  background:rgba(0,2,7,.84)!important;
+  backdrop-filter:blur(14px) saturate(1.08)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.08)!important;
+}
+html body .cal-detail-sheet{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(73,212,255,.07),transparent 24%),
+    radial-gradient(circle at 94% 0%,rgba(255,88,212,.06),transparent 25%),
+    linear-gradient(180deg,#08111d,#03070d)!important;
+  border-color:rgba(192,216,244,.18)!important;
+  box-shadow:0 28px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+html body .cal-detail-close,
+html body .cal-detail-nav button{
+  border:1px solid rgba(255,255,255,.09)!important;
+  background:rgba(255,255,255,.055)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 18px rgba(0,0,0,.22)!important;
+}
+html body .cal-detail-close:hover,
+html body .cal-detail-nav button:hover{
+  background:rgba(73,212,255,.09)!important;
+  border-color:rgba(73,212,255,.25)!important;
+}
+html body .cal-detail-flyer{
+  border:1px solid rgba(255,255,255,.075)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 20px rgba(73,212,255,.045)!important;
+}
+html body .cal-detail-flyer-hint{
+  background:rgba(2,5,10,.70)!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+}
+html body .cal-detail-date{
+  color:#90a0b2!important;
+  font-weight:760!important;
+  letter-spacing:.08em!important;
+}
+html body .cal-detail-venue{
+  color:#f4f7fb!important;
+  letter-spacing:.015em!important;
+}
+html body .cal-detail-actions a.primary{
+  background:linear-gradient(105deg,var(--rp5-blue),#7280ff 48%,var(--rp5-pink))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.56),0 10px 24px rgba(0,0,0,.28)!important;
+}
+html body .cal-detail-actions-row a.alt{
+  background:rgba(255,255,255,.025)!important;
+  border-color:rgba(255,255,255,.10)!important;
+  color:#dbe4ef!important;
+}
+html body .cal-flyer-full{
+  background:radial-gradient(circle at 50% 40%,#0a111d,#000 66%)!important;
+}
+html body .cal-flyer-full-back{
+  border:1px solid rgba(255,255,255,.10)!important;
+  background:rgba(5,9,15,.68)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+}
+
+/* Choice menu opened by Directions / + Calendar. */
+html body .cal-choice-menu{
+  background:rgba(8,13,22,.97)!important;
+  border-color:rgba(192,216,244,.16)!important;
+  box-shadow:0 18px 45px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+}
+html body .cal-choice-menu a{
+  color:#e5ecf5!important;
+}
+html body .cal-choice-menu a:hover,
+html body .cal-choice-menu a:active{
+  background:linear-gradient(90deg,rgba(73,212,255,.08),rgba(255,88,212,.055))!important;
+}
+
+/* ==========================================================
+   PROMO VIDEOS — stronger selected state / swipe affordance
+   ========================================================== */
+html body #rp-video-section .rp-carousel-outer{
+  position:relative;
+}
+html body #rp-video-section .rp-carousel{
+  scroll-padding-inline:2px!important;
+}
+html body #rp-video-section .rp-thumb{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.025),transparent 32%),
+    #040914!important;
+}
+html body #rp-video-section .rp-thumb.active{
+  transform:translateY(-2px)!important;
+  border-color:rgba(255,88,212,.50)!important;
+  box-shadow:0 0 0 1px rgba(73,212,255,.12),0 12px 26px rgba(0,0,0,.30),0 0 22px rgba(255,88,212,.09)!important;
+}
+html body #rp-video-section .rp-now-chip{
+  border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 4px 12px rgba(0,0,0,.24)!important;
+}
+html body #rp-video-section .rp-featured-label{
+  color:#8996a7!important;
+}
+html body #rp-video-section #rp-playing-title{
+  color:#e9eef5!important;
+}
+
+/* ==========================================================
+   DIAMOND METHOD — better product / login distinction
+   ========================================================== */
+html body .product-card .dm-btn-row{
+  align-items:stretch!important;
+}
+html body .product-card .buy-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:40px!important;
+  border:1px solid rgba(255,255,255,.09)!important;
+}
+html body .product-card .buy-btn[href*="diamond-login"]{
+  background:rgba(255,255,255,.025)!important;
+  border-color:rgba(194,215,241,.16)!important;
+  color:#dce5ef!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+html body .product-card .buy-btn[href*="diamond-login"]:hover{
+  border-color:rgba(73,212,255,.28)!important;
+  background:rgba(73,212,255,.045)!important;
+}
+
+/* ==========================================================
+   BOOKING — app-like form controls without removing fields
+   ========================================================== */
+html body form.booking{
+  position:relative;
+}
+html body form.booking label{
+  margin-bottom:5px!important;
+  color:#8f9bab!important;
+}
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018)!important;
+}
+html body form.booking input::placeholder,
+html body form.booking textarea::placeholder{
+  color:#5f6b79!important;
+  opacity:1;
+}
+html body form.booking select{
+  cursor:pointer;
+}
+html body form.booking fieldset{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.018),transparent 35%),
+    rgba(4,9,16,.76)!important;
+  border-color:rgba(177,202,232,.15)!important;
+}
+html body form.booking fieldset legend{
+  color:#a7b2c0!important;
+  padding:0 7px!important;
+}
+html body form.booking fieldset label{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-height:34px;
+  margin:0!important;
+  color:#c3ccd8!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+  font-size:.76rem!important;
+}
+html body form.booking input[type="checkbox"]{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  width:18px!important;
+  min-width:18px!important;
+  height:18px!important;
+  min-height:18px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:5px!important;
+  border:1px solid rgba(190,214,242,.26)!important;
+  background:#050a12!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  cursor:pointer!important;
+}
+html body form.booking input[type="checkbox"]::before{
+  content:'';
+  width:8px;
+  height:8px;
+  border-radius:2px;
+  transform:scale(0);
+  transition:transform .14s var(--rp5-ease);
+  background:#04070b;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);
+}
+html body form.booking input[type="checkbox"]:checked{
+  border-color:transparent!important;
+  background:linear-gradient(135deg,var(--rp5-blue),#727fff 50%,var(--rp5-pink))!important;
+}
+html body form.booking input[type="checkbox"]:checked::before{
+  transform:scale(1);
+}
+html body .submit-btn:disabled{
+  opacity:.62!important;
+  filter:saturate(.7)!important;
+  cursor:wait!important;
+  transform:none!important;
+}
+
+/* ==========================================================
+   FOOTER — slightly tighter, stronger brand finish
+   ========================================================== */
+html body footer{
+  letter-spacing:.015em!important;
+}
+html body footer::after{
+  color:#748191!important;
+  letter-spacing:.13em!important;
+}
+
+/* ==========================================================
+   MOBILE DETAILS
+   ========================================================== */
+@media(max-width:559px){
+  html body .band-music h2.display-heading,
+  html body #calendar h2.display-heading,
+  html body #rp-video-section .rp-section-title{
+    padding-bottom:12px!important;
+  }
+  html body .cal-detail-sheet{
+    padding:14px 12px!important;
+  }
+  html body .cal-detail-flyer{
+    margin-top:38px!important;
+  }
+  html body .cal-detail-actions a{
+    min-height:44px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  html body .cal-detail-actions-row{
+    gap:8px!important;
+  }
+  html body .cal-detail-actions-row a.alt{
+    flex:1!important;
+    padding:11px 10px!important;
+  }
+  html body #rp-video-section .rp-thumb{
+    flex-basis:152px!important;
+  }
+  html body .product-card .dm-btn-row{
+    width:100%!important;
+  }
+  html body .product-card .buy-btn{
+    flex:1 1 120px!important;
+  }
+}
+
+@media(max-width:380px){
+  html body #calendar .show-tile{flex-basis:168px!important;}
+  html body #rp-video-section .rp-thumb{flex-basis:142px!important;}
+  html body form.booking fieldset label{font-size:.72rem!important;}
+}
+
+/* Desktop keeps the same language, just more breathing room. */
+@media(min-width:900px){
+  html body .cal-detail-sheet{
+    max-width:520px!important;
+  }
+  html body .product-card .buy-btn{
+    min-width:122px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body .rp-progress-fill::after{box-shadow:none!important;}
+  html body form.booking input[type="checkbox"]::before{transition:none!important;}
+}
