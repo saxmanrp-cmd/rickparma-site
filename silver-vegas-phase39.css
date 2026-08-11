@@ -1,0 +1,147 @@
+/* RickParma.com — Silver Vegas Phase 39
+   Restore the SHOW SOME LOVE title/subtitle and the Square trust line.
+   Compress the tip module vertically so there is no dead space. */
+
+/* ==========================================================
+   TIP PANEL — compact single visual block
+   ========================================================== */
+html body .band-tipjar{
+  padding-top:6px!important;
+  padding-bottom:6px!important;
+}
+
+html body .band-tipjar .rp-card-panel{
+  position:relative!important;
+  min-height:0!important;
+  padding:76px 12px 10px!important;
+  overflow:visible!important;
+}
+
+/* Restore the title that Phase 34 accidentally hid globally. */
+html body .band-tipjar .rp-card-panel::before{
+  content:'SHOW SOME LOVE'!important;
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+  position:absolute!important;
+  top:13px!important;
+  left:10px!important;
+  right:10px!important;
+  z-index:5!important;
+  background:linear-gradient(180deg,#ffffff 0%,#dce5ef 40%,#8e9cad 72%,#f8fbff 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  color:transparent!important;
+  -webkit-text-fill-color:transparent!important;
+  text-align:center!important;
+  font-size:clamp(1.58rem,7.2vw,2.08rem)!important;
+  font-weight:950!important;
+  line-height:.98!important;
+  letter-spacing:.085em!important;
+  text-transform:uppercase!important;
+  text-shadow:none!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+
+html body .band-tipjar .rp-card-panel::after{
+  content:'Enjoying the music? Tips are always appreciated!'!important;
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+  position:absolute!important;
+  top:47px!important;
+  left:8px!important;
+  right:8px!important;
+  z-index:5!important;
+  color:#c5cbd4!important;
+  text-align:center!important;
+  font-size:clamp(.70rem,3.35vw,.88rem)!important;
+  font-weight:650!important;
+  line-height:1.12!important;
+  letter-spacing:.018em!important;
+  white-space:nowrap!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+
+/* Amounts sit immediately below the subtitle. */
+html body .band-tipjar .tip-amounts{
+  margin:0 0 8px!important;
+  gap:8px!important;
+}
+html body .band-tipjar .tip-amt{
+  min-height:48px!important;
+  padding-top:8px!important;
+  padding-bottom:8px!important;
+}
+
+/* CTA stays substantial but no longer creates a giant empty block. */
+html body .band-tipjar .tip-row{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  margin:0!important;
+  padding:0!important;
+}
+html body .band-tipjar .tip-row > #tip-cta,
+html body .band-tipjar .tip-row > .tip-cta-btn,
+html body #tip-cta.tip-cta-btn{
+  min-height:58px!important;
+  height:auto!important;
+  margin:0!important;
+  padding-top:10px!important;
+  padding-bottom:10px!important;
+}
+
+/* Restore the trust/payment line directly beneath the CTA.
+   Text is deliberately generated here so no payment behavior changes. */
+html body .band-tipjar .tip-row::after{
+  content:'🔒  Secure & powered by  ▣  Square'!important;
+  display:block!important;
+  width:100%!important;
+  margin:7px 0 0!important;
+  padding:0!important;
+  color:#aeb6c2!important;
+  text-align:center!important;
+  font-size:clamp(.70rem,3.45vw,.86rem)!important;
+  font-weight:600!important;
+  line-height:1.1!important;
+  letter-spacing:.018em!important;
+  white-space:nowrap!important;
+  opacity:.92!important;
+  background:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:420px){
+  html body .band-tipjar .rp-card-panel{
+    padding:72px 10px 9px!important;
+  }
+  html body .band-tipjar .rp-card-panel::before{
+    top:12px!important;
+    font-size:clamp(1.42rem,7.1vw,1.78rem)!important;
+  }
+  html body .band-tipjar .rp-card-panel::after{
+    top:43px!important;
+    font-size:clamp(.66rem,3.15vw,.78rem)!important;
+  }
+  html body .band-tipjar .tip-amounts{
+    gap:7px!important;
+    margin-bottom:7px!important;
+  }
+  html body .band-tipjar .tip-amt{
+    min-height:46px!important;
+  }
+  html body .band-tipjar .tip-row > #tip-cta,
+  html body .band-tipjar .tip-row > .tip-cta-btn,
+  html body #tip-cta.tip-cta-btn{
+    min-height:56px!important;
+  }
+  html body .band-tipjar .tip-row::after{
+    margin-top:6px!important;
+    font-size:clamp(.66rem,3.25vw,.76rem)!important;
+  }
+}
