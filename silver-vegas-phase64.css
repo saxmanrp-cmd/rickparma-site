@@ -1,0 +1,57 @@
+/* RickParma.com — Silver Vegas Phase 64
+   Final header recovery: use the verified 1300x732 HD AVIF as an ordinary
+   CSS background. Keep the existing social icons live above it. */
+
+html body header{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:1300 / 732!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  box-shadow:none!important;
+  background-color:#010307!important;
+  background-image:url('images/rick-parma-header-approved-hd.avif?v=64')!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  background-size:100% 100%!important;
+  transform:none!important;
+  filter:none!important;
+}
+
+/* Disable the failed Phase 62/63 replacement-image experiments. */
+html body header::before,
+html body header::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+html body header h1,
+html body header h1 a{
+  display:none!important;
+  content:none!important;
+}
+
+/* Preserve the already-approved social icons above the image. */
+html body header .socials{
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:absolute!important;
+  z-index:20!important;
+}
+
+@media(max-width:560px){
+  html body header{
+    width:100%!important;
+    aspect-ratio:1300 / 732!important;
+    background-image:url('images/rick-parma-header-approved-hd.avif?v=64')!important;
+    background-position:center center!important;
+    background-size:100% 100%!important;
+  }
+}
