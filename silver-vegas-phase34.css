@@ -1,0 +1,179 @@
+/* RickParma.com — Silver Vegas Phase 34
+   High-contrast cleanup: remove diffuse haze while preserving neon and glass shine. */
+
+:root{
+  --rp34-glass-edge:rgba(220,234,250,.20);
+  --rp34-black:#02050a;
+  --rp34-black-2:#070b12;
+}
+
+/* ==========================================================
+   BACKGROUNDS — remove the fog/blur from the full-page bands.
+   ========================================================== */
+html body .band::before{
+  filter:none!important;
+  inset:0!important;
+  opacity:1!important;
+}
+html body .band::after{
+  background:rgba(2,4,8,.46)!important;
+}
+html body .band-hero::after{
+  background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.40) 72%,rgba(0,0,0,.62))!important;
+}
+html body .band-tipjar::before{
+  filter:none!important;
+  background-size:cover!important;
+}
+
+/* ==========================================================
+   CARDS — crisp black glass instead of milky/fogged glass.
+   Keep glare, remove wide cyan/pink haze.
+   ========================================================== */
+html body .band-hero .button-col,
+html body .band-tipjar .rp-card-panel,
+html body .band-textjoin .rp-card-panel,
+html body .rp-player,
+html body #rp-video-section,
+html body .product-card,
+html body section#booking,
+html body #calendar .show-tile{
+  background:
+    linear-gradient(116deg,
+      rgba(255,255,255,.12) 0%,
+      rgba(255,255,255,.035) 10%,
+      transparent 24%),
+    linear-gradient(180deg,rgba(8,12,19,.985),rgba(1,4,8,.995))!important;
+  border-color:var(--rp34-glass-edge)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(255,255,255,.025),
+    0 8px 20px rgba(0,0,0,.34)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Hero cards: a harder showroom reflection, no colored fog. */
+html body .band-hero .button-col{
+  background:
+    linear-gradient(118deg,
+      rgba(255,255,255,.15) 0%,
+      rgba(255,255,255,.045) 11%,
+      transparent 27%),
+    linear-gradient(180deg,rgba(8,12,19,.985),rgba(1,4,8,.997))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(255,255,255,.02),
+    0 9px 20px rgba(0,0,0,.38)!important;
+}
+
+/* Remove leftover card-level colored mist pseudo-layers. */
+html body .rp-card-panel::before,
+html body #rp-video-section::before{
+  background:none!important;
+  opacity:0!important;
+}
+
+/* ==========================================================
+   NEON BADGES — keep the neon, tighten its bloom to the ring.
+   SVG artwork stays unchanged.
+   ========================================================== */
+html body .song-request-button::before,
+html body .fan-cam-button::before,
+html body .text-join-button{
+  filter:none!important;
+  box-shadow:none!important;
+}
+
+/* ==========================================================
+   TIP — crisp controls, selected amount gets a tight blue halo only.
+   ========================================================== */
+html body .band-tipjar .tip-amt{
+  background:
+    linear-gradient(116deg,rgba(255,255,255,.08),transparent 30%),
+    linear-gradient(180deg,rgba(7,11,18,.99),rgba(1,4,8,.998))!important;
+  border-color:rgba(218,232,248,.18)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 4px 10px rgba(0,0,0,.24)!important;
+}
+html body .band-tipjar .rp-card-panel.tip-selection-made .tip-amt.active{
+  border-color:#49b8ff!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 0 0 1px rgba(73,184,255,.55),
+    0 0 10px rgba(73,184,255,.38)!important;
+}
+
+html body #tip-cta.tip-cta-btn,
+html body .band-tipjar .tip-cta-btn{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.70),
+    inset 0 -1px 0 rgba(0,0,0,.20),
+    0 8px 18px rgba(0,0,0,.34)!important;
+}
+
+/* ==========================================================
+   TEXT / MUSIC / CALENDAR / PROMO / DIAMOND / BOOKING
+   Remove wide glow and keep sharp glass highlights.
+   ========================================================== */
+html body .band-textjoin .rp-card-panel{
+  background:
+    linear-gradient(116deg,rgba(255,255,255,.11),rgba(255,255,255,.025) 15%,transparent 30%),
+    linear-gradient(180deg,rgba(7,11,18,.99),rgba(1,4,8,.998))!important;
+}
+
+html body .rp-player-cover,
+html body .rp-player img,
+html body #rp-video-section .rp-featured-wrap,
+html body #rp-video-section .rp-featured,
+html body #calendar .show-flyer,
+html body #calendar .show-tile img,
+html body .product-card img{
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+
+html body .rp-player button,
+html body #calendar .show-carousel-nav button,
+html body .product-card .buy-btn,
+html body .submit-btn{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 4px 10px rgba(0,0,0,.20)!important;
+}
+
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea,
+html body form.booking fieldset{
+  background:rgba(2,6,11,.96)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+
+/* Cleaner hero chrome: stronger dark separation under the title. */
+html body .hero-title,
+html body .band-hero .hero-title{
+  filter:none!important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.18),
+    0 3px 8px rgba(0,0,0,.72)!important;
+}
+
+@media(max-width:560px){
+  /* Mobile gets the highest contrast because this is where haze was most obvious. */
+  html body .band::after{
+    background:rgba(1,3,7,.40)!important;
+  }
+  html body .band-hero::after{
+    background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.34) 70%,rgba(0,0,0,.58))!important;
+  }
+  html body .band-hero .button-col,
+  html body .band-tipjar .rp-card-panel,
+  html body .band-textjoin .rp-card-panel{
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.17),
+      0 6px 14px rgba(0,0,0,.32)!important;
+  }
+}
