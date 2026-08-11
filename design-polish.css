@@ -54,115 +54,15 @@
 @import url('silver-vegas-phase55.css');
 @import url('silver-vegas-phase62.css');
 @import url('silver-vegas-phase63.css');
+@import url('silver-vegas-phase64.css');
 
 /* Tip section spacing safeguard — compact final values */
-html body .band-tipjar .rp-card-panel{
-  padding-top:76px!important;
-}
-html body .band-tipjar .rp-card-panel::before{
-  top:13px!important;
-  line-height:.98!important;
-}
-html body .band-tipjar .rp-card-panel::after{
-  top:47px!important;
-}
-html body .band-tipjar .tip-amounts{
-  position:relative!important;
-  z-index:3!important;
-  margin-top:0!important;
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  gap:8px!important;
-}
-html body .band-tipjar .tip-amt{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  visibility:visible!important;
-  opacity:1!important;
-  position:relative!important;
-  z-index:4!important;
-  min-width:0!important;
-  width:100%!important;
-  min-height:48px!important;
-  border-radius:12px!important;
-  border-width:1.5px!important;
-}
-/* $20 keeps only structural safeguards now — no forced selected appearance. */
-html body .band-tipjar .tip-amt[data-amt="20"]{
-  display:flex!important;
-  visibility:visible!important;
-  opacity:1!important;
-  font-size:1rem!important;
-  font-weight:900!important;
-  line-height:1!important;
-  text-indent:0!important;
-  overflow:visible!important;
-}
-
-/* Mobile CTA safeguard — aligned with Phase 44. */
-html body .band-tipjar .tip-row{
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:stretch!important;
-  justify-content:center!important;
-  width:100%!important;
-  max-width:none!important;
-  margin:0!important;
-  padding-left:0!important;
-  padding-right:0!important;
-  gap:0!important;
-}
-html body .band-tipjar .tip-row > #tip-cta,
-html body .band-tipjar .tip-row > .tip-cta-btn,
-html body #tip-cta.tip-cta-btn{
-  display:flex!important;
-  flex:0 0 auto!important;
-  align-self:stretch!important;
-  align-items:center!important;
-  justify-content:center!important;
-  width:100%!important;
-  max-width:none!important;
-  min-width:0!important;
-  min-height:74px!important;
-  margin:0 auto!important;
-  padding:7px 0!important;
-  box-sizing:border-box!important;
-  text-align:center!important;
-  white-space:nowrap!important;
-}
-
-@media(max-width:420px){
-  html body .band-tipjar .rp-card-panel{
-    padding-top:72px!important;
-  }
-  html body .band-tipjar .rp-card-panel::before{
-    top:12px!important;
-    font-size:clamp(1.42rem,7.1vw,1.78rem)!important;
-  }
-  html body .band-tipjar .rp-card-panel::after{
-    top:43px!important;
-  }
-  html body .band-tipjar .tip-amounts{
-    gap:7px!important;
-  }
-  html body .band-tipjar .tip-amt{
-    min-height:46px!important;
-    font-size:.92rem!important;
-    padding-left:1px!important;
-    padding-right:1px!important;
-  }
-  html body .band-tipjar .tip-row,
-  html body .band-tipjar .tip-row > #tip-cta,
-  html body .band-tipjar .tip-row > .tip-cta-btn,
-  html body #tip-cta.tip-cta-btn{
-    width:100%!important;
-    max-width:none!important;
-    min-height:72px!important;
-  }
-  html body .band-tipjar .tip-row > #tip-cta,
-  html body .band-tipjar .tip-row > .tip-cta-btn,
-  html body #tip-cta.tip-cta-btn{
-    padding:6px 0!important;
-  }
-}
+html body .band-tipjar .rp-card-panel{padding-top:76px!important;}
+html body .band-tipjar .rp-card-panel::before{top:13px!important;line-height:.98!important;}
+html body .band-tipjar .rp-card-panel::after{top:47px!important;}
+html body .band-tipjar .tip-amounts{position:relative!important;z-index:3!important;margin-top:0!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;}
+html body .band-tipjar .tip-amt{display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:4!important;min-width:0!important;width:100%!important;min-height:48px!important;border-radius:12px!important;border-width:1.5px!important;}
+html body .band-tipjar .tip-amt[data-amt="20"]{display:flex!important;visibility:visible!important;opacity:1!important;font-size:1rem!important;font-weight:900!important;line-height:1!important;text-indent:0!important;overflow:visible!important;}
+html body .band-tipjar .tip-row{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;width:100%!important;max-width:none!important;margin:0!important;padding-left:0!important;padding-right:0!important;gap:0!important;}
+html body .band-tipjar .tip-row > #tip-cta,html body .band-tipjar .tip-row > .tip-cta-btn,html body #tip-cta.tip-cta-btn{display:flex!important;flex:0 0 auto!important;align-self:stretch!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:74px!important;margin:0 auto!important;padding:7px 0!important;box-sizing:border-box!important;text-align:center!important;white-space:nowrap!important;}
+@media(max-width:420px){html body .band-tipjar .rp-card-panel{padding-top:72px!important;}html body .band-tipjar .rp-card-panel::before{top:12px!important;font-size:clamp(1.42rem,7.1vw,1.78rem)!important;}html body .band-tipjar .rp-card-panel::after{top:43px!important;}html body .band-tipjar .tip-amounts{gap:7px!important;}html body .band-tipjar .tip-amt{min-height:46px!important;font-size:.92rem!important;padding-left:1px!important;padding-right:1px!important;}html body .band-tipjar .tip-row,html body .band-tipjar .tip-row > #tip-cta,html body .band-tipjar .tip-row > .tip-cta-btn,html body #tip-cta.tip-cta-btn{width:100%!important;max-width:none!important;min-height:72px!important;}html body .band-tipjar .tip-row > #tip-cta,html body .band-tipjar .tip-row > .tip-cta-btn,html body #tip-cta.tip-cta-btn{padding:6px 0!important;}}
