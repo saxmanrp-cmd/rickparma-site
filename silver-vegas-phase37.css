@@ -1,0 +1,125 @@
+/* RickParma.com — Silver Vegas Phase 37
+   Text Updates is the icon-style source of truth.
+   Match Song Request/Fan Cam to its exact presentation scale on mobile,
+   and force the original RP medallion into the silver/chrome theme. */
+
+/* ==========================================================
+   HEADER — original medallion, SILVER/CHROME only.
+   Phase 36 restored the original asset but removed the grayscale
+   filter, which exposed its warm/gold source tones.
+   ========================================================== */
+html body header h1 a{
+  background:url('apple-touch-icon.png') center/contain no-repeat!important;
+  background-color:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  filter:
+    grayscale(1)
+    saturate(0)
+    brightness(1.48)
+    contrast(1.20)
+    drop-shadow(0 4px 10px rgba(0,0,0,.48))!important;
+}
+
+/* ==========================================================
+   ICON SYSTEM — Text Updates is the master treatment.
+   Same transparent container, same contain sizing, no extra box,
+   no inherited shell, no extra CSS glow. The SVG supplies the
+   crisp neon ring + neon glyph treatment.
+   ========================================================== */
+html body .song-request-button::before,
+html body .fan-cam-button::before,
+html body .text-join-button{
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background-color:transparent!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  clip-path:none!important;
+}
+
+/* Keep the correct artwork mapped to each control. */
+html body .song-request-button::before{
+  content:''!important;
+  background-image:url('neon-song-badge.svg')!important;
+}
+html body .fan-cam-button::before{
+  content:''!important;
+  background-image:url('neon-camera-badge.svg')!important;
+}
+html body .text-join-button{
+  background-image:url('neon-chat-badge.svg')!important;
+}
+
+/* Desktop/tablet: use one common icon footprint. */
+@media(min-width:561px){
+  html body .song-request-button::before,
+  html body .fan-cam-button::before,
+  html body .text-join-button{
+    width:82px!important;
+    height:82px!important;
+    min-width:82px!important;
+    min-height:82px!important;
+  }
+}
+
+/* Mobile: EXACT same physical badge size as Text Updates. */
+@media(max-width:560px){
+  html body .song-request-button::before,
+  html body .fan-cam-button::before,
+  html body .text-join-button{
+    width:82px!important;
+    height:82px!important;
+    min-width:82px!important;
+    min-height:82px!important;
+  }
+
+  /* Rebalance the hero link grid around that same badge footprint. */
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-template-columns:88px minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+}
+
+/* Typical iPhone widths — clone Text Updates at 76px. */
+@media(max-width:430px){
+  html body .song-request-button::before,
+  html body .fan-cam-button::before,
+  html body .text-join-button{
+    width:76px!important;
+    height:76px!important;
+    min-width:76px!important;
+    min-height:76px!important;
+  }
+
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-template-columns:82px minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+}
+
+/* Extra-small phones — again, all three stay identical. */
+@media(max-width:350px){
+  html body .song-request-button::before,
+  html body .fan-cam-button::before,
+  html body .text-join-button{
+    width:68px!important;
+    height:68px!important;
+    min-width:68px!important;
+    min-height:68px!important;
+  }
+
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-template-columns:74px minmax(0,1fr)!important;
+    gap:8px!important;
+  }
+}
