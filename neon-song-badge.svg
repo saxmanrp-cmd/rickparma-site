@@ -1,35 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Neon music note badge">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Neon music note icon">
   <defs>
-    <linearGradient id="ring" x1="34" y1="45" x2="221" y2="211" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#55ddff"/>
-      <stop offset="0.42" stop-color="#5ea8ff"/>
-      <stop offset="0.72" stop-color="#b56bff"/>
-      <stop offset="1" stop-color="#ff58d2"/>
-    </linearGradient>
-    <linearGradient id="glyph" x1="78" y1="76" x2="182" y2="184" gradientUnits="userSpaceOnUse">
+    <linearGradient id="glyph" x1="72" y1="72" x2="188" y2="190" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#54dcff"/>
       <stop offset="0.45" stop-color="#75a9ff"/>
       <stop offset="1" stop-color="#ff5bd3"/>
     </linearGradient>
-    <radialGradient id="disc" cx="38%" cy="28%" r="82%">
-      <stop offset="0" stop-color="#182236" stop-opacity=".72"/>
-      <stop offset=".58" stop-color="#070b14" stop-opacity=".95"/>
-      <stop offset="1" stop-color="#02040a"/>
-    </radialGradient>
-    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="7" result="b"/>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="6.5" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <filter id="soft" x="-80%" y="-80%" width="260%" height="260%">
-      <feGaussianBlur stdDeviation="12"/>
-    </filter>
   </defs>
-  <circle cx="128" cy="128" r="101" fill="url(#disc)"/>
-  <circle cx="128" cy="128" r="101" fill="none" stroke="url(#ring)" stroke-width="5.5" opacity=".44" filter="url(#soft)"/>
-  <circle cx="128" cy="128" r="101" fill="none" stroke="url(#ring)" stroke-width="4.5" filter="url(#glow)"/>
-  <path d="M47 88c25-41 72-66 121-56" fill="none" stroke="#fff" stroke-opacity=".34" stroke-width="2.2" stroke-linecap="round"/>
-  <g transform="matrix(.74 0 0 .74 45.12 29.21)">
-    <path d="M104 93v77c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V88l82-18v67c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V86l-66 15" fill="none" stroke="url(#glyph)" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
-    <path d="M104 93v77c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V88l82-18v67c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V86l-66 15" fill="none" stroke="#fff" stroke-opacity=".24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="matrix(.88 0 0 .88 25.7 13.5)">
+    <path d="M104 93v77c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V88l82-18v67c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V86l-66 15" fill="none" stroke="url(#glyph)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <path d="M104 93v77c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V88l82-18v67c0 15-14 27-31 27-15 0-27-9-27-21 0-14 15-24 32-24 7 0 13 1 18 4V86l-66 15" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 </svg>
