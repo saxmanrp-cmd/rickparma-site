@@ -1,4 +1,4 @@
-/* Phase 66 — use the existing proven JPEG header asset. No AVIF, no raw GitHub URL. */
+/* Phase 66 — approved JPEG header, rendered without stretch or CSS blur. */
 html body header{
   position:relative!important;
   display:block!important;
@@ -6,20 +6,22 @@ html body header{
   height:auto!important;
   min-height:0!important;
   max-height:none!important;
-  aspect-ratio:1672 / 941!important;
+  aspect-ratio:700 / 394!important;
   margin:0!important;
   padding:0!important;
   overflow:hidden!important;
   border:0!important;
+  box-shadow:none!important;
   background-color:#010307!important;
-  background-image:url('images/rick-parma-header-approved.jpg?v=66')!important;
+  background-image:url('images/rick-parma-header-approved.jpg?v=67')!important;
   background-repeat:no-repeat!important;
-  background-position:center top!important;
-  background-size:100% 100%!important;
+  background-position:center center!important;
+  background-size:cover!important;
   transform:none!important;
   filter:none!important;
+  image-rendering:auto!important;
 }
-html body header::before,html body header::after{content:none!important;display:none!important;}
+html body header::before,html body header::after{content:none!important;display:none!important;background:none!important;filter:none!important;}
 html body header h1,html body header h1 a{display:none!important;}
-html body header .socials{display:flex!important;visibility:visible!important;opacity:1!important;position:absolute!important;z-index:20!important;top:6px!important;left:6px!important;right:auto!important;}
-@media(max-width:560px){html body header{aspect-ratio:1672 / 941!important;background-image:url('images/rick-parma-header-approved.jpg?v=66')!important;background-position:center top!important;background-size:100% 100%!important;}}
+html body header .socials{display:flex!important;visibility:visible!important;opacity:1!important;position:absolute!important;z-index:20!important;top:6px!important;left:6px!important;right:auto!important;filter:none!important;transform:none!important;}
+@media(max-width:560px){html body header{aspect-ratio:700 / 394!important;background-image:url('images/rick-parma-header-approved.jpg?v=67')!important;background-position:center center!important;background-size:cover!important;}}
