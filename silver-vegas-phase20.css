@@ -1,0 +1,355 @@
+/* RickParma.com — Silver Vegas Phase 20
+   MICRO-ALIGNMENT / FINAL MOBILE PROPORTION PASS.
+   Presentation only. No JS, API, payment, calendar-data, booking-submission,
+   media-player, or hero-visibility behavior is changed. */
+
+:root{
+  --rp20-cyan:#5ae2ff;
+  --rp20-pink:#ff56d0;
+  --rp20-line:rgba(190,214,241,.17);
+  --rp20-radius:11px;
+  --rp20-gap:6px;
+}
+
+/* ==========================================================
+   GLOBAL COLUMN + RHYTHM
+   ========================================================== */
+html body{
+  --rp20-width:min(100% - 14px,760px);
+}
+html body .band-inner,
+html body section#booking,
+html body footer{
+  width:var(--rp20-width)!important;
+  max-width:760px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+html body .band-tipjar,
+html body .band-textjoin,
+html body .band-music,
+html body #calendar .band-calendar,
+html body section#promo-videos,
+html body .band-diamond{
+  padding:3px 0!important;
+  margin:0!important;
+}
+html body #music,
+html body #calendar,
+html body #promo-videos,
+html body #diamond-method{
+  margin:0!important;
+  padding:0!important;
+}
+
+/* Consistent compact panel geometry. */
+html body .band-tipjar .rp-card-panel,
+html body .band-textjoin .rp-card-panel,
+html body .rp-player,
+html body #rp-video-section,
+html body .product-card,
+html body section#booking{
+  border-radius:var(--rp20-radius)!important;
+  border-color:var(--rp20-line)!important;
+}
+
+/* ==========================================================
+   HERO → CONTENT — tighter handoff
+   ========================================================== */
+html body .band-hero{
+  margin-bottom:0!important;
+  padding-bottom:5px!important;
+}
+html body .band-hero .button-row{
+  margin-bottom:0!important;
+}
+html body .band-tipjar{
+  padding-top:2px!important;
+}
+
+/* ==========================================================
+   SECTION TITLES — one compact scale everywhere
+   ========================================================== */
+html body .band-music h2.display-heading,
+html body #calendar h2.display-heading,
+html body #rp-video-section .rp-section-title,
+html body #booking h2.display-heading{
+  margin:0 0 4px!important;
+  padding:0 1px!important;
+  font-size:clamp(.80rem,3.45vw,.96rem)!important;
+  line-height:1!important;
+  letter-spacing:.095em!important;
+}
+
+/* ==========================================================
+   TIP — button proportions only; wrapper safety rules still win
+   ========================================================== */
+html body .band-tipjar .tip-amounts{
+  gap:5px!important;
+}
+html body .band-tipjar .tip-amt{
+  min-height:41px!important;
+  border-radius:6px!important;
+}
+html body #tip-cta.tip-cta-btn{
+  border-radius:6px!important;
+  font-size:clamp(.88rem,3.9vw,1.02rem)!important;
+  letter-spacing:.065em!important;
+}
+html body .band-tipjar .tip-row::before,
+html body .band-tipjar .tip-row::after,
+html body #tip-cta::before,
+html body #tip-cta::after{
+  display:none!important;
+  content:none!important;
+}
+
+/* ==========================================================
+   TEXT JOIN — keep compact and horizontally balanced
+   ========================================================== */
+html body .band-textjoin .rp-card-panel{
+  min-height:86px!important;
+  grid-template-columns:52px minmax(0,1fr)!important;
+  column-gap:9px!important;
+  padding:8px 9px!important;
+}
+html body .text-join-button,
+html body .text-join-button::before{
+  width:50px!important;
+  height:50px!important;
+  min-height:50px!important;
+}
+html body .band-textjoin .rp-card-panel > p:not(.fine-print)::before{
+  margin-bottom:2px!important;
+  font-size:.56rem!important;
+}
+html body .band-textjoin .rp-card-panel > p:not(.fine-print)::after{
+  font-size:clamp(1.02rem,4.95vw,1.46rem)!important;
+}
+html body .band-textjoin .fine-print{
+  margin-top:3px!important;
+  font-size:.41rem!important;
+  line-height:1.14!important;
+}
+
+/* ==========================================================
+   MUSIC — compact player rectangle
+   ========================================================== */
+html body .rp-player{
+  min-height:108px!important;
+  padding:7px!important;
+}
+html body .rp-player-cover,
+html body .rp-player img{
+  max-height:91px!important;
+  border-radius:6px!important;
+}
+html body .rp-player-title{
+  font-size:.78rem!important;
+}
+html body .rp-player button{
+  min-width:33px!important;
+  min-height:33px!important;
+}
+
+/* ==========================================================
+   CALENDAR — exact paired-card feel on phones
+   ========================================================== */
+html body #calendar .show-track{
+  gap:5px!important;
+  padding:0 0 3px!important;
+}
+html body #calendar .show-tile{
+  flex:0 0 calc((100vw - 25px)/2)!important;
+  width:calc((100vw - 25px)/2)!important;
+  max-width:182px!important;
+  min-height:124px!important;
+  border-radius:7px!important;
+}
+html body #calendar .show-flyer,
+html body #calendar .show-tile img{
+  aspect-ratio:1.63/1!important;
+}
+html body #calendar .show-tile .venue{
+  font-size:.60rem!important;
+}
+html body #calendar .show-tile .meta{
+  font-size:.47rem!important;
+}
+html body #calendar .show-carousel-nav{
+  min-height:21px!important;
+  margin-top:0!important;
+}
+
+/* ==========================================================
+   PROMO — tighter stage + thumbnail rail
+   ========================================================== */
+html body #rp-video-section{
+  padding:7px!important;
+}
+html body #rp-video-section .rp-featured-wrap,
+html body #rp-video-section .rp-featured{
+  border-radius:7px!important;
+}
+html body #rp-video-section .rp-carousel{
+  gap:5px!important;
+  margin-top:5px!important;
+}
+html body #rp-video-section .rp-thumb{
+  flex:0 0 96px!important;
+  width:96px!important;
+  min-height:54px!important;
+  border-radius:5px!important;
+}
+
+/* ==========================================================
+   DIAMOND — short horizontal product card
+   ========================================================== */
+html body .product-card{
+  min-height:90px!important;
+  padding:8px 9px!important;
+  gap:8px!important;
+}
+html body .product-card img{
+  width:62px!important;
+  max-width:62px!important;
+  border-radius:6px!important;
+}
+html body .product-card p{
+  margin:2px 0!important;
+  font-size:.55rem!important;
+  line-height:1.16!important;
+}
+html body .product-card .price{
+  font-size:.90rem!important;
+}
+html body .product-card .dm-btn-row{
+  gap:4px!important;
+}
+html body .product-card .buy-btn{
+  min-height:33px!important;
+  padding:5px 8px!important;
+  border-radius:5px!important;
+  font-size:.60rem!important;
+}
+
+/* ==========================================================
+   BOOKING — dense but readable, preserve every field
+   ========================================================== */
+html body section#booking{
+  margin-top:3px!important;
+  margin-bottom:4px!important;
+  padding:9px!important;
+}
+html body #booking-intro{
+  margin:0 0 6px!important;
+  font-size:.55rem!important;
+  line-height:1.18!important;
+}
+html body form.booking{
+  gap:5px!important;
+  row-gap:5px!important;
+}
+html body form.booking label{
+  margin-bottom:2px!important;
+  font-size:.52rem!important;
+}
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  min-height:36px!important;
+  padding:6px 8px!important;
+  border-radius:5px!important;
+  font-size:.70rem!important;
+}
+html body form.booking textarea{
+  min-height:58px!important;
+}
+html body form.booking fieldset{
+  padding:7px!important;
+  border-radius:6px!important;
+}
+html body .submit-btn{
+  min-height:45px!important;
+  border-radius:5px!important;
+  font-size:.76rem!important;
+}
+
+/* ==========================================================
+   FOOTER — short close, same width as the composition
+   ========================================================== */
+html body footer{
+  margin-top:3px!important;
+  padding-top:10px!important;
+  padding-bottom:calc(15px + env(safe-area-inset-bottom,0px))!important;
+}
+html body footer::before{
+  width:44px!important;
+  height:44px!important;
+}
+
+/* ==========================================================
+   PHONE MICRO-TUNING
+   ========================================================== */
+@media(max-width:559px){
+  html body{
+    --rp20-width:calc(100% - 12px);
+  }
+  html body .band-tipjar,
+  html body .band-textjoin,
+  html body .band-music,
+  html body #calendar .band-calendar,
+  html body section#promo-videos,
+  html body .band-diamond{
+    padding-top:2px!important;
+    padding-bottom:2px!important;
+  }
+  html body .band-music h2.display-heading,
+  html body #calendar h2.display-heading,
+  html body #rp-video-section .rp-section-title,
+  html body #booking h2.display-heading{
+    margin-bottom:3px!important;
+  }
+  html body .product-card{
+    grid-template-columns:60px minmax(0,1fr)!important;
+  }
+}
+
+@media(max-width:380px){
+  html body{
+    --rp20-width:calc(100% - 10px);
+  }
+  html body .band-textjoin .rp-card-panel{
+    grid-template-columns:48px minmax(0,1fr)!important;
+    column-gap:7px!important;
+    padding-left:7px!important;
+    padding-right:7px!important;
+  }
+  html body .text-join-button,
+  html body .text-join-button::before{
+    width:46px!important;
+    height:46px!important;
+    min-height:46px!important;
+  }
+  html body #rp-video-section .rp-thumb{
+    flex-basis:91px!important;
+    width:91px!important;
+  }
+}
+
+@media(min-width:560px) and (max-width:899px){
+  html body{
+    --rp20-width:min(100% - 20px,760px);
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body .band-tipjar .rp-card-panel,
+  html body .band-textjoin .rp-card-panel,
+  html body .rp-player,
+  html body #rp-video-section,
+  html body .product-card,
+  html body section#booking{
+    transition:none!important;
+  }
+}
