@@ -51,6 +51,39 @@ html body .band-tipjar .tip-amt.active[data-amt="20"]{
   overflow:visible!important;
 }
 
+/* Mobile CTA safeguard — overrides the legacy .tip-row a icon sizing in index.html. */
+html body .band-tipjar .tip-row{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:center!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  gap:0!important;
+}
+html body .band-tipjar .tip-row > #tip-cta,
+html body .band-tipjar .tip-row > .tip-cta-btn,
+html body #tip-cta.tip-cta-btn{
+  display:flex!important;
+  flex:0 0 auto!important;
+  align-self:stretch!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:60px!important;
+  margin:0 auto!important;
+  padding-left:14px!important;
+  padding-right:14px!important;
+  box-sizing:border-box!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+
 @media(max-width:420px){
   html body .band-tipjar .rp-card-panel{
     padding-top:108px!important;
@@ -68,5 +101,12 @@ html body .band-tipjar .tip-amt.active[data-amt="20"]{
     font-size:.92rem!important;
     padding-left:1px!important;
     padding-right:1px!important;
+  }
+  html body .band-tipjar .tip-row,
+  html body .band-tipjar .tip-row > #tip-cta,
+  html body .band-tipjar .tip-row > .tip-cta-btn,
+  html body #tip-cta.tip-cta-btn{
+    width:100%!important;
+    max-width:none!important;
   }
 }
