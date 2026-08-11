@@ -35,17 +35,18 @@
 @import url('silver-vegas-phase36.css');
 @import url('silver-vegas-phase37.css');
 @import url('silver-vegas-phase38.css');
+@import url('silver-vegas-phase39.css');
 
-/* Tip section spacing safeguard — keeps heading/subtitle clear of amount buttons */
+/* Tip section spacing safeguard — compact final values */
 html body .band-tipjar .rp-card-panel{
-  padding-top:112px!important;
+  padding-top:76px!important;
 }
 html body .band-tipjar .rp-card-panel::before{
-  top:20px!important;
-  line-height:1.05!important;
+  top:13px!important;
+  line-height:.98!important;
 }
 html body .band-tipjar .rp-card-panel::after{
-  top:62px!important;
+  top:47px!important;
 }
 html body .band-tipjar .tip-amounts{
   position:relative!important;
@@ -53,7 +54,7 @@ html body .band-tipjar .tip-amounts{
   margin-top:0!important;
   display:grid!important;
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  gap:10px!important;
+  gap:8px!important;
 }
 html body .band-tipjar .tip-amt{
   display:flex!important;
@@ -65,7 +66,7 @@ html body .band-tipjar .tip-amt{
   z-index:4!important;
   min-width:0!important;
   width:100%!important;
-  min-height:52px!important;
+  min-height:48px!important;
   border-radius:12px!important;
   border-width:1.5px!important;
 }
@@ -81,7 +82,7 @@ html body .band-tipjar .tip-amt[data-amt="20"]{
   overflow:visible!important;
 }
 
-/* Mobile CTA safeguard — overrides the legacy .tip-row a icon sizing in index.html. */
+/* Mobile CTA safeguard — compact final height. */
 html body .band-tipjar .tip-row{
   display:flex!important;
   flex-direction:column!important;
@@ -105,7 +106,7 @@ html body #tip-cta.tip-cta-btn{
   width:100%!important;
   max-width:none!important;
   min-width:0!important;
-  min-height:72px!important;
+  min-height:58px!important;
   margin:0 auto!important;
   padding-left:14px!important;
   padding-right:14px!important;
@@ -116,19 +117,20 @@ html body #tip-cta.tip-cta-btn{
 
 @media(max-width:420px){
   html body .band-tipjar .rp-card-panel{
-    padding-top:108px!important;
+    padding-top:72px!important;
   }
   html body .band-tipjar .rp-card-panel::before{
-    font-size:clamp(1.28rem,6.8vw,1.7rem)!important;
+    top:12px!important;
+    font-size:clamp(1.42rem,7.1vw,1.78rem)!important;
   }
   html body .band-tipjar .rp-card-panel::after{
-    top:58px!important;
+    top:43px!important;
   }
   html body .band-tipjar .tip-amounts{
-    gap:8px!important;
+    gap:7px!important;
   }
   html body .band-tipjar .tip-amt{
-    min-height:50px!important;
+    min-height:46px!important;
     font-size:.92rem!important;
     padding-left:1px!important;
     padding-right:1px!important;
@@ -139,6 +141,6 @@ html body #tip-cta.tip-cta-btn{
   html body #tip-cta.tip-cta-btn{
     width:100%!important;
     max-width:none!important;
-    min-height:68px!important;
+    min-height:56px!important;
   }
 }
