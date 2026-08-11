@@ -1,0 +1,52 @@
+/* RickParma.com — Silver Vegas Phase 51
+   Match the approved reference more closely: let the branded header artwork use the
+   full header width, enlarge the center RP mark, and tighten the composition. */
+
+/* Let the chrome header artwork fill the full browser width instead of stopping at 982px. */
+html body header::before{
+  background-size:100% auto!important;
+  background-position:center top!important;
+}
+
+/* Make the actual RP logo read as the centerpiece inside the large medallion. */
+html body header h1{
+  top:clamp(16px,4.55vw,45px)!important;
+  width:clamp(96px,21.5vw,218px)!important;
+  height:clamp(96px,21.5vw,218px)!important;
+}
+html body header h1 a{
+  background-size:122% 122%!important;
+  filter:
+    grayscale(1)
+    saturate(0)
+    brightness(1.60)
+    contrast(1.22)
+    drop-shadow(0 7px 11px rgba(0,0,0,.78))!important;
+}
+
+/* Keep the header slightly taller so the stronger lockup has the same dramatic proportions
+   as the reference while still flowing cleanly into JOIN THE FUN below. */
+html body header{
+  height:clamp(255px,58vw,570px)!important;
+}
+
+@media(max-width:560px){
+  html body header{
+    height:58vw!important;
+    min-height:228px!important;
+  }
+  html body header::before{
+    background-size:104% auto!important;
+    background-position:center top!important;
+  }
+  html body header h1{
+    top:4.45vw!important;
+    width:22.5vw!important;
+    height:22.5vw!important;
+    min-width:90px!important;
+    min-height:90px!important;
+  }
+  html body header h1 a{
+    background-size:124% 124%!important;
+  }
+}
