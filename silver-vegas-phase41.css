@@ -1,0 +1,84 @@
+/* RickParma.com — Silver Vegas Phase 41
+   Maximize TIP RICK NOW across the CTA and pin the Square trust line directly below it. */
+
+/* Hide the legacy anchor text so the display label is the only CTA wording. */
+html body .band-tipjar #tip-cta.tip-cta-btn,
+html body .band-tipjar .tip-cta-btn{
+  font-size:0!important;
+  line-height:1!important;
+  overflow:visible!important;
+}
+
+/* Oversized, heavy, wide display treatment — centered and allowed to fill the button. */
+html body #tip-cta.tip-cta-btn::before,
+html body .band-tipjar .tip-cta-btn::before{
+  content:'TIP RICK NOW'!important;
+  display:block!important;
+  width:96%!important;
+  max-width:none!important;
+  margin:0 auto!important;
+  padding:0!important;
+  color:#05080c!important;
+  font-family:'Arial Black','Helvetica Neue',Arial,sans-serif!important;
+  font-size:clamp(2.02rem,9vw,2.82rem)!important;
+  font-weight:1000!important;
+  line-height:.88!important;
+  letter-spacing:.18em!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  transform:scaleX(1.12)!important;
+  transform-origin:center center!important;
+  -webkit-text-stroke:.35px #05080c!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.20)!important;
+}
+
+/* Give the bigger type the full center of the button without side padding stealing width. */
+html body .band-tipjar .tip-row > #tip-cta,
+html body .band-tipjar .tip-row > .tip-cta-btn,
+html body #tip-cta.tip-cta-btn{
+  min-height:68px!important;
+  padding:8px 2px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+/* Square trust line belongs immediately under the CTA. */
+html body .band-tipjar .tip-row::after{
+  content:'🔒  Secure & powered by  ▣  Square'!important;
+  display:block!important;
+  width:100%!important;
+  margin:0!important;
+  padding:4px 0 0!important;
+  text-align:center!important;
+  line-height:1!important;
+  position:relative!important;
+  top:0!important;
+}
+
+/* Keep the bottom of the whole tip card tight to the trust line. */
+html body .band-tipjar .rp-card-panel{
+  padding-bottom:5px!important;
+}
+
+@media(max-width:420px){
+  html body #tip-cta.tip-cta-btn::before,
+  html body .band-tipjar .tip-cta-btn::before{
+    width:97%!important;
+    font-size:clamp(1.72rem,8.75vw,2.15rem)!important;
+    letter-spacing:.145em!important;
+    transform:scaleX(1.11)!important;
+  }
+
+  html body .band-tipjar .tip-row > #tip-cta,
+  html body .band-tipjar .tip-row > .tip-cta-btn,
+  html body #tip-cta.tip-cta-btn{
+    min-height:64px!important;
+    padding-left:1px!important;
+    padding-right:1px!important;
+  }
+
+  html body .band-tipjar .tip-row::after{
+    padding-top:3px!important;
+  }
+}
