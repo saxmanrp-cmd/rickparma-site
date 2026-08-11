@@ -1,0 +1,340 @@
+/* RickParma.com — Silver Vegas Phase 15
+   BENCHMARK HERO CONTROL + TOP COMPOSITION PASS.
+   Presentation only. Existing JS, APIs, payments, calendar/flyer behavior,
+   booking submission and live hero visibility logic remain untouched. */
+
+:root{
+  --rp15-cyan:#57ddff;
+  --rp15-blue:#3f8dff;
+  --rp15-pink:#ff4fcf;
+  --rp15-violet:#9a63ff;
+  --rp15-chrome:#f7fbff;
+  --rp15-panel:rgba(4,9,17,.94);
+}
+
+/* ==========================================================
+   TOP COMPOSITION — cleaner, tighter, closer to supplied mockup
+   ========================================================== */
+html body header{
+  min-height:74px!important;
+  padding:6px 10px!important;
+  background:linear-gradient(180deg,rgba(1,4,9,.98),rgba(2,6,12,.95))!important;
+  border-bottom:0!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.28)!important;
+}
+html body header h1 a{
+  width:82px!important;
+  height:82px!important;
+  margin-bottom:-16px!important;
+  border-radius:50%!important;
+  background-color:rgba(3,7,13,.72)!important;
+  box-shadow:
+    0 0 0 1px rgba(235,246,255,.16),
+    0 0 0 4px rgba(87,221,255,.026),
+    0 8px 24px rgba(0,0,0,.52),
+    0 0 24px rgba(87,221,255,.12),
+    0 0 30px rgba(255,79,207,.05)!important;
+}
+html body .socials{
+  align-self:center!important;
+}
+html body .socials a{
+  width:32px!important;
+  height:32px!important;
+  border-color:rgba(226,238,252,.12)!important;
+  background:rgba(7,12,20,.72)!important;
+}
+html body .socials svg{
+  width:16px!important;
+  height:16px!important;
+}
+
+/* Let the Vegas visual start directly underneath the medallion. */
+html body .band-hero{
+  min-height:344px!important;
+  padding:25px 8px 7px!important;
+  background-position:center 43%!important;
+  box-shadow:inset 0 -92px 110px rgba(0,0,0,.44)!important;
+}
+html body .band-hero::after{
+  background:
+    radial-gradient(circle at 11% 68%,rgba(87,221,255,.24),transparent 25%),
+    radial-gradient(circle at 89% 65%,rgba(255,79,207,.20),transparent 28%),
+    linear-gradient(180deg,rgba(0,0,0,.01),rgba(0,0,0,.08) 36%,rgba(1,4,9,.78))!important;
+}
+
+/* Keep the decorative wheel/fountain scene behind the title rather than the cards. */
+html body .band-hero .band-inner::before{
+  right:-2%!important;
+  top:1%!important;
+  width:min(34vw,235px)!important;
+  opacity:.52!important;
+}
+html body .band-hero .band-inner::after{
+  left:-2%!important;
+  bottom:33%!important;
+  width:min(58vw,470px)!important;
+  height:122px!important;
+  opacity:.58!important;
+}
+
+/* ==========================================================
+   TITLE / SUBTITLE — tighter benchmark rhythm
+   Phase 14 still provides JOIN / THE FUN text construction.
+   ========================================================== */
+html body .hero-title{
+  width:min(92vw,520px)!important;
+  margin:0 auto 7px!important;
+}
+html body .hero-title::before{
+  font-size:clamp(3.35rem,16.4vw,5rem)!important;
+  line-height:.76!important;
+}
+html body .hero-title .accent::before{
+  margin-top:0!important;
+  font-size:clamp(2.06rem,10vw,3.16rem)!important;
+  line-height:.82!important;
+}
+html body .hero-title::after{
+  width:min(88vw,405px)!important;
+  margin:6px auto 0!important;
+  font-size:clamp(.67rem,2.45vw,.82rem)!important;
+  line-height:1.20!important;
+  color:#c8d0da!important;
+  -webkit-text-fill-color:#c8d0da!important;
+}
+
+/* ==========================================================
+   HERO ACTIONS — compact cyan/pink pair like the mockup
+   ========================================================== */
+html body .band-hero .button-row{
+  width:min(100%,700px)!important;
+  max-width:700px!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:7px!important;
+  margin:0 auto!important;
+}
+html body .band-hero .button-col{
+  min-height:82px!important;
+  padding:8px 8px 7px!important;
+  display:grid!important;
+  grid-template-columns:42px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  column-gap:8px!important;
+  row-gap:2px!important;
+  border-radius:11px!important;
+  overflow:hidden!important;
+  backdrop-filter:blur(15px) saturate(1.14)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(1.14)!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.045),transparent 32%),
+    linear-gradient(180deg,rgba(7,14,25,.92),rgba(2,6,12,.97))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 10px 24px rgba(0,0,0,.36)!important;
+}
+html body .band-hero #songRequestCol{
+  border:1px solid rgba(87,221,255,.42)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    0 10px 24px rgba(0,0,0,.36),
+    0 0 22px rgba(87,221,255,.09)!important;
+}
+html body .band-hero #fanCamCol{
+  border:1px solid rgba(255,79,207,.38)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    0 10px 24px rgba(0,0,0,.36),
+    0 0 22px rgba(255,79,207,.08)!important;
+}
+
+/* Remove the earlier illuminated lower rail; the thin border is cleaner. */
+html body .band-hero .button-col::before{
+  content:none!important;
+  display:none!important;
+}
+
+/* Existing anchor becomes the card's icon + title row. */
+html body .band-hero .song-request-button,
+html body .band-hero .fan-cam-button{
+  grid-column:1 / -1!important;
+  grid-row:1!important;
+  display:grid!important;
+  grid-template-columns:42px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:100%!important;
+  margin:0!important;
+}
+html body .song-request-button::before,
+html body .fan-cam-button::before{
+  width:40px!important;
+  height:40px!important;
+  border-radius:10px!important;
+  font-size:1.35rem!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(3,8,15,.92))!important;
+}
+html body .song-request-button::before{
+  color:#78e7ff!important;
+  border:1px solid rgba(87,221,255,.45)!important;
+  box-shadow:inset 0 0 14px rgba(87,221,255,.07),0 0 14px rgba(87,221,255,.12)!important;
+}
+html body .fan-cam-button::before{
+  color:#ff74dd!important;
+  border:1px solid rgba(255,79,207,.44)!important;
+  box-shadow:inset 0 0 14px rgba(255,79,207,.07),0 0 14px rgba(255,79,207,.11)!important;
+}
+html body .song-request-button::after,
+html body .fan-cam-button::after{
+  font-size:clamp(.82rem,3.65vw,1rem)!important;
+  line-height:.92!important;
+  letter-spacing:.04em!important;
+  white-space:pre-line!important;
+  text-align:left!important;
+}
+
+/* Compact availability strip along the bottom, centered under each title. */
+html body .band-hero .button-col::after{
+  content:'●  AVAILABLE'!important;
+  grid-column:2!important;
+  grid-row:2!important;
+  position:static!important;
+  display:block!important;
+  width:max-content!important;
+  max-width:100%!important;
+  height:auto!important;
+  margin:0!important;
+  padding:2px 7px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(205,224,244,.18)!important;
+  background:rgba(0,0,0,.22)!important;
+  color:#b9c5d2!important;
+  font-size:.47rem!important;
+  font-weight:850!important;
+  line-height:1.05!important;
+  letter-spacing:.08em!important;
+  text-align:left!important;
+  opacity:.94!important;
+  box-shadow:none!important;
+}
+html body #songRequestCol::after{
+  color:#a8f8d0!important;
+  border-color:rgba(84,236,166,.19)!important;
+}
+html body #fanCamCol::after{
+  color:#d6c7ff!important;
+  border-color:rgba(155,99,255,.20)!important;
+}
+
+/* Keep captions suppressed to match the compact reference cards. */
+html body .band-hero .btn-caption{
+  display:none!important;
+}
+
+/* One live control becomes a centered single card rather than a half-width orphan. */
+@supports selector(.button-row:has(.button-col[style*="display: none"])){
+  html body .band-hero .button-row:has(.button-col[style*="display: none"]) {
+    grid-template-columns:minmax(0,360px)!important;
+    justify-content:center!important;
+  }
+}
+
+/* ==========================================================
+   UPPER-PAGE STACK — reduce the visual gap after hero
+   ========================================================== */
+html body .band-tipjar{
+  padding-top:4px!important;
+}
+html body .band-textjoin{
+  padding-top:4px!important;
+}
+
+/* ==========================================================
+   PHONE TUNING
+   ========================================================== */
+@media(max-width:559px){
+  html body header{
+    min-height:68px!important;
+    padding-top:5px!important;
+    padding-bottom:5px!important;
+  }
+  html body header h1 a{
+    width:76px!important;
+    height:76px!important;
+    margin-bottom:-14px!important;
+  }
+  html body .band-hero{
+    min-height:326px!important;
+    padding-top:22px!important;
+  }
+  html body .hero-title{
+    margin-bottom:6px!important;
+  }
+  html body .hero-title::before{
+    font-size:clamp(3.18rem,17vw,4.55rem)!important;
+  }
+  html body .hero-title .accent::before{
+    font-size:clamp(1.98rem,10.35vw,2.75rem)!important;
+  }
+  html body .hero-title::after{
+    width:min(91vw,370px)!important;
+    margin-top:5px!important;
+  }
+  html body .band-hero .button-col{
+    min-height:78px!important;
+    padding:7px!important;
+  }
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:38px!important;
+    height:38px!important;
+  }
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-template-columns:40px minmax(0,1fr)!important;
+    gap:7px!important;
+  }
+}
+
+@media(max-width:380px){
+  html body .socials{
+    gap:3px!important;
+  }
+  html body .socials a{
+    width:29px!important;
+    height:29px!important;
+  }
+  html body header h1 a{
+    width:70px!important;
+    height:70px!important;
+  }
+  html body .band-hero{
+    min-height:312px!important;
+  }
+  html body .band-hero .button-row{
+    gap:6px!important;
+  }
+  html body .band-hero .button-col{
+    min-height:76px!important;
+    padding-left:6px!important;
+    padding-right:6px!important;
+  }
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:.78rem!important;
+  }
+  html body .band-hero .button-col::after{
+    font-size:.43rem!important;
+    padding-left:6px!important;
+    padding-right:6px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body header h1 a,
+  html body .band-hero .button-col{
+    transition:none!important;
+    animation:none!important;
+  }
+}
