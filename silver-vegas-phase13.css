@@ -1,0 +1,650 @@
+/* RickParma.com — Silver Vegas Phase 13
+   BENCHMARK MATCH PASS — mobile density, hierarchy and proportions.
+   Presentation only. Existing JS, APIs, payments, calendar/flyer behavior,
+   booking submission and live hero visibility logic remain untouched. */
+
+:root{
+  --rp13-cyan:#57ddff;
+  --rp13-blue:#268fff;
+  --rp13-pink:#ff43c7;
+  --rp13-violet:#9c62ff;
+  --rp13-silver:#f5f8fc;
+  --rp13-steel:#9aa8b8;
+  --rp13-panel:rgba(4,9,16,.965);
+  --rp13-line:rgba(190,215,244,.19);
+  --rp13-ease:cubic-bezier(.2,.78,.24,1);
+}
+
+/* ==========================================================
+   BENCHMARK SHELL — tighter, more unified vertical dashboard
+   ========================================================== */
+html body{
+  --rp13-content:min(100% - 16px,760px);
+}
+html body .band{
+  padding:5px 8px!important;
+}
+html body .band-inner{
+  width:100%!important;
+  max-width:760px!important;
+}
+html body #music,
+html body #calendar,
+html body #promo-videos,
+html body #diamond-method,
+html body #booking{
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+html body .rp-card-panel,
+html body .rp-player,
+html body #rp-video-section,
+html body .product-card,
+html body section#booking{
+  border-radius:13px!important;
+  border-color:var(--rp13-line)!important;
+}
+
+/* ==========================================================
+   HEADER — centered RP lockup like the reference
+   ========================================================== */
+html body header{
+  min-height:82px!important;
+  padding:8px 12px!important;
+  display:grid!important;
+  grid-template-columns:1fr auto 1fr!important;
+  align-items:center!important;
+  position:relative!important;
+}
+html body header h1{
+  grid-column:2!important;
+  justify-self:center!important;
+  position:relative!important;
+  z-index:3!important;
+}
+html body header h1 a{
+  width:74px!important;
+  height:74px!important;
+}
+html body .socials{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:start!important;
+  gap:5px!important;
+}
+html body .socials a{
+  width:34px!important;
+  height:34px!important;
+}
+html body .socials svg{
+  width:17px!important;
+  height:17px!important;
+}
+html body header h1::after{
+  display:none!important;
+}
+
+/* ==========================================================
+   HERO — benchmark proportions, hierarchy and compactness
+   ========================================================== */
+html body .band-hero{
+  min-height:430px!important;
+  padding:28px 8px 8px!important;
+  align-items:flex-end!important;
+}
+html body .band-hero .band-inner{
+  max-width:760px!important;
+}
+html body .band-hero .rp-card-panel{
+  padding:0!important;
+}
+html body .hero-title{
+  max-width:560px!important;
+  margin:0 auto 48px!important;
+  font-size:clamp(3.0rem,14.5vw,5.2rem)!important;
+  line-height:.78!important;
+  letter-spacing:.015em!important;
+  text-align:center!important;
+}
+/* Replace earlier marketing micro-copy with the benchmark sentence. */
+html body .hero-title::after{
+  content:'Request songs, tip your favorite performer, and stay connected.'!important;
+  position:absolute!important;
+  left:50%!important;
+  top:calc(100% + 12px)!important;
+  width:min(92vw,470px)!important;
+  transform:translateX(-50%)!important;
+  display:block!important;
+  color:#c0c8d2!important;
+  -webkit-text-fill-color:#c0c8d2!important;
+  font-size:clamp(.72rem,2.6vw,.90rem)!important;
+  font-weight:650!important;
+  line-height:1.32!important;
+  letter-spacing:.05em!important;
+  text-transform:none!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.72)!important;
+}
+html body .hero-title::before{
+  display:none!important;
+}
+
+html body .band-hero .button-row{
+  gap:8px!important;
+  max-width:760px!important;
+  margin:0 auto!important;
+}
+html body .band-hero .button-col{
+  min-height:96px!important;
+  padding:10px 11px 9px!important;
+  gap:2px!important;
+  border-radius:13px!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+html body .song-request-button,
+html body .fan-cam-button{
+  grid-template-columns:48px 1fr!important;
+  gap:9px!important;
+}
+html body .song-request-button::before,
+html body .fan-cam-button::before{
+  width:46px!important;
+  height:46px!important;
+  font-size:1.65rem!important;
+}
+html body .song-request-button::after,
+html body .fan-cam-button::after{
+  font-size:clamp(.86rem,3.8vw,1.04rem)!important;
+  line-height:.93!important;
+  letter-spacing:.055em!important;
+}
+/* Benchmark availability chip; hidden columns are still controlled by existing JS. */
+html body .band-hero .button-col::after{
+  content:'●  AVAILABLE'!important;
+  position:static!important;
+  display:block!important;
+  width:auto!important;
+  height:auto!important;
+  margin:2px 0 0 57px!important;
+  padding:3px 9px!important;
+  border:1px solid rgba(201,220,241,.24)!important;
+  border-radius:999px!important;
+  background:rgba(0,0,0,.24)!important;
+  color:#dce5ee!important;
+  font-size:.52rem!important;
+  font-weight:850!important;
+  line-height:1!important;
+  letter-spacing:.08em!important;
+  text-align:left!important;
+  box-shadow:none!important;
+  opacity:1!important;
+}
+html body .band-hero .button-col::first-letter{
+  color:#35ea6d;
+}
+html body .band-hero .btn-caption{
+  display:none!important;
+}
+
+/* ==========================================================
+   TIP — compressed benchmark-style module
+   final safety rules in design-polish.css still win
+   ========================================================== */
+html body .band-tipjar{
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+}
+html body .band-tipjar .rp-card-panel{
+  border-radius:13px!important;
+  padding-left:12px!important;
+  padding-right:12px!important;
+  padding-bottom:12px!important;
+}
+html body .band-tipjar .rp-card-panel::before{
+  letter-spacing:.055em!important;
+}
+html body .band-tipjar .rp-card-panel::after{
+  font-size:.67rem!important;
+}
+html body .band-tipjar .tip-amounts{
+  gap:7px!important;
+}
+html body .band-tipjar .tip-amt{
+  min-height:40px!important;
+  border-radius:8px!important;
+}
+html body .band-tipjar .tip-cta-btn{
+  border-radius:7px!important;
+  min-height:50px!important;
+  font-size:clamp(.88rem,4.3vw,1.06rem)!important;
+}
+html body .band-tipjar .tip-row::after{
+  margin-top:6px!important;
+  font-size:.50rem!important;
+  letter-spacing:.08em!important;
+}
+
+/* ==========================================================
+   TEXT JOIN — horizontal compact card like reference
+   ========================================================== */
+html body .band-textjoin{
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+}
+html body .band-textjoin .rp-card-panel{
+  min-height:102px!important;
+  padding:10px 12px!important;
+  display:grid!important;
+  grid-template-columns:64px minmax(0,1fr)!important;
+  align-items:center!important;
+  column-gap:12px!important;
+  border-radius:13px!important;
+}
+html body .text-join-button{
+  grid-column:1!important;
+  grid-row:1 / span 3!important;
+  width:62px!important;
+  height:62px!important;
+  min-height:62px!important;
+  margin:0!important;
+  border-radius:50%!important;
+  padding:0!important;
+  position:relative!important;
+}
+html body .text-join-button::before{
+  width:62px!important;
+  height:62px!important;
+  border-radius:50%!important;
+  margin:0!important;
+}
+html body .text-join-button::after{
+  content:''!important;
+  display:none!important;
+}
+html body .band-textjoin .rp-card-panel > p:not(.fine-print){
+  grid-column:2!important;
+  margin:0!important;
+  font-size:0!important;
+}
+html body .band-textjoin .rp-card-panel > p:not(.fine-print)::before{
+  content:'TEXT JOIN TO'!important;
+  display:block!important;
+  color:#6fbfff!important;
+  font-size:.64rem!important;
+  font-weight:850!important;
+  line-height:1!important;
+  letter-spacing:.12em!important;
+  margin-bottom:3px!important;
+}
+html body .band-textjoin .rp-card-panel > p:not(.fine-print)::after{
+  content:'(855) 924-2976'!important;
+  display:block!important;
+  color:#f6f8fb!important;
+  font-size:clamp(1.18rem,5.8vw,1.75rem)!important;
+  font-weight:950!important;
+  line-height:1!important;
+  letter-spacing:.02em!important;
+}
+html body .band-textjoin .fine-print{
+  grid-column:2!important;
+  margin:5px 0 0!important;
+  max-width:none!important;
+  font-size:.48rem!important;
+  line-height:1.22!important;
+  color:#8e99a7!important;
+}
+
+/* ==========================================================
+   MUSIC — short single-card player proportions
+   ========================================================== */
+html body .band-music{
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+}
+html body .band-music h2.display-heading{
+  margin:0 0 5px!important;
+  padding-bottom:0!important;
+  font-size:clamp(.88rem,4vw,1.08rem)!important;
+  text-align:left!important;
+}
+html body .band-music h2.display-heading::before,
+html body .band-music h2.display-heading::after{
+  display:none!important;
+}
+html body .rp-player{
+  min-height:142px!important;
+  padding:10px!important;
+  border-radius:13px!important;
+}
+html body .rp-player-cover,
+html body .rp-player img{
+  max-height:124px!important;
+}
+html body .rp-player-title{
+  font-size:.92rem!important;
+}
+html body .rp-player button{
+  min-width:38px!important;
+  min-height:38px!important;
+}
+
+/* ==========================================================
+   CALENDAR — compact horizontal row like benchmark
+   ========================================================== */
+html body #calendar .band-calendar{
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+}
+html body #calendar h2.display-heading{
+  margin:0 0 5px!important;
+  padding-bottom:0!important;
+  font-size:clamp(.88rem,4vw,1.08rem)!important;
+  text-align:left!important;
+}
+html body #calendar h2.display-heading::before,
+html body #calendar h2.display-heading::after{
+  display:none!important;
+}
+html body #calendar .show-track{
+  gap:8px!important;
+  padding:2px 0 5px!important;
+}
+html body #calendar .show-tile{
+  flex:0 0 165px!important;
+  width:165px!important;
+  min-height:154px!important;
+  border-radius:9px!important;
+}
+html body #calendar .show-flyer,
+html body #calendar .show-tile img{
+  aspect-ratio:1.55/1!important;
+  object-fit:cover!important;
+}
+html body #calendar .show-tile .venue{
+  font-size:.70rem!important;
+  line-height:1.08!important;
+}
+html body #calendar .show-tile .meta{
+  font-size:.56rem!important;
+  line-height:1.15!important;
+}
+html body #calendar .show-carousel-nav{
+  min-height:28px!important;
+  margin-top:0!important;
+}
+html body #calendar .show-carousel-nav::before{
+  display:none!important;
+}
+html body #calendar .show-carousel-nav button{
+  width:30px!important;
+  height:30px!important;
+}
+
+/* ==========================================================
+   PROMO — compressed thumbnail strip
+   ========================================================== */
+html body section#promo-videos{
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+}
+html body #rp-video-section{
+  padding:9px!important;
+  border-radius:13px!important;
+}
+html body #rp-video-section .rp-section-title{
+  margin:0 0 6px!important;
+  padding-bottom:0!important;
+  font-size:clamp(.88rem,4vw,1.08rem)!important;
+  text-align:left!important;
+}
+html body #rp-video-section .rp-section-title::before,
+html body #rp-video-section .rp-section-title::after{
+  display:none!important;
+}
+html body #rp-video-section .rp-featured-wrap,
+html body #rp-video-section .rp-featured{
+  border-radius:9px!important;
+}
+html body #rp-video-section .rp-carousel{
+  gap:7px!important;
+  margin-top:7px!important;
+}
+html body #rp-video-section .rp-thumb{
+  flex:0 0 116px!important;
+  width:116px!important;
+  min-height:66px!important;
+  border-radius:7px!important;
+}
+html body #rp-video-section .rp-carousel-label{
+  display:none!important;
+}
+
+/* ==========================================================
+   DIAMOND — benchmark horizontal product module
+   ========================================================== */
+html body .band-diamond{
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+}
+html body .product-card{
+  min-height:102px!important;
+  padding:10px 11px!important;
+  border-radius:13px!important;
+}
+html body .product-card img{
+  width:82px!important;
+  max-width:82px!important;
+}
+html body .product-card p{
+  margin-top:3px!important;
+  margin-bottom:3px!important;
+  font-size:.62rem!important;
+  line-height:1.24!important;
+}
+html body .product-card .price{
+  font-size:1rem!important;
+}
+html body .product-card .buy-btn{
+  min-height:38px!important;
+  border-radius:6px!important;
+  font-size:.68rem!important;
+}
+
+/* ==========================================================
+   BOOKING — visually compact, but KEEP all real fields
+   ========================================================== */
+html body section#booking{
+  max-width:760px!important;
+  margin:5px auto!important;
+  padding:11px!important;
+  border-radius:13px!important;
+}
+html body #booking h2.display-heading{
+  margin:0 0 5px!important;
+  font-size:clamp(.92rem,4.2vw,1.14rem)!important;
+  text-align:left!important;
+}
+html body #booking-intro{
+  margin:0 0 8px!important;
+  font-size:.62rem!important;
+  line-height:1.25!important;
+}
+html body form.booking{
+  gap:7px!important;
+  row-gap:7px!important;
+}
+html body form.booking label{
+  margin-bottom:3px!important;
+  font-size:.58rem!important;
+}
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  min-height:38px!important;
+  padding:7px 9px!important;
+  border-radius:5px!important;
+  font-size:.72rem!important;
+}
+html body form.booking textarea{
+  min-height:64px!important;
+}
+html body form.booking fieldset{
+  padding:8px!important;
+  border-radius:7px!important;
+}
+html body form.booking fieldset label{
+  min-height:28px!important;
+  font-size:.65rem!important;
+}
+html body .submit-btn{
+  min-height:48px!important;
+  border-radius:6px!important;
+  font-size:.78rem!important;
+}
+
+/* ==========================================================
+   FOOTER — compact luxury lockup
+   ========================================================== */
+html body footer{
+  max-width:760px;
+  margin:5px auto 0!important;
+  padding:14px 12px calc(20px + env(safe-area-inset-bottom,0px))!important;
+  border-top:1px solid rgba(200,220,245,.16)!important;
+}
+html body footer::before{
+  width:52px!important;
+  height:52px!important;
+}
+html body footer::after{
+  font-size:.48rem!important;
+  letter-spacing:.12em!important;
+}
+
+/* ==========================================================
+   PHONE BENCHMARK — stack tightly but stay readable
+   ========================================================== */
+@media(max-width:559px){
+  html body header{
+    min-height:74px!important;
+    padding:6px 8px!important;
+  }
+  html body header h1 a{
+    width:64px!important;
+    height:64px!important;
+  }
+  html body .socials a{
+    width:31px!important;
+    height:31px!important;
+  }
+
+  html body .band-hero{
+    min-height:400px!important;
+    padding-top:18px!important;
+  }
+  html body .hero-title{
+    margin-bottom:46px!important;
+    font-size:clamp(2.75rem,15vw,4.2rem)!important;
+  }
+  html body .band-hero .button-col{
+    min-height:91px!important;
+    padding:9px 8px!important;
+  }
+  html body .band-hero .button-col::after{
+    margin-left:54px!important;
+    padding:3px 7px!important;
+    font-size:.46rem!important;
+  }
+
+  html body .band-textjoin .rp-card-panel{
+    grid-template-columns:58px minmax(0,1fr)!important;
+    column-gap:9px!important;
+    min-height:94px!important;
+    padding:9px!important;
+  }
+  html body .text-join-button,
+  html body .text-join-button::before{
+    width:56px!important;
+    height:56px!important;
+    min-height:56px!important;
+  }
+  html body .band-textjoin .fine-print{
+    font-size:.44rem!important;
+  }
+
+  html body #calendar .show-tile{
+    flex-basis:148px!important;
+    width:148px!important;
+    min-height:142px!important;
+  }
+  html body #rp-video-section .rp-thumb{
+    flex-basis:108px!important;
+    width:108px!important;
+  }
+
+  html body .product-card{
+    grid-template-columns:76px minmax(0,1fr)!important;
+    gap:9px!important;
+  }
+  html body .product-card img{
+    width:72px!important;
+    max-width:72px!important;
+  }
+}
+
+@media(max-width:380px){
+  html body .socials{
+    gap:3px!important;
+  }
+  html body .socials a{
+    width:29px!important;
+    height:29px!important;
+  }
+  html body .hero-title{
+    font-size:clamp(2.5rem,14.8vw,3.5rem)!important;
+  }
+  html body .song-request-button,
+  html body .fan-cam-button{
+    grid-template-columns:42px 1fr!important;
+    gap:6px!important;
+  }
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:40px!important;
+    height:40px!important;
+  }
+  html body .band-hero .button-col::after{
+    margin-left:47px!important;
+  }
+}
+
+/* ==========================================================
+   TABLET / DESKTOP — keep same design language, add breathing room
+   ========================================================== */
+@media(min-width:700px){
+  html body .band-hero{
+    min-height:520px!important;
+  }
+  html body .hero-title{
+    font-size:5.2rem!important;
+  }
+  html body .band-hero .button-col{
+    min-height:108px!important;
+  }
+  html body .band-textjoin .rp-card-panel{
+    grid-template-columns:76px minmax(0,1fr)!important;
+  }
+  html body .text-join-button,
+  html body .text-join-button::before{
+    width:72px!important;
+    height:72px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body .hero-title,
+  html body .band-hero::before,
+  html body .band-hero .band-inner::before,
+  html body .band-hero .band-inner::after{
+    animation:none!important;
+  }
+}
