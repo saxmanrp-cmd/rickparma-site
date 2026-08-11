@@ -24,6 +24,7 @@ jobs:
       - name: Decode optimized JPEG
         shell: bash
         run: |
+          echo "Decoding staged Rick Parma header hero"
           base64 --decode images/rick-parma-header-hero.jpg.b64 > images/rick-parma-header-hero.jpg
           test -s images/rick-parma-header-hero.jpg
           file images/rick-parma-header-hero.jpg
