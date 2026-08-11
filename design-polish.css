@@ -20,6 +20,7 @@
 @import url('silver-vegas-phase21.css');
 @import url('silver-vegas-phase22.css');
 @import url('silver-vegas-phase23.css');
+@import url('silver-vegas-phase24.css');
 
 /* Tip section spacing safeguard — keeps heading/subtitle clear of amount buttons */
 html body .band-tipjar .rp-card-panel{
@@ -38,7 +39,7 @@ html body .band-tipjar .tip-amounts{
   margin-top:0!important;
   display:grid!important;
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  gap:7px!important;
+  gap:10px!important;
 }
 html body .band-tipjar .tip-amt{
   display:flex!important;
@@ -50,16 +51,19 @@ html body .band-tipjar .tip-amt{
   z-index:4!important;
   min-width:0!important;
   width:100%!important;
-  min-height:46px!important;
+  min-height:52px!important;
+  border-radius:12px!important;
+  border-width:1.5px!important;
 }
 html body .band-tipjar .tip-amt[data-amt="20"],
 html body .band-tipjar .tip-amt.active[data-amt="20"]{
   display:flex!important;
   visibility:visible!important;
   opacity:1!important;
-  color:#05080d!important;
-  background:linear-gradient(110deg,#2cc8ff 0%,#627aff 42%,#ff3fca 100%)!important;
-  border-color:transparent!important;
+  color:#ffffff!important;
+  background:linear-gradient(180deg,rgba(8,12,20,.98),rgba(3,6,12,.99))!important;
+  border:2px solid #49b8ff!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 0 0 1px rgba(73,184,255,.55),0 0 16px rgba(73,184,255,.48),0 0 28px rgba(73,184,255,.20)!important;
   font-size:1rem!important;
   font-weight:900!important;
   line-height:1!important;
@@ -91,7 +95,7 @@ html body #tip-cta.tip-cta-btn{
   width:100%!important;
   max-width:none!important;
   min-width:0!important;
-  min-height:60px!important;
+  min-height:72px!important;
   margin:0 auto!important;
   padding-left:14px!important;
   padding-right:14px!important;
@@ -111,9 +115,10 @@ html body #tip-cta.tip-cta-btn{
     top:58px!important;
   }
   html body .band-tipjar .tip-amounts{
-    gap:6px!important;
+    gap:8px!important;
   }
   html body .band-tipjar .tip-amt{
+    min-height:50px!important;
     font-size:.92rem!important;
     padding-left:1px!important;
     padding-right:1px!important;
@@ -124,5 +129,6 @@ html body #tip-cta.tip-cta-btn{
   html body #tip-cta.tip-cta-btn{
     width:100%!important;
     max-width:none!important;
+    min-height:68px!important;
   }
 }
