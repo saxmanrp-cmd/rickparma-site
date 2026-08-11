@@ -1,0 +1,38 @@
+name: Convert HD header to JPEG
+
+on:
+  push:
+    branches:
+      - agent/silver-vegas-redesign
+    paths:
+      - '.github/workflows/convert-header.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/silver-vegas-redesign
+
+      - name: Install ImageMagick with AVIF support
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick libheif1
+
+      - name: Convert existing HD AVIF to JPEG
+        run: |
+          magick images/rick-parma-header-approved-hd.avif -quality 94 -sampling-factor 4:4:4 images/rick-parma-header-fresh-hd.jpg
+          identify images/rick-parma-header-fresh-hd.jpg
+
+      - name: Commit JPEG
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add images/rick-parma-header-fresh-hd.jpg
+          git commit -m 'Add Safari-safe HD header JPEG' || exit 0
+          git push origin HEAD:agent/silver-vegas-redesign
