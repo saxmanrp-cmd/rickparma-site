@@ -1,0 +1,77 @@
+/* RickParma.com — Silver Vegas Phase 63
+   Safari-safe header image rendering. The approved composite artwork is rendered
+   once as generated image content on the header itself. Social icons remain live
+   and untouched above it. Nothing below the header is changed. */
+
+html body header{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:#010307!important;
+  background-image:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+
+/* Undo the failed Phase 62 H1 replacement completely. */
+html body header h1,
+html body header h1 a{
+  display:none!important;
+  content:none!important;
+}
+
+/* Render the approved art exactly once as image content.
+   Generated image content has its own intrinsic ratio, so Safari scales it
+   proportionally instead of background-positioning/cropping it. */
+html body header::before{
+  content:url('images/rick-parma-header-approved-hd.avif?v=63')!important;
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  line-height:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+  image-rendering:auto!important;
+  z-index:1!important;
+}
+
+html body header::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* Social icons stay exactly where the approved Phase 54 rules put them. */
+html body header .socials{
+  z-index:10!important;
+}
+
+@media(max-width:560px){
+  html body header,
+  html body header::before{
+    width:100%!important;
+    max-width:none!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+    filter:none!important;
+  }
+}
