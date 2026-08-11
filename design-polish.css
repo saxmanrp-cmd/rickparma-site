@@ -17,6 +17,35 @@ html body .band-tipjar .tip-amounts{
   position:relative!important;
   z-index:3!important;
   margin-top:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:7px!important;
+}
+html body .band-tipjar .tip-amt{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:4!important;
+  min-width:0!important;
+  width:100%!important;
+  min-height:46px!important;
+}
+html body .band-tipjar .tip-amt[data-amt="20"],
+html body .band-tipjar .tip-amt.active[data-amt="20"]{
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  color:#05080d!important;
+  background:linear-gradient(110deg,#2cc8ff 0%,#627aff 42%,#ff3fca 100%)!important;
+  border-color:transparent!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  line-height:1!important;
+  text-indent:0!important;
+  overflow:visible!important;
 }
 
 @media(max-width:420px){
@@ -28,5 +57,13 @@ html body .band-tipjar .tip-amounts{
   }
   html body .band-tipjar .rp-card-panel::after{
     top:58px!important;
+  }
+  html body .band-tipjar .tip-amounts{
+    gap:6px!important;
+  }
+  html body .band-tipjar .tip-amt{
+    font-size:.92rem!important;
+    padding-left:1px!important;
+    padding-right:1px!important;
   }
 }
