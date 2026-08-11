@@ -1,0 +1,177 @@
+/* RickParma.com — Silver Vegas Phase 30
+   Mobile-first hero card fill/composition refinement.
+   Presentation only; existing links and availability logic remain untouched. */
+
+/* ==========================================================
+   PHONE HERO CARDS — use the space instead of leaving dead air
+   ========================================================== */
+@media (max-width:560px){
+  html body .band-hero .button-row{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    width:100%!important;
+    max-width:none!important;
+  }
+
+  html body .band-hero .button-col{
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    padding:11px 13px!important;
+    grid-template-columns:98px minmax(0,1fr)!important;
+    grid-template-rows:94px 36px!important;
+    column-gap:13px!important;
+    row-gap:5px!important;
+    align-items:center!important;
+    align-content:center!important;
+    border-radius:18px!important;
+  }
+
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    grid-column:1 / -1!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-height:94px!important;
+    height:94px!important;
+    display:grid!important;
+    grid-template-columns:98px minmax(0,1fr)!important;
+    gap:13px!important;
+    align-items:center!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  /* Larger medallion so it visually fills the left half of the card height. */
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:88px!important;
+    height:88px!important;
+    min-width:88px!important;
+    min-height:88px!important;
+    margin:0 auto!important;
+    border-width:2px!important;
+    font-size:2.35rem!important;
+  }
+  html body .fan-cam-button::before{
+    font-size:2.42rem!important;
+  }
+
+  /* Make the titles own the right-hand side instead of floating small in it. */
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    font-size:clamp(1.56rem,7.2vw,1.92rem)!important;
+    font-weight:950!important;
+    line-height:.84!important;
+    letter-spacing:.015em!important;
+    text-align:left!important;
+    align-self:center!important;
+    transform:scaleX(1.025)!important;
+    transform-origin:left center!important;
+  }
+
+  /* AVAILABLE fills the full right-hand column under the title. */
+  html body .band-hero .button-col::after{
+    grid-column:2!important;
+    grid-row:2!important;
+    align-self:stretch!important;
+    justify-self:stretch!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:36px!important;
+    margin:0!important;
+    padding:5px 12px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border-radius:999px!important;
+    font-size:.76rem!important;
+    font-weight:900!important;
+    letter-spacing:.065em!important;
+    line-height:1!important;
+  }
+}
+
+/* Normal smaller phones — keep the same full composition with slightly tighter metrics. */
+@media (max-width:430px){
+  html body .band-hero .button-col{
+    padding:10px 11px!important;
+    grid-template-columns:92px minmax(0,1fr)!important;
+    grid-template-rows:88px 34px!important;
+    column-gap:11px!important;
+    row-gap:5px!important;
+  }
+
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    min-height:88px!important;
+    height:88px!important;
+    grid-template-columns:92px minmax(0,1fr)!important;
+    gap:11px!important;
+  }
+
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:82px!important;
+    height:82px!important;
+    min-width:82px!important;
+    min-height:82px!important;
+    font-size:2.18rem!important;
+  }
+  html body .fan-cam-button::before{
+    font-size:2.24rem!important;
+  }
+
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:clamp(1.48rem,7.25vw,1.78rem)!important;
+    line-height:.85!important;
+  }
+
+  html body .band-hero .button-col::after{
+    min-height:34px!important;
+    font-size:.72rem!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+}
+
+/* Extra-small phones — retain fullness without allowing clipping. */
+@media (max-width:350px){
+  html body .band-hero .button-col{
+    grid-template-columns:80px minmax(0,1fr)!important;
+    grid-template-rows:78px 32px!important;
+    column-gap:9px!important;
+    padding:9px 10px!important;
+  }
+  html body .band-hero .song-request-button,
+  html body .band-hero .fan-cam-button{
+    min-height:78px!important;
+    height:78px!important;
+    grid-template-columns:80px minmax(0,1fr)!important;
+    gap:9px!important;
+  }
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:72px!important;
+    height:72px!important;
+    min-width:72px!important;
+    min-height:72px!important;
+    font-size:1.92rem!important;
+  }
+  html body .fan-cam-button::before{
+    font-size:2rem!important;
+  }
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:1.34rem!important;
+  }
+  html body .band-hero .button-col::after{
+    min-height:32px!important;
+    font-size:.66rem!important;
+  }
+}
