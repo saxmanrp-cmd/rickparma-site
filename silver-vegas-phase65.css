@@ -1,0 +1,24 @@
+/* Phase 65 — force the verified header asset from an absolute URL.
+   This bypasses any Pages relative-path/deployment asset problem. */
+html body header{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:1300 / 732!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  background-color:#010307!important;
+  background-image:url('https://raw.githubusercontent.com/saxmanrp-cmd/rickparma-site/agent/silver-vegas-redesign/images/rick-parma-header-approved-hd.avif')!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  background-size:cover!important;
+}
+html body header::before,
+html body header::after{content:none!important;display:none!important;}
+html body header h1,
+html body header h1 a{display:none!important;}
+html body header .socials{display:flex!important;visibility:visible!important;opacity:1!important;position:absolute!important;z-index:20!important;}
+@media(max-width:560px){html body header{background-position:center center!important;background-size:cover!important;}}
