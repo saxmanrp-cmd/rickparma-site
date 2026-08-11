@@ -26,9 +26,11 @@
   <circle cx="128" cy="128" r="101" fill="none" stroke="url(#ring)" stroke-width="5.5" opacity=".44" filter="url(#soft)"/>
   <circle cx="128" cy="128" r="101" fill="none" stroke="url(#ring)" stroke-width="4.5" filter="url(#glow)"/>
   <path d="M47 88c25-41 72-66 121-56" fill="none" stroke="#fff" stroke-opacity=".34" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M73 99h26l9-15h40l9 15h26c10 0 18 8 18 18v60c0 10-8 18-18 18H73c-10 0-18-8-18-18v-60c0-10 8-18 18-18Z" fill="none" stroke="url(#glyph)" stroke-width="7.5" stroke-linejoin="round" filter="url(#glow)"/>
-  <circle cx="128" cy="145" r="35" fill="none" stroke="url(#glyph)" stroke-width="7.5" filter="url(#glow)"/>
-  <circle cx="178" cy="119" r="5.5" fill="url(#glyph)" filter="url(#glow)"/>
-  <path d="M73 99h26l9-15h40l9 15h26c10 0 18 8 18 18v60c0 10-8 18-18 18H73c-10 0-18-8-18-18v-60c0-10 8-18 18-18Z" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="2" stroke-linejoin="round"/>
-  <circle cx="128" cy="145" r="35" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
+  <g transform="matrix(.74 0 0 .74 33.28 24.77)">
+    <path d="M73 99h26l9-15h40l9 15h26c10 0 18 8 18 18v60c0 10-8 18-18 18H73c-10 0-18-8-18-18v-60c0-10 8-18 18-18Z" fill="none" stroke="url(#glyph)" stroke-width="8.5" stroke-linejoin="round" filter="url(#glow)"/>
+    <circle cx="128" cy="145" r="35" fill="none" stroke="url(#glyph)" stroke-width="8.5" filter="url(#glow)"/>
+    <circle cx="178" cy="119" r="5.5" fill="url(#glyph)" filter="url(#glow)"/>
+    <path d="M73 99h26l9-15h40l9 15h26c10 0 18 8 18 18v60c0 10-8 18-18 18H73c-10 0-18-8-18-18v-60c0-10 8-18 18-18Z" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="2.2" stroke-linejoin="round"/>
+    <circle cx="128" cy="145" r="35" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2.2"/>
+  </g>
 </svg>
