@@ -1,0 +1,658 @@
+/* RickParma.com — Silver Vegas Phase 11
+   SHOWROOM DECORATIVE PASS. Presentation only.
+   No JavaScript, API, payment, calendar data, booking submission,
+   hero visibility logic, or existing link behavior is changed. */
+
+:root{
+  --rp11-cyan:#6ae8ff;
+  --rp11-blue:#4f92ff;
+  --rp11-violet:#a17bff;
+  --rp11-pink:#ff67dc;
+  --rp11-white:#fbfdff;
+  --rp11-silver:#c7d3df;
+  --rp11-steel:#7f90a4;
+  --rp11-night:#02050b;
+  --rp11-ease:cubic-bezier(.2,.78,.24,1);
+}
+
+/* ==========================================================
+   GLOBAL SHOWROOM ATMOSPHERE
+   ========================================================== */
+html body{
+  background:
+    radial-gradient(ellipse at 50% -8%,rgba(79,146,255,.20),transparent 34rem),
+    radial-gradient(ellipse at 3% 26%,rgba(106,232,255,.10),transparent 27rem),
+    radial-gradient(ellipse at 98% 34%,rgba(255,103,220,.095),transparent 29rem),
+    radial-gradient(ellipse at 50% 78%,rgba(161,123,255,.055),transparent 36rem),
+    linear-gradient(180deg,#010207 0%,#071421 25%,#030914 59%,#010307 100%)!important;
+}
+
+/* Sharper chrome divider language throughout the page. */
+html body #music::after,
+html body #calendar::after,
+html body #promo-videos::after,
+html body #diamond-method::after{
+  height:2px!important;
+  background:
+    linear-gradient(90deg,
+      transparent 0%,
+      rgba(106,232,255,.06) 10%,
+      rgba(106,232,255,.38) 31%,
+      rgba(255,255,255,.50) 50%,
+      rgba(255,103,220,.34) 69%,
+      rgba(255,103,220,.06) 90%,
+      transparent 100%)!important;
+  box-shadow:
+    0 0 11px rgba(106,232,255,.12),
+    0 0 18px rgba(255,103,220,.07)!important;
+}
+
+/* ==========================================================
+   HEADER — illuminated chrome marquee
+   ========================================================== */
+html body header{
+  border-bottom:1px solid rgba(219,235,252,.22)!important;
+  box-shadow:
+    0 16px 46px rgba(0,0,0,.44),
+    inset 0 -1px 0 rgba(255,255,255,.025),
+    0 0 30px rgba(72,156,255,.035)!important;
+}
+html body header::before{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:1px;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.26),rgba(106,232,255,.20),rgba(255,103,220,.18),rgba(255,255,255,.24),transparent);
+  opacity:.72;
+}
+html body header::after{
+  left:4%!important;
+  right:4%!important;
+  height:2px!important;
+  background:linear-gradient(90deg,transparent,rgba(106,232,255,.38),rgba(251,253,255,.55),rgba(255,103,220,.34),transparent)!important;
+  box-shadow:0 0 14px rgba(106,232,255,.12)!important;
+}
+
+html body header h1 a{
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.14),
+    0 0 0 4px rgba(106,232,255,.035),
+    0 0 30px rgba(106,232,255,.18),
+    0 0 48px rgba(255,103,220,.08)!important;
+}
+html body header h1::after{
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.10),
+    0 0 14px rgba(106,232,255,.11),
+    0 0 20px rgba(255,103,220,.055)!important;
+}
+
+html body .socials a{
+  border-color:rgba(220,235,252,.16)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.11),
+    inset 0 -1px 0 rgba(255,255,255,.02),
+    0 9px 22px rgba(0,0,0,.31),
+    0 0 17px rgba(106,232,255,.04)!important;
+}
+html body .socials a:hover{
+  border-color:rgba(106,232,255,.48)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 10px 24px rgba(0,0,0,.34),
+    0 0 20px rgba(106,232,255,.12),
+    0 0 28px rgba(255,103,220,.055)!important;
+}
+
+/* ==========================================================
+   HERO — bigger Vegas landmark illusion + marquee chrome
+   ========================================================== */
+html body .band-hero{
+  box-shadow:
+    inset 0 -150px 150px rgba(0,0,0,.48),
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 22px 56px rgba(0,0,0,.22)!important;
+}
+
+/* Intensify the existing observation-wheel landmark without changing structure. */
+html body .band-hero .band-inner::before{
+  right:-2%!important;
+  top:-1%!important;
+  opacity:.72!important;
+  border-color:rgba(173,231,255,.58)!important;
+  box-shadow:
+    0 0 0 3px rgba(106,232,255,.025),
+    0 0 0 10px rgba(106,232,255,.010),
+    inset 0 0 36px rgba(106,232,255,.07),
+    0 0 34px rgba(106,232,255,.18),
+    0 0 64px rgba(255,103,220,.075)!important;
+  background:
+    radial-gradient(circle,transparent 0 14%,rgba(255,255,255,.07) 15% 15.7%,transparent 16.5% 44%,rgba(106,232,255,.10) 44.7% 45.4%,transparent 46% 61%,rgba(106,232,255,.28) 61.7% 62.8%,transparent 63.4%),
+    repeating-conic-gradient(from 0deg,rgba(210,241,255,.28) 0 .75deg,transparent .75deg 15deg)!important;
+}
+
+/* Fountain arcs become more theatrical and layered. */
+html body .band-hero .band-inner::after{
+  left:-6%!important;
+  bottom:20%!important;
+  width:min(68vw,570px)!important;
+  height:176px!important;
+  opacity:.78!important;
+  filter:
+    drop-shadow(0 0 9px rgba(106,232,255,.16))
+    drop-shadow(0 0 18px rgba(161,123,255,.08))!important;
+  background:
+    radial-gradient(ellipse 38% 78% at 3% 100%,transparent 57%,rgba(106,232,255,.28) 58% 59%,transparent 60%),
+    radial-gradient(ellipse 41% 82% at 22% 100%,transparent 57%,rgba(170,238,255,.30) 58% 59%,transparent 60%),
+    radial-gradient(ellipse 43% 91% at 41% 100%,transparent 57%,rgba(255,255,255,.35) 58% 59%,transparent 60%),
+    radial-gradient(ellipse 44% 96% at 58% 100%,transparent 57%,rgba(198,203,255,.32) 58% 59%,transparent 60%),
+    radial-gradient(ellipse 42% 86% at 76% 100%,transparent 57%,rgba(161,123,255,.31) 58% 59%,transparent 60%),
+    radial-gradient(ellipse 39% 78% at 95% 100%,transparent 57%,rgba(255,103,220,.29) 58% 59%,transparent 60%)!important;
+}
+
+/* Larger reflective chrome title with a stronger light sweep. */
+html body .hero-title{
+  letter-spacing:.006em!important;
+  filter:
+    drop-shadow(0 1px 0 rgba(255,255,255,.14))
+    drop-shadow(0 4px 0 rgba(45,57,72,.22))
+    drop-shadow(0 12px 26px rgba(0,0,0,.72))
+    drop-shadow(0 0 28px rgba(106,232,255,.13))!important;
+}
+html body .hero-title::before{
+  letter-spacing:.31em!important;
+}
+html body .hero-title::after{
+  letter-spacing:.26em!important;
+}
+
+/* Hero action cards now read like illuminated control consoles. */
+html body .band-hero .button-col{
+  border-radius:21px!important;
+  background:
+    radial-gradient(circle at 18% 0%,rgba(255,255,255,.075),transparent 28%),
+    linear-gradient(110deg,rgba(106,232,255,.025),transparent 30%,rgba(255,103,220,.018) 72%,transparent),
+    linear-gradient(180deg,rgba(8,17,31,.92),rgba(2,7,14,.975))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.09),
+    inset 0 -1px 0 rgba(255,255,255,.025),
+    0 20px 48px rgba(0,0,0,.44),
+    0 0 32px rgba(106,232,255,.07)!important;
+}
+html body .band-hero .button-col::before{
+  opacity:.72!important;
+  background:linear-gradient(118deg,transparent 16%,rgba(255,255,255,.08) 40%,rgba(106,232,255,.05) 48%,transparent 64%)!important;
+}
+html body .band-hero .button-col:first-child{
+  border-color:rgba(106,232,255,.36)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.09),
+    0 20px 48px rgba(0,0,0,.44),
+    0 0 34px rgba(106,232,255,.13)!important;
+}
+html body .band-hero .button-col:last-child{
+  border-color:rgba(255,103,220,.34)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.09),
+    0 20px 48px rgba(0,0,0,.44),
+    0 0 34px rgba(255,103,220,.11)!important;
+}
+html body .song-request-button::before{
+  box-shadow:
+    0 0 0 1px rgba(106,232,255,.16),
+    inset 0 0 18px rgba(106,232,255,.12),
+    0 0 22px rgba(106,232,255,.34),
+    0 0 38px rgba(79,146,255,.12)!important;
+}
+html body .fan-cam-button::before{
+  box-shadow:
+    0 0 0 1px rgba(255,103,220,.15),
+    inset 0 0 18px rgba(255,103,220,.11),
+    0 0 22px rgba(255,103,220,.31),
+    0 0 38px rgba(161,123,255,.10)!important;
+}
+html body .song-request-button::after,
+html body .fan-cam-button::after{
+  text-shadow:0 0 13px rgba(255,255,255,.035),0 2px 12px rgba(0,0,0,.62)!important;
+}
+
+/* ==========================================================
+   TIP — decorate around, never disturb locked sizing rules
+   ========================================================== */
+html body .band-tipjar .rp-card-panel{
+  border-color:rgba(216,232,250,.27)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -1px 0 rgba(255,255,255,.018),
+    0 20px 52px rgba(0,0,0,.42),
+    0 0 36px rgba(106,232,255,.07),
+    0 0 46px rgba(255,103,220,.045)!important;
+}
+html body .tip-amt{
+  border-color:rgba(210,230,251,.17)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(3,8,15,.90))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 7px 15px rgba(0,0,0,.16)!important;
+}
+html body .tip-amt.active{
+  background:linear-gradient(110deg,var(--rp11-cyan) 0%,#667eff 43%,var(--rp11-pink) 100%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.72),
+    0 8px 18px rgba(0,0,0,.22),
+    0 0 24px rgba(106,232,255,.28),
+    0 0 34px rgba(255,103,220,.18)!important;
+}
+html body .tip-cta-btn{
+  background:linear-gradient(105deg,var(--rp11-cyan),#667eff 46%,var(--rp11-pink))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.70),
+    0 15px 34px rgba(0,0,0,.38),
+    0 0 25px rgba(106,232,255,.17),
+    0 0 32px rgba(255,103,220,.12)!important;
+}
+
+/* ==========================================================
+   TEXT JOIN — illuminated SMS marquee
+   ========================================================== */
+html body .band-textjoin .rp-card-panel{
+  border-color:rgba(204,227,250,.22)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.065),
+    0 18px 48px rgba(0,0,0,.39),
+    0 0 30px rgba(106,232,255,.055),
+    0 0 34px rgba(255,103,220,.035)!important;
+}
+html body .text-join-button{
+  border-color:rgba(141,218,255,.26)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 12px 32px rgba(0,0,0,.27),
+    0 0 24px rgba(106,232,255,.07),
+    0 0 28px rgba(255,103,220,.045)!important;
+}
+html body .text-join-button::after{
+  border-color:rgba(106,232,255,.33)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 22px rgba(106,232,255,.11),
+    0 0 25px rgba(255,103,220,.07)!important;
+}
+
+/* ==========================================================
+   SECTION TITLES — illuminated chrome sign language
+   ========================================================== */
+html body .band-music h2.display-heading,
+html body #calendar h2.display-heading,
+html body #rp-video-section .rp-section-title,
+html body #booking h2.display-heading::before{
+  filter:drop-shadow(0 0 13px rgba(106,232,255,.09)) drop-shadow(0 0 17px rgba(255,103,220,.045));
+}
+html body .band-music h2.display-heading::before,
+html body #calendar h2.display-heading::before,
+html body #rp-video-section .rp-section-title::before{
+  width:78px!important;
+  height:2px!important;
+  background:linear-gradient(90deg,var(--rp11-cyan),rgba(255,255,255,.68),var(--rp11-pink),transparent)!important;
+  box-shadow:0 0 13px rgba(106,232,255,.19)!important;
+}
+
+/* ==========================================================
+   MUSIC — chrome console / stage rack feel
+   ========================================================== */
+html body .rp-player{
+  border-color:rgba(204,227,250,.24)!important;
+  background:
+    radial-gradient(circle at 0% 50%,rgba(106,232,255,.09),transparent 31%),
+    radial-gradient(circle at 100% 50%,rgba(255,103,220,.045),transparent 29%),
+    linear-gradient(180deg,rgba(9,18,31,.97),rgba(3,8,15,.99))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    inset 0 -1px 0 rgba(255,255,255,.018),
+    0 20px 48px rgba(0,0,0,.40),
+    0 0 30px rgba(106,232,255,.06)!important;
+}
+html body .rp-player::before{
+  left:6%!important;
+  right:6%!important;
+  height:2px!important;
+  background:linear-gradient(90deg,transparent,var(--rp11-cyan),rgba(255,255,255,.62),var(--rp11-pink),transparent)!important;
+  box-shadow:0 0 11px rgba(106,232,255,.15)!important;
+}
+html body #rp-playpause{
+  background:linear-gradient(135deg,var(--rp11-cyan),#657dff 52%,var(--rp11-pink))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.62),
+    0 0 18px rgba(106,232,255,.23),
+    0 0 25px rgba(255,103,220,.11)!important;
+}
+html body .rp-progress-bar{
+  background:rgba(255,255,255,.09)!important;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.025)!important;
+}
+html body .rp-progress-fill{
+  background:linear-gradient(90deg,var(--rp11-cyan),#677eff 55%,var(--rp11-pink))!important;
+  box-shadow:0 0 11px rgba(106,232,255,.30),0 0 14px rgba(255,103,220,.08)!important;
+}
+
+/* ==========================================================
+   CALENDAR — electric event cards / marquee dates
+   ========================================================== */
+html body #calendar .show-tile{
+  border-color:rgba(204,227,250,.20)!important;
+  background:
+    radial-gradient(circle at 6% 0%,rgba(106,232,255,.055),transparent 26%),
+    radial-gradient(circle at 96% 100%,rgba(255,103,220,.04),transparent 28%),
+    linear-gradient(180deg,rgba(8,17,29,.985),rgba(3,8,15,.995))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 15px 34px rgba(0,0,0,.32)!important;
+}
+html body #calendar .show-tile::before{
+  left:8%!important;
+  right:8%!important;
+  height:2px!important;
+  background:linear-gradient(90deg,transparent,var(--rp11-cyan),rgba(255,255,255,.50),var(--rp11-pink),transparent)!important;
+  box-shadow:0 0 10px rgba(106,232,255,.12)!important;
+}
+html body #calendar .show-tile:hover,
+html body #calendar .show-tile:focus-visible{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    0 19px 42px rgba(0,0,0,.38),
+    0 0 24px rgba(106,232,255,.11),
+    0 0 30px rgba(255,103,220,.06)!important;
+}
+html body #calendar .show-date-badge{
+  background:linear-gradient(145deg,var(--rp11-cyan),#6680ff 52%,var(--rp11-pink))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.58),
+    0 8px 18px rgba(0,0,0,.25),
+    0 0 18px rgba(106,232,255,.15)!important;
+}
+html body #calendar .show-actions a:first-child{
+  background:linear-gradient(105deg,var(--rp11-cyan),#6c80ff 58%,#9f73ff)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 13px rgba(106,232,255,.10)!important;
+}
+html body #calendar .show-carousel-nav button{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 15px rgba(0,0,0,.20),0 0 13px rgba(106,232,255,.045)!important;
+}
+
+/* Detail sheet gets a brighter nightclub glass rim. */
+html body .cal-detail-sheet{
+  border-color:rgba(204,227,250,.23)!important;
+  box-shadow:
+    0 30px 86px rgba(0,0,0,.62),
+    inset 0 1px 0 rgba(255,255,255,.065),
+    0 0 36px rgba(106,232,255,.055),
+    0 0 46px rgba(255,103,220,.035)!important;
+}
+html body .cal-detail-flyer{
+  box-shadow:
+    0 14px 38px rgba(0,0,0,.42),
+    0 0 24px rgba(106,232,255,.06),
+    0 0 30px rgba(255,103,220,.035)!important;
+}
+html body .cal-detail-actions a.primary{
+  background:linear-gradient(105deg,var(--rp11-cyan),#687fff 48%,var(--rp11-pink))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.60),0 11px 25px rgba(0,0,0,.30),0 0 18px rgba(106,232,255,.11)!important;
+}
+
+/* ==========================================================
+   PROMO VIDEOS — LED stage screen / selected tile lighting
+   ========================================================== */
+html body #rp-video-section{
+  border-color:rgba(204,227,250,.23)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 20px 52px rgba(0,0,0,.42),
+    0 0 34px rgba(106,232,255,.06),
+    0 0 42px rgba(255,103,220,.04)!important;
+}
+html body #rp-video-section .rp-featured-wrap{
+  border-color:rgba(211,231,251,.20)!important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.025),
+    0 15px 36px rgba(0,0,0,.40),
+    0 0 25px rgba(106,232,255,.11),
+    0 0 36px rgba(255,103,220,.065)!important;
+}
+html body #rp-video-section .rp-featured-wrap::after{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.055),
+    inset 0 -56px 54px rgba(0,0,0,.12),
+    inset 0 1px 18px rgba(106,232,255,.025)!important;
+}
+html body #rp-video-section .rp-thumb{
+  border-color:rgba(201,224,249,.17)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 11px 24px rgba(0,0,0,.25)!important;
+}
+html body #rp-video-section .rp-thumb.active{
+  border-color:rgba(106,232,255,.45)!important;
+  box-shadow:
+    0 0 0 1px rgba(255,103,220,.08),
+    0 14px 30px rgba(0,0,0,.32),
+    0 0 24px rgba(106,232,255,.12),
+    0 0 31px rgba(255,103,220,.08)!important;
+}
+html body #rp-video-section .rp-play-btn{
+  background:linear-gradient(145deg,var(--rp11-cyan),#687eff 52%,var(--rp11-pink))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 6px 16px rgba(0,0,0,.35),0 0 16px rgba(106,232,255,.13)!important;
+}
+
+/* ==========================================================
+   DIAMOND — jeweled chrome presentation card
+   ========================================================== */
+html body .band-diamond .band-inner::before{
+  color:#f5f9fd!important;
+  text-shadow:0 0 14px rgba(106,232,255,.08),0 0 18px rgba(161,123,255,.05)!important;
+}
+html body .product-card{
+  border-color:rgba(211,231,250,.23)!important;
+  background:
+    radial-gradient(circle at 4% 14%,rgba(106,232,255,.09),transparent 28%),
+    radial-gradient(circle at 96% 86%,rgba(161,123,255,.08),transparent 31%),
+    linear-gradient(180deg,rgba(9,18,31,.98),rgba(3,8,15,.995))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    0 20px 52px rgba(0,0,0,.41),
+    0 0 30px rgba(106,232,255,.06),
+    0 0 38px rgba(161,123,255,.045)!important;
+}
+html body .product-card::before{
+  left:6%!important;
+  right:6%!important;
+  height:2px!important;
+  background:linear-gradient(90deg,transparent,var(--rp11-cyan),rgba(255,255,255,.62),var(--rp11-violet),transparent)!important;
+  box-shadow:0 0 11px rgba(106,232,255,.14)!important;
+}
+html body .product-card img{
+  box-shadow:0 12px 30px rgba(0,0,0,.30),0 0 22px rgba(106,232,255,.05),0 0 28px rgba(161,123,255,.035)!important;
+}
+html body .product-card .buy-btn:not([href*="diamond-login"]){
+  background:linear-gradient(105deg,var(--rp11-cyan),#6a80ff 50%,var(--rp11-violet))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.58),0 9px 21px rgba(0,0,0,.28),0 0 17px rgba(106,232,255,.10)!important;
+}
+
+/* ==========================================================
+   BOOKING — luxury dark showroom / illuminated form surface
+   ========================================================== */
+html body section#booking{
+  border-color:rgba(211,231,250,.23)!important;
+  background:
+    radial-gradient(circle at 6% 0%,rgba(106,232,255,.095),transparent 29%),
+    radial-gradient(circle at 94% 0%,rgba(255,103,220,.072),transparent 28%),
+    radial-gradient(ellipse at 50% 100%,rgba(161,123,255,.045),transparent 36%),
+    linear-gradient(180deg,rgba(8,17,29,.985),rgba(3,8,15,.998))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    0 22px 58px rgba(0,0,0,.43),
+    0 0 34px rgba(106,232,255,.055),
+    0 0 42px rgba(255,103,220,.035)!important;
+}
+html body section#booking::before{
+  left:5%!important;
+  right:5%!important;
+  height:2px!important;
+  background:linear-gradient(90deg,transparent,var(--rp11-cyan),rgba(255,255,255,.58),var(--rp11-pink),transparent)!important;
+  box-shadow:0 0 12px rgba(106,232,255,.12)!important;
+}
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  border-color:rgba(202,225,250,.18)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 5px 12px rgba(0,0,0,.11)!important;
+}
+html body form.booking input:focus,
+html body form.booking select:focus,
+html body form.booking textarea:focus{
+  border-color:rgba(106,232,255,.54)!important;
+  box-shadow:
+    0 0 0 3px rgba(106,232,255,.065),
+    0 0 18px rgba(106,232,255,.08),
+    inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+html body form.booking fieldset{
+  border-color:rgba(205,228,251,.18)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+html body .submit-btn{
+  background:linear-gradient(105deg,var(--rp11-cyan),#687fff 46%,var(--rp11-pink))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.64),
+    0 14px 32px rgba(0,0,0,.35),
+    0 0 23px rgba(106,232,255,.15),
+    0 0 29px rgba(255,103,220,.09)!important;
+}
+
+/* ==========================================================
+   FOOTER — final illuminated brand plate
+   ========================================================== */
+html body footer{
+  border-top-color:rgba(205,228,251,.17)!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(106,232,255,.08),transparent 19rem),
+    radial-gradient(ellipse at 75% 0%,rgba(255,103,220,.035),transparent 15rem),
+    linear-gradient(180deg,#040b16,#010307)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+html body footer::before{
+  filter:
+    grayscale(1)
+    brightness(1.52)
+    contrast(1.18)
+    drop-shadow(0 0 15px rgba(106,232,255,.16))
+    drop-shadow(0 0 22px rgba(255,103,220,.06))!important;
+}
+html body footer::after{
+  color:#7f8da0!important;
+  text-shadow:0 0 12px rgba(106,232,255,.035)!important;
+}
+
+/* ==========================================================
+   SHOWROOM MOTION — slow, polished, not frantic
+   ========================================================== */
+@keyframes rp11WheelBreathe{
+  0%,100%{opacity:.58;filter:brightness(.96) saturate(.96);transform:scale(.992) rotate(0deg);}
+  50%{opacity:.82;filter:brightness(1.15) saturate(1.08);transform:scale(1.012) rotate(1.25deg);}
+}
+@keyframes rp11FountainBreathe{
+  0%,100%{opacity:.62;filter:drop-shadow(0 0 8px rgba(106,232,255,.13));}
+  50%{opacity:.84;filter:drop-shadow(0 0 16px rgba(106,232,255,.24)) drop-shadow(0 0 22px rgba(161,123,255,.08));}
+}
+@keyframes rp11CardGlow{
+  0%,100%{filter:brightness(1);}
+  50%{filter:brightness(1.025);}
+}
+@media(prefers-reduced-motion:no-preference){
+  html body .band-hero .band-inner::before{animation:rp11WheelBreathe 7.8s ease-in-out infinite!important;}
+  html body .band-hero .band-inner::after{animation:rp11FountainBreathe 5.2s ease-in-out infinite!important;}
+  html body #rp-video-section,
+  html body .product-card{animation:rp11CardGlow 7s ease-in-out infinite;}
+}
+
+/* ==========================================================
+   MOBILE — retain spectacle, keep it readable
+   ========================================================== */
+@media(max-width:559px){
+  html body .band-hero .band-inner::before{
+    right:-12%!important;
+    top:5%!important;
+    width:48vw!important;
+    opacity:.45!important;
+  }
+  html body .band-hero .band-inner::after{
+    left:-16%!important;
+    bottom:25%!important;
+    width:82vw!important;
+    height:126px!important;
+    opacity:.48!important;
+  }
+  html body .hero-title{
+    filter:
+      drop-shadow(0 1px 0 rgba(255,255,255,.10))
+      drop-shadow(0 9px 20px rgba(0,0,0,.72))
+      drop-shadow(0 0 20px rgba(106,232,255,.11))!important;
+  }
+  html body .band-hero .button-col{
+    border-radius:18px!important;
+  }
+  html body #calendar .show-tile,
+  html body #rp-video-section .rp-thumb{
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 12px 27px rgba(0,0,0,.28)!important;
+  }
+}
+
+@media(max-width:390px){
+  html body .band-hero .band-inner::before{
+    width:52vw!important;
+    right:-17%!important;
+  }
+  html body .band-hero .band-inner::after{
+    width:92vw!important;
+    left:-24%!important;
+  }
+}
+
+/* ==========================================================
+   DESKTOP — fuller showroom scale
+   ========================================================== */
+@media(min-width:900px){
+  html body .band-hero .band-inner::before{
+    width:310px!important;
+    right:-1%!important;
+    top:-2%!important;
+  }
+  html body .band-hero .band-inner::after{
+    width:610px!important;
+    height:188px!important;
+    left:-2%!important;
+    bottom:19%!important;
+  }
+  html body .band-hero .button-col{
+    border-radius:23px!important;
+  }
+  html body .rp-player,
+  html body #rp-video-section,
+  html body .product-card,
+  html body section#booking{
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.075),
+      0 24px 60px rgba(0,0,0,.43),
+      0 0 36px rgba(106,232,255,.055),
+      0 0 44px rgba(255,103,220,.032)!important;
+  }
+}
+
+/* ==========================================================
+   ACCESSIBILITY — spectacle stops cleanly when requested
+   ========================================================== */
+@media(prefers-reduced-motion:reduce){
+  html body .band-hero .band-inner::before,
+  html body .band-hero .band-inner::after,
+  html body #rp-video-section,
+  html body .product-card{
+    animation:none!important;
+  }
+}
