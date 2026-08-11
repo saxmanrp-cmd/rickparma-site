@@ -1,0 +1,85 @@
+/* RickParma.com — Silver Vegas Phase 62
+   Render the approved header artwork as replaced image content instead of a
+   CSS background. This leaves the existing social icon DOM and styling alone. */
+
+html body header{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:#010307!important;
+  background-image:none!important;
+  transform:none!important;
+  filter:none!important;
+  contain:none!important;
+}
+
+html body header::before,
+html body header::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* The existing H1 becomes the image box itself. Unlike background-image,
+   this is sized by the browser as replaced image content, exactly like an IMG. */
+html body header h1{
+  content:url('images/rick-parma-header-approved-hd.avif?v=62')!important;
+  position:relative!important;
+  display:block!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+  opacity:1!important;
+  overflow:hidden!important;
+  line-height:0!important;
+  font-size:0!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  image-rendering:auto!important;
+  z-index:1!important;
+}
+
+/* The image replacement is on H1; its old text link is not visually rendered. */
+html body header h1 a{
+  display:none!important;
+}
+
+/* IMPORTANT: no .socials rules here. Phase 54's already-approved social icon
+   positioning/sizing stays exactly as-is. */
+
+@media(max-width:560px){
+  html body header,
+  html body header h1{
+    width:100%!important;
+    max-width:none!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+    filter:none!important;
+  }
+}
