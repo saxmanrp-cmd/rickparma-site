@@ -1,0 +1,69 @@
+/* RickParma.com — Silver Vegas Phase 40
+   Make TIP RICK NOW larger/wider/centered and pull the Square trust line directly under the CTA. */
+
+/* CTA label — bigger, wider, centered across the full button. */
+html body #tip-cta.tip-cta-btn::before,
+html body .band-tipjar .tip-cta-btn::before{
+  content:'TIP RICK NOW'!important;
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0 auto!important;
+  color:#05080c!important;
+  font-size:clamp(1.72rem,7.9vw,2.34rem)!important;
+  font-weight:950!important;
+  line-height:.92!important;
+  letter-spacing:.12em!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  transform:scaleX(1.08)!important;
+  transform-origin:center center!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.18)!important;
+}
+
+/* Keep the CTA itself centered and give the larger label enough vertical room. */
+html body .band-tipjar .tip-row > #tip-cta,
+html body .band-tipjar .tip-row > .tip-cta-btn,
+html body #tip-cta.tip-cta-btn{
+  min-height:64px!important;
+  padding-top:10px!important;
+  padding-bottom:10px!important;
+  padding-left:8px!important;
+  padding-right:8px!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+/* Trust line sits directly beneath the button. */
+html body .band-tipjar .tip-row::after{
+  margin-top:2px!important;
+  padding-top:0!important;
+  padding-bottom:0!important;
+  line-height:1!important;
+}
+
+/* Trim the panel bottom so the trust line closes the section tightly. */
+html body .band-tipjar .rp-card-panel{
+  padding-bottom:7px!important;
+}
+
+@media(max-width:420px){
+  html body #tip-cta.tip-cta-btn::before,
+  html body .band-tipjar .tip-cta-btn::before{
+    font-size:clamp(1.50rem,7.8vw,1.92rem)!important;
+    letter-spacing:.105em!important;
+    transform:scaleX(1.06)!important;
+  }
+
+  html body .band-tipjar .tip-row > #tip-cta,
+  html body .band-tipjar .tip-row > .tip-cta-btn,
+  html body #tip-cta.tip-cta-btn{
+    min-height:60px!important;
+    padding-left:5px!important;
+    padding-right:5px!important;
+  }
+
+  html body .band-tipjar .tip-row::after{
+    margin-top:1px!important;
+  }
+}
