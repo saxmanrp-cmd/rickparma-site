@@ -1,0 +1,382 @@
+/* RickParma.com — Silver Vegas Phase 4
+   Final refinement layer. Visual presentation only.
+   Existing JavaScript, APIs, payments, calendar/flyer behavior and booking submission are untouched. */
+
+:root{
+  --rp-phase4-blue:#36ceff;
+  --rp-phase4-pink:#ff4fd1;
+  --rp-phase4-violet:#806fff;
+  --rp-phase4-chrome:#eef4fb;
+  --rp-phase4-ink:#02050a;
+}
+
+/* ---------- page depth ---------- */
+html body{
+  background:
+    radial-gradient(ellipse at 50% -8%,rgba(78,159,255,.13),transparent 28rem),
+    radial-gradient(ellipse at -10% 24%,rgba(54,206,255,.07),transparent 26rem),
+    radial-gradient(ellipse at 110% 38%,rgba(255,79,209,.065),transparent 28rem),
+    linear-gradient(180deg,#010307 0%,#06101b 28%,#030812 62%,#010307 100%)!important;
+}
+
+html body section:not(#top){
+  isolation:isolate;
+}
+
+/* ---------- header: more like a premium app bar ---------- */
+html body header{
+  backdrop-filter:blur(18px) saturate(1.15)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.15)!important;
+  background:linear-gradient(180deg,rgba(3,7,13,.95),rgba(2,6,11,.88))!important;
+}
+
+html body header::after{
+  content:'';
+  position:absolute;
+  left:9%;
+  right:9%;
+  bottom:-1px;
+  height:1px;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(238,244,251,.28),rgba(54,206,255,.25),rgba(255,79,209,.22),transparent);
+}
+
+html body header h1 a{
+  box-shadow:0 0 0 1px rgba(255,255,255,.055),0 0 26px rgba(54,206,255,.07)!important;
+}
+
+html body .socials a{
+  position:relative;
+  overflow:hidden;
+}
+html body .socials a::after{
+  content:'';
+  position:absolute;
+  inset:1px;
+  border-radius:inherit;
+  pointer-events:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+/* ---------- hero: deeper Vegas light atmosphere without adding people ---------- */
+html body .band-hero{
+  min-height:440px!important;
+  background-position:center 48%!important;
+  box-shadow:inset 0 -90px 90px rgba(0,0,0,.30)!important;
+}
+
+html body .band-hero::after{
+  background:
+    radial-gradient(ellipse at 18% 74%,rgba(54,206,255,.25),transparent 25%),
+    radial-gradient(ellipse at 82% 72%,rgba(255,79,209,.22),transparent 27%),
+    radial-gradient(ellipse at 50% 95%,rgba(128,111,255,.16),transparent 36%),
+    repeating-linear-gradient(104deg,transparent 0 9%,rgba(255,255,255,.018) 9.5%,transparent 10.5% 19%),
+    linear-gradient(180deg,rgba(0,0,0,.025),rgba(0,0,0,.18) 40%,rgba(1,4,9,.80))!important;
+}
+
+html body .hero-title{
+  max-width:860px;
+  text-wrap:balance;
+  filter:drop-shadow(0 7px 18px rgba(0,0,0,.62)) drop-shadow(0 0 18px rgba(185,215,248,.08))!important;
+}
+
+html body .hero-title::before{
+  content:'LIVE • LAS VEGAS';
+  display:block;
+  margin:0 auto 12px;
+  font-size:clamp(.58rem,2.8vw,.76rem);
+  line-height:1;
+  letter-spacing:.28em;
+  font-weight:800;
+  color:#b8c5d4!important;
+  -webkit-text-fill-color:#b8c5d4!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.70)!important;
+}
+
+html body .band-hero .button-row{
+  max-width:760px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+html body .band-hero .button-col{
+  border-color:rgba(204,225,250,.22)!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.035),transparent 35%),
+    linear-gradient(180deg,rgba(8,15,26,.94),rgba(3,8,15,.97))!important;
+}
+
+html body .song-request-button::before,
+html body .fan-cam-button::before{
+  position:relative;
+  overflow:hidden;
+}
+
+html body .song-request-button::before{
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.13),rgba(8,18,31,.96) 66%)!important;
+}
+html body .fan-cam-button::before{
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.13),rgba(18,8,27,.96) 66%)!important;
+}
+
+/* ---------- shared premium card language ---------- */
+html body .band-tipjar .rp-card-panel,
+html body .band-textjoin .rp-card-panel,
+html body .rp-player,
+html body #rp-video-section,
+html body .product-card,
+html body section#booking{
+  box-shadow:
+    0 18px 48px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 0 0 1px rgba(255,255,255,.015)!important;
+}
+
+html body .band-tipjar .rp-card-panel,
+html body .band-textjoin .rp-card-panel,
+html body .rp-player,
+html body #rp-video-section,
+html body .product-card,
+html body section#booking{
+  backdrop-filter:blur(13px)!important;
+  -webkit-backdrop-filter:blur(13px)!important;
+}
+
+/* ---------- tip section ---------- */
+html body .band-tipjar .rp-card-panel::before{
+  text-shadow:0 0 18px rgba(219,231,246,.06)!important;
+}
+
+html body .tip-amt{
+  transition:transform .18s var(--rp-ease),border-color .18s var(--rp-ease),filter .18s var(--rp-ease),box-shadow .18s var(--rp-ease)!important;
+}
+html body .tip-amt:hover{
+  transform:translateY(-1px)!important;
+  border-color:rgba(54,206,255,.38)!important;
+  filter:brightness(1.08)!important;
+}
+html body .tip-amt:active{transform:scale(.97)!important;}
+html body .tip-amt.active{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.68),0 0 22px rgba(54,206,255,.22),0 0 28px rgba(255,79,209,.14)!important;
+}
+
+html body .tip-cta-btn{
+  min-height:62px!important;
+  border:1px solid rgba(255,255,255,.11)!important;
+}
+
+/* ---------- text join ---------- */
+html body .text-join-button{
+  min-height:96px!important;
+  background:
+    radial-gradient(circle at 8% 50%,rgba(54,206,255,.08),transparent 30%),
+    radial-gradient(circle at 92% 50%,rgba(255,79,209,.08),transparent 32%),
+    linear-gradient(135deg,rgba(255,255,255,.025),rgba(255,255,255,.01))!important;
+}
+html body .text-join-button::before{
+  background:linear-gradient(90deg,#ffffff 0%,#c7d5e5 42%,#ffffff 65%,#b4c0d0 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent!important;
+  -webkit-text-fill-color:transparent;
+}
+html body .text-join-button::after{
+  background:rgba(3,8,15,.72);
+  border-color:rgba(94,204,255,.26)!important;
+  box-shadow:0 0 0 1px rgba(255,79,209,.05),0 0 20px rgba(54,206,255,.07)!important;
+}
+
+/* ---------- music player ---------- */
+html body .rp-player{
+  min-height:78px;
+  background:
+    radial-gradient(circle at 0% 50%,rgba(54,206,255,.06),transparent 28%),
+    linear-gradient(180deg,rgba(9,16,27,.96),rgba(3,8,15,.98))!important;
+}
+html body #rp-playpause{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 0 22px rgba(91,128,255,.19)!important;
+}
+html body .rp-progress-fill{
+  box-shadow:0 0 9px rgba(54,206,255,.28)!important;
+}
+
+/* ---------- calendar ---------- */
+html body #calendar .show-track{
+  scrollbar-width:none!important;
+  -ms-overflow-style:none!important;
+}
+html body #calendar .show-track::-webkit-scrollbar{display:none!important;}
+
+html body #calendar .show-tile{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.03),transparent 34%),
+    linear-gradient(180deg,rgba(8,15,25,.98),rgba(3,8,15,.99))!important;
+}
+
+html body #calendar .show-flyer-thumb{
+  position:relative;
+  background:#02050a!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+html body #calendar .show-flyer-thumb::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.045),inset 0 -34px 34px rgba(0,0,0,.08);
+}
+
+html body #calendar .show-carousel-nav button{
+  transition:transform .18s var(--rp-ease),background .18s var(--rp-ease),border-color .18s var(--rp-ease)!important;
+}
+html body #calendar .show-carousel-nav button:hover{
+  transform:scale(1.06)!important;
+  border-color:rgba(54,206,255,.32)!important;
+  background:rgba(54,206,255,.065)!important;
+}
+
+/* ---------- promo video ---------- */
+html body #rp-video-section .rp-featured-wrap{
+  overflow:hidden!important;
+  background:#02050a!important;
+}
+html body #rp-video-section .rp-featured-wrap::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.045),inset 0 -50px 48px rgba(0,0,0,.10);
+}
+html body #rp-video-section .rp-thumb-title{
+  font-weight:780!important;
+  color:#dce5ef!important;
+}
+html body #rp-video-section .rp-thumb.active .rp-thumb-title{color:#fff!important;}
+
+/* ---------- Diamond section ---------- */
+html body .band-diamond .band-inner::before{
+  content:'DIAMOND SINGING METHOD';
+  display:block;
+  max-width:980px;
+  margin:0 auto 9px;
+  text-align:left;
+  color:#eaf0f7;
+  font-size:1.02rem;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.06em;
+}
+html body .product-card{
+  background:
+    radial-gradient(circle at 4% 20%,rgba(54,206,255,.07),transparent 27%),
+    radial-gradient(circle at 96% 80%,rgba(128,111,255,.07),transparent 31%),
+    linear-gradient(180deg,rgba(9,16,27,.97),rgba(3,8,15,.99))!important;
+}
+html body .product-card img{
+  border:1px solid rgba(255,255,255,.08)!important;
+}
+html body .product-card .price::before{
+  content:'COURSE  •  ';
+  color:#7f8b9b;
+  font-size:.60rem;
+  letter-spacing:.10em;
+  vertical-align:middle;
+}
+
+/* ---------- booking ---------- */
+html body section#booking{
+  background:
+    radial-gradient(circle at 5% 0%,rgba(54,206,255,.07),transparent 28%),
+    radial-gradient(circle at 95% 0%,rgba(255,79,209,.055),transparent 28%),
+    linear-gradient(180deg,rgba(8,15,25,.97),rgba(3,8,15,.99))!important;
+}
+html body #booking h2.display-heading::after{
+  content:'PRIVATE EVENTS • CORPORATE • WEDDINGS • CLUBS';
+  display:block;
+  margin-top:8px;
+  color:#8793a2;
+  -webkit-text-fill-color:#8793a2;
+  font-size:.55rem;
+  font-weight:760;
+  letter-spacing:.12em;
+}
+html body #booking-intro{
+  max-width:640px;
+  line-height:1.45!important;
+}
+html body form.booking > div,
+html body form.booking fieldset{
+  min-width:0;
+}
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  transition:border-color .18s var(--rp-ease),box-shadow .18s var(--rp-ease),background .18s var(--rp-ease)!important;
+}
+html body form.booking input:hover,
+html body form.booking select:hover,
+html body form.booking textarea:hover{
+  border-color:rgba(189,213,241,.23)!important;
+}
+html body form.booking textarea{min-height:112px!important;resize:vertical;}
+html body .submit-btn{width:100%!important;}
+
+/* ---------- footer ---------- */
+html body footer{
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(54,206,255,.055),transparent 18rem),
+    linear-gradient(180deg,#040914,#010307)!important;
+}
+html body footer a{
+  transition:color .18s var(--rp-ease),text-shadow .18s var(--rp-ease)!important;
+}
+html body footer a:hover{
+  color:#e5edf6!important;
+  text-shadow:0 0 12px rgba(54,206,255,.12)!important;
+}
+
+/* ---------- mobile-first tightening ---------- */
+@media(max-width:559px){
+  html body header{padding:10px 12px!important;}
+  html body header h1 a{width:64px!important;height:64px!important;}
+  html body .band{padding-left:9px!important;padding-right:9px!important;}
+  html body .band-hero{padding-left:9px!important;padding-right:9px!important;}
+  html body .hero-title{margin-bottom:15px!important;}
+  html body .hero-title::before{margin-bottom:10px;}
+  html body .hero-title::after{margin-top:11px;}
+  html body .band-hero .button-row{gap:8px!important;}
+  html body .band-hero .button-col{padding:11px 9px!important;}
+  html body #calendar .show-tile{flex-basis:178px!important;}
+  html body section#booking{margin-left:9px!important;margin-right:9px!important;}
+}
+
+@media(max-width:390px){
+  html body header h1::after{font-size:.66rem!important;letter-spacing:.11em!important;}
+  html body .song-request-button,
+  html body .fan-cam-button{grid-template-columns:48px 1fr!important;gap:8px!important;}
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{width:46px!important;height:46px!important;font-size:1.75rem!important;}
+  html body .band-hero .btn-caption{margin-left:56px!important;}
+}
+
+/* ---------- desktop expansion ---------- */
+@media(min-width:900px){
+  html body header{margin-top:0!important;}
+  html body .band-hero{min-height:660px!important;}
+  html body .band-hero .button-row{max-width:800px!important;}
+  html body .band-hero .button-col{min-height:176px!important;}
+  html body #calendar .show-tile{flex-basis:210px!important;}
+  html body #rp-video-section .rp-thumb{flex-basis:174px!important;}
+}
+
+/* ---------- respectful motion ---------- */
+@keyframes rpPhase4Glow{
+  0%,100%{filter:brightness(1);}
+  50%{filter:brightness(1.035);}
+}
+@media(prefers-reduced-motion:no-preference){
+  html body .tip-amt.active{animation:rpPhase4Glow 3.2s ease-in-out infinite!important;}
+}
+@media(prefers-reduced-motion:reduce){
+  html body .tip-amt.active{animation:none!important;}
+}
