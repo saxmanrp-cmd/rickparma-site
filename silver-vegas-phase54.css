@@ -1,0 +1,80 @@
+/* RickParma.com — Silver Vegas Phase 54
+   Preserve the approved 1672×941 header artwork at its exact native ratio.
+   No cover-crop, no forced height, no stretching, no minimum-height distortion. */
+
+html body header{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:1672 / 941!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+
+  background-image:url('images/rick-parma-header-approved.jpg')!important;
+  background-size:contain!important;
+  background-position:center top!important;
+  background-repeat:no-repeat!important;
+  background-color:#010307!important;
+}
+
+/* The approved header image already contains the complete Vegas + RP + text composition. */
+html body header::before,
+html body header::after,
+html body header h1,
+html body header h1 a{
+  display:none!important;
+  content:none!important;
+}
+
+/* Keep live socials over the artwork without affecting its geometry. */
+html body header .socials{
+  position:absolute!important;
+  top:7px!important;
+  left:7px!important;
+  right:auto!important;
+  z-index:6!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:5px!important;
+  margin:0!important;
+  padding:0!important;
+  transform:none!important;
+}
+
+/* Actions remain below the header. */
+html body .band-hero{
+  background:#010307!important;
+  padding:10px 8px 12px!important;
+}
+html body .band-hero::before,
+html body .band-hero::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+
+@media(max-width:560px){
+  html body header{
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    aspect-ratio:1672 / 941!important;
+    background-size:contain!important;
+    background-position:center top!important;
+  }
+
+  html body header .socials{
+    top:6px!important;
+    left:6px!important;
+  }
+}
