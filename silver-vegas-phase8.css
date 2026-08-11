@@ -1,0 +1,445 @@
+/* RickParma.com — Silver Vegas Phase 8
+   Production cleanup + responsive hardening only.
+   No JavaScript, API, payment, calendar data, booking submission,
+   or hero visibility behavior is changed. */
+
+:root{
+  --rp8-blue:#61dcff;
+  --rp8-pink:#ff6dde;
+  --rp8-chrome:#f5f8fc;
+  --rp8-muted:#91a0b1;
+  --rp8-line:rgba(199,221,247,.19);
+  --rp8-ease:cubic-bezier(.2,.78,.24,1);
+}
+
+/* ==========================================================
+   GLOBAL — prevent accidental overflow / clipped controls
+   ========================================================== */
+html body,
+html body main,
+html body section,
+html body .band,
+html body .band-inner{
+  min-width:0;
+}
+
+html body img,
+html body video,
+html body iframe{
+  max-width:100%;
+}
+
+html body a,
+html body button,
+html body input,
+html body select,
+html body textarea{
+  font-family:inherit;
+}
+
+html body button,
+html body a{
+  touch-action:manipulation;
+}
+
+/* Stop long text from forcing cards wider than the viewport. */
+html body .btn-caption,
+html body .join-box p,
+html body .rp-player-title,
+html body #calendar .show-tile .venue,
+html body #calendar .show-tile .meta,
+html body #rp-video-section .rp-thumb-title,
+html body .product-card p,
+html body #booking-intro,
+html body footer{
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+
+/* ==========================================================
+   HEADER / HERO — extreme-width cleanup
+   ========================================================== */
+html body header{
+  width:100%;
+}
+
+html body header h1{
+  min-width:0!important;
+}
+
+html body header h1::after{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+html body .socials{
+  flex-shrink:0;
+}
+
+html body .band-hero .button-row{
+  width:100%;
+}
+
+html body .band-hero .button-col{
+  min-width:0!important;
+}
+
+html body .song-request-button,
+html body .fan-cam-button{
+  min-width:0!important;
+}
+
+html body .song-request-button::after,
+html body .fan-cam-button::after{
+  overflow-wrap:normal;
+}
+
+/* ==========================================================
+   SHARED CTA SYSTEM — consistent sizing without changing links
+   ========================================================== */
+html body .tip-cta-btn,
+html body .text-join-button,
+html body #calendar .rpc-subscribe a,
+html body .product-card .buy-btn,
+html body .submit-btn,
+html body .cal-detail-actions a{
+  -webkit-user-select:none;
+  user-select:none;
+}
+
+html body #calendar .rpc-subscribe a,
+html body .product-card .buy-btn,
+html body .submit-btn{
+  min-height:44px;
+}
+
+html body .product-card .buy-btn{
+  white-space:nowrap;
+}
+
+/* ==========================================================
+   TEXT JOIN — fit every phone cleanly
+   ========================================================== */
+html body .text-join-button{
+  max-width:100%!important;
+}
+
+html body .text-join-button::before,
+html body .text-join-button::after{
+  max-width:100%;
+}
+
+html body .join-box{
+  min-width:0;
+}
+
+/* ==========================================================
+   MUSIC — avoid crowding around the progress controls
+   ========================================================== */
+html body .rp-player-controls{
+  min-width:0;
+}
+
+html body .rp-player-track{
+  min-width:0!important;
+}
+
+html body .rp-progress-row{
+  min-width:0;
+}
+
+html body .rp-progress-bar{
+  min-width:40px;
+}
+
+/* ==========================================================
+   CALENDAR — robust carousel and action wrapping
+   ========================================================== */
+html body #calendar .show-track{
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+html body #calendar .show-tile{
+  min-width:0;
+}
+
+html body #calendar .show-actions{
+  min-width:0;
+}
+
+html body #calendar .show-actions a{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+html body #calendar .show-carousel-nav button,
+html body .cal-detail-close,
+html body .cal-detail-nav button{
+  flex:0 0 auto;
+}
+
+html body .cal-detail-sheet,
+html body .cal-detail-card,
+html body .cal-detail-body{
+  min-width:0;
+}
+
+html body .cal-detail-actions a{
+  min-width:0;
+}
+
+html body .cal-detail-actions-row{
+  min-width:0;
+}
+
+html body .cal-choice-menu{
+  max-width:calc(100vw - 16px)!important;
+}
+
+html body .cal-choice-menu a{
+  overflow-wrap:anywhere;
+}
+
+/* ==========================================================
+   VIDEO — clean edge peeking and touch scrolling
+   ========================================================== */
+html body #rp-video-section .rp-carousel{
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+html body #rp-video-section .rp-thumb{
+  min-width:0;
+}
+
+html body #rp-video-section .rp-featured-wrap iframe{
+  display:block;
+}
+
+/* ==========================================================
+   DIAMOND — keep purchase actions stable on narrow screens
+   ========================================================== */
+html body .product-card{
+  min-width:0;
+}
+
+html body .product-card .dm-btn-row{
+  min-width:0;
+}
+
+/* ==========================================================
+   BOOKING — input reliability across Safari / Chrome / Android
+   ========================================================== */
+html body form.booking,
+html body form.booking > div,
+html body form.booking fieldset{
+  min-width:0;
+}
+
+html body form.booking input,
+html body form.booking select,
+html body form.booking textarea{
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+html body form.booking select{
+  text-overflow:ellipsis;
+}
+
+html body form.booking input[type="date"],
+html body form.booking input[type="time"]{
+  min-width:0;
+}
+
+html body form.booking input:disabled,
+html body form.booking select:disabled,
+html body form.booking textarea:disabled{
+  opacity:.62;
+}
+
+html body .submit-btn{
+  max-width:100%;
+}
+
+/* ==========================================================
+   FOCUS — consistent keyboard affordance on desktop/tablet
+   ========================================================== */
+@media(hover:hover){
+  html body .socials a:focus-visible,
+  html body .song-request-button:focus-visible,
+  html body .fan-cam-button:focus-visible,
+  html body .text-join-button:focus-visible,
+  html body .tip-cta-btn:focus-visible,
+  html body #calendar .rpc-subscribe a:focus-visible,
+  html body .product-card .buy-btn:focus-visible,
+  html body .submit-btn:focus-visible{
+    outline:2px solid rgba(97,220,255,.88)!important;
+    outline-offset:3px!important;
+  }
+}
+
+/* ==========================================================
+   SMALL PHONES — 320–360px class devices
+   ========================================================== */
+@media(max-width:360px){
+  html body header{
+    gap:7px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+
+  html body header h1 a{
+    width:58px!important;
+    height:58px!important;
+  }
+
+  html body .socials{
+    gap:5px!important;
+  }
+
+  html body .socials a{
+    width:34px!important;
+    height:34px!important;
+  }
+
+  html body .hero-title{
+    font-size:clamp(2rem,12vw,2.55rem)!important;
+  }
+
+  html body .hero-title::before,
+  html body .hero-title::after{
+    letter-spacing:.14em!important;
+  }
+
+  html body .band-hero .button-col{
+    padding-left:7px!important;
+    padding-right:7px!important;
+  }
+
+  html body .song-request-button,
+  html body .fan-cam-button{
+    grid-template-columns:42px 1fr!important;
+    gap:7px!important;
+  }
+
+  html body .song-request-button::before,
+  html body .fan-cam-button::before{
+    width:40px!important;
+    height:40px!important;
+    font-size:1.55rem!important;
+  }
+
+  html body .song-request-button::after,
+  html body .fan-cam-button::after{
+    font-size:.78rem!important;
+  }
+
+  html body .band-hero .btn-caption{
+    margin-left:49px!important;
+    font-size:.61rem!important;
+  }
+
+  html body .text-join-button::before{
+    font-size:1.22rem!important;
+  }
+
+  html body .text-join-button::after{
+    font-size:.98rem!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+
+  html body #calendar .show-tile{
+    flex-basis:164px!important;
+  }
+
+  html body #rp-video-section .rp-thumb{
+    flex-basis:138px!important;
+  }
+
+  html body .product-card{
+    grid-template-columns:68px 1fr!important;
+    gap:8px 10px!important;
+  }
+
+  html body .product-card img{
+    width:68px!important;
+    max-width:68px!important;
+  }
+}
+
+/* ==========================================================
+   LANDSCAPE PHONES — reduce vertical bulk
+   ========================================================== */
+@media(max-height:520px) and (orientation:landscape){
+  html body header{
+    padding-top:7px!important;
+    padding-bottom:7px!important;
+  }
+
+  html body header h1 a{
+    width:54px!important;
+    height:54px!important;
+  }
+
+  html body .band-hero{
+    min-height:360px!important;
+    padding-top:28px!important;
+  }
+
+  html body .hero-title{
+    margin-bottom:12px!important;
+  }
+
+  html body .band-hero .button-col{
+    min-height:112px!important;
+  }
+}
+
+/* ==========================================================
+   LARGE TABLET / DESKTOP — cap line lengths and card sprawl
+   ========================================================== */
+@media(min-width:1200px){
+  html body .band-inner,
+  html body #rp-video-section,
+  html body section#booking{
+    max-width:1040px!important;
+  }
+
+  html body .band-hero .button-row{
+    max-width:840px!important;
+  }
+
+  html body #calendar .show-tile{
+    flex-basis:220px!important;
+  }
+
+  html body #rp-video-section .rp-thumb{
+    flex-basis:184px!important;
+  }
+}
+
+/* ==========================================================
+   MOTION — avoid stacking hover + reveal effects excessively
+   ========================================================== */
+@media(hover:none){
+  html body .socials a:hover,
+  html body .band-hero .button-col:hover,
+  html body .text-join-button:hover,
+  html body #calendar .show-tile:hover,
+  html body #rp-video-section .rp-thumb:hover,
+  html body .product-card .buy-btn:hover{
+    transform:none!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body *,
+  html body *::before,
+  html body *::after{
+    scroll-behavior:auto!important;
+  }
+}
