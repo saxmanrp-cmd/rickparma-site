@@ -74,8 +74,7 @@ html body #booking form.booking .submit-btn,html body #booking form.booking butt
 html body #music h2.display-heading,
 html body #calendar h2.display-heading,
 html body #promo-videos h2.rp-section-title,
-html body #booking h2.display-heading,
-html body #diamond-method h2.display-heading{
+html body #booking h2.display-heading{
   font-family:'Helvetica Neue',Arial,sans-serif!important;
   font-size:clamp(2.15rem,5.5vw,3.35rem)!important;
   font-weight:900!important;
@@ -87,13 +86,31 @@ html body #diamond-method h2.display-heading{
   background:none!important;
   text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;
 }
-/* Undo the accidental fake/background Diamond text and restore the actual cover logo. */
+
+/* Diamond Method: title belongs above the card; logo remains inside at its approved size. */
+html body #diamond-method::before{
+  content:'DIAMOND METHOD'!important;
+  display:block!important;
+  width:min(96%,900px)!important;
+  margin:0 auto 12px!important;
+  text-align:left!important;
+  font-family:'Helvetica Neue',Arial,sans-serif!important;
+  font-size:clamp(2.15rem,5.5vw,3.35rem)!important;
+  font-weight:900!important;
+  line-height:.95!important;
+  letter-spacing:.025em!important;
+  color:#eef2f7!important;
+  -webkit-text-fill-color:#eef2f7!important;
+  text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;
+}
 html body #diamond-method .product-card::before{content:none!important;display:none!important;}
-html body #diamond-method .product-card>img:first-child{display:block!important;}
+html body #diamond-method .product-card>img:first-child{display:block!important;order:1!important;width:min(64%,430px)!important;max-width:430px!important;height:auto!important;margin:0 auto 4px!important;object-fit:contain!important;}
 @media(max-width:600px){
   html body #music h2.display-heading,
   html body #calendar h2.display-heading,
   html body #promo-videos h2.rp-section-title,
   html body #booking h2.display-heading,
-  html body #diamond-method h2.display-heading{font-size:2.8rem!important;line-height:.95!important;}
+  html body #diamond-method::before{font-size:2.8rem!important;line-height:.95!important;}
+  html body #diamond-method::before{width:96%!important;margin-bottom:10px!important;}
+  html body #diamond-method .product-card>img:first-child{width:min(78%,340px)!important;max-width:340px!important;}
 }
