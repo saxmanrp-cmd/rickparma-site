@@ -606,6 +606,216 @@
     .bubble-grid{padding:18px 13px 40px;gap:10px;}
     .bubble{padding:12px 18px;font-size:14px;}
   }
+
+  /* Silver Vegas results screen — visual-only refresh. */
+  #resultsScreen{
+    width:min(100%,900px);
+    margin:0 auto;
+    padding:0 0 calc(30px + env(safe-area-inset-bottom));
+  }
+  .results-header{
+    position:sticky;
+    top:0;
+    z-index:30;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 16px;
+    border-bottom:1px solid rgba(192,211,234,.22);
+    background:linear-gradient(180deg,rgba(10,15,24,.96),rgba(4,7,13,.94));
+    box-shadow:0 10px 30px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.025) inset;
+    backdrop-filter:blur(22px) saturate(125%);
+  }
+  #backBtn{
+    flex:0 0 auto;
+    padding:10px 15px;
+    border-radius:999px;
+    border:1px solid rgba(207,222,240,.44);
+    background:linear-gradient(180deg,rgba(29,39,54,.94),rgba(8,13,21,.98));
+    color:#edf2f8;
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:.025em;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 7px 18px rgba(0,0,0,.26),0 0 14px rgba(76,210,255,.06);
+    transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;
+  }
+  #backBtn:active{transform:scale(.96);}
+  #resultsLabel{
+    min-width:0;
+    flex:1;
+    font-family:'Josefin Sans',sans-serif;
+    font-size:clamp(1.15rem,3vw,1.5rem);
+    font-weight:900;
+    letter-spacing:.035em;
+    color:#eef3f8;
+    text-shadow:0 1px 0 #fff,0 2px 1px rgba(0,0,0,.72),0 0 14px rgba(126,180,233,.10);
+  }
+  #resultsScreen .controls{
+    position:sticky;
+    top:62px;
+    z-index:25;
+    margin:0;
+    padding:13px 16px 11px;
+    border-bottom:1px solid rgba(181,204,231,.16);
+    background:linear-gradient(180deg,rgba(7,11,19,.94),rgba(4,7,13,.91));
+    box-shadow:0 10px 26px rgba(0,0,0,.22);
+    backdrop-filter:blur(20px) saturate(120%);
+  }
+  #resultsScreen #search,
+  #resultsScreen #sortSelect{
+    width:100%;
+    border:1px solid rgba(180,205,233,.30);
+    background:linear-gradient(180deg,rgba(18,25,38,.94),rgba(6,10,17,.98));
+    color:#eef3f8;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 22px rgba(0,0,0,.22);
+  }
+  #resultsScreen #search{
+    padding:14px 16px;
+    border-radius:16px;
+    font-size:16px;
+    font-weight:700;
+  }
+  #resultsScreen #search::placeholder{color:#778292;opacity:1;}
+  #resultsScreen #search:focus{
+    outline:none;
+    border-color:rgba(98,221,255,.78);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 0 0 2px rgba(68,210,255,.09),0 0 22px rgba(62,210,255,.12),0 0 30px rgba(240,77,222,.06);
+  }
+  #resultsScreen #sortSelect{
+    margin-top:9px;
+    padding:13px 15px;
+    border-radius:15px;
+    font-size:14px;
+    font-weight:800;
+    color:#cfd8e4;
+  }
+  #resultsScreen .chips{
+    padding:11px 1px 3px;
+    gap:8px;
+  }
+  #resultsScreen .chip{
+    padding:8px 13px;
+    border-radius:999px;
+    border:1px solid rgba(178,201,228,.24);
+    background:linear-gradient(180deg,rgba(20,27,40,.92),rgba(7,11,19,.97));
+    color:#aeb8c6;
+    font-size:12px;
+    font-weight:900;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.055);
+    transition:transform .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease;
+  }
+  #resultsScreen .chip.active{
+    border-color:rgba(100,221,255,.76);
+    background:linear-gradient(180deg,rgba(20,53,72,.96),rgba(8,20,31,.98));
+    color:#8ee8ff;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 16px rgba(64,211,255,.12),0 0 22px rgba(239,78,222,.04);
+  }
+  #resultsScreen .count-row{
+    width:min(100%,860px);
+    margin:0 auto;
+    padding:13px 17px 4px;
+    color:#7f8b9b;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+  #resultsScreen #list{
+    width:min(100%,860px);
+    margin:0 auto;
+    padding:8px 14px 50px;
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  #resultsScreen .song-row{
+    position:relative;
+    overflow:hidden;
+    min-height:66px;
+    padding:13px 13px 13px 15px;
+    border:1px solid rgba(183,204,229,.20);
+    border-radius:17px;
+    background:linear-gradient(180deg,rgba(18,25,38,.91),rgba(6,10,17,.96));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 8px 22px rgba(0,0,0,.24);
+    transition:transform .15s ease,border-color .16s ease,box-shadow .16s ease,background .16s ease;
+  }
+  #resultsScreen .song-row::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:9px;
+    bottom:9px;
+    width:2px;
+    border-radius:2px;
+    background:linear-gradient(180deg,#56dcff,#b08dff,#f15bdb);
+    box-shadow:0 0 11px rgba(79,213,255,.38);
+    opacity:.72;
+  }
+  #resultsScreen .song-row:active{
+    transform:scale(.987);
+    background:linear-gradient(180deg,rgba(23,34,50,.98),rgba(7,13,22,.99));
+  }
+  #resultsScreen .song-title{
+    color:#f0f4f8;
+    font-size:15.5px;
+    font-weight:900;
+    line-height:1.15;
+    letter-spacing:.005em;
+  }
+  #resultsScreen .song-artist{
+    margin-top:4px;
+    color:#8f9baa;
+    font-size:12.5px;
+    font-weight:700;
+  }
+  #resultsScreen .badge.general{
+    min-width:48px;
+    justify-content:center;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid rgba(106,222,255,.48);
+    background:linear-gradient(180deg,rgba(16,40,55,.96),rgba(6,18,27,.98));
+    color:#8be7ff;
+    font-size:14px;
+    font-weight:900;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 15px rgba(68,211,255,.09);
+  }
+  #resultsScreen .empty-state{
+    margin:18px 14px;
+    padding:34px 18px;
+    border:1px solid rgba(183,204,229,.18);
+    border-radius:18px;
+    background:rgba(10,15,24,.64);
+    color:#97a2b1;
+  }
+  @media(hover:hover){
+    #backBtn:hover{
+      border-color:rgba(105,221,255,.72);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 8px 20px rgba(0,0,0,.30),0 0 16px rgba(73,209,255,.12);
+    }
+    #resultsScreen .chip:hover{border-color:rgba(91,217,255,.50);color:#d7edf5;}
+    #resultsScreen .song-row:hover{
+      transform:translateY(-1px);
+      border-color:rgba(92,216,255,.35);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 10px 25px rgba(0,0,0,.29),0 0 18px rgba(72,211,255,.055);
+    }
+  }
+  @media(max-width:560px){
+    .results-header{padding:10px 11px;gap:9px;}
+    #backBtn{padding:9px 12px;font-size:12px;}
+    #resultsLabel{font-size:1.08rem;}
+    #resultsScreen .controls{top:54px;padding:10px 11px 9px;}
+    #resultsScreen #search{padding:13px 14px;font-size:15px;border-radius:15px;}
+    #resultsScreen #sortSelect{padding:12px 13px;font-size:13px;border-radius:14px;}
+    #resultsScreen .chips{padding-top:9px;}
+    #resultsScreen .chip{padding:7px 11px;font-size:11.5px;}
+    #resultsScreen .count-row{padding:11px 12px 3px;}
+    #resultsScreen #list{padding:7px 10px 42px;gap:8px;}
+    #resultsScreen .song-row{min-height:62px;padding:12px 10px 12px 13px;border-radius:15px;gap:9px;}
+    #resultsScreen .song-title{font-size:14.5px;}
+    #resultsScreen .song-artist{font-size:12px;}
+    #resultsScreen .badge.general{min-width:44px;padding:7px 9px;font-size:13px;}
+  }
 </style>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
@@ -667,19 +877,13 @@
 
 <script>
 /* ============ CONFIG ============ */
-// Paste the Bin ID created in the Song Manager app here. Both apps must use the SAME Bin ID.
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev"; const BIN_ID = "6a52d2c6f5f4af5e2982691a";
-// MASTER_KEY removed — reads/writes now go through the cached proxy Worker (rickparma-jsonbin-proxy) instead of hitting jsonbin directly.
-
 const CONTACT_NUMBER = "8559242976";
 const APPLE_GPAY_NUMBER = "773-209-1124";
-
 let DEFAULT_PRICES = { general: 5 };
 let prices = { ...DEFAULT_PRICES };
 let songs = [];
 let ALL_TAGS = [];
-
-// Paste the Poll Bin ID created in the Poll Manager app here. Leave blank to disable live polls.
 const POLL_BIN_ID = "6a65070cda38895dfe8f39bf";
 let pollPollingTimer = null;
 let currentPollId = null;
@@ -689,11 +893,9 @@ let activeTag = null;
 let searchTerm = "";
 let sortMode = "title-asc";
 
-/* ============ LOAD FROM CLOUD ============ */
 async function loadSongs(){
   if(!BIN_ID){
-    document.getElementById('loadingState').innerHTML =
-      `Song list isn't connected yet.<br><br>Set up cloud storage in the Song Manager app first, then paste the Bin ID into this page.`;
+    document.getElementById('loadingState').innerHTML = `Song list isn't connected yet.<br><br>Set up cloud storage in the Song Manager app first, then paste the Bin ID into this page.`;
     return;
   }
   try{
@@ -703,7 +905,6 @@ async function loadSongs(){
     songs = record.songs || [];
     prices = { ...DEFAULT_PRICES, ...(record.prices || {}) };
     ALL_TAGS = [...new Set(songs.flatMap(s => s.tags || []))].sort();
-
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('homeScreen').style.display = 'block';
     renderBubbles();
@@ -716,17 +917,14 @@ async function loadSongs(){
   }
 }
 
-/* ============ RENDER: LIST ============ */
 function renderBubbles(){
   const grid = document.getElementById('bubbleGrid');
   grid.innerHTML = '';
-
   const allBubble = document.createElement('div');
   allBubble.className = 'bubble bubble-all';
   allBubble.textContent = '🎶 All Songs';
   allBubble.onclick = () => { activeTag = null; searchTerm = ''; goResults(); };
   grid.appendChild(allBubble);
-
   ALL_TAGS.forEach((tag, i) => {
     const b = document.createElement('div');
     b.className = 'bubble' + (i % 2 === 1 ? ' bubble-pink' : '');
@@ -738,746 +936,80 @@ function renderBubbles(){
 
 function updateResultsLabel(){
   const label = document.getElementById('resultsLabel');
-  if(searchTerm.trim()){
-    label.textContent = `🔍 "${searchTerm.trim()}"`;
-  } else if(activeTag){
-    label.textContent = activeTag;
-  } else {
-    label.textContent = 'All Songs';
-  }
+  if(searchTerm.trim()) label.textContent = `🔍 "${searchTerm.trim()}"`;
+  else if(activeTag) label.textContent = activeTag;
+  else label.textContent = 'All Songs';
 }
-
 function goResults(){
   document.getElementById('homeScreen').style.display = 'none';
   document.getElementById('resultsScreen').style.display = 'block';
   document.getElementById('search').value = searchTerm;
-  updateResultsLabel();
-  renderChips();
-  renderList();
-  window.scrollTo(0, 0);
+  updateResultsLabel(); renderChips(); renderList(); window.scrollTo(0,0);
 }
-
-function goHome(){
-  document.getElementById('resultsScreen').style.display = 'none';
-  document.getElementById('homeScreen').style.display = 'block';
-  window.scrollTo(0, 0);
-}
-
-document.getElementById('homeSearch').addEventListener('keydown', e => {
-  if(e.key === 'Enter'){
-    searchTerm = e.target.value;
-    activeTag = null;
-    goResults();
-  }
-});
-
+function goHome(){document.getElementById('resultsScreen').style.display='none';document.getElementById('homeScreen').style.display='block';window.scrollTo(0,0);}
+document.getElementById('homeSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){searchTerm=e.target.value;activeTag=null;goResults();}});
 function renderChips(){
-  const chipsEl = document.getElementById('chips');
-  chipsEl.innerHTML = '';
-  const allChip = document.createElement('div');
-  allChip.className = 'chip' + (activeTag === null ? ' active' : '');
-  allChip.textContent = 'All';
-  allChip.onclick = () => { activeTag = null; updateResultsLabel(); renderChips(); renderList(); };
-  chipsEl.appendChild(allChip);
-
-  ALL_TAGS.forEach(tag => {
-    const chip = document.createElement('div');
-    chip.className = 'chip' + (activeTag === tag ? ' active' : '');
-    chip.textContent = tag;
-    chip.onclick = () => { activeTag = (activeTag === tag ? null : tag); updateResultsLabel(); renderChips(); renderList(); };
-    chipsEl.appendChild(chip);
-  });
+  const chipsEl=document.getElementById('chips');chipsEl.innerHTML='';
+  const allChip=document.createElement('div');allChip.className='chip'+(activeTag===null?' active':'');allChip.textContent='All';allChip.onclick=()=>{activeTag=null;updateResultsLabel();renderChips();renderList();};chipsEl.appendChild(allChip);
+  ALL_TAGS.forEach(tag=>{const chip=document.createElement('div');chip.className='chip'+(activeTag===tag?' active':'');chip.textContent=tag;chip.onclick=()=>{activeTag=(activeTag===tag?null:tag);updateResultsLabel();renderChips();renderList();};chipsEl.appendChild(chip);});
 }
-
-function tierBadge(){
-  return `<span class="badge general"> $${prices.general}</span>`;
-}
-
-function sortSongs(list){
-  const sorted = [...list];
-  sorted.sort((a, b) => {
-    if(sortMode === 'title-asc') return a.t.localeCompare(b.t);
-    if(sortMode === 'title-desc') return b.t.localeCompare(a.t);
-    if(sortMode === 'artist-asc') return (a.a||'').localeCompare(b.a||'');
-    if(sortMode === 'artist-desc') return (b.a||'').localeCompare(a.a||'');
-    return 0;
-  });
-  return sorted;
-}
-
+function tierBadge(){return `<span class="badge general"> $${prices.general}</span>`;}
+function sortSongs(list){const sorted=[...list];sorted.sort((a,b)=>{if(sortMode==='title-asc')return a.t.localeCompare(b.t);if(sortMode==='title-desc')return b.t.localeCompare(a.t);if(sortMode==='artist-asc')return(a.a||'').localeCompare(b.a||'');if(sortMode==='artist-desc')return(b.a||'').localeCompare(a.a||'');return 0;});return sorted;}
 function renderList(){
-  const listEl = document.getElementById('list');
-  const term = searchTerm.trim().toLowerCase();
-  let filtered = songs.filter(s => {
-    const matchesTag = !activeTag || (s.tags||[]).includes(activeTag);
-    const matchesTerm = !term || s.t.toLowerCase().includes(term) || (s.a||'').toLowerCase().includes(term);
-    return matchesTag && matchesTerm;
-  });
-  filtered = sortSongs(filtered);
-
-  document.getElementById('countRow').textContent = `${filtered.length} song${filtered.length===1?'':'s'}`;
-
-  if(filtered.length === 0){
-    listEl.innerHTML = `<div class="empty-state">No songs match — try a different search or filter.</div>`;
-    return;
-  }
-
-  listEl.innerHTML = filtered.map(s => `
-    <div class="song-row" data-id="${s.id}">
-      <div class="song-info">
-        <div class="song-title">${escapeHtml(s.t)}</div>
-        <div class="song-artist">${escapeHtml(s.a || '')}</div>
-      </div>
-      ${tierBadge()}
-    </div>`).join('');
-
-  [...listEl.querySelectorAll('.song-row')].forEach(row => {
-    row.addEventListener('click', () => openSheet(row.dataset.id));
-  });
+  const listEl=document.getElementById('list');const term=searchTerm.trim().toLowerCase();let filtered=songs.filter(s=>{const matchesTag=!activeTag||(s.tags||[]).includes(activeTag);const matchesTerm=!term||s.t.toLowerCase().includes(term)||(s.a||'').toLowerCase().includes(term);return matchesTag&&matchesTerm;});filtered=sortSongs(filtered);document.getElementById('countRow').textContent=`${filtered.length} song${filtered.length===1?'':'s'}`;
+  if(filtered.length===0){listEl.innerHTML=`<div class="empty-state">No songs match — try a different search or filter.</div>`;return;}
+  listEl.innerHTML=filtered.map(s=>`<div class="song-row" data-id="${s.id}"><div class="song-info"><div class="song-title">${escapeHtml(s.t)}</div><div class="song-artist">${escapeHtml(s.a||'')}</div></div>${tierBadge()}</div>`).join('');
+  [...listEl.querySelectorAll('.song-row')].forEach(row=>row.addEventListener('click',()=>openSheet(row.dataset.id)));
 }
+function escapeHtml(str){return(str||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+document.getElementById('search').addEventListener('input',e=>{searchTerm=e.target.value;updateResultsLabel();renderList();});
+document.getElementById('sortSelect').addEventListener('change',e=>{sortMode=e.target.value;renderList();});
 
-function escapeHtml(str){
-  return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-document.getElementById('search').addEventListener('input', e => {
-  searchTerm = e.target.value;
-  updateResultsLabel();
-  renderList();
-});
-
-document.getElementById('sortSelect').addEventListener('change', e => {
-  sortMode = e.target.value;
-  renderList();
-});
-
-/* ============ REQUEST SHEET ============ */
-    const WHEEL_SLICES = ['FREE','BOGO','FREE','BOGO','FREE','BOGO','FREE','BOGO','FREE','BOGO'];
-let wheelSpinning = false;
-let wheelRotationTotal = 0;
-  const SPIN_COOLDOWN_MS = 4 * 60 * 60 * 1000; // one spin per device, then resets after a few hours
-  function getSpinLockRemainingMs(){
-    const last = parseInt(localStorage.getItem('rp_lastSpinAt') || '0', 10);
-    if(!last) return 0;
-    return Math.max(0, SPIN_COOLDOWN_MS - (Date.now() - last));
-  }
-  function lockSpinForThisDevice(){
-    localStorage.setItem('rp_lastSpinAt', String(Date.now()));
-  }
-  function formatSpinLockRemaining(ms){
-    const mins = Math.ceil(ms / 60000);
-    if(mins < 60) return mins + ' minute' + (mins === 1 ? '' : 's');
-    const hrs = Math.floor(mins / 60);
-    const remMins = mins % 60;
-    return hrs + ' hour' + (hrs === 1 ? '' : 's') + (remMins ? ' ' + remMins + 'm' : '');
-  }
-  function skipSpinToPayment(songId, price){
-    const s = songs.find(x => x.id === songId);
-    if(!s) return;
-    const songLabel = s.t + (s.a ? ' - ' + s.a : '');
-    const payUrl = '/pay/?mode=song&amount=' + price + '&song=' + encodeURIComponent(songLabel);
-    window.top.location.href = payUrl;
-  }
-
-function fitWheelToViewport(){
-  const sheetEl = document.getElementById('sheet');
-  const wrap = document.querySelector('.wheel-wrap');
-  const inner = document.querySelector('.wheel-scale-inner');
-  if(!sheetEl || !wrap || !inner) return;
-  let guard = 0;
-  while (sheetEl.scrollHeight > sheetEl.clientHeight && guard < 25){
-    const curOuter = parseFloat(wrap.style.width) || 280;
-    const nextOuter = Math.max(150, curOuter - 8);
-    if (nextOuter === curOuter) break;
-    const curPad = parseFloat(inner.style.left) || 0;
-    const nextWheelPx = Math.max(130, nextOuter - curPad*2);
-    const nextScale = (nextWheelPx/280).toFixed(4);
-    const nextPad = Math.round(14*nextScale);
-    const finalOuter = nextWheelPx + nextPad*2;
-    wrap.style.width = finalOuter + 'px';
-    wrap.style.height = finalOuter + 'px';
-    inner.style.transform = 'scale(' + nextScale + ')';
-    inner.style.top = nextPad + 'px';
-    inner.style.left = nextPad + 'px';
-    guard++;
-  }
-}
-
+const WHEEL_SLICES=['FREE','BOGO','FREE','BOGO','FREE','BOGO','FREE','BOGO','FREE','BOGO'];
+let wheelSpinning=false;let wheelRotationTotal=0;const SPIN_COOLDOWN_MS=4*60*60*1000;
+function getSpinLockRemainingMs(){const last=parseInt(localStorage.getItem('rp_lastSpinAt')||'0',10);if(!last)return 0;return Math.max(0,SPIN_COOLDOWN_MS-(Date.now()-last));}
+function lockSpinForThisDevice(){localStorage.setItem('rp_lastSpinAt',String(Date.now()));}
+function formatSpinLockRemaining(ms){const mins=Math.ceil(ms/60000);if(mins<60)return mins+' minute'+(mins===1?'':'s');const hrs=Math.floor(mins/60);const remMins=mins%60;return hrs+' hour'+(hrs===1?'':'s')+(remMins?' '+remMins+'m':'');}
+function skipSpinToPayment(songId,price){const s=songs.find(x=>x.id===songId);if(!s)return;const songLabel=s.t+(s.a?' - '+s.a:'');window.top.location.href='/pay/?mode=song&amount='+price+'&song='+encodeURIComponent(songLabel);}
+function fitWheelToViewport(){const sheetEl=document.getElementById('sheet');const wrap=document.querySelector('.wheel-wrap');const inner=document.querySelector('.wheel-scale-inner');if(!sheetEl||!wrap||!inner)return;let guard=0;while(sheetEl.scrollHeight>sheetEl.clientHeight&&guard<25){const curOuter=parseFloat(wrap.style.width)||280;const nextOuter=Math.max(150,curOuter-8);if(nextOuter===curOuter)break;const curPad=parseFloat(inner.style.left)||0;const nextWheelPx=Math.max(130,nextOuter-curPad*2);const nextScale=(nextWheelPx/280).toFixed(4);const nextPad=Math.round(14*nextScale);const finalOuter=nextWheelPx+nextPad*2;wrap.style.width=finalOuter+'px';wrap.style.height=finalOuter+'px';inner.style.transform='scale('+nextScale+')';inner.style.top=nextPad+'px';inner.style.left=nextPad+'px';guard++;}}
 function openSheet(id){
-      const s = songs.find(x => x.id === id);
-      if(!s) return;
-
-      document.getElementById('sheetTitle').textContent = s.t;
-      document.getElementById('sheetArtist').textContent = s.a || '';
-
-      const nameFieldHtml = `
-          <div class="section-label">🎤 Step 1 — What's your name?</div>
-              <input type="text" id="reqName" class="name-input" placeholder="So I can give you a shout-out on the mic!">
-                `;
-
-      const price = prices.general;
-      const tierLineHtml = `<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
-
-      const wheelWrapPx = Math.round(Math.max(210, Math.min(320, window.innerWidth * 0.72, window.innerHeight * 0.40)));
-      const wheelScale = (wheelWrapPx / 280).toFixed(4);
-      const wheelGlowPad = Math.round(14 * wheelScale);
-      const wheelOuterPx = wheelWrapPx + wheelGlowPad * 2;
-
-      const spinLockRemaining = getSpinLockRemainingMs();
-      let stepTwoHtml;
-      if(spinLockRemaining > 0){
-            const songLabelForPay = `${s.t}${s.a ? ' - ' + s.a : ''}`;
-            const payUrl = `/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabelForPay)}`;
-            stepTwoHtml = `
-                  <div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div>
-                        <a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>
-                            `;
-      } else {
-            stepTwoHtml = `
-                                                    <div class="section-label" id="step2Label">STEP 2 — ONE SPIN PER SHOW TO WIN A FREE REQUEST</div>
-                                    <div class="wheel-wrap" style="width:${wheelOuterPx}px;height:${wheelOuterPx}px;">
-                                      <div class="wheel-scale-inner" style="transform:scale(${wheelScale});top:${wheelGlowPad}px;left:${wheelGlowPad}px;">
-                                                <div class="wheel-pointer">▼</div>
-                                                          <div class="wheel-glow"></div>
-                                                                    <div class="wheel" id="spinWheel">${buildWheelLabels(price)}${buildWheelSparkles()}${buildWheelRivets()}</div>
-                                                                              <div class="wheel-center-dot"></div>
-                                                                                      </div>
-                                                                                            </div>
-                                                                                                  <button class="btn btn-text" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">🎡 Spin to Win!</button>
-                                                                                                        <div id="spinResultArea"></div>
-                                                                                                            `;
-      }
-
-      const bodyHtml = `
-          ${nameFieldHtml}
-              ${stepTwoHtml}
-                `;
-
-      document.getElementById('sheetTierLine').innerHTML = tierLineHtml;
-      document.getElementById('sheetBody').innerHTML = bodyHtml;
-
-      wheelSpinning = false;
-      wheelRotationTotal = 0;
-      if(document.getElementById('spinWheel')){
-            document.getElementById('spinWheel').style.transform = 'rotate(0deg)';
-      }
-
-      document.getElementById('overlay').classList.add('show');
-      document.getElementById('sheet').classList.add('show');
-      document.body.style.overflow = 'hidden';
-      fitWheelToViewport();
-  }
-function stackedLetters(word, outerRadius){
-    const boxWidth = 44; // matches the .wheel-label CSS width — scaleX multiplies against this
-    const targetWidthStart = 70;
-  const targetWidthEnd = 50;
-  const stretchStart = targetWidthStart / boxWidth;
-  const stretchEnd = targetWidthEnd / boxWidth;
-  const baseFontSize = 26;
-  const shrinkAmount = 5;
-  let r = outerRadius;
-  let html = '';
-  for(let i = 0; i < word.length; i++){
-    const t = word.length > 1 ? i / (word.length - 1) : 0;
-    const fontSize = baseFontSize - shrinkAmount * t;
-    const stretch = (stretchStart + (stretchEnd - stretchStart) * t).toFixed(3);
-    html += `<span style="font-size:${fontSize.toFixed(1)}px; transform:scaleX(${stretch});">${word[i]}</span>`;
-    r -= fontSize * 0.92;
-  }
-  return html;
+  const s=songs.find(x=>x.id===id);if(!s)return;
+  document.getElementById('sheetTitle').textContent=s.t;document.getElementById('sheetArtist').textContent=s.a||'';
+  const nameFieldHtml=`<div class="section-label">🎤 Step 1 — What's your name?</div><input type="text" id="reqName" class="name-input" placeholder="So I can give you a shout-out on the mic!">`;
+  const price=prices.general;const tierLineHtml=`<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
+  const wheelWrapPx=Math.round(Math.max(210,Math.min(320,window.innerWidth*.72,window.innerHeight*.40)));const wheelScale=(wheelWrapPx/280).toFixed(4);const wheelGlowPad=Math.round(14*wheelScale);const wheelOuterPx=wheelWrapPx+wheelGlowPad*2;
+  const spinLockRemaining=getSpinLockRemainingMs();let stepTwoHtml;
+  if(spinLockRemaining>0){const songLabelForPay=`${s.t}${s.a?' - '+s.a:''}`;const payUrl=`/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabelForPay)}`;stepTwoHtml=`<div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>`;}
+  else{stepTwoHtml=`<div class="section-label" id="step2Label">STEP 2 — ONE SPIN PER SHOW TO WIN A FREE REQUEST</div><div class="wheel-wrap" style="width:${wheelOuterPx}px;height:${wheelOuterPx}px;"><div class="wheel-scale-inner" style="transform:scale(${wheelScale});top:${wheelGlowPad}px;left:${wheelGlowPad}px;"><div class="wheel-pointer">▼</div><div class="wheel-glow"></div><div class="wheel" id="spinWheel">${buildWheelLabels(price)}${buildWheelSparkles()}${buildWheelRivets()}</div><div class="wheel-center-dot"></div></div></div><button class="btn btn-text" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">🎡 Spin to Win!</button><div id="spinResultArea"></div>`;}
+  document.getElementById('sheetTierLine').innerHTML=tierLineHtml;document.getElementById('sheetBody').innerHTML=nameFieldHtml+stepTwoHtml;wheelSpinning=false;wheelRotationTotal=0;if(document.getElementById('spinWheel'))document.getElementById('spinWheel').style.transform='rotate(0deg)';document.getElementById('overlay').classList.add('show');document.getElementById('sheet').classList.add('show');document.body.style.overflow='hidden';fitWheelToViewport();
 }
-
-function buildWheelLabels(price){
-  const outerRadius = 122; // top (biggest letter) sits right at the rim
-  return WHEEL_SLICES.map((label, i) => {
-    const angle = i * 36 + 18;
-    const word = label === 'FREE' ? 'FREE' : label === 'BOGO' ? 'BOGO' : 'PAID';
-    return `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);">
-      <div class="wheel-label" style="transform: translate(-50%, -${outerRadius}px);">${stackedLetters(word, outerRadius)}</div>
-    </div>`;
-  }).join('');
-}
-
-function buildWheelRivets(){
-  const rivetCount = 20;
-  const radius = 133; // sits right on the rim
-  let out = '';
-  for(let i = 0; i < rivetCount; i++){
-    const angle = i * (360 / rivetCount);
-    out += `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);">
-      <div class="wheel-rivet" style="transform: translate(0, -${radius}px);"></div>
-    </div>`;
-  }
-  return out;
-}
-
-function buildWheelSparkles(){
-  const sparkleCount = 16;
-  let out = '';
-  for(let i = 0; i < sparkleCount; i++){
-    const angle = Math.random() * 360;
-    const radius = 20 + Math.random() * 95;
-    const delay = (Math.random() * 1.6).toFixed(2);
-    const size = 10 + Math.round(Math.random() * 10);
-    out += `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);">
-      <span class="sparkle" style="transform: translate(-50%, -${radius}px); font-size:${size}px; animation-delay:${delay}s;">✨</span>
-    </div>`;
-  }
-  return out;
-}
-
-function spinWheel(songId, price){
-  const spinLockRemaining = getSpinLockRemainingMs();
-  if(spinLockRemaining > 0){
-    var spinLockArea = document.getElementById('spinResultArea');
-    if(spinLockArea){
-      spinLockArea.innerHTML = '<div class="spin-result">You already used your spin on this device. Try again in ' + formatSpinLockRemaining(spinLockRemaining) + ' — or <a href="#" onclick="skipSpinToPayment(\'' + songId + '\', ' + price + '); return false;" style="color:var(--accent);text-decoration:underline;">send this request now for $' + price + '</a>.</div>';
-    }
-    return;
-  }
-  if(wheelSpinning) return;
-  wheelSpinning = true;
-  lockSpinForThisDevice();
-
-  const wheel = document.getElementById('spinWheel');
-  const spinBtn = document.getElementById('spinBtn');
-  spinBtn.disabled = true;
-  spinBtn.style.opacity = '0.6';
-
-  const resultIndex = Math.floor(Math.random() * WHEEL_SLICES.length);
-  const targetSliceCenter = resultIndex * 36 + 18;
-  const extraSpins = 5 * 360;
-  wheelRotationTotal += extraSpins + (360 - targetSliceCenter) - (wheelRotationTotal % 360);
-  wheel.style.transform = `rotate(${wheelRotationTotal}deg)`;
-
-  setTimeout(() => {
-    const outcome = WHEEL_SLICES[resultIndex];
-    revealSpinResult(outcome, songId, price);
-  }, 4300);
-}
-
-function launchFirework(x, apexY, color, isFinale, finaleText){
-  const rocket = document.createElement('div');
-  rocket.className = 'firework-rocket' + (isFinale ? ' firework-rocket-big' : '');
-  rocket.style.left = x + 'px';
-  rocket.style.background = color;
-  rocket.style.color = color;
-  document.body.appendChild(rocket);
-
-  const riseDuration = isFinale ? 1100 : 850 + Math.random() * 450;
-  const anim = rocket.animate([
-    { transform: 'translateY(0)', opacity: 1 },
-    { transform: `translateY(-${apexY}px)`, opacity: 1 }
-  ], { duration: riseDuration, easing: 'cubic-bezier(0.22,0.5,0.35,1)', fill: 'forwards' });
-
-  anim.onfinish = () => {
-    const rect = rocket.getBoundingClientRect();
-    const burstX = isFinale ? window.innerWidth / 2 : rect.left;
-    const burstY = isFinale ? window.innerHeight * 0.42 : rect.top;
-    rocket.remove();
-
-    if(isFinale){
-      screenFlash();
-      burstAt(burstX, burstY, color, true);
-      setTimeout(() => burstAt(burstX, burstY, '#FFFFFF', true), 90);
-      setTimeout(() => burstAt(burstX, burstY, colorPalette[Math.floor(Math.random()*colorPalette.length)], true), 200);
-      setTimeout(() => showFreeText(burstX, burstY, finaleText), 160);
-    } else {
-      burstAt(burstX, burstY, color, false);
-    }
-  };
-}
-
-function screenFlash(){
-  const flash = document.createElement('div');
-  flash.className = 'screen-flash';
-  document.body.appendChild(flash);
-  setTimeout(() => flash.remove(), 500);
-}
-
-function burstAt(x, y, color, epic){
-  const particleCount = epic ? 55 : 36;
-  const distRange = epic ? [90, 210] : [60, 130];
-  for(let i = 0; i < particleCount; i++){
-    const p = document.createElement('div');
-    p.className = 'firework-particle';
-    const size = epic ? (5 + Math.random() * 4) : (4 + Math.random() * 3);
-    p.style.width = size + 'px';
-    p.style.height = size + 'px';
-    p.style.left = x + 'px';
-    p.style.top = y + 'px';
-    p.style.background = color;
-    p.style.boxShadow = `0 0 ${epic ? 10 : 6}px ${epic ? 3 : 2}px ${color}`;
-    document.body.appendChild(p);
-
-    const angle = Math.random() * Math.PI * 2;
-    const dist = distRange[0] + Math.random() * (distRange[1] - distRange[0]);
-    const dx = Math.cos(angle) * dist;
-    const dy = Math.sin(angle) * dist + (epic ? 45 : 30); // gravity drift downward
-    const duration = (epic ? 950 : 700) + Math.random() * 500;
-
-    const pAnim = p.animate([
-      { transform: 'translate(0,0) scale(1)', opacity: 1 },
-      { transform: `translate(${dx}px, ${dy}px) scale(0.4)`, opacity: 0 }
-    ], { duration, easing: 'cubic-bezier(0.2,0.6,0.4,1)', fill: 'forwards' });
-
-    pAnim.onfinish = () => p.remove();
-  }
-}
-
-function showFreeText(x, y, text){
-  const el = document.createElement('div');
-  el.className = 'firework-free-text';
-  el.textContent = text || 'FREE';
-  el.style.left = x + 'px';
-  el.style.top = y + 'px';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2200);
-}
-
-const colorPalette = ['#FF3B3B', '#FFD700', '#3BA1FF', '#39FF6A', '#FF3BE0', '#B23BFF', '#3BFFF0', '#FFFFFF', '#FF8C3B'];
-
-function launchFireworks(finaleText){
-  const label = finaleText || 'FREE';
-  const count = 12;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  for(let i = 0; i < count; i++){
-    const delay = i * 150 + Math.random() * 110;
-    const x = vw * 0.08 + Math.random() * vw * 0.84;
-    const apexY = vh * 0.36 + Math.random() * vh * 0.34;
-    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-    setTimeout(() => launchFirework(x, apexY, color, false), delay);
-  }
-
-  // Grand finale — always launches last, always lands dead-center
-  const finaleDelay = count * 150 + 500;
-  setTimeout(() => {
-    launchFirework(vw / 2, vh * 0.5, '#FFD700', true, label);
-  }, finaleDelay);
-}
-
-function revealSpinResult(outcome, songId, price){
-  const area = document.getElementById('spinResultArea');
-  const s = songs.find(x => x.id === songId);
-  if(!s || !area) return;
-
-  if(outcome === 'FREE' || outcome === 'BOGO'){ launchFireworks(outcome); }
-
-  function finishReveal(){
-    // The wheel already did its job — hide it once spun so the result/
-    // payment step below has room to breathe without needing to scroll.
-    var wheelWrapEl = document.querySelector('.wheel-wrap');
-    if (wheelWrapEl) wheelWrapEl.style.display = 'none';
-    var spinBtnEl = document.getElementById('spinBtn');
-    if (spinBtnEl) spinBtnEl.style.display = 'none';
-    var step2LabelEl = document.getElementById('step2Label');
-    if (step2LabelEl) step2LabelEl.style.display = 'none';
-
-    if(outcome === 'FREE'){
-      area.innerHTML = `
-        <div class="spin-result spin-result-free">🎉 You spun FREE! This one's on the house.</div>
-        <div class="section-label">Step 3 — Send the request</div>
-        <a class="btn btn-text" href="#" target="_top" onclick="prepareSend(this, '${s.id}', 'FREE'); return false;">Send Request</a>
-      `;
-
-    } else if(outcome === 'BOGO'){
-      area.innerHTML = `
-        <div class="spin-result spin-result-bogo">🎉 You spun BOGO! Pick a second song — it's free.</div>
-        <div class="section-label" id="bogoStep3Label">Step 3 — Pick your free second song</div><div id="bogoPickerWrap">
-        <input type="text" id="bogoSearch" class="name-input" placeholder="Search song or artist…" autocomplete="off">
-        <select id="bogoSort" class="bogo-sort-select">
-          <option value="title-asc">Title A → Z</option>
-          <option value="title-desc">Title Z → A</option>
-          <option value="artist-asc">Artist A → Z</option>
-          <option value="artist-desc">Artist Z → A</option>
-        </select>
-        <div class="chips" id="bogoChips"></div>
-        <div class="count-row" id="bogoCountRow"></div>
-        <div id="bogoResults" class="bogo-results"></div>
-        </div><div id="bogoSelectedWrap" style="display:none"></div><div id="bogoNextSteps"></div>
-      `;
-      setupBogoPicker(songId, price);
-
-    } else {
-      const songLabel = `${s.t}${s.a ? ' - ' + s.a : ''}`;
-      const payUrl = `/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabel)}`;
-      area.innerHTML = `
-        <div class="spin-result spin-result-general">You spun $${price} — pay securely to send your request.</div>
-        <div class="section-label">Step 3 — Pay $${price} (song won't be added until paid)</div>
-        <a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>
-      `;
-    }
-  }
-
-  if(outcome === 'FREE' || outcome === 'BOGO'){
-    setTimeout(finishReveal, 4800);
-  } else {
-    finishReveal();
-  }
-}
-
-let bogoFilter = { search: '', sort: 'title-asc', tag: null };
-
-function sortSongsByMode(list, mode){
-  const sorted = [...list];
-  sorted.sort((a, b) => {
-    if(mode === 'title-asc') return a.t.localeCompare(b.t);
-    if(mode === 'title-desc') return b.t.localeCompare(a.t);
-    if(mode === 'artist-asc') return (a.a||'').localeCompare(b.a||'');
-    if(mode === 'artist-desc') return (b.a||'').localeCompare(a.a||'');
-    return 0;
-  });
-  return sorted;
-}
-
-function setupBogoPicker(songAId, price){
-  bogoFilter = { search: '', sort: 'title-asc', tag: null };
-
-  const chipsEl = document.getElementById('bogoChips');
-  chipsEl.innerHTML = '';
-  const allChip = document.createElement('div');
-  allChip.className = 'chip active';
-  allChip.textContent = 'All';
-  allChip.onclick = () => { bogoFilter.tag = null; renderBogoChips(); renderBogoResults(songAId, price); };
-  chipsEl.appendChild(allChip);
-
-  ALL_TAGS.forEach(tag => {
-    const chip = document.createElement('div');
-    chip.className = 'chip';
-    chip.textContent = tag;
-    chip.onclick = () => {
-      bogoFilter.tag = (bogoFilter.tag === tag ? null : tag);
-      renderBogoChips();
-      renderBogoResults(songAId, price);
-    };
-    chipsEl.appendChild(chip);
-  });
-
-  document.getElementById('bogoSearch').addEventListener('input', e => {
-    bogoFilter.search = e.target.value;
-    renderBogoResults(songAId, price);
-  });
-  document.getElementById('bogoSort').addEventListener('change', e => {
-    bogoFilter.sort = e.target.value;
-    renderBogoResults(songAId, price);
-  });
-
-  renderBogoResults(songAId, price);
-}
-
-function renderBogoChips(){
-  const chipsEl = document.getElementById('bogoChips');
-  [...chipsEl.children].forEach(chip => {
-    const isAllChip = chip === chipsEl.firstElementChild;
-    chip.classList.toggle('active', isAllChip ? bogoFilter.tag === null : chip.textContent === bogoFilter.tag);
-  });
-}
-
-function renderBogoResults(songAId, price){
-  const term = bogoFilter.search.trim().toLowerCase();
-  let filtered = songs.filter(sg =>
-    sg.id !== songAId &&
-    (!bogoFilter.tag || (sg.tags||[]).includes(bogoFilter.tag)) &&
-    (!term || sg.t.toLowerCase().includes(term) || (sg.a||'').toLowerCase().includes(term))
-  );
-  filtered = sortSongsByMode(filtered, bogoFilter.sort);
-
-  const resultsBox = document.getElementById('bogoResults');
-  const countRow = document.getElementById('bogoCountRow');
-  if(countRow) countRow.textContent = `${filtered.length} song${filtered.length === 1 ? '' : 's'}`;
-
-  if(filtered.length === 0){
-    resultsBox.innerHTML = `<div class="bogo-result-item">No matches</div>`;
-    return;
-  }
-
-  resultsBox.innerHTML = filtered.slice(0, 60).map(sg =>
-    `<div class="bogo-result-item" data-song-id="${sg.id}">${escapeHtml(sg.t)}${sg.a ? ' — ' + escapeHtml(sg.a) : ''}</div>`
-  ).join('');
-
-  [...resultsBox.querySelectorAll('.bogo-result-item')].forEach(item => {
-    item.onclick = () => {
-      const songBId = item.dataset.songId;
-      if(!songBId) return;
-      [...resultsBox.querySelectorAll('.bogo-result-item')].forEach(el => el.classList.remove('selected'));
-      item.classList.add('selected');
-      var sA = songs.find(x => x.id === songAId);
-      var sB = songs.find(x => x.id === songBId);
-      var pickerWrap = document.getElementById('bogoPickerWrap');
-      var selectedWrap = document.getElementById('bogoSelectedWrap');
-      var step3Label = document.getElementById('bogoStep3Label');
-      if(pickerWrap) pickerWrap.style.display = 'none';
-      if(step3Label) step3Label.textContent = 'Step 3 — Your BOGO picks 🎉';
-      if(selectedWrap){
-        selectedWrap.innerHTML = '<div class="bogo-picks"><div class="bogo-pick-card">' + (sA ? escapeHtml(sA.t) : '') + (sA && sA.a ? ' — ' + escapeHtml(sA.a) : '') + '</div><div class="bogo-pick-plus">+</div><div class="bogo-pick-card">' + (sB ? escapeHtml(sB.t) : '') + (sB && sB.a ? ' — ' + escapeHtml(sB.a) : '') + '</div></div><button type="button" class="bogo-change-link" id="bogoChangeBtn">Change second song</button>';
-        selectedWrap.style.display = 'block';
-        var changeBtn = document.getElementById('bogoChangeBtn');
-        if(changeBtn) changeBtn.onclick = function(){
-          selectedWrap.style.display = 'none';
-          selectedWrap.innerHTML = '';
-          if(pickerWrap) pickerWrap.style.display = '';
-          if(step3Label) step3Label.textContent = 'Step 3 — Pick your free second song';
-          var nextStepsEl2 = document.getElementById('bogoNextSteps');
-          if(nextStepsEl2) nextStepsEl2.innerHTML = '';
-        };
-      }
-      renderBogoNextSteps(songAId, songBId, price);
-      var nextStepsEl = document.getElementById('bogoNextSteps');
-      if(nextStepsEl) nextStepsEl.scrollIntoView({behavior:'smooth', block:'start'});
-    };
-  });
-}
-
-function renderBogoNextSteps(songAId, songBId, price){
-  const sA = songs.find(x => x.id === songAId);
-  const sB = songs.find(x => x.id === songBId);
-  const labelA = sA ? `${sA.t}${sA.a ? ' - ' + sA.a : ''}` : '';
-  const labelB = sB ? `${sB.t}${sB.a ? ' - ' + sB.a : ''}` : '';
-  const songLabel = `${labelA} + BOGO: ${labelB}`;
-  const payUrl = `/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabel)}`;
-  const nextSteps = document.getElementById('bogoNextSteps');
-  nextSteps.innerHTML = `
-    <div class="section-label">Step 4 — Pay $${price} (songs won't be added until paid)</div>
-    <a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>
-  `;
-}
-
-async function prepareSend(el, id, outcomeType){
-  const s = songs.find(x => x.id === id);
-  if(!s) return false;
-  el.textContent = 'Sending...';
-  try{var __p=new URLSearchParams();__p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');__p.append('song',s.t);__p.append('artist',s.a||'');__p.append('outcome',outcomeType||'PAID');await fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:__p}).catch(function(){});}catch(__e){}
-    el.textContent = 'Thanks for the request!';
-    el.style.pointerEvents = 'none';
-    el.style.opacity = '0.7';
-    var __backWrap = document.createElement('div');
-    __backWrap.style.cssText = 'margin-top:18px;text-align:center;';
-    __backWrap.innerHTML = '<a href="https://rickparma.com" target="_top" style="display:inline-block;padding:16px 30px;background:var(--accent);color:#0c1420;font-weight:900;font-size:18px;border-radius:14px;text-decoration:none;letter-spacing:0.3px;">&larr; Back to RickParma.com</a>';
-    (el.closest('.spin-result') || el.parentElement || el).insertAdjacentElement('afterend', __backWrap);
-  return false;
-}
-
-function closeSheet(){
-  document.getElementById('overlay').classList.remove('show');
-  document.getElementById('sheet').classList.remove('show');
-  document.body.style.overflow = '';
-}
-
-/* ============ LIVE POLLS ============ */
-const POLL_COLORS = ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#B983FF', '#FF9F45'];
-
-function startPollChecking(){
-  if(!POLL_BIN_ID) return; // polls feature not set up yet
-  checkForLivePoll();
-  pollPollingTimer = setInterval(checkForLivePoll, 4000);
-}
-
-async function fetchPollData(){
-  const res = await fetch(`${PROXY_BASE}/polls`);
-  const data = await res.json();
-  return data.record || { polls: [], activePollId: null };
-}
-
-async function checkForLivePoll(){
-  try{
-    const record = await fetchPollData();
-    const activePoll = (record.polls || []).find(p => p.id === record.activePollId && p.status === 'live');
-
-    if(!activePoll){
-      currentPollId = null;
-      pollDismissed = false;
-      document.getElementById('pollTakeover').style.display = 'none';
-      return;
-    }
-
-    if(activePoll.id !== currentPollId){
-      pollDismissed = false; // a new poll just went live — show it fresh
-    }
-    currentPollId = activePoll.id;
-    const votedKey = 'voted_poll_' + activePoll.id;
-    hasVotedThisPoll = !!localStorage.getItem(votedKey);
-    renderPollTakeover(activePoll);
-
-    if(!pollDismissed){
-      document.getElementById('pollTakeover').style.display = 'flex';
-    }
-  } catch(err){
-    console.error('Poll check failed:', err);
-  }
-}
-
-function dismissPollTakeover(){
-  pollDismissed = true;
-  document.getElementById('pollTakeover').style.display = 'none';
-}
-
-function renderPollTakeover(poll){
-  document.getElementById('pollQuestionText').textContent = poll.question;
-  const area = document.getElementById('pollOptionsArea');
-  const totalVotes = poll.options.reduce((sum, o) => sum + (o.votes || 0), 0);
-
-  const optionsHtml = poll.options.map((opt, i) => {
-    const song = songs.find(s => s.id === opt.songId);
-    const label = opt.label || (song ? song.t + (song.a ? ' — ' + song.a : '') : 'Unknown song');
-    const pct = totalVotes > 0 ? Math.round(((opt.votes || 0) / totalVotes) * 100) : 0;
-    const votedForThis = hasVotedThisPoll && localStorage.getItem('voted_poll_' + poll.id) === String(i);
-    const color = POLL_COLORS[i % POLL_COLORS.length];
-
-    const showResults = hasVotedThisPoll;
-    const fillHtml = showResults ? `<div class="poll-option-fill" style="width:${pct}%;"></div>` : '';
-    const pctHtml = showResults ? `<span class="poll-option-pct">${pct}%</span>` : '';
-    const clickAttr = hasVotedThisPoll ? '' : `onclick="castVote('${poll.id}', ${i})"`;
-    const requestLinkText = opt.label
-      ? `Want a specific song instead? Request one — $${prices.general}`
-      : `Want this one anyway? Request it — $${prices.general}`;
-
-    return `
-      <div class="poll-option${votedForThis ? ' voted-for' : ''}" style="background:${color};" ${clickAttr}>
-        ${fillHtml}
-        <div class="poll-option-content">
-          <span class="poll-option-label">${escapeHtml(label)}</span>
-          ${pctHtml}
-        </div>
-      </div>
-      ${hasVotedThisPoll && opt.songId ? `<div class="poll-request-link" onclick="event.stopPropagation(); openSheet('${opt.songId}')">${requestLinkText}</div>` : ''}
-    `;
-  }).join('');
-
-  area.innerHTML = `
-    ${optionsHtml}
-    ${hasVotedThisPoll ? `
-      <div class="poll-voted-note">✓ Your vote is in — thanks!</div>
-      <div class="poll-continue-btn" onclick="dismissPollTakeover()">Continue Browsing</div>
-    ` : ''}
-  `;
-}
-
-async function castVote(pollId, optionIndex){
-  if(hasVotedThisPoll) return;
-  hasVotedThisPoll = true; // optimistic lock so a double-tap can't double-vote
-  localStorage.setItem('voted_poll_' + pollId, String(optionIndex));
-
-  try{
-    const record = await fetchPollData();
-    const poll = (record.polls || []).find(p => p.id === pollId);
-    if(poll && poll.status === 'live'){
-      poll.options[optionIndex].votes = (poll.options[optionIndex].votes || 0) + 1;
-      await fetch(`${PROXY_BASE}/polls`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(record)
-      });
-    }
-  } catch(err){
-    console.error('Vote failed to save:', err);
-  }
-
-  checkForLivePoll();
-}
-
-/* ============ INIT ============ */
+function stackedLetters(word,outerRadius){const boxWidth=44,targetWidthStart=70,targetWidthEnd=50,stretchStart=targetWidthStart/boxWidth,stretchEnd=targetWidthEnd/boxWidth,baseFontSize=26,shrinkAmount=5;let html='';for(let i=0;i<word.length;i++){const t=word.length>1?i/(word.length-1):0,fontSize=baseFontSize-shrinkAmount*t,stretch=(stretchStart+(stretchEnd-stretchStart)*t).toFixed(3);html+=`<span style="font-size:${fontSize.toFixed(1)}px; transform:scaleX(${stretch});">${word[i]}</span>`;}return html;}
+function buildWheelLabels(price){const outerRadius=122;return WHEEL_SLICES.map((label,i)=>{const angle=i*36+18,word=label==='FREE'?'FREE':label==='BOGO'?'BOGO':'PAID';return `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);"><div class="wheel-label" style="transform: translate(-50%, -${outerRadius}px);">${stackedLetters(word,outerRadius)}</div></div>`;}).join('');}
+function buildWheelRivets(){let out='';for(let i=0;i<20;i++){const angle=i*18;out+=`<div class="wheel-label-arm" style="transform: rotate(${angle}deg);"><div class="wheel-rivet" style="transform: translate(0, -133px);"></div></div>`;}return out;}
+function buildWheelSparkles(){let out='';for(let i=0;i<16;i++){const angle=Math.random()*360,radius=20+Math.random()*95,delay=(Math.random()*1.6).toFixed(2),size=10+Math.round(Math.random()*10);out+=`<div class="wheel-label-arm" style="transform: rotate(${angle}deg);"><span class="sparkle" style="transform: translate(-50%, -${radius}px); font-size:${size}px; animation-delay:${delay}s;">✨</span></div>`;}return out;}
+function spinWheel(songId,price){const spinLockRemaining=getSpinLockRemainingMs();if(spinLockRemaining>0){const area=document.getElementById('spinResultArea');if(area)area.innerHTML='<div class="spin-result">You already used your spin on this device. Try again in '+formatSpinLockRemaining(spinLockRemaining)+' — or <a href="#" onclick="skipSpinToPayment(\''+songId+'\', '+price+'); return false;" style="color:var(--accent);text-decoration:underline;">send this request now for $'+price+'</a>.</div>';return;}if(wheelSpinning)return;wheelSpinning=true;lockSpinForThisDevice();const wheel=document.getElementById('spinWheel'),spinBtn=document.getElementById('spinBtn');spinBtn.disabled=true;spinBtn.style.opacity='.6';const resultIndex=Math.floor(Math.random()*WHEEL_SLICES.length),targetSliceCenter=resultIndex*36+18,extraSpins=5*360;wheelRotationTotal+=extraSpins+(360-targetSliceCenter)-(wheelRotationTotal%360);wheel.style.transform=`rotate(${wheelRotationTotal}deg)`;setTimeout(()=>revealSpinResult(WHEEL_SLICES[resultIndex],songId,price),4300);}
+const colorPalette=['#FF3B3B','#FFD700','#3BA1FF','#39FF6A','#FF3BE0','#B23BFF','#3BFFF0','#FFFFFF','#FF8C3B'];
+function launchFirework(x,apexY,color,isFinale,finaleText){const rocket=document.createElement('div');rocket.className='firework-rocket'+(isFinale?' firework-rocket-big':'');rocket.style.left=x+'px';rocket.style.background=color;rocket.style.color=color;document.body.appendChild(rocket);const riseDuration=isFinale?1100:850+Math.random()*450;const anim=rocket.animate([{transform:'translateY(0)',opacity:1},{transform:`translateY(-${apexY}px)`,opacity:1}],{duration:riseDuration,easing:'cubic-bezier(0.22,0.5,0.35,1)',fill:'forwards'});anim.onfinish=()=>{const rect=rocket.getBoundingClientRect(),burstX=isFinale?window.innerWidth/2:rect.left,burstY=isFinale?window.innerHeight*.42:rect.top;rocket.remove();if(isFinale){screenFlash();burstAt(burstX,burstY,color,true);setTimeout(()=>burstAt(burstX,burstY,'#FFFFFF',true),90);setTimeout(()=>burstAt(burstX,burstY,colorPalette[Math.floor(Math.random()*colorPalette.length)],true),200);setTimeout(()=>showFreeText(burstX,burstY,finaleText),160);}else burstAt(burstX,burstY,color,false);};}
+function screenFlash(){const flash=document.createElement('div');flash.className='screen-flash';document.body.appendChild(flash);setTimeout(()=>flash.remove(),500);}
+function burstAt(x,y,color,epic){const particleCount=epic?55:36,distRange=epic?[90,210]:[60,130];for(let i=0;i<particleCount;i++){const p=document.createElement('div');p.className='firework-particle';const size=epic?5+Math.random()*4:4+Math.random()*3;p.style.width=size+'px';p.style.height=size+'px';p.style.left=x+'px';p.style.top=y+'px';p.style.background=color;p.style.boxShadow=`0 0 ${epic?10:6}px ${epic?3:2}px ${color}`;document.body.appendChild(p);const angle=Math.random()*Math.PI*2,dist=distRange[0]+Math.random()*(distRange[1]-distRange[0]),dx=Math.cos(angle)*dist,dy=Math.sin(angle)*dist+(epic?45:30),duration=(epic?950:700)+Math.random()*500;const pAnim=p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx}px, ${dy}px) scale(0.4)`,opacity:0}],{duration,easing:'cubic-bezier(0.2,0.6,0.4,1)',fill:'forwards'});pAnim.onfinish=()=>p.remove();}}
+function showFreeText(x,y,text){const el=document.createElement('div');el.className='firework-free-text';el.textContent=text||'FREE';el.style.left=x+'px';el.style.top=y+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),2200);}
+function launchFireworks(finaleText){const label=finaleText||'FREE',count=12,vw=window.innerWidth,vh=window.innerHeight;for(let i=0;i<count;i++){const delay=i*150+Math.random()*110,x=vw*.08+Math.random()*vw*.84,apexY=vh*.36+Math.random()*vh*.34,color=colorPalette[Math.floor(Math.random()*colorPalette.length)];setTimeout(()=>launchFirework(x,apexY,color,false),delay);}setTimeout(()=>launchFirework(vw/2,vh*.5,'#FFD700',true,label),count*150+500);}
+function revealSpinResult(outcome,songId,price){const area=document.getElementById('spinResultArea'),s=songs.find(x=>x.id===songId);if(!s||!area)return;if(outcome==='FREE'||outcome==='BOGO')launchFireworks(outcome);function finishReveal(){const wheelWrapEl=document.querySelector('.wheel-wrap');if(wheelWrapEl)wheelWrapEl.style.display='none';const spinBtnEl=document.getElementById('spinBtn');if(spinBtnEl)spinBtnEl.style.display='none';const step2LabelEl=document.getElementById('step2Label');if(step2LabelEl)step2LabelEl.style.display='none';if(outcome==='FREE'){area.innerHTML=`<div class="spin-result spin-result-free">🎉 You spun FREE! This one's on the house.</div><div class="section-label">Step 3 — Send the request</div><a class="btn btn-text" href="#" target="_top" onclick="prepareSend(this, '${s.id}', 'FREE'); return false;">Send Request</a>`;}else if(outcome==='BOGO'){area.innerHTML=`<div class="spin-result spin-result-bogo">🎉 You spun BOGO! Pick a second song — it's free.</div><div class="section-label" id="bogoStep3Label">Step 3 — Pick your free second song</div><div id="bogoPickerWrap"><input type="text" id="bogoSearch" class="name-input" placeholder="Search song or artist…" autocomplete="off"><select id="bogoSort" class="bogo-sort-select"><option value="title-asc">Title A → Z</option><option value="title-desc">Title Z → A</option><option value="artist-asc">Artist A → Z</option><option value="artist-desc">Artist Z → A</option></select><div class="chips" id="bogoChips"></div><div class="count-row" id="bogoCountRow"></div><div id="bogoResults" class="bogo-results"></div></div><div id="bogoSelectedWrap" style="display:none"></div><div id="bogoNextSteps"></div>`;setupBogoPicker(songId,price);}else{const songLabel=`${s.t}${s.a?' - '+s.a:''}`,payUrl=`/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabel)}`;area.innerHTML=`<div class="spin-result spin-result-general">You spun $${price} — pay securely to send your request.</div><div class="section-label">Step 3 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>`;}}if(outcome==='FREE'||outcome==='BOGO')setTimeout(finishReveal,4800);else finishReveal();}
+let bogoFilter={search:'',sort:'title-asc',tag:null};
+function sortSongsByMode(list,mode){const sorted=[...list];sorted.sort((a,b)=>{if(mode==='title-asc')return a.t.localeCompare(b.t);if(mode==='title-desc')return b.t.localeCompare(a.t);if(mode==='artist-asc')return(a.a||'').localeCompare(b.a||'');if(mode==='artist-desc')return(b.a||'').localeCompare(a.a||'');return 0;});return sorted;}
+function setupBogoPicker(songAId,price){bogoFilter={search:'',sort:'title-asc',tag:null};const chipsEl=document.getElementById('bogoChips');chipsEl.innerHTML='';const allChip=document.createElement('div');allChip.className='chip active';allChip.textContent='All';allChip.onclick=()=>{bogoFilter.tag=null;renderBogoChips();renderBogoResults(songAId,price);};chipsEl.appendChild(allChip);ALL_TAGS.forEach(tag=>{const chip=document.createElement('div');chip.className='chip';chip.textContent=tag;chip.onclick=()=>{bogoFilter.tag=(bogoFilter.tag===tag?null:tag);renderBogoChips();renderBogoResults(songAId,price);};chipsEl.appendChild(chip);});document.getElementById('bogoSearch').addEventListener('input',e=>{bogoFilter.search=e.target.value;renderBogoResults(songAId,price);});document.getElementById('bogoSort').addEventListener('change',e=>{bogoFilter.sort=e.target.value;renderBogoResults(songAId,price);});renderBogoResults(songAId,price);}
+function renderBogoChips(){const chipsEl=document.getElementById('bogoChips');[...chipsEl.children].forEach(chip=>{const isAllChip=chip===chipsEl.firstElementChild;chip.classList.toggle('active',isAllChip?bogoFilter.tag===null:chip.textContent===bogoFilter.tag);});}
+function renderBogoResults(songAId,price){const term=bogoFilter.search.trim().toLowerCase();let filtered=songs.filter(sg=>sg.id!==songAId&&(!bogoFilter.tag||(sg.tags||[]).includes(bogoFilter.tag))&&(!term||sg.t.toLowerCase().includes(term)||(sg.a||'').toLowerCase().includes(term)));filtered=sortSongsByMode(filtered,bogoFilter.sort);const resultsBox=document.getElementById('bogoResults'),countRow=document.getElementById('bogoCountRow');if(countRow)countRow.textContent=`${filtered.length} song${filtered.length===1?'':'s'}`;if(filtered.length===0){resultsBox.innerHTML='<div class="bogo-result-item">No matches</div>';return;}resultsBox.innerHTML=filtered.slice(0,60).map(sg=>`<div class="bogo-result-item" data-song-id="${sg.id}">${escapeHtml(sg.t)}${sg.a?' — '+escapeHtml(sg.a):''}</div>`).join('');[...resultsBox.querySelectorAll('.bogo-result-item')].forEach(item=>{item.onclick=()=>{const songBId=item.dataset.songId;if(!songBId)return;[...resultsBox.querySelectorAll('.bogo-result-item')].forEach(el=>el.classList.remove('selected'));item.classList.add('selected');const sA=songs.find(x=>x.id===songAId),sB=songs.find(x=>x.id===songBId),pickerWrap=document.getElementById('bogoPickerWrap'),selectedWrap=document.getElementById('bogoSelectedWrap'),step3Label=document.getElementById('bogoStep3Label');if(pickerWrap)pickerWrap.style.display='none';if(step3Label)step3Label.textContent='Step 3 — Your BOGO picks 🎉';if(selectedWrap){selectedWrap.innerHTML='<div class="bogo-picks"><div class="bogo-pick-card">'+(sA?escapeHtml(sA.t):'')+(sA&&sA.a?' — '+escapeHtml(sA.a):'')+'</div><div class="bogo-pick-plus">+</div><div class="bogo-pick-card">'+(sB?escapeHtml(sB.t):'')+(sB&&sB.a?' — '+escapeHtml(sB.a):'')+'</div></div><button type="button" class="bogo-change-link" id="bogoChangeBtn">Change second song</button>';selectedWrap.style.display='block';const changeBtn=document.getElementById('bogoChangeBtn');if(changeBtn)changeBtn.onclick=function(){selectedWrap.style.display='none';selectedWrap.innerHTML='';if(pickerWrap)pickerWrap.style.display='';if(step3Label)step3Label.textContent='Step 3 — Pick your free second song';const n=document.getElementById('bogoNextSteps');if(n)n.innerHTML='';};}renderBogoNextSteps(songAId,songBId,price);const n=document.getElementById('bogoNextSteps');if(n)n.scrollIntoView({behavior:'smooth',block:'start'});};});}
+function renderBogoNextSteps(songAId,songBId,price){const sA=songs.find(x=>x.id===songAId),sB=songs.find(x=>x.id===songBId),labelA=sA?`${sA.t}${sA.a?' - '+sA.a:''}`:'',labelB=sB?`${sB.t}${sB.a?' - '+sB.a:''}`:'',songLabel=`${labelA} + BOGO: ${labelB}`,payUrl=`/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabel)}`;document.getElementById('bogoNextSteps').innerHTML=`<div class="section-label">Step 4 — Pay $${price} (songs won't be added until paid)</div><a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>`;}
+async function prepareSend(el,id,outcomeType){const s=songs.find(x=>x.id===id);if(!s)return false;el.textContent='Sending...';try{const p=new URLSearchParams();p.append('name',(document.getElementById('reqName')?document.getElementById('reqName').value.trim():'')||'Someone');p.append('song',s.t);p.append('artist',s.a||'');p.append('outcome',outcomeType||'PAID');await fetch('https://rickparma-booking-8582.twil.io/song-alert',{method:'POST',mode:'no-cors',body:p}).catch(()=>{});}catch(e){}el.textContent='Thanks for the request!';el.style.pointerEvents='none';el.style.opacity='.7';const w=document.createElement('div');w.style.cssText='margin-top:18px;text-align:center;';w.innerHTML='<a href="https://rickparma.com" target="_top" style="display:inline-block;padding:16px 30px;background:var(--accent);color:#0c1420;font-weight:900;font-size:18px;border-radius:14px;text-decoration:none;letter-spacing:0.3px;">&larr; Back to RickParma.com</a>';(el.closest('.spin-result')||el.parentElement||el).insertAdjacentElement('afterend',w);return false;}
+function closeSheet(){document.getElementById('overlay').classList.remove('show');document.getElementById('sheet').classList.remove('show');document.body.style.overflow='';}
+const POLL_COLORS=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#B983FF','#FF9F45'];
+function startPollChecking(){if(!POLL_BIN_ID)return;checkForLivePoll();pollPollingTimer=setInterval(checkForLivePoll,4000);}
+async function fetchPollData(){const res=await fetch(`${PROXY_BASE}/polls`);const data=await res.json();return data.record||{polls:[],activePollId:null};}
+async function checkForLivePoll(){try{const record=await fetchPollData();const activePoll=(record.polls||[]).find(p=>p.id===record.activePollId&&p.status==='live');if(!activePoll){currentPollId=null;pollDismissed=false;document.getElementById('pollTakeover').style.display='none';return;}if(activePoll.id!==currentPollId)pollDismissed=false;currentPollId=activePoll.id;hasVotedThisPoll=!!localStorage.getItem('voted_poll_'+activePoll.id);renderPollTakeover(activePoll);if(!pollDismissed)document.getElementById('pollTakeover').style.display='flex';}catch(err){console.error('Poll check failed:',err);}}
+function dismissPollTakeover(){pollDismissed=true;document.getElementById('pollTakeover').style.display='none';}
+function renderPollTakeover(poll){document.getElementById('pollQuestionText').textContent=poll.question;const area=document.getElementById('pollOptionsArea'),totalVotes=poll.options.reduce((sum,o)=>sum+(o.votes||0),0);const optionsHtml=poll.options.map((opt,i)=>{const song=songs.find(s=>s.id===opt.songId),label=opt.label||(song?song.t+(song.a?' — '+song.a:''):'Unknown song'),pct=totalVotes>0?Math.round(((opt.votes||0)/totalVotes)*100):0,votedForThis=hasVotedThisPoll&&localStorage.getItem('voted_poll_'+poll.id)===String(i),showResults=hasVotedThisPoll,fillHtml=showResults?`<div class="poll-option-fill" style="width:${pct}%;"></div>`:'',pctHtml=showResults?`<span class="poll-option-pct">${pct}%</span>`:'',clickAttr=hasVotedThisPoll?'':`onclick="castVote('${poll.id}', ${i})"`,requestLinkText=opt.label?`Want a specific song instead? Request one — $${prices.general}`:`Want this one anyway? Request it — $${prices.general}`;return `<div class="poll-option${votedForThis?' voted-for':''}" ${clickAttr}>${fillHtml}<div class="poll-option-content"><span class="poll-option-label">${escapeHtml(label)}</span>${pctHtml}</div></div>${hasVotedThisPoll&&opt.songId?`<div class="poll-request-link" onclick="event.stopPropagation(); openSheet('${opt.songId}')">${requestLinkText}</div>`:''}`;}).join('');area.innerHTML=optionsHtml+(hasVotedThisPoll?`<div class="poll-voted-note">✓ Your vote is in — thanks!</div><div class="poll-continue-btn" onclick="dismissPollTakeover()">Continue Browsing</div>`:'');}
+async function castVote(pollId,optionIndex){if(hasVotedThisPoll)return;hasVotedThisPoll=true;localStorage.setItem('voted_poll_'+pollId,String(optionIndex));try{const record=await fetchPollData(),poll=(record.polls||[]).find(p=>p.id===pollId);if(poll&&poll.status==='live'){poll.options[optionIndex].votes=(poll.options[optionIndex].votes||0)+1;await fetch(`${PROXY_BASE}/polls`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(record)});}}catch(err){console.error('Vote failed to save:',err);}checkForLivePoll();}
 loadSongs();
 </script>
 </body>
