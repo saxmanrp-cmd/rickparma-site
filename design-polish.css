@@ -85,12 +85,27 @@ html body #booking h2.display-heading{
   background:none!important;
   text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;
 }
-/* Diamond Method title is the logo image: force it to the same strong visual scale. */
-html body #diamond-method .product-card>img:first-child{width:430px!important;max-width:78%!important;height:auto!important;display:block!important;margin:0 auto 6px!important;object-fit:contain!important;}
+/* Replace the old Diamond Singing Method cover/title with the approved DIAMOND METHOD title. */
+html body #diamond-method .product-card>img:first-child{display:none!important;}
+html body #diamond-method .product-card::before{
+  content:'DIAMOND METHOD';
+  display:block;
+  width:100%;
+  font-family:'Helvetica Neue',Arial,sans-serif!important;
+  font-size:clamp(2.15rem,5.5vw,3.35rem)!important;
+  font-weight:900!important;
+  line-height:.95!important;
+  letter-spacing:.025em!important;
+  text-transform:uppercase!important;
+  color:#eef2f7!important;
+  -webkit-text-fill-color:#eef2f7!important;
+  text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;
+  margin:0 auto 12px!important;
+}
 @media(max-width:600px){
   html body #music h2.display-heading,
   html body #calendar h2.display-heading,
   html body #promo-videos h2.rp-section-title,
-  html body #booking h2.display-heading{font-size:2.8rem!important;line-height:.95!important;}
-  html body #diamond-method .product-card>img:first-child{width:360px!important;max-width:86%!important;}
+  html body #booking h2.display-heading,
+  html body #diamond-method .product-card::before{font-size:2.8rem!important;line-height:.95!important;}
 }
