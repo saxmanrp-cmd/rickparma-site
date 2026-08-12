@@ -11,7 +11,7 @@ html body .band-hero .rp-card-panel::before,html body .band-hero .rp-card-panel:
 
 /* Remove every generated/legacy hero tagline and collapse its space. */
 html body #heroBand .hero-subtitle,html body #heroBand .hero-description,html body #heroBand .hero-copy,html body #heroBand .hero-title+p{display:none!important;margin:0!important;padding:0!important;height:0!important;min-height:0!important;line-height:0!important;}
-html body #heroBand .hero-title{margin-bottom:0!important;}
+html body #heroBand .hero-title{margin-bottom:0!important;white-space:nowrap!important;width:100%!important;text-align:center!important;font-size:clamp(1.9rem,10vw,5rem)!important;}
 html body #heroBand .hero-title::before,html body #heroBand .hero-title::after{content:none!important;display:none!important;width:0!important;height:0!important;margin:0!important;padding:0!important;}
 html body #heroBand .hero-title + *:not(.button-row){display:none!important;margin:0!important;padding:0!important;height:0!important;min-height:0!important;}
 html body #heroBand .rp-card-panel{padding-top:0!important;padding-bottom:0!important;}
@@ -34,9 +34,10 @@ html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,h
 @media(max-width:700px){
  html body .rp-card-panel,html body .rp-player,html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{-webkit-backdrop-filter:blur(12px) saturate(135%)!important;backdrop-filter:blur(12px) saturate(135%)!important;}
  html body #heroBand .band-inner{padding-left:0!important;padding-right:0!important;}
+ html body #heroBand .hero-title{font-size:clamp(1.8rem,10.5vw,3.2rem)!important;letter-spacing:.005em!important;white-space:nowrap!important;}
  html body #heroBand .button-row{width:98%!important;gap:4px!important;margin-top:0!important;}
  html body #heroBand #songRequestCol,html body #heroBand #fanCamCol{flex:1 1 50%!important;width:auto!important;max-width:none!important;}
  html body #heroBand #songRequestCol>a,html body #heroBand #fanCamCol>a{width:100%!important;max-width:none!important;}
 }
-@media(max-width:390px){html body #heroBand .button-row{width:99%!important;gap:2px!important;}}
+@media(max-width:390px){html body #heroBand .hero-title{font-size:10vw!important;}html body #heroBand .button-row{width:99%!important;gap:2px!important;}}
 @media(prefers-reduced-transparency:reduce){html body .rp-player,html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background-color:#080c13!important;}}
