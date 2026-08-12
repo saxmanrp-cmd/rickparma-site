@@ -1,4 +1,4 @@
-/* Approved booking readability pass — match Diamond Method description sizing. */
+/* Approved booking readability pass — visibly match Diamond Method description sizing. */
 html body #booking form,
 html body #booking .booking-form,
 html body #booking .booking-card{font-size:clamp(1.18rem,2.4vw,1.65rem)!important;line-height:1.32!important;}
@@ -13,4 +13,5 @@ html body #booking textarea,
 html body #booking button{font-size:clamp(1.18rem,2.4vw,1.65rem)!important;line-height:1.32!important;}
 html body #booking input::placeholder,
 html body #booking textarea::placeholder{font-size:clamp(1.18rem,2.4vw,1.65rem)!important;opacity:.82!important;}
-@media(max-width:600px){html body #booking form,html body #booking .booking-form,html body #booking .booking-card,html body #booking label,html body #booking .form-label,html body #booking p,html body #booking .form-help,html body #booking .booking-copy,html body #booking input,html body #booking select,html body #booking textarea,html body #booking button,html body #booking input::placeholder,html body #booking textarea::placeholder{font-size:clamp(1.08rem,5vw,1.35rem)!important;line-height:1.28!important;}}
+/* Mobile must use the same visual scale as the Diamond Method description — no smaller override. */
+@media(max-width:600px){html body #booking form,html body #booking .booking-form,html body #booking .booking-card,html body #booking label,html body #booking .form-label,html body #booking p,html body #booking .form-help,html body #booking .booking-copy,html body #booking input,html body #booking select,html body #booking textarea,html body #booking button,html body #booking input::placeholder,html body #booking textarea::placeholder{font-size:clamp(1.18rem,5.8vw,1.65rem)!important;line-height:1.32!important;}}
