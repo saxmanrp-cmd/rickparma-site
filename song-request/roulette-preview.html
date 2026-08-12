@@ -73,7 +73,8 @@ body::before{
     linear-gradient(180deg,#070c15,#020409);
   box-shadow:inset 0 1px rgba(255,255,255,.04),inset 0 -30px 70px rgba(0,0,0,.30)
 }
-#roulette3d{position:absolute;inset:0;width:100%;height:100%}
+#roulette3d{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+#roulette3d canvas{display:block;width:100%!important;height:100%!important}
 .roulette-stage::after{
   content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(110deg,rgba(255,255,255,.04),transparent 24%,transparent 72%,rgba(96,216,255,.025));
@@ -306,7 +307,9 @@ requestAnimationFrame(animate);
 
 function resize(){
   const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);
-  renderer.setSize(w,h,false);
+  renderer.setSize(w,h,true);
+  renderer.domElement.style.width='100%';
+  renderer.domElement.style.height='100%';
   camera.aspect=w/h;
 
   /* Keep the entire roulette wheel, outer ball rail and spindle visible on every screen size. */
