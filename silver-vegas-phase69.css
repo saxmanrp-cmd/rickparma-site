@@ -51,3 +51,38 @@ html body #heroBand .rp-card-panel::after{
   background:none!important;
 }
 @media(max-width:560px){html body header{width:100%!important;margin-left:0!important;margin-right:0!important;background-position:center center!important;background-size:cover!important;}}
+
+/* Booking form typography — placed in an already-loaded stylesheet so it overrides
+   Claude's original inline form.booking rules on the actual GitHub Pages build. */
+html body #booking #booking-intro,
+html body #booking form.booking label,
+html body #booking form.booking legend,
+html body #booking form.booking input,
+html body #booking form.booking select,
+html body #booking form.booking textarea,
+html body #booking form.booking button,
+html body #booking form.booking .submit-btn{
+  font-size:clamp(1.18rem,2.4vw,1.65rem)!important;
+  line-height:1.32!important;
+}
+html body #booking form.booking input::placeholder,
+html body #booking form.booking textarea::placeholder{
+  font-size:inherit!important;
+}
+html body #booking form.booking label,
+html body #booking form.booking legend{
+  font-weight:700!important;
+}
+@media(max-width:600px){
+  html body #booking #booking-intro,
+  html body #booking form.booking label,
+  html body #booking form.booking legend,
+  html body #booking form.booking input,
+  html body #booking form.booking select,
+  html body #booking form.booking textarea,
+  html body #booking form.booking button,
+  html body #booking form.booking .submit-btn{
+    font-size:clamp(1.18rem,5.8vw,1.65rem)!important;
+    line-height:1.32!important;
+  }
+}
