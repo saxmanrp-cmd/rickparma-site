@@ -121,4 +121,75 @@ html body #music .rp-player-controls{width:100%!important;}
     margin:0!important;
     padding:0!important;
   }
+
+  /* Mobile Join the Fun: use the exact PNG buttons, side by side, like desktop. */
+  html body #heroBand .hero-title{
+    display:block!important;
+    width:100%!important;
+    margin:0 0 14px!important;
+    font-size:clamp(2rem,10vw,2.55rem)!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+    text-align:center!important;
+  }
+  html body #heroBand .hero-title::before,
+  html body #heroBand .hero-title::after,
+  html body #heroBand .song-request-button::before,
+  html body #heroBand .song-request-button::after,
+  html body #heroBand .fan-cam-button::before,
+  html body #heroBand .fan-cam-button::after{
+    content:none!important;
+    display:none!important;
+  }
+  html body #heroBand .button-row{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    align-items:center!important;
+  }
+  html body #heroBand .button-col{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  html body #heroBand .song-request-button,
+  html body #heroBand .fan-cam-button{
+    display:block!important;
+    position:static!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:auto!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    border:0!important;
+    border-radius:0!important;
+    background:none!important;
+    box-shadow:none!important;
+    transform:none!important;
+  }
+  html body #heroBand .song-request-button img,
+  html body #heroBand .fan-cam-button img{
+    display:block!important;
+    position:static!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    object-fit:contain!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+    border:0!important;
+    border-radius:0!important;
+  }
+  html body #heroBand .btn-caption{display:none!important;}
 }
