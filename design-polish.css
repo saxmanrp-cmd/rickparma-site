@@ -64,154 +64,31 @@
 @import url('silver-vegas-tip-restore.css');
 @import url('silver-vegas-diamond-layout.css');
 
-/* Final live booking overrides */
 html body #booking form.booking{font-size:clamp(1.18rem,2.4vw,1.65rem)!important;line-height:1.32!important;}
 html body #booking form.booking label,html body #booking form.booking legend,html body #booking-intro{font-size:clamp(1.18rem,2.4vw,1.65rem)!important;line-height:1.32!important;}
 html body #booking form.booking input,html body #booking form.booking select,html body #booking form.booking textarea{font-size:clamp(1.18rem,2.4vw,1.65rem)!important;line-height:1.32!important;}
 html body #booking form.booking .submit-btn,html body #booking form.booking button[type="submit"]{font-family:'Helvetica Neue',Arial,sans-serif!important;font-size:1.15rem!important;font-weight:bold!important;line-height:1!important;letter-spacing:.02em!important;color:#e8edf4!important;-webkit-text-fill-color:#e8edf4!important;text-shadow:0 1px 0 #fff,0 2px 1px rgba(0,0,0,.75),0 0 8px rgba(215,230,248,.20)!important;}
-
-/* Approved large silver section titles. */
-html body #music h2.display-heading,
-html body #calendar h2.display-heading,
-html body #promo-videos h2.rp-section-title,
-html body #booking h2.display-heading{
-  font-family:'Helvetica Neue',Arial,sans-serif!important;
-  font-size:clamp(2.15rem,5.5vw,3.35rem)!important;
-  font-weight:900!important;
-  line-height:.95!important;
-  letter-spacing:.025em!important;
-  text-transform:uppercase!important;
-  color:#eef2f7!important;
-  -webkit-text-fill-color:#eef2f7!important;
-  background:none!important;
-  text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;
-}
-
-/* Diamond Method: title belongs above the card; logo remains inside at its approved size. */
-html body #diamond-method::before{
-  content:'DIAMOND METHOD'!important;
-  display:block!important;
-  width:min(96%,900px)!important;
-  margin:0 auto 12px!important;
-  text-align:left!important;
-  font-family:'Helvetica Neue',Arial,sans-serif!important;
-  font-size:clamp(2.15rem,5.5vw,3.35rem)!important;
-  font-weight:900!important;
-  line-height:.95!important;
-  letter-spacing:.025em!important;
-  color:#eef2f7!important;
-  -webkit-text-fill-color:#eef2f7!important;
-  text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;
-}
+html body #music h2.display-heading,html body #calendar h2.display-heading,html body #promo-videos h2.rp-section-title,html body #booking h2.display-heading{font-family:'Helvetica Neue',Arial,sans-serif!important;font-size:clamp(2.15rem,5.5vw,3.35rem)!important;font-weight:900!important;line-height:.95!important;letter-spacing:.025em!important;text-transform:uppercase!important;color:#eef2f7!important;-webkit-text-fill-color:#eef2f7!important;background:none!important;text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;}
+html body #diamond-method::before{content:'DIAMOND METHOD'!important;display:block!important;width:min(96%,900px)!important;margin:0 auto 12px!important;text-align:left!important;font-family:'Helvetica Neue',Arial,sans-serif!important;font-size:clamp(2.15rem,5.5vw,3.35rem)!important;font-weight:900!important;line-height:.95!important;letter-spacing:.025em!important;color:#eef2f7!important;-webkit-text-fill-color:#eef2f7!important;text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;}
 html body #diamond-method .product-card::before{content:none!important;display:none!important;}
 html body #diamond-method .product-card>img:first-child{display:block!important;order:1!important;width:min(64%,430px)!important;max-width:430px!important;height:auto!important;margin:0 auto 4px!important;object-fit:contain!important;}
 
-/* Text signup: PNG button above legal disclosure. */
-html body .band-textjoin .join-box{
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:stretch!important;
-  justify-content:flex-start!important;
-  width:min(96%,900px)!important;
-  max-width:900px!important;
-  margin:0 auto!important;
-  gap:10px!important;
-}
-html body .band-textjoin .text-join-button{
-  display:block!important;
-  order:1!important;
-  width:100%!important;
-  max-width:none!important;
-  height:auto!important;
-  aspect-ratio:auto!important;
-  overflow:visible!important;
-  position:relative!important;
-  margin:0!important;
-  padding:0!important;
-}
-html body .band-textjoin .text-join-button img{
-  position:static!important;
-  display:block!important;
-  width:100%!important;
-  max-width:none!important;
-  height:auto!important;
-  margin:0!important;
-  padding:0!important;
-  transform:none!important;
-  object-fit:contain!important;
-}
+/* Text signup: exact vertical stack on every viewport. */
+html body .band-textjoin .band-inner{display:block!important;width:100%!important;max-width:100%!important;}
+html body .band-textjoin .join-box{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;width:min(96%,900px)!important;max-width:900px!important;margin:0 auto!important;gap:12px!important;}
 html body .band-textjoin .join-box::before{content:none!important;display:none!important;}
 html body .band-textjoin .join-box>p:first-of-type{display:none!important;}
-html body .band-textjoin .consent-disclosure{
-  display:block!important;
-  order:2!important;
-  width:100%!important;
-  max-width:none!important;
-  box-sizing:border-box!important;
-  font-size:clamp(.72rem,1.7vw,.95rem)!important;
-  line-height:1.35!important;
-  color:#aeb5c2!important;
-  text-align:left!important;
-  margin:0!important;
-  padding:0 2%!important;
-}
+html body .band-textjoin .text-join-button{display:block!important;order:1!important;width:100%!important;max-width:100%!important;aspect-ratio:1088/376!important;height:auto!important;overflow:hidden!important;position:relative!important;margin:0!important;padding:0!important;flex:none!important;}
+/* Preserve the source PNG's built-in-padding crop so the neon pill fills its full row. */
+html body .band-textjoin .text-join-button img{position:absolute!important;top:-85.11%!important;left:-20.96%!important;width:141.18%!important;max-width:none!important;height:auto!important;margin:0!important;padding:0!important;transform:none!important;}
+html body .band-textjoin .consent-disclosure{display:block!important;order:2!important;position:static!important;float:none!important;clear:both!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;flex:none!important;font-size:clamp(.72rem,1.7vw,.95rem)!important;line-height:1.35!important;color:#aeb5c2!important;text-align:center!important;margin:0!important;padding:0 2%!important;}
 
 @media(max-width:600px){
-  html body #music h2.display-heading,
-  html body #calendar h2.display-heading,
-  html body #promo-videos h2.rp-section-title,
-  html body #booking h2.display-heading,
-  html body #diamond-method::before{font-size:2.8rem!important;line-height:.95!important;}
+  html body #music h2.display-heading,html body #calendar h2.display-heading,html body #promo-videos h2.rp-section-title,html body #booking h2.display-heading,html body #diamond-method::before{font-size:2.8rem!important;line-height:.95!important;}
   html body #diamond-method::before{width:96%!important;margin-bottom:10px!important;}
   html body #diamond-method .product-card>img:first-child{width:min(78%,340px)!important;max-width:340px!important;}
-
-  /* iPhone: override older grid/absolute mobile rules and force a true full-width stack. */
-  html body .band-textjoin .band-inner,
-  html body .band-textjoin .join-box{
-    display:flex!important;
-    flex-direction:column!important;
-    grid-template-columns:none!important;
-    align-items:stretch!important;
-    width:100%!important;
-    max-width:100%!important;
-    box-sizing:border-box!important;
-  }
-  html body .band-textjoin .join-box{padding:14px!important;gap:10px!important;}
-  html body .band-textjoin .text-join-button{
-    position:relative!important;
-    inset:auto!important;
-    float:none!important;
-    display:block!important;
-    width:100%!important;
-    max-width:100%!important;
-    flex:none!important;
-    align-self:stretch!important;
-    margin:0!important;
-  }
-  html body .band-textjoin .text-join-button img{
-    position:static!important;
-    inset:auto!important;
-    display:block!important;
-    width:100%!important;
-    max-width:100%!important;
-    height:auto!important;
-    min-width:0!important;
-    margin:0!important;
-  }
-  html body .band-textjoin .consent-disclosure{
-    position:static!important;
-    float:none!important;
-    clear:both!important;
-    display:block!important;
-    width:100%!important;
-    max-width:100%!important;
-    min-width:0!important;
-    flex:none!important;
-    align-self:stretch!important;
-    margin:0!important;
-    padding:0 4px!important;
-    text-align:center!important;
-    font-size:.78rem!important;
-    line-height:1.3!important;
-  }
+  html body .band-textjoin{padding-left:12px!important;padding-right:12px!important;}
+  html body .band-textjoin .join-box{display:flex!important;flex-direction:column!important;width:100%!important;max-width:100%!important;padding:14px!important;gap:12px!important;}
+  html body .band-textjoin .text-join-button{display:block!important;order:1!important;width:100%!important;max-width:100%!important;aspect-ratio:1088/376!important;align-self:stretch!important;}
+  html body .band-textjoin .consent-disclosure{display:block!important;order:2!important;width:100%!important;max-width:100%!important;align-self:stretch!important;text-align:center!important;font-size:.78rem!important;line-height:1.3!important;padding:0 4px!important;}
 }
