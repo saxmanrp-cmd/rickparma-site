@@ -69,11 +69,11 @@ html body #booking form.booking label,html body #booking form.booking legend,htm
 html body #booking form.booking input,html body #booking form.booking select,html body #booking form.booking textarea{font-size:clamp(1.18rem,2.4vw,1.65rem)!important;line-height:1.32!important;}
 html body #booking form.booking .submit-btn,html body #booking form.booking button[type="submit"]{font-family:'Helvetica Neue',Arial,sans-serif!important;font-size:1.15rem!important;font-weight:bold!important;line-height:1!important;letter-spacing:.02em!important;color:#e8edf4!important;-webkit-text-fill-color:#e8edf4!important;text-shadow:0 1px 0 #fff,0 2px 1px rgba(0,0,0,.75),0 0 8px rgba(215,230,248,.20)!important;}
 
-/* Approved large silver section titles — keep these independent from tip/booking fixes. */
-html body #music .display-heading,
-html body #calendar .display-heading,
-html body #promo-videos .rp-section-title,
-html body #booking .display-heading{
+/* Approved large silver section titles. */
+html body #music h2.display-heading,
+html body #calendar h2.display-heading,
+html body #promo-videos h2.rp-section-title,
+html body #booking h2.display-heading{
   font-family:'Helvetica Neue',Arial,sans-serif!important;
   font-size:clamp(2.15rem,5.5vw,3.35rem)!important;
   font-weight:900!important;
@@ -85,12 +85,12 @@ html body #booking .display-heading{
   background:none!important;
   text-shadow:0 1px 0 #fff,0 3px 1px rgba(0,0,0,.78),0 0 10px rgba(215,230,248,.18)!important;
 }
-/* Diamond Method uses the cover/logo as its section title; keep its approved large presentation. */
-html body #diamond-method .product-card>img{width:min(78%,430px)!important;max-width:430px!important;height:auto!important;display:block!important;margin:0 auto 4px!important;object-fit:contain!important;}
+/* Diamond Method title is the logo image: force it to the same strong visual scale. */
+html body #diamond-method .product-card>img:first-child{width:430px!important;max-width:78%!important;height:auto!important;display:block!important;margin:0 auto 6px!important;object-fit:contain!important;}
 @media(max-width:600px){
-  html body #music .display-heading,
-  html body #calendar .display-heading,
-  html body #promo-videos .rp-section-title,
-  html body #booking .display-heading{font-size:clamp(2rem,9.5vw,2.8rem)!important;}
-  html body #diamond-method .product-card>img{width:min(82%,360px)!important;max-width:360px!important;}
+  html body #music h2.display-heading,
+  html body #calendar h2.display-heading,
+  html body #promo-videos h2.rp-section-title,
+  html body #booking h2.display-heading{font-size:2.8rem!important;line-height:.95!important;}
+  html body #diamond-method .product-card>img:first-child{width:360px!important;max-width:86%!important;}
 }
