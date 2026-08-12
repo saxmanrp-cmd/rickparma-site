@@ -1,12 +1,50 @@
-/* Phase 69 — diagnostic image swap ONLY.
-   Header uses existing hero-bg.jpg.
-   Hero uses the Rick Parma header artwork.
-   This tells us whether pixelation follows the IMAGE or the HEADER container. */
-html body header{background-color:#010307!important;background-image:url('images/hero-bg.jpg?v=69')!important;background-repeat:no-repeat!important;background-position:center center!important;background-size:cover!important;aspect-ratio:16/9!important;min-height:0!important;height:auto!important;}
+/* Phase 69 — final high-resolution Vegas header image.
+   Uses the original 1536x864 PNG uploaded to /images.
+   No upscaling, CSS embedding, blur, or diagnostic image swap. */
+html body header{
+  background-color:#010307!important;
+  background-image:url('images/D5A2A81B-07ED-48B7-895F-286F7ECAED19.PNG?v=70')!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  aspect-ratio:16/9!important;
+  min-height:0!important;
+  height:auto!important;
+}
 html body header::before,html body header::after{content:none!important;display:none!important;}
 html body header h1,html body header h1 a{display:none!important;}
 html body header .socials{display:flex!important;visibility:visible!important;opacity:1!important;position:absolute!important;z-index:20!important;top:6px!important;left:6px!important;}
-html body .band-hero,html body #heroBand{--bg-image:none!important;--overlay:0!important;background-color:#010307!important;background-image:url('images/rick-parma-header-approved.jpg?v=69')!important;background-repeat:no-repeat!important;background-position:center center!important;background-size:cover!important;}
-html body .band-hero::before,html body .band-hero::after,html body #heroBand::before,html body #heroBand::after{content:none!important;display:none!important;}
-html body .band-hero .band-inner,html body #heroBand .band-inner,html body .band-hero .rp-card-panel,html body #heroBand .rp-card-panel{background:transparent!important;background-image:none!important;}
-html body .band-hero .rp-card-panel::before,html body .band-hero .rp-card-panel::after,html body #heroBand .rp-card-panel::before,html body #heroBand .rp-card-panel::after{content:none!important;display:none!important;}
+
+/* Keep the Join the Fun hero clean; Phase 69's diagnostic swap is removed. */
+html body .band-hero,
+html body #heroBand{
+  --bg-image:none!important;
+  --overlay:0!important;
+  background:#000!important;
+  background-image:none!important;
+}
+html body .band-hero::before,
+html body .band-hero::after,
+html body #heroBand::before,
+html body #heroBand::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  filter:none!important;
+}
+html body .band-hero .band-inner,
+html body #heroBand .band-inner,
+html body .band-hero .rp-card-panel,
+html body #heroBand .rp-card-panel{
+  background:transparent!important;
+  background-image:none!important;
+}
+html body .band-hero .rp-card-panel::before,
+html body .band-hero .rp-card-panel::after,
+html body #heroBand .rp-card-panel::before,
+html body #heroBand .rp-card-panel::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+@media(max-width:560px){html body header{background-position:center center!important;background-size:cover!important;}}
