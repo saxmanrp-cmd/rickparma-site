@@ -1,28 +1,24 @@
 /* Silver Vegas — flagship neon liquid-glass system.
-   The Song Request and Fan Cam PNGs now contain their complete visual design.
+   The Song Request and Fan Cam PNGs contain their complete visual design.
    CSS only lays them out, keeps them clickable/responsive, and adds subtle interaction. */
 :root{--rp-glass:rgba(8,12,19,.62);--rp-line:rgba(224,240,255,.58);--rp-cyan:#55dfff;--rp-pink:#ff4fd8;--rp-violet:#aa68ff;}
 
 /* Shared premium glass for the REST of the site. */
-html body .rp-card-panel,html body .rp-player,html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{
- background:linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,.025) 24%,rgba(5,9,16,.70) 66%,rgba(255,255,255,.055) 100%)!important;
- border:1px solid var(--rp-line)!important;
- box-shadow:inset 0 1px 1px rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.08),0 14px 36px rgba(0,0,0,.46),0 0 18px rgba(92,208,255,.15)!important;
- -webkit-backdrop-filter:blur(22px) saturate(155%)!important;backdrop-filter:blur(22px) saturate(155%)!important;
-}
+html body .rp-card-panel,html body .rp-player,html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{background:linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,.025) 24%,rgba(5,9,16,.70) 66%,rgba(255,255,255,.055) 100%)!important;border:1px solid var(--rp-line)!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.08),0 14px 36px rgba(0,0,0,.46),0 0 18px rgba(92,208,255,.15)!important;-webkit-backdrop-filter:blur(22px) saturate(155%)!important;backdrop-filter:blur(22px) saturate(155%)!important;}
 
 /* Remove ALL legacy hero decoration, including the old circle. */
-html body .band-hero,html body #heroBand,html body .band-hero .band-inner,html body #heroBand .band-inner{background:#000!important;background-image:none!important;}
+html body .band-hero,html body #heroBand,html body .band-hero .band-inner,html body #heroBand .band-inner{background:#000!important;background-image:none!important;border:0!important;box-shadow:none!important;}
 html body .band-hero::before,html body .band-hero::after,html body #heroBand::before,html body #heroBand::after,html body .band-hero .band-inner::before,html body .band-hero .band-inner::after,html body #heroBand .band-inner::before,html body #heroBand .band-inner::after{content:none!important;display:none!important;background:none!important;border:0!important;box-shadow:none!important;}
-html body .band-hero .rp-card-panel,html body #heroBand .rp-card-panel{background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding-left:0!important;padding-right:0!important;overflow:visible!important;}
+html body .band-hero .rp-card-panel,html body #heroBand .rp-card-panel{background:transparent!important;background-image:none!important;border:0!important;outline:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding-left:0!important;padding-right:0!important;overflow:visible!important;}
 html body .band-hero .rp-card-panel::before,html body .band-hero .rp-card-panel::after,html body #heroBand .rp-card-panel::before,html body #heroBand .rp-card-panel::after{content:none!important;display:none!important;background:none!important;border:0!important;box-shadow:none!important;}
 
-/* New PNGs ARE the buttons: no extra boxes, borders, arrows, old icons, captions or manufactured chrome. */
-html body .band-hero .button-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;align-items:center!important;width:100%!important;margin:0!important;padding:0!important;}
-html body .band-hero .button-col{display:block!important;min-width:0!important;width:100%!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;}
-html body .band-hero .img-btn{display:block!important;position:relative!important;width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important;border:0!important;border-radius:0!important;background:transparent!important;background-image:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transition:transform .16s ease,filter .16s ease!important;}
+/* The PNGs ARE the controls. Keep both exactly equal-sized and centered. */
+html body .band-hero .button-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;align-items:center!important;justify-items:center!important;width:min(100%,900px)!important;margin:0 auto!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;}
+html body .band-hero .button-col{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;width:100%!important;margin:0!important;padding:0!important;background:none!important;border:0!important;outline:0!important;box-shadow:none!important;}
+html body .band-hero .img-btn{display:block!important;position:relative!important;width:100%!important;max-width:440px!important;height:auto!important;min-height:0!important;aspect-ratio:auto!important;margin:0 auto!important;padding:0!important;overflow:visible!important;border:0!important;outline:0!important;border-radius:0!important;background:transparent!important;background-image:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transition:transform .16s ease,filter .16s ease!important;}
 html body .band-hero .img-btn::before,html body .band-hero .img-btn::after{content:none!important;display:none!important;background:none!important;border:0!important;box-shadow:none!important;}
-html body .band-hero .img-btn img{display:block!important;position:relative!important;width:100%!important;max-width:none!important;height:auto!important;margin:0!important;padding:0!important;object-fit:contain!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;filter:none!important;}
+html body .band-hero .img-btn img{display:block!important;position:relative!important;width:100%!important;max-width:440px!important;height:auto!important;aspect-ratio:1040/310!important;margin:0 auto!important;padding:0!important;object-fit:contain!important;border:0!important;outline:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;filter:none!important;}
+html body .band-hero #fanCamCol .img-btn img{aspect-ratio:1040/310!important;object-fit:contain!important;}
 html body .band-hero .img-btn:hover{transform:translateY(-2px) scale(1.01)!important;filter:brightness(1.08) saturate(1.06)!important;}
 html body .band-hero .img-btn:active{transform:scale(.975)!important;filter:brightness(1.15)!important;}
 html body .band-hero .btn-caption{display:none!important;}
@@ -31,10 +27,6 @@ html body .band-hero .btn-caption{display:none!important;}
 html body .band-tipjar .rp-card-panel,html body .band-textjoin .rp-card-panel,html body .rp-player{box-shadow:inset 0 1px 1px rgba(255,255,255,.40),-3px -1px 16px rgba(85,223,255,.14),3px 1px 18px rgba(255,79,216,.10),0 18px 40px rgba(0,0,0,.45)!important;}
 html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{box-shadow:inset 0 1px 1px rgba(255,255,255,.38),0 0 16px rgba(111,198,255,.16),0 8px 20px rgba(0,0,0,.36)!important;}
 
-@media(max-width:700px){
- html body .rp-card-panel,html body .rp-player,html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{-webkit-backdrop-filter:blur(12px) saturate(135%)!important;backdrop-filter:blur(12px) saturate(135%)!important;}
- html body .band-hero .button-row{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;}
- html body .band-hero .band-inner{padding-left:8px!important;padding-right:8px!important;}
-}
-@media(max-width:390px){html body .band-hero .button-row{gap:4px!important;}html body .band-hero .band-inner{padding-left:5px!important;padding-right:5px!important;}}
+@media(max-width:700px){html body .rp-card-panel,html body .rp-player,html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{-webkit-backdrop-filter:blur(12px) saturate(135%)!important;backdrop-filter:blur(12px) saturate(135%)!important;}html body .band-hero .button-row{width:94%!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important;}html body .band-hero .band-inner{padding-left:0!important;padding-right:0!important;}html body .band-hero .img-btn,html body .band-hero .img-btn img{width:100%!important;max-width:330px!important;}html body .band-hero .button-col{overflow:visible!important;}}
+@media(max-width:390px){html body .band-hero .button-row{width:96%!important;gap:2px!important;}}
 @media(prefers-reduced-transparency:reduce){html body .rp-player,html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background-color:#080c13!important;}}
