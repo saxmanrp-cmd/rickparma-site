@@ -105,6 +105,31 @@ html body #diamond-method::before{
 }
 html body #diamond-method .product-card::before{content:none!important;display:none!important;}
 html body #diamond-method .product-card>img:first-child{display:block!important;order:1!important;width:min(64%,430px)!important;max-width:430px!important;height:auto!important;margin:0 auto 4px!important;object-fit:contain!important;}
+
+/* Text signup: replace the old image headline with exact live text: text JOIN to. */
+html body .band-textjoin .text-join-button{display:none!important;}
+html body .band-textjoin .join-box::before{
+  content:'text JOIN to'!important;
+  display:block!important;
+  text-align:center!important;
+  font-family:'Helvetica Neue',Arial,sans-serif!important;
+  font-size:clamp(2rem,5.2vw,3.25rem)!important;
+  font-weight:800!important;
+  line-height:1!important;
+  letter-spacing:.08em!important;
+  text-transform:none!important;
+  color:#55c8ed!important;
+  -webkit-text-fill-color:#55c8ed!important;
+  margin:0 auto 8px!important;
+}
+html body .band-textjoin .join-box>p:first-of-type{
+  font-size:clamp(1.55rem,4.6vw,2.75rem)!important;
+  font-weight:800!important;
+  line-height:1.05!important;
+  margin:0 auto 8px!important;
+  color:#eef2f7!important;
+}
+
 @media(max-width:600px){
   html body #music h2.display-heading,
   html body #calendar h2.display-heading,
@@ -113,4 +138,5 @@ html body #diamond-method .product-card>img:first-child{display:block!important;
   html body #diamond-method::before{font-size:2.8rem!important;line-height:.95!important;}
   html body #diamond-method::before{width:96%!important;margin-bottom:10px!important;}
   html body #diamond-method .product-card>img:first-child{width:min(78%,340px)!important;max-width:340px!important;}
+  html body .band-textjoin .join-box::before{font-size:2.35rem!important;}
 }
