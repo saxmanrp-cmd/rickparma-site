@@ -1615,7 +1615,7 @@
   var form = document.getElementById('booking-form');
   if (!form) return;
   var TWILIO_URL = 'https://rickparma-booking-8582.twil.io/booking-alert';
-  var INVOICE_SYNC_URL = 'https://rickparma-booking-8582.twil.io/invoice-sync';
+    var INVOICE_SYNC_URL = '/api/invoices/booking-sync';
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var submitBtn = form.querySelector('.submit-btn');
