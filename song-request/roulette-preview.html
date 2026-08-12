@@ -6,22 +6,28 @@
 <title>Roulette Request Preview — Rick Parma</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js"
+  }
+}
+</script>
 <style>
 :root{
-  --cyan:#55dcff;
-  --magenta:#f45bdb;
+  --cyan:#58dcff;
+  --magenta:#f45bdd;
   --silver:#eef3f8;
-  --dim:#98a4b4;
-  --panel:#080d16;
-  --line:rgba(194,213,237,.25);
+  --dim:#96a2b1;
+  --line:rgba(195,214,238,.26);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;background:#02040a;color:#f2f5f8;font-family:'Lato',sans-serif}
 body{
   min-height:100vh;
   background:
-    radial-gradient(circle at 14% 6%,rgba(56,204,255,.14),transparent 30%),
-    radial-gradient(circle at 88% 8%,rgba(244,74,220,.11),transparent 31%),
+    radial-gradient(circle at 13% 5%,rgba(55,204,255,.14),transparent 28%),
+    radial-gradient(circle at 88% 8%,rgba(244,76,221,.11),transparent 30%),
     linear-gradient(180deg,#02040a 0%,#050811 52%,#020309 100%);
   overflow-x:hidden;
 }
@@ -29,79 +35,69 @@ body::before{
   content:"";position:fixed;inset:0;pointer-events:none;
   background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 5px);
 }
-.preview-shell{position:relative;z-index:1;width:min(100%,620px);margin:0 auto;padding:14px 14px calc(28px + env(safe-area-inset-bottom))}
+.preview-shell{position:relative;z-index:1;width:min(100%,660px);margin:0 auto;padding:14px 14px calc(30px + env(safe-area-inset-bottom))}
 .back-btn{
   appearance:none;border:1px solid rgba(211,226,243,.42);border-radius:999px;
   background:linear-gradient(180deg,rgba(28,38,52,.95),rgba(7,12,20,.98));
-  color:#edf2f8;padding:10px 15px;font-weight:900;font-size:13px;box-shadow:inset 0 1px rgba(255,255,255,.09),0 7px 18px rgba(0,0,0,.28)
+  color:#edf2f8;padding:10px 15px;font-weight:900;font-size:13px;
+  box-shadow:inset 0 1px rgba(255,255,255,.09),0 7px 18px rgba(0,0,0,.28)
 }
 .request-card{
-  margin-top:12px;padding:18px 16px 19px;border-radius:24px;border:1px solid rgba(190,211,236,.28);
+  position:relative;overflow:hidden;margin-top:12px;padding:18px 16px 19px;border-radius:24px;
+  border:1px solid rgba(190,211,236,.28);
   background:linear-gradient(180deg,rgba(15,22,34,.93),rgba(5,8,14,.97));
-  box-shadow:inset 0 1px rgba(255,255,255,.08),0 18px 48px rgba(0,0,0,.40),0 0 28px rgba(74,208,255,.06);
-  overflow:hidden;position:relative
+  box-shadow:inset 0 1px rgba(255,255,255,.075),0 20px 55px rgba(0,0,0,.42),0 0 30px rgba(71,210,255,.055)
 }
-.request-card::before{content:"";position:absolute;left:18px;right:18px;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),#9d93ff,var(--magenta),transparent);box-shadow:0 0 16px rgba(79,215,255,.55),0 0 18px rgba(244,91,219,.30)}
-.song-title{font-family:'Josefin Sans',sans-serif;font-size:clamp(1.55rem,6vw,2rem);font-weight:900;line-height:1.05;color:#f3f6fa;margin:4px 0 4px}
-.song-artist{color:#99a5b5;font-weight:700;font-size:14px}
-.tier-line{display:flex;align-items:center;gap:9px;margin-top:13px}
-.badge{padding:7px 12px;border-radius:999px;border:1px solid rgba(103,222,255,.48);background:linear-gradient(180deg,rgba(15,42,57,.96),rgba(5,18,27,.99));color:#90e9ff;font-size:13px;font-weight:900;box-shadow:inset 0 1px rgba(255,255,255,.07),0 0 14px rgba(76,211,255,.08)}
-.price{font-family:'Josefin Sans',sans-serif;font-size:23px;font-weight:900;color:#f5f7fa}
-.step-label{margin-top:18px;color:#a9b4c2;font-size:12px;letter-spacing:.08em;font-weight:900;text-transform:uppercase}
-.step-label strong{color:#83e5ff}
-.name-input{width:100%;margin-top:8px;padding:15px 16px;border-radius:16px;border:1px solid rgba(177,204,235,.30);background:linear-gradient(180deg,rgba(18,25,38,.94),rgba(6,10,17,.98));color:#f2f5f8;font:700 16px 'Lato',sans-serif;box-shadow:inset 0 1px rgba(255,255,255,.06)}
-.name-input:focus{outline:none;border-color:rgba(100,222,255,.78);box-shadow:0 0 0 2px rgba(77,211,255,.08),0 0 20px rgba(72,210,255,.10)}
-.roulette-copy{margin:6px 0 0;color:#7f8b9b;font-size:12px;text-align:center;font-weight:700}
-.roulette-stage{height:330px;margin:4px -6px -8px;display:flex;align-items:center;justify-content:center;perspective:900px;overflow:visible}
-.roulette-tilt{position:relative;width:320px;height:320px;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(-2deg);filter:drop-shadow(0 22px 18px rgba(0,0,0,.58))}
-.roulette-bowl{
-  position:absolute;inset:9px;border-radius:50%;
+.request-card::before{
+  content:"";position:absolute;left:18px;right:18px;top:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan) 25%,#9a8cff 52%,var(--magenta) 78%,transparent);
+  box-shadow:0 0 14px rgba(82,218,255,.58),0 0 18px rgba(244,91,221,.34)
+}
+.song-title{font-family:'Josefin Sans',sans-serif;font-size:clamp(1.55rem,6vw,2rem);font-weight:900;line-height:1.06;color:#f3f6fa}
+.artist{margin-top:4px;color:#9aa6b4;font-size:13px;font-weight:700}
+.request-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid rgba(193,214,237,.14)}
+.price-badge{flex:0 0 auto;padding:8px 12px;border-radius:999px;border:1px solid rgba(98,221,255,.5);background:rgba(47,182,224,.09);color:#8be9ff;font-weight:900}
+.section-label{margin-top:14px;color:#a8b4c2;font-size:11px;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
+.section-label strong{color:#65ddff}
+.name-input{width:100%;margin-top:8px;padding:14px 15px;border:1px solid rgba(177,204,235,.31);border-radius:15px;background:linear-gradient(180deg,rgba(18,25,38,.94),rgba(6,10,17,.98));color:#f2f5f8;font-size:16px;font-weight:700;outline:none;box-shadow:inset 0 1px rgba(255,255,255,.07)}
+.name-input:focus{border-color:rgba(96,222,255,.76);box-shadow:0 0 0 2px rgba(80,217,255,.08),0 0 20px rgba(70,210,255,.11)}
+.roulette-copy{margin:7px 0 10px;color:#9ca8b7;font-size:12.5px;line-height:1.42}
+.roulette-copy .f{color:#6fe5ff;font-weight:900}.roulette-copy .b{color:#ff82e8;font-weight:900}
+.roulette-stage{
+  position:relative;width:100%;height:clamp(340px,74vw,470px);margin:4px auto 4px;border-radius:22px;overflow:hidden;
+  border:1px solid rgba(180,207,236,.22);
   background:
-    radial-gradient(circle at 46% 38%,rgba(255,255,255,.10),transparent 12%),
-    radial-gradient(circle at 50% 50%,#1e0e08 0 29%,#542918 30% 39%,#1b0d08 40% 42%,#8b4a25 43% 47%,#1a0b07 48% 55%,#090b0f 56% 66%,#b9c1c9 67% 69%,#15191e 70% 75%,#d9e0e7 76% 78%,#171a1f 79% 82%,#05070a 83% 100%);
-  border:2px solid #d4dae0;
-  box-shadow:
-    inset 0 0 0 5px #0b0e12,
-    inset 0 0 0 8px #8f9aa5,
-    inset 0 0 35px rgba(0,0,0,.86),
-    0 0 0 2px rgba(255,255,255,.10),
-    0 0 26px rgba(67,205,255,.08),0 0 32px rgba(244,77,221,.05)
+    radial-gradient(ellipse at 50% 88%,rgba(0,0,0,.80),transparent 50%),
+    radial-gradient(circle at 12% 12%,rgba(51,202,255,.09),transparent 30%),
+    radial-gradient(circle at 90% 13%,rgba(244,72,220,.08),transparent 30%),
+    linear-gradient(180deg,#070c15,#020409);
+  box-shadow:inset 0 1px rgba(255,255,255,.04),inset 0 -30px 70px rgba(0,0,0,.30)
 }
-.roulette-bowl::before{content:"";position:absolute;inset:4px;border-radius:50%;background:conic-gradient(from 210deg,transparent 0 19%,rgba(255,255,255,.22) 23%,transparent 28% 100%);mix-blend-mode:screen;opacity:.75;pointer-events:none}
-.roulette-wheel{
-  position:absolute;left:50%;top:50%;width:236px;height:236px;margin:-118px 0 0 -118px;border-radius:50%;
-  background:
-    radial-gradient(circle,#170b07 0 34%,#2c130a 35% 41%,transparent 42%),
-    conic-gradient(from -7.5deg,
-      #861829 0 15deg,#080b0f 15deg 30deg,#861829 30deg 45deg,#080b0f 45deg 60deg,
-      #861829 60deg 75deg,#080b0f 75deg 90deg,#861829 90deg 105deg,#080b0f 105deg 120deg,
-      #861829 120deg 135deg,#080b0f 135deg 150deg,#861829 150deg 165deg,#080b0f 165deg 180deg,
-      #861829 180deg 195deg,#080b0f 195deg 210deg,#861829 210deg 225deg,#080b0f 225deg 240deg,
-      #861829 240deg 255deg,#080b0f 255deg 270deg,#861829 270deg 285deg,#080b0f 285deg 300deg,
-      #861829 300deg 315deg,#080b0f 315deg 330deg,#861829 330deg 345deg,#080b0f 345deg 360deg);
-  border:5px solid #d8dde2;
-  box-shadow:inset 0 0 0 3px #1b1e22,inset 0 0 0 5px #8e99a3,inset 0 0 22px rgba(0,0,0,.7),0 0 0 2px rgba(0,0,0,.6);
-  transition:transform 5.6s cubic-bezier(.08,.62,.10,1);transform:rotate(0deg);transform-style:preserve-3d
+#roulette3d{position:absolute;inset:0;width:100%;height:100%}
+.roulette-stage::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(110deg,rgba(255,255,255,.04),transparent 24%,transparent 72%,rgba(96,216,255,.025));
 }
-.roulette-wheel::after{content:"";position:absolute;inset:39px;border-radius:50%;background:radial-gradient(circle at 44% 35%,#773d20 0,#3c1d10 30%,#160a06 66%,#070506 100%);border:3px solid #aeb8c1;box-shadow:inset 0 0 20px rgba(0,0,0,.68)}
-.pocket-label{position:absolute;left:50%;top:50%;width:22px;height:24px;margin:-12px 0 0 -11px;display:flex;align-items:center;justify-content:center;font-family:'Josefin Sans',sans-serif;font-size:15px;font-weight:900;color:#f5f7fa;text-shadow:0 1px 2px #000;z-index:3;transform-origin:50% 50%;backface-visibility:hidden}
-.pocket-label.free{color:#8ae8ff;text-shadow:0 0 5px rgba(70,216,255,.55),0 1px 2px #000}
-.pocket-label.bogo{color:#ff9bec;text-shadow:0 0 5px rgba(244,91,219,.55),0 1px 2px #000}
-.ball-track{position:absolute;left:50%;top:50%;width:272px;height:272px;margin:-136px 0 0 -136px;border-radius:50%;border:8px solid rgba(18,20,23,.82);box-shadow:inset 0 0 0 2px rgba(228,235,240,.60),inset 0 0 10px #000;z-index:5;pointer-events:none}
-.ball-orbit{position:absolute;inset:0;border-radius:50%;transition:transform 5.25s cubic-bezier(.07,.72,.13,1);transform:rotate(0deg);--ball-radius:121px}
-.roulette-stage.settling .ball-orbit{--ball-radius:103px}
-.ball{position:absolute;left:50%;top:50%;width:15px;height:15px;margin:-7.5px;border-radius:50%;transform:translateY(calc(-1 * var(--ball-radius)));transition:transform 1.4s cubic-bezier(.2,.8,.3,1);background:radial-gradient(circle at 35% 28%,#fff 0 16%,#f1eee2 28%,#c8c4b8 54%,#79766d 80%,#ece8da 100%);box-shadow:0 2px 4px rgba(0,0,0,.9),0 0 5px rgba(255,255,255,.38)}
-.spindle{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px;border-radius:50%;z-index:8;background:radial-gradient(circle at 40% 32%,#fff 0 7%,#dce2e7 12%,#717a83 30%,#171a1e 47%,#b5bec6 60%,#373d43 75%,#edf1f4 100%);box-shadow:0 0 0 4px #171a1e,0 0 0 6px #aeb7bf,0 6px 10px rgba(0,0,0,.75)}
-.spindle::before{content:"";position:absolute;left:50%;top:50%;width:25px;height:90px;transform:translate(-50%,-77px);border-radius:50% 50% 40% 40%;background:linear-gradient(90deg,#2a2e33,#eef2f5 29%,#777f86 51%,#f2f5f7 70%,#30343a);box-shadow:0 3px 7px rgba(0,0,0,.72)}
-.spindle::after{content:"";position:absolute;left:50%;top:-58px;width:43px;height:18px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at 42% 32%,#fff,#a8b1ba 32%,#33383e 70%,#dce2e7);box-shadow:0 3px 7px rgba(0,0,0,.7)}
-.spin-btn{width:100%;margin-top:7px;padding:15px 16px;border-radius:16px;border:1px solid rgba(214,229,245,.70);background:linear-gradient(100deg,#52ddff 0%,#7598ff 48%,#e568dc 100%);color:#050811;font:900 16px 'Lato',sans-serif;letter-spacing:.035em;box-shadow:inset 0 1px rgba(255,255,255,.56),0 9px 25px rgba(72,203,255,.16),0 0 24px rgba(233,91,220,.12);cursor:pointer;transition:transform .15s ease,filter .15s ease}
-.spin-btn:active{transform:scale(.985)}.spin-btn:disabled{filter:saturate(.5) brightness(.7);cursor:default}
-.result{display:none;margin-top:13px;padding:15px;border-radius:16px;text-align:center;font-weight:900;border:1px solid rgba(187,208,234,.24);background:rgba(9,15,24,.78);box-shadow:inset 0 1px rgba(255,255,255,.05)}
-.result.show{display:block;animation:resultPop .35s ease-out}.result.free{color:#8de9ff;border-color:rgba(88,220,255,.55);box-shadow:0 0 18px rgba(73,212,255,.10)}.result.bogo{color:#ff9cec;border-color:rgba(244,91,219,.55);box-shadow:0 0 18px rgba(244,91,219,.10)}
-@keyframes resultPop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-.firework-particle{position:fixed;z-index:9999;width:6px;height:6px;border-radius:50%;pointer-events:none}
-@media(max-width:420px){
-  .preview-shell{padding-left:10px;padding-right:10px}.request-card{padding:16px 12px 17px;border-radius:20px}.roulette-stage{height:300px;margin-left:-12px;margin-right:-12px}.roulette-tilt{width:292px;height:292px;transform:rotateX(59deg) rotateZ(-2deg) scale(.93)}.song-title{font-size:1.55rem}.step-label{font-size:11px}.spin-btn{font-size:15px}
+.spin-btn{
+  appearance:none;width:100%;margin-top:12px;padding:15px 16px;border-radius:16px;border:1px solid rgba(206,225,246,.62);
+  background:linear-gradient(100deg,#54dfff 0%,#758fff 48%,#d46ee8 100%);color:#050810;
+  font-size:16px;font-weight:900;letter-spacing:.03em;text-transform:uppercase;
+  box-shadow:inset 0 1px rgba(255,255,255,.52),0 10px 25px rgba(57,188,255,.16),0 0 22px rgba(238,81,222,.12);
+  transition:transform .15s ease,filter .15s ease,opacity .15s ease
+}
+.spin-btn:active{transform:scale(.987);filter:brightness(.92)}
+.spin-btn:disabled{opacity:.48}
+.result{display:none;margin-top:12px;padding:13px 14px;border-radius:15px;text-align:center;font-size:14px;font-weight:900}
+.result.show{display:block;animation:resultPop .28s ease-out}
+.result.free{border:1px solid rgba(92,225,255,.55);background:rgba(57,196,238,.09);color:#9cedff;box-shadow:0 0 20px rgba(67,211,255,.09)}
+.result.bogo{border:1px solid rgba(248,103,225,.55);background:rgba(232,74,210,.09);color:#ff9cec;box-shadow:0 0 20px rgba(241,84,221,.09)}
+@keyframes resultPop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.firework-particle{position:fixed;top:0;left:0;width:6px;height:6px;border-radius:50%;z-index:500;pointer-events:none}
+@media(max-width:520px){
+  .preview-shell{padding:10px 10px calc(24px + env(safe-area-inset-bottom))}
+  .request-card{padding:15px 12px 16px;border-radius:20px}
+  .roulette-stage{height:clamp(330px,92vw,420px);border-radius:18px}
+  .song-title{font-size:1.55rem}
 }
 </style>
 </head>
@@ -109,102 +105,228 @@ body::before{
 <div class="preview-shell">
   <button class="back-btn" type="button">← Back</button>
   <section class="request-card">
-    <div class="song-title">Don’t Stop Believin’</div>
-    <div class="song-artist">Journey</div>
-    <div class="tier-line"><span class="badge">Song Request</span><span class="price">$5</span></div>
+    <div class="request-meta">
+      <div>
+        <div class="song-title">Don't Stop Believin'</div>
+        <div class="artist">Journey</div>
+      </div>
+      <div class="price-badge">$5</div>
+    </div>
 
-    <div class="step-label"><strong>Step 1</strong> — What’s your name?</div>
+    <div class="section-label"><strong>Step 1</strong> — What's your name?</div>
     <input class="name-input" type="text" placeholder="So I can give you a shout-out on the mic!">
 
-    <div class="step-label"><strong>Step 2</strong> — One spin per show to win a FREE or BOGO request</div>
+    <div class="section-label"><strong>Step 2</strong> — Spin the roulette for a chance to win</div>
+    <div class="roulette-copy">The ball circles the outer rail, drops into the wheel and lands on <span class="f">F for FREE</span> or <span class="b">B for BOGO</span>.</div>
+
     <div class="roulette-stage" id="rouletteStage">
-      <div class="roulette-tilt">
-        <div class="roulette-bowl"></div>
-        <div class="roulette-wheel" id="rouletteWheel"></div>
-        <div class="ball-track"><div class="ball-orbit" id="ballOrbit"><div class="ball"></div></div></div>
-        <div class="spindle"></div>
-      </div>
+      <div id="roulette3d" aria-label="Interactive 3D roulette wheel"></div>
     </div>
-    <div class="roulette-copy">F = FREE request &nbsp; • &nbsp; B = BOGO request</div>
-    <button class="spin-btn" id="spinBtn" type="button">SPIN TO WIN</button>
+
+    <button class="spin-btn" id="spinBtn" type="button">Spin to Win</button>
     <div class="result" id="result"></div>
   </section>
 </div>
-<script>
-const wheel = document.getElementById('rouletteWheel');
-const ballOrbit = document.getElementById('ballOrbit');
+
+<script type="module">
+import * as THREE from 'three';
+
+const host = document.getElementById('roulette3d');
 const stage = document.getElementById('rouletteStage');
 const spinBtn = document.getElementById('spinBtn');
 const result = document.getElementById('result');
-const POCKETS = 24;
-const STEP = 360 / POCKETS;
-let wheelRotation = 0;
-let ballRotation = 0;
-let spinning = false;
 
-function mod(n,m=360){ return ((n % m) + m) % m; }
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(34, 1, .1, 100);
+camera.position.set(0, 6.9, 7.9);
+camera.lookAt(0, .2, 0);
 
-for(let i=0;i<POCKETS;i++){
-  const el = document.createElement('div');
-  const free = i % 2 === 0;
-  el.className = 'pocket-label ' + (free ? 'free' : 'bogo');
-  el.textContent = free ? 'F' : 'B';
-  const angle = i * STEP;
-  el.style.transform = `rotate(${angle}deg) translateY(-96px) rotate(${-angle}deg)`;
-  wheel.appendChild(el);
+const renderer = new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+host.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xabcfff,0x130805,1.05));
+const key = new THREE.DirectionalLight(0xffffff,3.3);key.position.set(-3.5,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
+const cyan = new THREE.PointLight(0x55dcff,28,16,2);cyan.position.set(-4.8,3.2,2.8);scene.add(cyan);
+const magenta = new THREE.PointLight(0xf45bdd,24,15,2);magenta.position.set(4.7,2.8,2.4);scene.add(magenta);
+const warm = new THREE.PointLight(0xffb879,18,13,2);warm.position.set(0,4.7,-4.5);scene.add(warm);
+
+const wheelAssembly = new THREE.Group();
+scene.add(wheelAssembly);
+
+const chrome = new THREE.MeshPhysicalMaterial({color:0xcfd7e1,metalness:1,roughness:.14,clearcoat:1,clearcoatRoughness:.08});
+const darkChrome = new THREE.MeshPhysicalMaterial({color:0x151a20,metalness:.92,roughness:.18,clearcoat:1,clearcoatRoughness:.08});
+const wood = new THREE.MeshPhysicalMaterial({color:0x35170d,metalness:.10,roughness:.20,clearcoat:1,clearcoatRoughness:.08});
+const wood2 = new THREE.MeshPhysicalMaterial({color:0x5a2611,metalness:.08,roughness:.24,clearcoat:1,clearcoatRoughness:.10});
+const blackPocket = new THREE.MeshPhysicalMaterial({color:0x090b0f,metalness:.28,roughness:.30,clearcoat:.8,clearcoatRoughness:.16});
+const redPocket = new THREE.MeshPhysicalMaterial({color:0x6e0e16,metalness:.20,roughness:.28,clearcoat:.9,clearcoatRoughness:.12});
+
+function cyl(rTop,rBottom,h,y,mat,segments=96){
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(rTop,rBottom,h,segments),mat);m.position.y=y;m.castShadow=true;m.receiveShadow=true;wheelAssembly.add(m);return m;
+}
+function torus(radius,tube,y,mat){
+  const m=new THREE.Mesh(new THREE.TorusGeometry(radius,tube,24,128),mat);m.rotation.x=Math.PI/2;m.position.y=y;m.castShadow=true;m.receiveShadow=true;wheelAssembly.add(m);return m;
 }
 
-function burstFireworks(mode){
-  const colors = mode === 'FREE'
-    ? ['#55dcff','#8cecff','#ffffff','#7d8dff']
-    : ['#f45bdb','#ff9cec','#ffffff','#9f7cff'];
-  const bursts = 7;
+cyl(3.42,3.46,.36,.12,darkChrome);
+cyl(3.28,3.34,.20,.34,chrome);
+cyl(3.13,3.23,.28,.47,wood2);
+torus(3.18,.105,.61,chrome);
+torus(2.91,.070,.63,darkChrome);
+torus(2.69,.055,.65,chrome);
+
+const POCKETS=20;
+const STEP=Math.PI*2/POCKETS;
+const pocketGroup=new THREE.Group();
+wheelAssembly.add(pocketGroup);
+
+function makeWedge(innerR,outerR,start,end,depth){
+  const shape=new THREE.Shape();
+  const n=8;
+  shape.moveTo(Math.cos(start)*outerR,Math.sin(start)*outerR);
+  for(let i=1;i<=n;i++){const a=start+(end-start)*(i/n);shape.lineTo(Math.cos(a)*outerR,Math.sin(a)*outerR)}
+  for(let i=n;i>=0;i--){const a=start+(end-start)*(i/n);shape.lineTo(Math.cos(a)*innerR,Math.sin(a)*innerR)}
+  shape.closePath();
+  const g=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelSegments:2,bevelSize:.015,bevelThickness:.015});
+  g.rotateX(-Math.PI/2);
+  g.computeVertexNormals();
+  return g;
+}
+function makeLabel(text,color){
+  const c=document.createElement('canvas');c.width=256;c.height=128;const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.shadowColor=color;ctx.shadowBlur=18;ctx.fillStyle='#ffffff';ctx.font='900 82px Lato, Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,128,65);
+  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+  const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false});
+  const s=new THREE.Sprite(mat);s.scale.set(.46,.23,1);return s;
+}
+for(let i=0;i<POCKETS;i++){
+  const a0=i*STEP+.014;
+  const a1=(i+1)*STEP-.014;
+  const pocket=new THREE.Mesh(makeWedge(2.21,2.63,a0,a1,.10),i%2===0?blackPocket:redPocket);
+  pocket.position.y=.66;pocket.castShadow=true;pocket.receiveShadow=true;pocketGroup.add(pocket);
+  const mid=(a0+a1)/2;
+  const label=makeLabel(i%2===0?'F':'B',i%2===0?'#62e4ff':'#ff78e5');
+  const r=2.42;label.position.set(Math.cos(mid)*r,.82,-Math.sin(mid)*r);pocketGroup.add(label);
+}
+
+torus(2.15,.055,.68,chrome);
+cyl(2.06,2.20,.24,.55,wood);
+const bowl=new THREE.Mesh(new THREE.CylinderGeometry(.58,1.95,.54,96),wood2);bowl.position.y=.84;bowl.castShadow=true;bowl.receiveShadow=true;wheelAssembly.add(bowl);
+torus(1.92,.045,1.03,darkChrome);
+
+cyl(.38,.42,.65,1.24,chrome,64);
+cyl(.20,.32,.42,1.75,darkChrome,64);
+const cap=new THREE.Mesh(new THREE.SphereGeometry(.27,48,32),chrome);cap.scale.y=.75;cap.position.y=2.05;cap.castShadow=true;wheelAssembly.add(cap);
+
+const ballMat=new THREE.MeshPhysicalMaterial({color:0xf5efe2,roughness:.16,metalness:0,clearcoat:1,clearcoatRoughness:.06});
+const ball=new THREE.Mesh(new THREE.SphereGeometry(.115,48,32),ballMat);ball.castShadow=true;scene.add(ball);
+
+const shadowMat=new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.38,depthWrite:false});
+const shadow=new THREE.Mesh(new THREE.CircleGeometry(3.95,96),shadowMat);shadow.rotation.x=-Math.PI/2;shadow.position.y=-.075;scene.add(shadow);
+
+const railGlowC=new THREE.MeshBasicMaterial({color:0x36d8ff,transparent:true,opacity:.11});
+const railGlowM=new THREE.MeshBasicMaterial({color:0xff4fdf,transparent:true,opacity:.09});
+const gc=new THREE.Mesh(new THREE.TorusGeometry(3.38,.025,12,128),railGlowC);gc.rotation.x=Math.PI/2;gc.position.y=.34;scene.add(gc);
+const gm=new THREE.Mesh(new THREE.TorusGeometry(3.43,.018,12,128),railGlowM);gm.rotation.x=Math.PI/2;gm.position.y=.28;scene.add(gm);
+
+let wheelAngle=0;
+let ballAngle=.55;
+let ballRadius=3.03;
+let spinning=false;
+let anim=null;
+const easeOutQuint=t=>1-Math.pow(1-t,5);
+const easeInOut=t=>t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;
+const mod=(x,m)=>((x%m)+m)%m;
+
+function updateBall(){
+  ball.position.set(Math.cos(ballAngle)*ballRadius,.84,-Math.sin(ballAngle)*ballRadius);
+}
+updateBall();
+
+function spinRoulette(){
+  if(spinning)return;
+  spinning=true;spinBtn.disabled=true;result.className='result';result.textContent='';
+
+  const targetIndex=Math.floor(Math.random()*POCKETS);
+  const outcome=targetIndex%2===0?'FREE':'BOGO';
+  const startTime=performance.now();
+  const duration=6500;
+  const startWheel=wheelAngle;
+  const startBall=ballAngle;
+  const wheelTravel=(5.25+Math.random()*.55)*Math.PI*2;
+  const finalWheel=startWheel+wheelTravel;
+  const targetLocal=(targetIndex+.5)*STEP;
+  const targetWorld=finalWheel-targetLocal;
+  const loops=9+Math.floor(Math.random()*2);
+  const finalBall=targetWorld-loops*Math.PI*2;
+
+  anim={startTime,duration,startWheel,startBall,finalWheel,finalBall,outcome};
+}
+
+function animate(now){
+  requestAnimationFrame(animate);
+  if(anim){
+    let t=Math.min(1,(now-anim.startTime)/anim.duration);
+    const ew=easeOutQuint(t);
+    wheelAngle=THREE.MathUtils.lerp(anim.startWheel,anim.finalWheel,ew);
+    wheelAssembly.rotation.y=wheelAngle;
+
+    const eb=easeInOut(t);
+    ballAngle=THREE.MathUtils.lerp(anim.startBall,anim.finalBall,eb);
+    if(t<.68){
+      ballRadius=3.05-.04*Math.sin(t*18);
+      ball.position.y=.91+.025*Math.sin(t*42);
+    }else{
+      const drop=(t-.68)/.32;
+      ballRadius=THREE.MathUtils.lerp(3.02,2.43,easeOutQuint(drop));
+      const bounce=Math.sin(drop*Math.PI*5)*(1-drop)*.055;
+      ball.position.y=THREE.MathUtils.lerp(.89,.82,easeOutQuint(drop))+bounce;
+    }
+    ball.position.x=Math.cos(ballAngle)*ballRadius;
+    ball.position.z=-Math.sin(ballAngle)*ballRadius;
+
+    if(t>=1){
+      const outcome=anim.outcome;anim=null;spinning=false;spinBtn.disabled=false;
+      result.textContent=outcome==='FREE'?'🎉 FREE REQUEST — this one is on the house!':'🎉 BOGO REQUEST — choose a second song free!';
+      result.className='result show '+(outcome==='FREE'?'free':'bogo');
+      burstFireworks(outcome);
+    }
+  }else{
+    wheelAssembly.rotation.y=wheelAngle;
+    updateBall();
+  }
+  renderer.render(scene,camera);
+}
+requestAnimationFrame(animate);
+
+function resize(){
+  const w=host.clientWidth,h=host.clientHeight;
+  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(host);resize();
+
+function burstFireworks(outcome){
+  const colors=outcome==='FREE'?['#55dcff','#87ebff','#ffffff','#708cff']:['#f45bdd','#ff9cec','#ffffff','#9f7cff'];
+  const bursts=8;
   for(let b=0;b<bursts;b++){
     setTimeout(()=>{
-      const cx = window.innerWidth * (.16 + Math.random()*.68);
-      const cy = window.innerHeight * (.12 + Math.random()*.46);
-      const color = colors[Math.floor(Math.random()*colors.length)];
-      for(let i=0;i<30;i++){
+      const cx=window.innerWidth*(.14+Math.random()*.72),cy=window.innerHeight*(.10+Math.random()*.46),color=colors[Math.floor(Math.random()*colors.length)];
+      for(let i=0;i<34;i++){
         const p=document.createElement('div');p.className='firework-particle';p.style.left=cx+'px';p.style.top=cy+'px';p.style.background=color;p.style.boxShadow=`0 0 8px 2px ${color}`;document.body.appendChild(p);
-        const a=Math.random()*Math.PI*2,d=45+Math.random()*110,dx=Math.cos(a)*d,dy=Math.sin(a)*d+25;
-        const anim=p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(.25)`,opacity:0}],{duration:700+Math.random()*500,easing:'cubic-bezier(.2,.65,.4,1)',fill:'forwards'});
-        anim.onfinish=()=>p.remove();
+        const a=Math.random()*Math.PI*2,d=45+Math.random()*115,dx=Math.cos(a)*d,dy=Math.sin(a)*d+26;
+        const pa=p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(.25)`,opacity:0}],{duration:720+Math.random()*520,easing:'cubic-bezier(.2,.65,.4,1)',fill:'forwards'});
+        pa.onfinish=()=>p.remove();
       }
-    },b*140);
+    },b*135);
   }
 }
 
-function spinRoulette(){
-  if(spinning) return;
-  spinning = true;
-  spinBtn.disabled = true;
-  result.className = 'result';
-  result.textContent = '';
-  stage.classList.remove('settling');
-
-  const targetIndex = Math.floor(Math.random()*POCKETS);
-  const outcome = targetIndex % 2 === 0 ? 'FREE' : 'BOGO';
-
-  wheelRotation += 6*360 + 210 + Math.random()*220;
-  const targetWorldAngle = mod(wheelRotation + targetIndex*STEP);
-  const currentBallAngle = mod(ballRotation);
-  const backwardsToTarget = mod(currentBallAngle - targetWorldAngle);
-  ballRotation -= 9*360 + backwardsToTarget;
-
-  wheel.style.transform = `rotate(${wheelRotation}deg)`;
-  ballOrbit.style.transform = `rotate(${ballRotation}deg)`;
-  setTimeout(()=>stage.classList.add('settling'),3500);
-
-  setTimeout(()=>{
-    result.textContent = outcome === 'FREE'
-      ? '🎉 FREE REQUEST — this one is on the house!'
-      : '🎉 BOGO REQUEST — choose a second song free!';
-    result.className = 'result show ' + (outcome === 'FREE' ? 'free' : 'bogo');
-    burstFireworks(outcome);
-    spinBtn.disabled = false;
-    spinning = false;
-  },5650);
-}
 spinBtn.addEventListener('click',spinRoulette);
 </script>
 </body>
