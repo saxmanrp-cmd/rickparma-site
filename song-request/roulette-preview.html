@@ -242,7 +242,6 @@ let spinning=false;
 let anim=null;
 const easeOutQuint=t=>1-Math.pow(1-t,5);
 const easeInOut=t=>t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;
-const mod=(x,m)=>((x%m)+m)%m;
 
 function updateBall(){
   ball.position.set(Math.cos(ballAngle)*ballRadius,.84,-Math.sin(ballAngle)*ballRadius);
@@ -262,7 +261,7 @@ function spinRoulette(){
   const wheelTravel=(5.25+Math.random()*.55)*Math.PI*2;
   const finalWheel=startWheel+wheelTravel;
   const targetLocal=(targetIndex+.5)*STEP;
-  const targetWorld=finalWheel-targetLocal;
+  const targetWorld=finalWheel+targetLocal;
   const loops=9+Math.floor(Math.random()*2);
   const finalBall=targetWorld-loops*Math.PI*2;
 
