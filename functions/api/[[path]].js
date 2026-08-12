@@ -481,6 +481,36 @@ async function createIntegrationIntent(request, env) {
   const base = String(env.PUBLIC_BASE_URL || new URL(request.url).origin).replace(/\/$/, "");
   return json({ intent, checkoutUrl: `${base}/pay/?intent=${encodeURIComponent(intent.id)}` }, 201);
 }
+// Booking-inquiry sync: the homepage's Booking form used to POST straight to
+// a Twilio Function (rickparma-booking-8582.twil.io/invoice-sync) that wrote
+// to the old jsonbin.io API. That key is dead (403s on every write now), and
+// jsonbin.io isn't even what invoice-creator.html reads from anymore, so
+// inquiries never showed up as drafts there. This does the same job against
+// the real KV-backed store (PROXY_BASE) using the exact same GET/PUT contract
+// invoice-creator.html itself uses: GET returns { record: { invoices } },
+// PUT takes { invoices }.
+async function syncBookingInvoice(request, env) {
+    const body = await request.json().catch(() => ({}));
+    const invoice = body && typeof body.invoice === "object" ? body.invoice : null;
+    if (!invoice) return corsJson({ error: "Missing invoice payload." }, 400);
+    if (!invoice.id) invoice.id = "inv_" + Date.now();
+    invoice.lineItems = Array.isArray(invoice.lineItems) ? invoice.lineItems : [];
+    invoice.payments = Array.isArray(invoice.payments) ? invoice.payments : [];
+
+    const res = await fetch(`${PROXY_BASE}/invoices`);
+    const data = await res.json();
+    const invoices = (data && data.record && data.record.invoices) || [];
+    invoices.push(invoice);
+
+    await fetch(`${PROXY_BASE}/invoices`, {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ invoices })
+    });
+
+    return corsJson({ ok: true, id: invoice.id });
+}
+
 
 // Called directly from invoice-creator.html's browser JS (a different origin),
 // so it's public + CORS-open — but safe, because the amount charged is looked
@@ -888,6 +918,21 @@ export async function onRequest(context) {
       return await createInvoicePayLink(request, env);
     }
 
+        if (path === "/invoices/booking-sync" && request.method === "OPTIONS") {
+                return new Response(null, {
+                          headers: {
+                                      "access-control-allow-origin": "*",
+                                      "access-control-allow-methods": "POST, OPTIONS",
+                                      "access-control-allow-headers": "Content-Type"
+                          }
+                });
+        }
+
+        if (path === "/invoices/booking-sync" && request.method === "POST") {
+                return await syncBookingInvoice(request, env);
+        }
+
+    
         if (path === "/invoices/send-text" && request.method === "OPTIONS") {
                 return new Response(null, {
                           headers: {
