@@ -95,6 +95,9 @@ html body #calendar .rpc-wrap{
 html body #calendar .show-track{
   display:flex!important;
   flex-wrap:nowrap!important;
+  justify-content:flex-start!important;
+  align-items:stretch!important;
+  direction:ltr!important;
   gap:10px!important;
   width:100%!important;
   max-width:100%!important;
@@ -105,6 +108,10 @@ html body #calendar .show-track{
   box-sizing:border-box!important;
 }
 html body #calendar .show-tile{
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  transform:none!important;
   flex:0 0 calc((100% - 30px) / 4)!important;
   min-width:0!important;
   max-width:none!important;
