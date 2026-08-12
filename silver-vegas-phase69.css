@@ -3,13 +3,16 @@
    No upscaling, CSS embedding, blur, or diagnostic image swap. */
 html body header{
   background-color:#010307!important;
-  background-image:url('images/D5A2A81B-07ED-48B7-895F-286F7ECAED19.PNG?v=70')!important;
+  background-image:url('images/D5A2A81B-07ED-48B7-895F-286F7ECAED19.PNG?v=71')!important;
   background-repeat:no-repeat!important;
   background-position:center center!important;
   background-size:cover!important;
   aspect-ratio:16/9!important;
   min-height:0!important;
   height:auto!important;
+  width:min(100%,1536px)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
 }
 html body header::before,html body header::after{content:none!important;display:none!important;}
 html body header h1,html body header h1 a{display:none!important;}
@@ -47,4 +50,4 @@ html body #heroBand .rp-card-panel::after{
   display:none!important;
   background:none!important;
 }
-@media(max-width:560px){html body header{background-position:center center!important;background-size:cover!important;}}
+@media(max-width:560px){html body header{width:100%!important;margin-left:0!important;margin-right:0!important;background-position:center center!important;background-size:cover!important;}}
