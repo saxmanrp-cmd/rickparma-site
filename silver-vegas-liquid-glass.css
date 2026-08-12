@@ -1,0 +1,92 @@
+/* Silver Vegas — Apple-inspired smoked liquid-glass polish.
+   Visual-only layer: preserves existing layout, typography and header artwork. */
+:root{
+  --rp-glass:rgba(12,16,23,.58);
+  --rp-glass-deep:rgba(5,8,13,.72);
+  --rp-glass-line:rgba(226,238,255,.30);
+  --rp-glass-highlight:rgba(255,255,255,.13);
+  --rp-glass-cyan:rgba(67,211,255,.26);
+  --rp-glass-violet:rgba(174,94,255,.22);
+  --rp-glass-pink:rgba(255,73,195,.18);
+}
+
+/* Existing content panels become smoked glass without changing dimensions. */
+html body .rp-card-panel,
+html body .tip-amt,
+html body .tip-row > #tip-cta,
+html body .tip-row > .tip-cta-btn,
+html body #tip-cta.tip-cta-btn{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.085) 0%,rgba(255,255,255,.018) 30%,rgba(10,14,21,.20) 62%,rgba(255,255,255,.035) 100%),
+    var(--rp-glass)!important;
+  border-color:var(--rp-glass-line)!important;
+  box-shadow:
+    inset 0 1px 0 var(--rp-glass-highlight),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 14px 38px rgba(0,0,0,.34),
+    0 0 22px rgba(82,191,255,.055)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%)!important;
+  backdrop-filter:blur(22px) saturate(145%)!important;
+}
+
+/* Fine luminous edge on the main cards. */
+html body .rp-card-panel{
+  position:relative;
+  isolation:isolate;
+}
+html body .rp-card-panel > *{position:relative;z-index:1;}
+
+/* Buttons/interactive surfaces: glass capsule with restrained Vegas reflection. */
+html body button,
+html body .btn,
+html body a.btn,
+html body [class*="button"]:not(.socials),
+html body [class*="cta"]{
+  -webkit-backdrop-filter:blur(16px) saturate(135%);
+  backdrop-filter:blur(16px) saturate(135%);
+}
+
+html body .band-songrequest .rp-card-panel{
+  border-color:rgba(102,221,255,.43)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.17),0 14px 38px rgba(0,0,0,.36),0 0 24px var(--rp-glass-cyan)!important;
+}
+html body .band-fancam .rp-card-panel{
+  border-color:rgba(225,99,255,.39)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 14px 38px rgba(0,0,0,.36),0 0 24px var(--rp-glass-pink)!important;
+}
+html body .band-textclub .rp-card-panel{
+  border-color:rgba(174,121,255,.38)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 14px 38px rgba(0,0,0,.36),0 0 24px var(--rp-glass-violet)!important;
+}
+html body .band-tipjar .rp-card-panel{
+  border-color:rgba(226,238,255,.34)!important;
+}
+
+/* Desktop gets the richest glass. Mobile Safari keeps the same appearance with
+   a lighter blur workload to protect scrolling/rendering performance. */
+@media(max-width:700px){
+  html body .rp-card-panel,
+  html body .tip-amt,
+  html body .tip-row > #tip-cta,
+  html body .tip-row > .tip-cta-btn,
+  html body #tip-cta.tip-cta-btn{
+    background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(8,11,17,.76))!important;
+    -webkit-backdrop-filter:blur(11px) saturate(125%)!important;
+    backdrop-filter:blur(11px) saturate(125%)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 9px 24px rgba(0,0,0,.30),0 0 14px rgba(82,191,255,.05)!important;
+  }
+  html body .band-songrequest .rp-card-panel{border-color:rgba(102,221,255,.38)!important;}
+  html body .band-fancam .rp-card-panel{border-color:rgba(225,99,255,.34)!important;}
+}
+
+@media(prefers-reduced-transparency:reduce){
+  html body .rp-card-panel,
+  html body .tip-amt,
+  html body .tip-row > #tip-cta,
+  html body .tip-row > .tip-cta-btn,
+  html body #tip-cta.tip-cta-btn{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:var(--rp-glass-deep)!important;
+  }
+}
