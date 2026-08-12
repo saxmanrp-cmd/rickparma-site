@@ -64,7 +64,7 @@ body::before{
 .roulette-copy{margin:7px 0 10px;color:#9ca8b7;font-size:12.5px;line-height:1.42}
 .roulette-copy .f{color:#6fe5ff;font-weight:900}.roulette-copy .b{color:#ff82e8;font-weight:900}
 .roulette-stage{
-  position:relative;width:100%;height:clamp(340px,74vw,470px);margin:4px auto 4px;border-radius:22px;overflow:hidden;
+  position:relative;width:100%;height:clamp(370px,78vw,500px);margin:4px auto 4px;border-radius:22px;overflow:hidden;
   border:1px solid rgba(180,207,236,.22);
   background:
     radial-gradient(ellipse at 50% 88%,rgba(0,0,0,.80),transparent 50%),
@@ -96,7 +96,7 @@ body::before{
 @media(max-width:520px){
   .preview-shell{padding:10px 10px calc(24px + env(safe-area-inset-bottom))}
   .request-card{padding:15px 12px 16px;border-radius:20px}
-  .roulette-stage{height:clamp(330px,92vw,420px);border-radius:18px}
+  .roulette-stage{height:clamp(360px,100vw,445px);border-radius:18px}
   .song-title{font-size:1.55rem}
 }
 </style>
@@ -137,9 +137,9 @@ const spinBtn = document.getElementById('spinBtn');
 const result = document.getElementById('result');
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(34, 1, .1, 100);
-camera.position.set(0, 6.9, 7.9);
-camera.lookAt(0, .2, 0);
+const camera = new THREE.PerspectiveCamera(40, 1, .1, 100);
+const cameraTarget = new THREE.Vector3(0,.62,0);
+const cameraDirection = new THREE.Vector3(0,.66,.80).normalize();
 
 const renderer = new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -305,8 +305,20 @@ function animate(now){
 requestAnimationFrame(animate);
 
 function resize(){
-  const w=host.clientWidth,h=host.clientHeight;
-  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+  const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);
+  renderer.setSize(w,h,false);
+  camera.aspect=w/h;
+
+  /* Keep the entire roulette wheel, outer ball rail and spindle visible on every screen size. */
+  const verticalFov=THREE.MathUtils.degToRad(camera.fov);
+  const horizontalFov=2*Math.atan(Math.tan(verticalFov/2)*camera.aspect);
+  const limitingFov=Math.min(verticalFov,horizontalFov);
+  const wheelBoundsRadius=3.78;
+  const framingMargin=1.12;
+  const distance=(wheelBoundsRadius*framingMargin)/Math.sin(limitingFov/2);
+  camera.position.copy(cameraTarget).addScaledVector(cameraDirection,distance);
+  camera.lookAt(cameraTarget);
+  camera.updateProjectionMatrix();
 }
 new ResizeObserver(resize).observe(host);resize();
 
