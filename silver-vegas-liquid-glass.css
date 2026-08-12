@@ -1,3 +1,5 @@
+@import url('silver-vegas-diamond-layout.css');
+
 /* Silver Vegas — flagship neon liquid-glass system. */
 :root{--rp-glass:rgba(8,12,19,.62);--rp-line:rgba(224,240,255,.58);--rp-cyan:#55dfff;--rp-pink:#ff4fd8;--rp-violet:#aa68ff;}
 html body .rp-card-panel,html body .rp-player,html body .tip-amt,html body .tip-row>#tip-cta,html body .tip-row>.tip-cta-btn,html body #tip-cta.tip-cta-btn{background:linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,.025) 24%,rgba(5,9,16,.70) 66%,rgba(255,255,255,.055) 100%)!important;border:1px solid var(--rp-line)!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.08),0 14px 36px rgba(0,0,0,.46),0 0 18px rgba(92,208,255,.15)!important;-webkit-backdrop-filter:blur(22px) saturate(155%)!important;backdrop-filter:blur(22px) saturate(155%)!important;}
