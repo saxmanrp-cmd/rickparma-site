@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Roulette Request Preview — Rick Parma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cyan:#55dcff;
+  --magenta:#f45bdb;
+  --silver:#eef3f8;
+  --dim:#98a4b4;
+  --panel:#080d16;
+  --line:rgba(194,213,237,.25);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:#02040a;color:#f2f5f8;font-family:'Lato',sans-serif}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 14% 6%,rgba(56,204,255,.14),transparent 30%),
+    radial-gradient(circle at 88% 8%,rgba(244,74,220,.11),transparent 31%),
+    linear-gradient(180deg,#02040a 0%,#050811 52%,#020309 100%);
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 5px);
+}
+.preview-shell{position:relative;z-index:1;width:min(100%,620px);margin:0 auto;padding:14px 14px calc(28px + env(safe-area-inset-bottom))}
+.back-btn{
+  appearance:none;border:1px solid rgba(211,226,243,.42);border-radius:999px;
+  background:linear-gradient(180deg,rgba(28,38,52,.95),rgba(7,12,20,.98));
+  color:#edf2f8;padding:10px 15px;font-weight:900;font-size:13px;box-shadow:inset 0 1px rgba(255,255,255,.09),0 7px 18px rgba(0,0,0,.28)
+}
+.request-card{
+  margin-top:12px;padding:18px 16px 19px;border-radius:24px;border:1px solid rgba(190,211,236,.28);
+  background:linear-gradient(180deg,rgba(15,22,34,.93),rgba(5,8,14,.97));
+  box-shadow:inset 0 1px rgba(255,255,255,.08),0 18px 48px rgba(0,0,0,.40),0 0 28px rgba(74,208,255,.06);
+  overflow:hidden;position:relative
+}
+.request-card::before{content:"";position:absolute;left:18px;right:18px;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),#9d93ff,var(--magenta),transparent);box-shadow:0 0 16px rgba(79,215,255,.55),0 0 18px rgba(244,91,219,.30)}
+.song-title{font-family:'Josefin Sans',sans-serif;font-size:clamp(1.55rem,6vw,2rem);font-weight:900;line-height:1.05;color:#f3f6fa;margin:4px 0 4px}
+.song-artist{color:#99a5b5;font-weight:700;font-size:14px}
+.tier-line{display:flex;align-items:center;gap:9px;margin-top:13px}
+.badge{padding:7px 12px;border-radius:999px;border:1px solid rgba(103,222,255,.48);background:linear-gradient(180deg,rgba(15,42,57,.96),rgba(5,18,27,.99));color:#90e9ff;font-size:13px;font-weight:900;box-shadow:inset 0 1px rgba(255,255,255,.07),0 0 14px rgba(76,211,255,.08)}
+.price{font-family:'Josefin Sans',sans-serif;font-size:23px;font-weight:900;color:#f5f7fa}
+.step-label{margin-top:18px;color:#a9b4c2;font-size:12px;letter-spacing:.08em;font-weight:900;text-transform:uppercase}
+.step-label strong{color:#83e5ff}
+.name-input{width:100%;margin-top:8px;padding:15px 16px;border-radius:16px;border:1px solid rgba(177,204,235,.30);background:linear-gradient(180deg,rgba(18,25,38,.94),rgba(6,10,17,.98));color:#f2f5f8;font:700 16px 'Lato',sans-serif;box-shadow:inset 0 1px rgba(255,255,255,.06)}
+.name-input:focus{outline:none;border-color:rgba(100,222,255,.78);box-shadow:0 0 0 2px rgba(77,211,255,.08),0 0 20px rgba(72,210,255,.10)}
+.roulette-copy{margin:6px 0 0;color:#7f8b9b;font-size:12px;text-align:center;font-weight:700}
+.roulette-stage{height:330px;margin:4px -6px -8px;display:flex;align-items:center;justify-content:center;perspective:900px;overflow:visible}
+.roulette-tilt{position:relative;width:320px;height:320px;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(-2deg);filter:drop-shadow(0 22px 18px rgba(0,0,0,.58))}
+.roulette-bowl{
+  position:absolute;inset:9px;border-radius:50%;
+  background:
+    radial-gradient(circle at 46% 38%,rgba(255,255,255,.10),transparent 12%),
+    radial-gradient(circle at 50% 50%,#1e0e08 0 29%,#542918 30% 39%,#1b0d08 40% 42%,#8b4a25 43% 47%,#1a0b07 48% 55%,#090b0f 56% 66%,#b9c1c9 67% 69%,#15191e 70% 75%,#d9e0e7 76% 78%,#171a1f 79% 82%,#05070a 83% 100%);
+  border:2px solid #d4dae0;
+  box-shadow:
+    inset 0 0 0 5px #0b0e12,
+    inset 0 0 0 8px #8f9aa5,
+    inset 0 0 35px rgba(0,0,0,.86),
+    0 0 0 2px rgba(255,255,255,.10),
+    0 0 26px rgba(67,205,255,.08),0 0 32px rgba(244,77,221,.05)
+}
+.roulette-bowl::before{content:"";position:absolute;inset:4px;border-radius:50%;background:conic-gradient(from 210deg,transparent 0 19%,rgba(255,255,255,.22) 23%,transparent 28% 100%);mix-blend-mode:screen;opacity:.75;pointer-events:none}
+.roulette-wheel{
+  position:absolute;left:50%;top:50%;width:236px;height:236px;margin:-118px 0 0 -118px;border-radius:50%;
+  background:
+    radial-gradient(circle,#170b07 0 34%,#2c130a 35% 41%,transparent 42%),
+    conic-gradient(from -7.5deg,
+      #861829 0 15deg,#080b0f 15deg 30deg,#861829 30deg 45deg,#080b0f 45deg 60deg,
+      #861829 60deg 75deg,#080b0f 75deg 90deg,#861829 90deg 105deg,#080b0f 105deg 120deg,
+      #861829 120deg 135deg,#080b0f 135deg 150deg,#861829 150deg 165deg,#080b0f 165deg 180deg,
+      #861829 180deg 195deg,#080b0f 195deg 210deg,#861829 210deg 225deg,#080b0f 225deg 240deg,
+      #861829 240deg 255deg,#080b0f 255deg 270deg,#861829 270deg 285deg,#080b0f 285deg 300deg,
+      #861829 300deg 315deg,#080b0f 315deg 330deg,#861829 330deg 345deg,#080b0f 345deg 360deg);
+  border:5px solid #d8dde2;
+  box-shadow:inset 0 0 0 3px #1b1e22,inset 0 0 0 5px #8e99a3,inset 0 0 22px rgba(0,0,0,.7),0 0 0 2px rgba(0,0,0,.6);
+  transition:transform 5.6s cubic-bezier(.08,.62,.10,1);transform:rotate(0deg);transform-style:preserve-3d
+}
+.roulette-wheel::after{content:"";position:absolute;inset:39px;border-radius:50%;background:radial-gradient(circle at 44% 35%,#773d20 0,#3c1d10 30%,#160a06 66%,#070506 100%);border:3px solid #aeb8c1;box-shadow:inset 0 0 20px rgba(0,0,0,.68)}
+.pocket-label{position:absolute;left:50%;top:50%;width:22px;height:24px;margin:-12px 0 0 -11px;display:flex;align-items:center;justify-content:center;font-family:'Josefin Sans',sans-serif;font-size:15px;font-weight:900;color:#f5f7fa;text-shadow:0 1px 2px #000;z-index:3;transform-origin:50% 50%;backface-visibility:hidden}
+.pocket-label.free{color:#8ae8ff;text-shadow:0 0 5px rgba(70,216,255,.55),0 1px 2px #000}
+.pocket-label.bogo{color:#ff9bec;text-shadow:0 0 5px rgba(244,91,219,.55),0 1px 2px #000}
+.ball-track{position:absolute;left:50%;top:50%;width:272px;height:272px;margin:-136px 0 0 -136px;border-radius:50%;border:8px solid rgba(18,20,23,.82);box-shadow:inset 0 0 0 2px rgba(228,235,240,.60),inset 0 0 10px #000;z-index:5;pointer-events:none}
+.ball-orbit{position:absolute;inset:0;border-radius:50%;transition:transform 5.25s cubic-bezier(.07,.72,.13,1);transform:rotate(0deg);--ball-radius:121px}
+.roulette-stage.settling .ball-orbit{--ball-radius:103px}
+.ball{position:absolute;left:50%;top:50%;width:15px;height:15px;margin:-7.5px;border-radius:50%;transform:translateY(calc(-1 * var(--ball-radius)));transition:transform 1.4s cubic-bezier(.2,.8,.3,1);background:radial-gradient(circle at 35% 28%,#fff 0 16%,#f1eee2 28%,#c8c4b8 54%,#79766d 80%,#ece8da 100%);box-shadow:0 2px 4px rgba(0,0,0,.9),0 0 5px rgba(255,255,255,.38)}
+.spindle{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px;border-radius:50%;z-index:8;background:radial-gradient(circle at 40% 32%,#fff 0 7%,#dce2e7 12%,#717a83 30%,#171a1e 47%,#b5bec6 60%,#373d43 75%,#edf1f4 100%);box-shadow:0 0 0 4px #171a1e,0 0 0 6px #aeb7bf,0 6px 10px rgba(0,0,0,.75)}
+.spindle::before{content:"";position:absolute;left:50%;top:50%;width:25px;height:90px;transform:translate(-50%,-77px);border-radius:50% 50% 40% 40%;background:linear-gradient(90deg,#2a2e33,#eef2f5 29%,#777f86 51%,#f2f5f7 70%,#30343a);box-shadow:0 3px 7px rgba(0,0,0,.72)}
+.spindle::after{content:"";position:absolute;left:50%;top:-58px;width:43px;height:18px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at 42% 32%,#fff,#a8b1ba 32%,#33383e 70%,#dce2e7);box-shadow:0 3px 7px rgba(0,0,0,.7)}
+.spin-btn{width:100%;margin-top:7px;padding:15px 16px;border-radius:16px;border:1px solid rgba(214,229,245,.70);background:linear-gradient(100deg,#52ddff 0%,#7598ff 48%,#e568dc 100%);color:#050811;font:900 16px 'Lato',sans-serif;letter-spacing:.035em;box-shadow:inset 0 1px rgba(255,255,255,.56),0 9px 25px rgba(72,203,255,.16),0 0 24px rgba(233,91,220,.12);cursor:pointer;transition:transform .15s ease,filter .15s ease}
+.spin-btn:active{transform:scale(.985)}.spin-btn:disabled{filter:saturate(.5) brightness(.7);cursor:default}
+.result{display:none;margin-top:13px;padding:15px;border-radius:16px;text-align:center;font-weight:900;border:1px solid rgba(187,208,234,.24);background:rgba(9,15,24,.78);box-shadow:inset 0 1px rgba(255,255,255,.05)}
+.result.show{display:block;animation:resultPop .35s ease-out}.result.free{color:#8de9ff;border-color:rgba(88,220,255,.55);box-shadow:0 0 18px rgba(73,212,255,.10)}.result.bogo{color:#ff9cec;border-color:rgba(244,91,219,.55);box-shadow:0 0 18px rgba(244,91,219,.10)}
+@keyframes resultPop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.firework-particle{position:fixed;z-index:9999;width:6px;height:6px;border-radius:50%;pointer-events:none}
+@media(max-width:420px){
+  .preview-shell{padding-left:10px;padding-right:10px}.request-card{padding:16px 12px 17px;border-radius:20px}.roulette-stage{height:300px;margin-left:-12px;margin-right:-12px}.roulette-tilt{width:292px;height:292px;transform:rotateX(59deg) rotateZ(-2deg) scale(.93)}.song-title{font-size:1.55rem}.step-label{font-size:11px}.spin-btn{font-size:15px}
+}
+</style>
+</head>
+<body>
+<div class="preview-shell">
+  <button class="back-btn" type="button">← Back</button>
+  <section class="request-card">
+    <div class="song-title">Don’t Stop Believin’</div>
+    <div class="song-artist">Journey</div>
+    <div class="tier-line"><span class="badge">Song Request</span><span class="price">$5</span></div>
+
+    <div class="step-label"><strong>Step 1</strong> — What’s your name?</div>
+    <input class="name-input" type="text" placeholder="So I can give you a shout-out on the mic!">
+
+    <div class="step-label"><strong>Step 2</strong> — One spin per show to win a FREE or BOGO request</div>
+    <div class="roulette-stage" id="rouletteStage">
+      <div class="roulette-tilt">
+        <div class="roulette-bowl"></div>
+        <div class="roulette-wheel" id="rouletteWheel"></div>
+        <div class="ball-track"><div class="ball-orbit" id="ballOrbit"><div class="ball"></div></div></div>
+        <div class="spindle"></div>
+      </div>
+    </div>
+    <div class="roulette-copy">F = FREE request &nbsp; • &nbsp; B = BOGO request</div>
+    <button class="spin-btn" id="spinBtn" type="button">SPIN TO WIN</button>
+    <div class="result" id="result"></div>
+  </section>
+</div>
+<script>
+const wheel = document.getElementById('rouletteWheel');
+const ballOrbit = document.getElementById('ballOrbit');
+const stage = document.getElementById('rouletteStage');
+const spinBtn = document.getElementById('spinBtn');
+const result = document.getElementById('result');
+const POCKETS = 24;
+const STEP = 360 / POCKETS;
+let wheelRotation = 0;
+let ballRotation = 0;
+let spinning = false;
+
+function mod(n,m=360){ return ((n % m) + m) % m; }
+
+for(let i=0;i<POCKETS;i++){
+  const el = document.createElement('div');
+  const free = i % 2 === 0;
+  el.className = 'pocket-label ' + (free ? 'free' : 'bogo');
+  el.textContent = free ? 'F' : 'B';
+  const angle = i * STEP;
+  el.style.transform = `rotate(${angle}deg) translateY(-96px) rotate(${-angle}deg)`;
+  wheel.appendChild(el);
+}
+
+function burstFireworks(mode){
+  const colors = mode === 'FREE'
+    ? ['#55dcff','#8cecff','#ffffff','#7d8dff']
+    : ['#f45bdb','#ff9cec','#ffffff','#9f7cff'];
+  const bursts = 7;
+  for(let b=0;b<bursts;b++){
+    setTimeout(()=>{
+      const cx = window.innerWidth * (.16 + Math.random()*.68);
+      const cy = window.innerHeight * (.12 + Math.random()*.46);
+      const color = colors[Math.floor(Math.random()*colors.length)];
+      for(let i=0;i<30;i++){
+        const p=document.createElement('div');p.className='firework-particle';p.style.left=cx+'px';p.style.top=cy+'px';p.style.background=color;p.style.boxShadow=`0 0 8px 2px ${color}`;document.body.appendChild(p);
+        const a=Math.random()*Math.PI*2,d=45+Math.random()*110,dx=Math.cos(a)*d,dy=Math.sin(a)*d+25;
+        const anim=p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(.25)`,opacity:0}],{duration:700+Math.random()*500,easing:'cubic-bezier(.2,.65,.4,1)',fill:'forwards'});
+        anim.onfinish=()=>p.remove();
+      }
+    },b*140);
+  }
+}
+
+function spinRoulette(){
+  if(spinning) return;
+  spinning = true;
+  spinBtn.disabled = true;
+  result.className = 'result';
+  result.textContent = '';
+  stage.classList.remove('settling');
+
+  const targetIndex = Math.floor(Math.random()*POCKETS);
+  const outcome = targetIndex % 2 === 0 ? 'FREE' : 'BOGO';
+
+  wheelRotation += 6*360 + 210 + Math.random()*220;
+  const targetWorldAngle = mod(wheelRotation + targetIndex*STEP);
+  const currentBallAngle = mod(ballRotation);
+  const backwardsToTarget = mod(currentBallAngle - targetWorldAngle);
+  ballRotation -= 9*360 + backwardsToTarget;
+
+  wheel.style.transform = `rotate(${wheelRotation}deg)`;
+  ballOrbit.style.transform = `rotate(${ballRotation}deg)`;
+  setTimeout(()=>stage.classList.add('settling'),3500);
+
+  setTimeout(()=>{
+    result.textContent = outcome === 'FREE'
+      ? '🎉 FREE REQUEST — this one is on the house!'
+      : '🎉 BOGO REQUEST — choose a second song free!';
+    result.className = 'result show ' + (outcome === 'FREE' ? 'free' : 'bogo');
+    burstFireworks(outcome);
+    spinBtn.disabled = false;
+    spinning = false;
+  },5650);
+}
+spinBtn.addEventListener('click',spinRoulette);
+</script>
+</body>
+</html>
