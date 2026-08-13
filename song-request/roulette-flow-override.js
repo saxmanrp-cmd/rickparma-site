@@ -4,6 +4,28 @@
 
   const style=document.createElement('style');
   style.textContent=`
+    /* Force the song detail / roulette step to behave like its own page. */
+    #sheet.show{
+      position:fixed !important;
+      inset:0 !important;
+      z-index:1001 !important;
+      width:100% !important;
+      height:100dvh !important;
+      max-height:100dvh !important;
+      display:flex !important;
+      flex-direction:column !important;
+      overflow-y:auto !important;
+      overflow-x:hidden !important;
+      padding:16px 20px calc(20px + env(safe-area-inset-bottom)) !important;
+      background:
+        radial-gradient(circle at 18% 8%,rgba(49,204,255,.12),transparent 28%),
+        radial-gradient(circle at 84% 12%,rgba(245,64,225,.09),transparent 30%),
+        linear-gradient(180deg,#02040a 0%,#05070d 52%,#020309 100%) !important;
+      -webkit-overflow-scrolling:touch;
+    }
+    #sheet.show .sheet-back-btn{position:relative;z-index:2;flex:0 0 auto;}
+    #sheet.show #sheetBody{width:min(100%,700px);margin:0 auto;padding-bottom:20px;}
+    #sheet.show #sheetTitle,#sheet.show #sheetArtist,#sheet.show #sheetTierLine{width:min(100%,700px);margin-left:auto;margin-right:auto;}
     .roulette-video-card{margin-top:14px;}
     .roulette-video-stage{position:relative;width:min(100%,520px);aspect-ratio:2/3;max-height:68vh;margin:14px auto 0;border-radius:22px;overflow:hidden;border:1px solid rgba(178,210,238,.27);background:#02040a;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 16px 38px rgba(0,0,0,.35),0 0 24px rgba(69,211,255,.08);}
     .roulette-video-poster{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(circle at 50% 22%,rgba(111,76,255,.25),transparent 28%),radial-gradient(circle at 22% 52%,rgba(64,219,255,.16),transparent 30%),radial-gradient(circle at 82% 42%,rgba(255,66,221,.18),transparent 28%),#030610;}
@@ -14,7 +36,11 @@
     .roulette-video-stage.playing .roulette-video-poster{display:none;}
     #spinBtn.roulette-spin-button{margin-top:16px;padding:19px 16px;border-radius:22px;background:linear-gradient(100deg,#55ddff 0%,#7d9cff 48%,#e678de 100%);color:#040714;font-size:clamp(1.2rem,5vw,1.7rem);font-weight:900;letter-spacing:.04em;box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 10px 28px rgba(69,198,255,.18);animation:none;}
     .roulette-video-status{min-height:20px;margin:10px 2px 0;text-align:center;color:#8f9daf;font-size:12px;font-weight:700;}
-    @media(max-width:560px){.roulette-video-stage{width:100%;max-height:62vh;border-radius:19px}.roulette-video-poster{padding:18px}}
+    @media(max-width:560px){
+      #sheet.show{padding:12px 13px calc(18px + env(safe-area-inset-bottom)) !important;}
+      .roulette-video-stage{width:100%;max-height:62vh;border-radius:19px}
+      .roulette-video-poster{padding:18px}
+    }
   `;
   document.head.appendChild(style);
 
@@ -41,6 +67,7 @@
     wheelSpinning=false;wheelRotationTotal=0;
     document.getElementById('overlay').classList.add('show');
     document.getElementById('sheet').classList.add('show');
+    document.getElementById('sheet').scrollTop=0;
     document.body.style.overflow='hidden';
   };
 
