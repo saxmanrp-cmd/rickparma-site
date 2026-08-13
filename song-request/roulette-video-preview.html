@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Roulette Video Preview — Rick Parma</title>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;font-family:Lato,system-ui,sans-serif;color:#eef3ff;background:radial-gradient(circle at 18% 8%,rgba(49,204,255,.14),transparent 28%),radial-gradient(circle at 84% 12%,rgba(245,64,225,.11),transparent 30%),linear-gradient(180deg,#02040a 0%,#05070d 52%,#020309 100%)}
+body{padding:18px 12px 38px}.wrap{max-width:700px;margin:0 auto}.card{border:1px solid rgba(205,223,244,.34);border-radius:26px;padding:18px;background:linear-gradient(180deg,rgba(15,22,35,.94),rgba(5,8,15,.98));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 20px 55px rgba(0,0,0,.45),0 0 30px rgba(70,211,255,.08)}
+.step{font-family:'Josefin Sans',sans-serif;font-size:clamp(1rem,4vw,1.25rem);font-weight:900;letter-spacing:.08em;line-height:1.2;color:#dfe8f5;margin-bottom:9px}.step b{color:#63dcff}.lede{margin:0 0 16px;color:#abb7ca;font-size:16px;line-height:1.45}.f{color:#6de5ff;font-weight:900}.b{color:#ff7be7;font-weight:900}
+.stage{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(178,210,238,.27);background:#02040a;aspect-ratio:2/3;max-height:72vh;margin:0 auto}.poster{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(circle at 50% 22%,rgba(111,76,255,.25),transparent 28%),radial-gradient(circle at 22% 52%,rgba(64,219,255,.16),transparent 30%),radial-gradient(circle at 82% 42%,rgba(255,66,221,.18),transparent 28%),#030610}.poster-inner{font-family:'Josefin Sans',sans-serif;font-size:clamp(2.2rem,10vw,4.4rem);font-weight:900;line-height:.9;background:linear-gradient(180deg,#fff,#cbd3df 60%,#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 28px rgba(83,215,255,.18)}.poster small{display:block;margin-top:16px;font-family:Lato,sans-serif;font-size:13px;line-height:1.35;color:#8f9daf;-webkit-text-fill-color:#8f9daf;letter-spacing:.08em;text-transform:uppercase}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;display:none}.playing video{display:block}.playing .poster{display:none}
+.spin{width:100%;margin-top:16px;padding:20px;border:0;border-radius:22px;font-size:clamp(1.35rem,6vw,2rem);font-weight:900;letter-spacing:.04em;color:#040714;background:linear-gradient(100deg,#55ddff 0%,#7d9cff 48%,#e678de 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 10px 28px rgba(69,198,255,.18);cursor:pointer}.spin:disabled{opacity:.65;cursor:default}
+.status{min-height:24px;margin:12px 2px 0;text-align:center;color:#8f9daf;font-size:13px;font-weight:700}.result{display:none;margin-top:16px;padding:18px;border-radius:20px;text-align:center;border:1px solid rgba(184,211,239,.25);background:rgba(6,11,20,.85)}.result.show{display:block}.result h2{margin:0 0 8px;font-family:'Josefin Sans',sans-serif;font-size:2rem}.result p{margin:0;color:#aeb8c8;line-height:1.45}.result.free h2{color:#79e9ff}.result.bogo h2{color:#ff87ea}.action{display:block;width:100%;margin-top:14px;padding:16px 14px;border-radius:16px;border:1px solid rgba(215,231,247,.56);background:linear-gradient(100deg,#53dfff,#6d9cff 48%,#c57cff);color:#050811;text-decoration:none;font-weight:900;font-size:16px}
+.note{margin-top:13px;color:#718094;text-align:center;font-size:11px;line-height:1.4}
+@media(min-width:700px){.stage{max-height:660px}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<div class="step"><b>STEP 2</b> — SPIN THE ROULETTE FOR A CHANCE TO WIN</div>
+<p class="lede">The site secretly chooses the outcome, then plays the matching cinematic clip. <span class="f">F = FREE</span> or <span class="b">B = BOGO</span>.</p>
+<div class="stage" id="stage">
+<div class="poster"><div class="poster-inner">VEGAS<br>ROULETTE<small>Tap Spin to Win to test the video workflow</small></div></div>
+<video id="rouletteVideo" playsinline preload="auto" disablepictureinpicture></video>
+</div>
+<button class="spin" id="spinBtn">SPIN TO WIN</button>
+<div class="status" id="status"></div>
+<div class="result" id="result"></div>
+<div class="note">Preview branch only. The result is hidden until the selected video reaches its end.</div>
+</div></div>
+<script>
+const FREE_VIDEO='./video/roulette-free.mp4';
+const BOGO_VIDEO='./video/roulette-bogo.mp4';
+const stage=document.getElementById('stage'),video=document.getElementById('rouletteVideo'),btn=document.getElementById('spinBtn'),status=document.getElementById('status'),result=document.getElementById('result');
+[new URL(FREE_VIDEO,location.href),new URL(BOGO_VIDEO,location.href)].forEach(u=>{const v=document.createElement('video');v.preload='auto';v.src=u.href;v.load();});
+let outcome=null,busy=false;
+function finish(){stage.classList.remove('playing');video.pause();video.removeAttribute('src');video.load();busy=false;btn.disabled=false;btn.textContent='SPIN AGAIN';status.textContent='Video complete — now the site reveals the next step.';result.className='result show '+(outcome==='FREE'?'free':'bogo');if(outcome==='FREE'){result.innerHTML='<h2>FREE REQUEST</h2><p>The live version will reveal the existing Send Request action here only after the FREE clip finishes.</p><a class="action" href="#" onclick="return false;">SEND REQUEST</a>';}else{result.innerHTML='<h2>BOGO REQUEST</h2><p>The live version will continue into the existing BOGO second-song / payment workflow only after the BOGO clip finishes.</p><a class="action" href="#" onclick="return false;">CONTINUE</a>';}}
+btn.addEventListener('click',async()=>{if(busy)return;busy=true;outcome=Math.random()<.5?'FREE':'BOGO';result.className='result';result.innerHTML='';status.textContent='Outcome selected. Playing cinematic result…';btn.disabled=true;btn.textContent='SPINNING…';video.src=outcome==='FREE'?FREE_VIDEO:BOGO_VIDEO;video.currentTime=0;stage.classList.add('playing');try{await video.play();}catch(e){status.textContent='Tap the video once to allow playback, then try again.';busy=false;btn.disabled=false;stage.classList.remove('playing');}});
+video.addEventListener('ended',finish);
+video.addEventListener('error',()=>{status.textContent='Video failed to load. Check the MP4 path or encoding.';busy=false;btn.disabled=false;stage.classList.remove('playing');});
+</script>
+</body></html>
