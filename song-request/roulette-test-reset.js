@@ -1,0 +1,1 @@
+(function(){try{const p=new URLSearchParams(location.search);if(p.get('resetSpin')==='1'){localStorage.removeItem('rp_lastSpinAt');sessionStorage.setItem('rp_spin_reset_notice','1');}}catch(e){console.warn('Spin reset hook failed',e);}})();
