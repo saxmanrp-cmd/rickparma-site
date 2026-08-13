@@ -106,7 +106,7 @@
   .photo-num  { font-size:10px; color:#8DB2E5; letter-spacing:0.1em; font-weight:700; margin-bottom:1px; }
   .photo-url  { font-size:10px; color:rgba(255,255,255,0.3); font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .photo-dates { font-size:10px; color:#8DB2E5; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .btn-delete { background:none; border:none; color:rgba(255,255,255,0.25); font-size:20px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; } .btn-share { background:none; border:none; color:#8DB2E5; font-size:16px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; }
+  .btn-delete { background:none; border:none; color:rgba(255,255,255,0.25); font-size:20px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; } .btn-share { background:none; border:none; color:#8DB2E5; font-size:16px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; } .btn-edit { background:none; border:none; color:#8DB2E5; font-size:16px; cursor:pointer; padding:4px 6px; border-radius:4px; flex-shrink:0; line-height:1; }
   .btn-delete:active { color:#e57a7a; }
   .empty-state { text-align:center; color:rgba(255,255,255,0.2); font-size:13px; padding:32px 0; }
   .photo-thumb-video { width:40px; height:53px; border-radius:4px; background:#2a1010; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:22px; cursor:pointer; }
@@ -220,6 +220,7 @@
   var isSaving = false;
   var pendingSrc = "";
   var chosenFile = null;
+ var editingIndex = null; // set when editing an existing gallery item's name/dates
 
   function setSyncStatus(state, label) {
     document.getElementById("syncDot").className = "sync-dot " + state;
@@ -592,7 +593,7 @@
       } else {
         wrap.innerHTML = '<img src="' + url + '" alt="" onerror="showPreviewError()" style="width:100%;max-height:280px;object-fit:contain;display:block;border-radius:8px;">';
       }
-      document.getElementById("input-name").value = name;
+            document.getElementById("input-name").value = "";
       selectedDates = [];
       renderDatePicker();
       document.getElementById("previewArea").classList.add("visible");
@@ -612,6 +613,8 @@
 
   // ── Preview flow (URL paste path) ────────────────────────────
   function loadPreview() {
+     editingIndex = null;
+   document.getElementById("btnSave").textContent = "Save";
     var src = document.getElementById("input-url").value.trim();
     if (!src) { alert("Paste an image or video URL first."); return; }
     pendingSrc = src;
@@ -630,6 +633,26 @@
   function showPreviewError() {
     document.getElementById("previewImgWrap").innerHTML = '<div class="preview-error">⚠️ Could not load media.<br>Check the URL and try again.</div>';
   }
+ function editPhoto(index) {
+  var p = photos[index];
+  if (!p) return;
+  editingIndex = index;
+  pendingSrc = p.src;
+  var wrap = document.getElementById("previewImgWrap");
+  if (isVideo(p.src)) {
+   wrap.innerHTML = '<video src="' + p.src + '" controls playsinline loop style="width:100%;max-height:280px;display:block;border-radius:8px;"></video>';
+  } else {
+   wrap.innerHTML = '<img src="' + p.src + '" alt="" onerror="showPreviewError()" style="width:100%;max-height:280px;object-fit:contain;display:block;border-radius:8px;">';
+  }
+  document.getElementById("input-name").value = p.name || "";
+  selectedDates = (p.dates || []).slice();
+  renderDatePicker();
+  document.getElementById("previewArea").classList.add("visible");
+  setPickingMode(true);
+  document.getElementById("btnSave").textContent = "Update";
+  document.getElementById("input-name").focus();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+ }
   // Hides the already-posted-flyers list while picking dates for a new one, so the
   // date list (which can now run long) has the screen to itself without the whole
   // gallery pushing everything around underneath it.
@@ -641,6 +664,8 @@
     document.getElementById("input-name").value = "";
     document.getElementById("previewArea").classList.remove("visible");
     pendingSrc = "";
+   editingIndex = null;
+   document.getElementById("btnSave").textContent = "Save";
     selectedDates = [];
     renderDatePicker();
     setPickingMode(false);
@@ -649,8 +674,13 @@
     var src  = pendingSrc || document.getElementById("input-url").value.trim();
     var name = document.getElementById("input-name").value.trim();
     if (!src) { alert("No image to save."); return; }
-    for (var j=0; j<photos.length; j++) { if (photos[j].src===src) { alert("Already in gallery."); return; } }
-    photos.push({ src: src, name: name, dates: selectedDates.slice() });
+    if (editingIndex !== null && editingIndex >= 0 && editingIndex < photos.length) {
+     photos[editingIndex].name = name;
+     photos[editingIndex].dates = selectedDates.slice();
+    } else {
+     for (var j=0; j<photos.length; j++) { if (photos[j].src===src) { alert("Already in gallery."); return; } }
+     photos.push({ src: src, name: name, dates: selectedDates.slice() });
+    }
     document.getElementById("input-url").value = "";
     document.getElementById("input-name").value = "";
     document.getElementById("previewArea").classList.remove("visible");
@@ -658,6 +688,8 @@
     selectedDates = [];
     renderDatePicker();
     setPickingMode(false);
+   editingIndex = null;
+   document.getElementById("btnSave").textContent = "Save";
     render();
     await save();
   }
@@ -754,7 +786,7 @@
         '<span class="drag-handle">⠿</span>' +
         thumbHtml +
         '<div class="photo-info"><div class="photo-num">PHOTO ' + (i+1) + '</div>' + nameHtml + '<div class="photo-url">' + truncUrl(p.src) + '</div>' + datesHtml + '</div>' +
-        '<button class="btn-share" onclick="shareItem(' + i + ')">🔗</button>' + '<button class="btn-delete" onclick="removePhoto(' + i + ')">×</button>';
+              '<button class="btn-edit" onclick="editPhoto(' + i + ')">✏️</button>' + '<button class="btn-share" onclick="shareItem(' + i + ')">🔗</button>' + '<button class="btn-delete" onclick="removePhoto(' + i + ')">×</button>';
       var handle = item.querySelector(".drag-handle");
       initTouchDrag(handle, i);
       list.appendChild(item);
