@@ -25,22 +25,19 @@
     ]
   },
   {
+    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785970624236-copy_6BF3294F-7A3E-4399-826A-F5B8003033FF.mov",
+    "name": "Whitney",
+    "dates": [
+      "2026-08-24"
+    ]
+  },
+  {
     "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785315715592-rickparma-flyer-6.mp4",
     "name": "Redbrick",
     "dates": [
       "2026-09-04",
       "2026-09-05",
       "2026-09-06"
-    ]
-  },
-  {
-    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785967951446-copy_68120930-D5F7-4C36-A242-808B2C45CFCF.mov",
-    "name": "Tommy",
-    "dates": [
-      "2026-09-18",
-      "2026-09-20",
-      "2026-09-25",
-      "2026-09-27"
     ]
   },
   {
@@ -55,10 +52,13 @@
     ]
   },
   {
-    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785970624236-copy_6BF3294F-7A3E-4399-826A-F5B8003033FF.mov",
-    "name": "Whitney",
+    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785967951446-copy_68120930-D5F7-4C36-A242-808B2C45CFCF.mov",
+    "name": "Tommy",
     "dates": [
-      "2026-08-24"
+      "2026-09-18",
+      "2026-09-20",
+      "2026-09-25",
+      "2026-09-27"
     ]
   }
 ]
