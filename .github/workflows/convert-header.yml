@@ -1,4 +1,4 @@
-name: Convert HD header to JPEG
+name: Mute Promo Videos
 
 on:
   push:
@@ -11,28 +11,33 @@ permissions:
   contents: write
 
 jobs:
-  convert:
+  mute:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: agent/silver-vegas-redesign
 
-      - name: Install AVIF conversion tools
+      - name: Force promo videos muted
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libavif-bin
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('index.html')
+          text = path.read_text()
+          old = 'return "https://www.youtube-nocookie.com/embed/" + id + "?rel=0&modestbranding=1" + (autoplay ? "&autoplay=1" : "");'
+          new = 'return "https://www.youtube-nocookie.com/embed/" + id + "?rel=0&modestbranding=1&mute=1" + (autoplay ? "&autoplay=1" : "");'
+          if old in text:
+              path.write_text(text.replace(old, new, 1))
+          elif new not in text:
+              raise SystemExit('promo video embedURL pattern not found')
+          PY
 
-      - name: Convert existing HD AVIF to JPEG-compatible PNG
+      - name: Commit muted promo videos
+        shell: bash
         run: |
-          avifdec images/rick-parma-header-approved-hd.avif images/rick-parma-header-fresh-hd.png
-          file images/rick-parma-header-fresh-hd.png
-
-      - name: Commit HD image
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add images/rick-parma-header-fresh-hd.png
-          git commit -m 'Add Safari-safe HD header PNG' || exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Mute both promo videos" || exit 0
           git push origin HEAD:agent/silver-vegas-redesign
