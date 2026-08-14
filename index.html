@@ -1424,7 +1424,7 @@
     var player = document.getElementById("rp-main-player");
     var playingTitle = document.getElementById("rp-playing-title");
     function embedURL(id, autoplay) {
-      return "https://www.youtube-nocookie.com/embed/" + id + "?rel=0&modestbranding=1" + (autoplay ? "&autoplay=1" : "");
+      return "https://www.youtube-nocookie.com/embed/" + id + "?rel=0&modestbranding=1&mute=1" + (autoplay ? "&autoplay=1" : "");
     }
     function ytThumb(id) { return "https://img.youtube.com/vi/" + id + "/mqdefault.jpg"; }
     function switchVideo(index) {
