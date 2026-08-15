@@ -941,7 +941,7 @@
         if (e.description) shareLines.push(e.description);
         var shareText = shareLines.join('\n');
         var flyerSrc = currentFlyerMap[fmtDateKey(e.start)];
-        var canTryImageShare = !!(flyerSrc && !isVideoSrc(flyerSrc) && navigator.share && navigator.canShare);
+        var canTryFileShare = !!(flyerSrc && navigator.share && navigator.canShare);
 
         function shareTextOnly() {
           if (navigator.share) {
@@ -957,14 +957,17 @@
           }
         }
 
-        if (canTryImageShare) {
+        if (canTryFileShare) {
+          var isVid = isVideoSrc(flyerSrc);
           fetch(flyerSrc).then(function (r) { return r.blob(); }).then(function (blob) {
-            var ext = blob.type && blob.type.indexOf('png') !== -1 ? 'png' : 'jpg';
+            var ext = isVid
+              ? (blob.type && blob.type.indexOf('quicktime') !== -1 ? 'mov' : (blob.type && blob.type.indexOf('webm') !== -1 ? 'webm' : 'mp4'))
+              : (blob.type && blob.type.indexOf('png') !== -1 ? 'png' : 'jpg');
             var fileName = (e.title || 'flyer').replace(/[^a-z0-9]+/gi, '-') + '.' + ext;
-            var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+            var file = new File([blob], fileName, { type: blob.type || (isVid ? 'video/mp4' : 'image/jpeg') });
             if (navigator.canShare({ files: [file] })) {
-              // Sharing the actual image file (not just a link) is what makes the OS
-              // share sheet offer "Save Image" / "Save to Photos" as an option.
+              // Sharing the actual file (not just a link) is what makes the OS
+              // share sheet offer "Save Image"/"Save Video" as an option.
               navigator.share({ files: [file], title: e.title, text: shareText }).catch(function () {});
             } else {
               shareTextOnly();
