@@ -940,16 +940,38 @@
         if (shareTimeStr) shareLines.push(shareTimeStr);
         if (e.description) shareLines.push(e.description);
         var shareText = shareLines.join('\n');
-        if (navigator.share) {
-          navigator.share({ title: e.title, text: shareText, url: shareUrl }).catch(function () {});
-        } else if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(shareText + ' — ' + shareUrl).then(function () {
-            var orig = btn.textContent;
-            btn.textContent = 'Copied!';
-            setTimeout(function () { btn.textContent = orig; }, 1500);
-          });
+        var flyerSrc = currentFlyerMap[fmtDateKey(e.start)];
+        var canTryImageShare = !!(flyerSrc && !isVideoSrc(flyerSrc) && navigator.share && navigator.canShare);
+
+        function shareTextOnly() {
+          if (navigator.share) {
+            navigator.share({ title: e.title, text: shareText, url: shareUrl }).catch(function () {});
+          } else if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(shareText + ' — ' + shareUrl).then(function () {
+              var orig = btn.textContent;
+              btn.textContent = 'Copied!';
+              setTimeout(function () { btn.textContent = orig; }, 1500);
+            });
+          } else {
+            window.prompt('Copy this link:', shareUrl);
+          }
+        }
+
+        if (canTryImageShare) {
+          fetch(flyerSrc).then(function (r) { return r.blob(); }).then(function (blob) {
+            var ext = blob.type && blob.type.indexOf('png') !== -1 ? 'png' : 'jpg';
+            var fileName = (e.title || 'flyer').replace(/[^a-z0-9]+/gi, '-') + '.' + ext;
+            var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+            if (navigator.canShare({ files: [file] })) {
+              // Sharing the actual image file (not just a link) is what makes the OS
+              // share sheet offer "Save Image" / "Save to Photos" as an option.
+              navigator.share({ files: [file], title: e.title, text: shareText }).catch(function () {});
+            } else {
+              shareTextOnly();
+            }
+          }).catch(function () { shareTextOnly(); });
         } else {
-          window.prompt('Copy this link:', shareUrl);
+          shareTextOnly();
         }
       }
     });
