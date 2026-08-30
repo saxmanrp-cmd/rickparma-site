@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Pay Hub">
+  <title>Pay Hub Manager</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-180.png">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="./icons/icon.svg" alt="" class="brand-icon">
+        <div><strong>PAY HUB</strong><span>MANAGER</span></div>
+      </div>
+      <div class="top-actions">
+        <button id="refreshBtn" class="icon-btn" aria-label="Refresh">↻</button>
+        <button id="logoutBtn" class="ghost hidden">Lock</button>
+      </div>
+    </header>
+
+    <main id="mainApp" class="hidden">
+      <section class="hero-row">
+        <div>
+          <p class="eyebrow">Payment command center</p>
+          <h1>Sales Dashboard</h1>
+          <p class="muted" id="lastUpdated">Loading transactions…</p>
+        </div>
+        <button id="exportBtn" class="primary">Export CSV</button>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat accent"><span>Paid revenue</span><strong id="statRevenue">$0.00</strong><small id="statPaidCount">0 paid sales</small></article>
+        <article class="stat"><span>Tips</span><strong id="statTips">$0.00</strong><small id="statTipCount">0 tips</small></article>
+        <article class="stat"><span>Song requests</span><strong id="statSongs">$0.00</strong><small id="statSongCount">0 requests</small></article>
+        <article class="stat"><span>Other sales</span><strong id="statOther">$0.00</strong><small id="statOtherCount">0 sales</small></article>
+      </section>
+
+      <section class="panel filters-panel">
+        <div class="filters-head"><h2>Transactions</h2><span id="resultCount" class="pill">0</span></div>
+        <div class="filters">
+          <input id="searchInput" type="search" placeholder="Search name, note, song, ID…">
+          <select id="typeFilter"><option value="">All types</option><option value="tip">Tips</option><option value="song_request">Song requests</option><option value="invoice">Invoices</option><option value="vocal_tutorial">Vocal tutorial</option></select>
+          <select id="providerFilter"><option value="">All payment methods</option><option value="square">Square</option><option value="paypal">PayPal</option></select>
+          <select id="statusFilter"><option value="">All statuses</option><option value="PAID">Paid</option><option value="OPEN">Open</option></select>
+          <input id="fromDate" type="date" aria-label="From date">
+          <input id="toDate" type="date" aria-label="To date">
+          <button id="clearFilters" class="ghost">Clear</button>
+        </div>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Type / details</th><th>Customer</th><th>Amount</th><th>Paid with</th><th>Status</th></tr></thead>
+            <tbody id="transactionRows"></tbody>
+          </table>
+        </div>
+        <div id="transactionCards" class="transaction-cards"></div>
+        <div id="emptyState" class="empty hidden">No transactions match these filters.</div>
+      </section>
+    </main>
+  </div>
+
+  <section id="loginView" class="login-view">
+    <div class="login-card">
+      <img src="./icons/icon.svg" class="login-icon" alt="Pay Hub Manager">
+      <p class="eyebrow">Private manager</p>
+      <h1>Pay Hub Manager</h1>
+      <p class="muted">Enter the Pay Hub admin key to view sales. The key is never included in the website code.</p>
+      <form id="loginForm">
+        <label>Admin key<input id="adminKey" type="password" autocomplete="current-password" required></label>
+        <label class="remember"><input id="rememberKey" type="checkbox"> Remember on this device</label>
+        <button class="primary full" type="submit">Open Manager</button>
+        <p id="loginError" class="error"></p>
+      </form>
+      <p class="install-note">On iPhone: open this page in Safari → Share → Add to Home Screen.</p>
+    </div>
+  </section>
+
+  <dialog id="detailDialog">
+    <div class="dialog-head"><div><p class="eyebrow">Transaction details</p><h2 id="detailTitle">Sale</h2></div><button id="closeDialog" class="icon-btn">×</button></div>
+    <div id="detailBody" class="detail-grid"></div>
+  </dialog>
+
+  <template id="rowTemplate"><tr class="clickable"><td data-date></td><td><strong data-type></strong><small data-desc></small></td><td><strong data-name></strong><small data-contact></small></td><td class="money" data-amount></td><td data-method></td><td><span class="status" data-status></span></td></tr></template>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
