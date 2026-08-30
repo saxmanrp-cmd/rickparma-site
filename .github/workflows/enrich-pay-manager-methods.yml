@@ -1,0 +1,43 @@
+name: Enrich Pay Hub Manager payment methods
+on:
+  push:
+    paths:
+      - '.github/workflows/enrich-pay-manager-methods.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enrich manager transaction data
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('functions/api/[[path]].js')
+          s=p.read_text()
+          old='''  return json({\n    transactions: (rows.results || []).map(serializeIntent),\n    total: Number(countRow?.total || 0),\n    limit,\n    offset\n  });\n}'''
+          new='''  const transactions = (rows.results || []).map(serializeIntent);\n\n  // Enrich the manager view with the actual funding method when the processor\n  // recorded it (Cash App Pay, Venmo, card brand/last4, etc.). We only surface\n  // non-confidential processor response fields already stored in payment_events.\n  if (transactions.length) {\n    const ids = transactions.map((t) => t.id);\n    const placeholders = ids.map(() => "?").join(",");\n    const events = await env.PAYMENT_DB.prepare(`\n      SELECT intent_id, event_type, provider, payload_json, created_at\n      FROM payment_events\n      WHERE intent_id IN (${placeholders})\n      ORDER BY created_at DESC\n    `).bind(...ids).all();\n\n    const byIntent = new Map();\n    for (const event of (events.results || [])) {\n      if (!byIntent.has(event.intent_id)) byIntent.set(event.intent_id, []);\n      byIntent.get(event.intent_id).push(event);\n    }\n\n    for (const tx of transactions) {\n      let method = tx.provider === "square" ? "Square" : tx.provider === "paypal" ? "PayPal" : (tx.provider || null);\n      const details = {};\n      for (const event of (byIntent.get(tx.id) || [])) {\n        const payload = safeJsonParse(event.payload_json, {});\n        const payment = payload?.payment || payload?.data?.object?.payment || null;\n        if (payment) {\n          const card = payment?.card_details?.card || {};\n          const wallet = payment?.wallet_details || {};\n          if (payment.source_type === "WALLET" && wallet.brand === "CASH_APP") {\n            method = "Cash App Pay";\n            if (wallet.cash_app_details?.buyer_cashtag) details.cashTag = wallet.cash_app_details.buyer_cashtag;\n            if (wallet.cash_app_details?.buyer_full_name) details.accountName = wallet.cash_app_details.buyer_full_name;\n          } else if (payment?.card_details?.wallet_type === "APPLE_PAY") {\n            method = "Apple Pay";\n          } else if (payment.source_type === "CARD") {\n            method = "Card";\n          } else if (payment.source_type && !method) {\n            method = String(payment.source_type).replaceAll("_", " ");\n          }\n          if (card.card_brand) details.cardBrand = card.card_brand;\n          if (card.last_4) details.last4 = card.last_4;\n          if (payment.receipt_url) details.receiptUrl = payment.receipt_url;\n        }\n\n        const source = payload?.payment_source || {};\n        if (source.venmo) {\n          method = "Venmo";\n          if (source.venmo.user_name) details.venmoUser = source.venmo.user_name;\n          if (source.venmo.email_address) details.payerEmail = source.venmo.email_address;\n        } else if (source.paypal) {\n          method = "PayPal";\n          if (source.paypal.email_address) details.payerEmail = source.paypal.email_address;\n        } else if (source.card) {\n          method = "Card";\n          if (source.card.brand) details.cardBrand = source.card.brand;\n          if (source.card.last_digits) details.last4 = source.card.last_digits;\n        }\n      }\n      tx.paymentMethod = method;\n      tx.paymentDetails = details;\n    }\n  }\n\n  return json({\n    transactions,\n    total: Number(countRow?.total || 0),\n    limit,\n    offset\n  });\n}'''
+          if old not in s:
+              raise SystemExit('Target block not found; refusing unsafe patch')
+          p.write_text(s.replace(old,new,1))
+          PY
+      - name: Show payment details in manager dialog and CSV
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('pay-manager/app.js')
+          s=p.read_text()
+          s=s.replace("item('Paid with',paymentMethod(tx)),item('Processor',tx.provider||'—')", "item('Paid with',paymentMethod(tx)),item('Card / wallet detail',tx.paymentDetails?.cardBrand?(tx.paymentDetails.cardBrand+(tx.paymentDetails.last4?' •••• '+tx.paymentDetails.last4:'')):(tx.paymentDetails?.cashTag||tx.paymentDetails?.venmoUser||'—')),item('Processor',tx.provider||'—')")
+          s=s.replace("'payment_method','provider'", "'payment_method','payment_detail','provider'")
+          s=s.replace("paymentMethod(t),t.provider", "paymentMethod(t),t.paymentDetails?.cardBrand?(t.paymentDetails.cardBrand+(t.paymentDetails.last4?' •••• '+t.paymentDetails.last4:'')):(t.paymentDetails?.cashTag||t.paymentDetails?.venmoUser||''),t.provider")
+          p.write_text(s)
+          PY
+      - name: Commit completed patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/enrich-pay-manager-methods.yml
+          git add 'functions/api/[[path]].js' pay-manager/app.js
+          git commit -m 'Enrich Pay Hub Manager payment method details'
+          git push
