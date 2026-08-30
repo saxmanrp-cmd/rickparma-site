@@ -929,8 +929,73 @@ async function listTransactions(request, env) {
     env.PAYMENT_DB.prepare(`SELECT COUNT(*) AS total FROM payment_intents`).first()
   ]);
 
+  const transactions = (rows.results || []).map(serializeIntent);
+
+  // Enrich the manager view with the actual funding method when the processor
+  // recorded it (Cash App Pay, Venmo, card brand/last4, etc.). We only surface
+  // non-confidential processor response fields already stored in payment_events.
+  if (transactions.length) {
+    const ids = transactions.map((t) => t.id);
+    const placeholders = ids.map(() => "?").join(",");
+    const events = await env.PAYMENT_DB.prepare(`
+      SELECT intent_id, event_type, provider, payload_json, created_at
+      FROM payment_events
+      WHERE intent_id IN (${placeholders})
+      ORDER BY created_at DESC
+    `).bind(...ids).all();
+
+    const byIntent = new Map();
+    for (const event of (events.results || [])) {
+      if (!byIntent.has(event.intent_id)) byIntent.set(event.intent_id, []);
+      byIntent.get(event.intent_id).push(event);
+    }
+
+    for (const tx of transactions) {
+      let method = tx.provider === "square" ? "Square" : tx.provider === "paypal" ? "PayPal" : (tx.provider || null);
+      const details = {};
+      for (const event of (byIntent.get(tx.id) || [])) {
+        const payload = safeJsonParse(event.payload_json, {});
+        const payment = payload?.payment || payload?.data?.object?.payment || null;
+        if (payment) {
+          const card = payment?.card_details?.card || {};
+          const wallet = payment?.wallet_details || {};
+          if (payment.source_type === "WALLET" && wallet.brand === "CASH_APP") {
+            method = "Cash App Pay";
+            if (wallet.cash_app_details?.buyer_cashtag) details.cashTag = wallet.cash_app_details.buyer_cashtag;
+            if (wallet.cash_app_details?.buyer_full_name) details.accountName = wallet.cash_app_details.buyer_full_name;
+          } else if (payment?.card_details?.wallet_type === "APPLE_PAY") {
+            method = "Apple Pay";
+          } else if (payment.source_type === "CARD") {
+            method = "Card";
+          } else if (payment.source_type && !method) {
+            method = String(payment.source_type).replaceAll("_", " ");
+          }
+          if (card.card_brand) details.cardBrand = card.card_brand;
+          if (card.last_4) details.last4 = card.last_4;
+          if (payment.receipt_url) details.receiptUrl = payment.receipt_url;
+        }
+
+        const source = payload?.payment_source || {};
+        if (source.venmo) {
+          method = "Venmo";
+          if (source.venmo.user_name) details.venmoUser = source.venmo.user_name;
+          if (source.venmo.email_address) details.payerEmail = source.venmo.email_address;
+        } else if (source.paypal) {
+          method = "PayPal";
+          if (source.paypal.email_address) details.payerEmail = source.paypal.email_address;
+        } else if (source.card) {
+          method = "Card";
+          if (source.card.brand) details.cardBrand = source.card.brand;
+          if (source.card.last_digits) details.last4 = source.card.last_digits;
+        }
+      }
+      tx.paymentMethod = method;
+      tx.paymentDetails = details;
+    }
+  }
+
   return json({
-    transactions: (rows.results || []).map(serializeIntent),
+    transactions,
     total: Number(countRow?.total || 0),
     limit,
     offset
