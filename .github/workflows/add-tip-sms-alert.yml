@@ -1,0 +1,56 @@
+name: Add tip SMS alert
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-tip-sms-alert.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-tip-alert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch Payment Hub tip fulfillment
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('functions/api/[[path]].js')
+          s = p.read_text()
+
+          anchor = '''// Creates the Diamond Method student account only once payment is confirmed —\n'''
+          if 'async function fulfillTip(env, intent)' not in s:
+              tip_fn = '''// Sends Rick an SMS only after a tip payment is confirmed PAID. Reuses the\n// same proven Twilio alert endpoint as Song Request, so no new credentials or\n// browser-side trust are introduced.\nasync function fulfillTip(env, intent) {\n  try {\n    const params = new URLSearchParams();\n    const amount = `$${(Number(intent.amountCents || 0) / 100).toFixed(2)}`;\n    const tipper = intent.customerName || "Someone";\n    const provider = intent.provider ? ` via ${intent.provider === "square" ? "Square" : intent.provider === "paypal" ? "PayPal" : intent.provider}` : "";\n    const note = intent.description ? ` — ${intent.description}` : "";\n\n    params.append("name", `TIP from ${tipper}`);\n    params.append("song", `${amount} TIP${provider}${note}`);\n    params.append("outcome", "PAID");\n\n    const response = await fetch(SONG_ALERT_URL, {\n      method: "POST",\n      body: params\n    });\n    if (!response.ok) throw new Error(`Tip SMS alert failed with ${response.status}`);\n    return "FULFILLED";\n  } catch (err) {\n    console.error("fulfillTip error", intent.id, err);\n    return "ERROR";\n  }\n}\n\n'''
+              if anchor not in s:
+                  raise SystemExit('Could not find insertion anchor for fulfillTip')
+              s = s.replace(anchor, tip_fn + anchor, 1)
+
+          old = '''    } else if (intent.type === "tip") {\n      outcome = "FULFILLED"; // nothing to unlock — payment record itself is the fulfillment\n'''
+          new = '''    } else if (intent.type === "tip") {\n      outcome = await fulfillTip(env, intent);\n'''
+          if old in s:
+              s = s.replace(old, new, 1)
+          elif new not in s:
+              raise SystemExit('Could not find tip fulfillment branch')
+
+          p.write_text(s)
+          PY
+
+      - name: Verify patch
+        run: |
+          grep -n "async function fulfillTip\|outcome = await fulfillTip" 'functions/api/[[path]].js'
+
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 'functions/api/[[path]].js'
+          if git diff --cached --quiet; then
+            echo "Patch already present."
+          else
+            git commit -m "Send SMS alert for confirmed tips"
+            git push origin main
+          fi
