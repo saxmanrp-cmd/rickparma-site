@@ -293,6 +293,33 @@ async function fulfillSongRequest(env, intent) {
   }
 }
 
+// Sends Rick an SMS only after a tip payment is confirmed PAID. Reuses the
+// same proven Twilio alert endpoint as Song Request, so no new credentials or
+// browser-side trust are introduced.
+async function fulfillTip(env, intent) {
+  try {
+    const params = new URLSearchParams();
+    const amount = `$${(Number(intent.amountCents || 0) / 100).toFixed(2)}`;
+    const tipper = intent.customerName || "Someone";
+    const provider = intent.provider ? ` via ${intent.provider === "square" ? "Square" : intent.provider === "paypal" ? "PayPal" : intent.provider}` : "";
+    const note = intent.description ? ` — ${intent.description}` : "";
+
+    params.append("name", `TIP from ${tipper}`);
+    params.append("song", `${amount} TIP${provider}${note}`);
+    params.append("outcome", "PAID");
+
+    const response = await fetch(SONG_ALERT_URL, {
+      method: "POST",
+      body: params
+    });
+    if (!response.ok) throw new Error(`Tip SMS alert failed with ${response.status}`);
+    return "FULFILLED";
+  } catch (err) {
+    console.error("fulfillTip error", intent.id, err);
+    return "ERROR";
+  }
+}
+
 // Creates the Diamond Method student account only once payment is confirmed —
 // mirrors fulfillSongRequest's "never trust the browser" pattern. The password
 // itself was never stored anywhere; only its salted SHA-256 hash (computed at
@@ -339,7 +366,7 @@ async function runFulfillment(env, intent) {
     if (intent.type === "invoice") {
       outcome = await fulfillInvoice(env, intent);
     } else if (intent.type === "tip") {
-      outcome = "FULFILLED"; // nothing to unlock — payment record itself is the fulfillment
+      outcome = await fulfillTip(env, intent);
     } else if (intent.type === "song_request") {
       outcome = await fulfillSongRequest(env, intent);
     } else if (intent.type === "vocal_tutorial") {
