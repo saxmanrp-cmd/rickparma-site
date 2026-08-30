@@ -1,0 +1,14 @@
+{
+  "name": "Pay Hub Manager",
+  "short_name": "Pay Hub",
+  "description": "Private sales manager for Rick Parma Payment Hub.",
+  "start_url": "/pay-manager/",
+  "scope": "/pay-manager/",
+  "display": "standalone",
+  "background_color": "#070a10",
+  "theme_color": "#080b12",
+  "icons": [
+    {"src":"./icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"./icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
