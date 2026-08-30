@@ -916,11 +916,25 @@ async function listTransactions(request, env) {
     return json({ error: "Unauthorized." }, 401);
   }
 
-  const rows = await env.PAYMENT_DB.prepare(`
-    SELECT * FROM payment_intents ORDER BY created_at DESC LIMIT 200
-  `).all();
+  const url = new URL(request.url);
+  const requestedLimit = Number(url.searchParams.get("limit") || 200);
+  const requestedOffset = Number(url.searchParams.get("offset") || 0);
+  const limit = Number.isFinite(requestedLimit) ? Math.min(Math.max(Math.trunc(requestedLimit), 1), 500) : 200;
+  const offset = Number.isFinite(requestedOffset) ? Math.max(Math.trunc(requestedOffset), 0) : 0;
 
-  return json({ transactions: (rows.results || []).map(serializeIntent) });
+  const [rows, countRow] = await Promise.all([
+    env.PAYMENT_DB.prepare(`
+      SELECT * FROM payment_intents ORDER BY created_at DESC LIMIT ? OFFSET ?
+    `).bind(limit, offset).all(),
+    env.PAYMENT_DB.prepare(`SELECT COUNT(*) AS total FROM payment_intents`).first()
+  ]);
+
+  return json({
+    transactions: (rows.results || []).map(serializeIntent),
+    total: Number(countRow?.total || 0),
+    limit,
+    offset
+  });
 }
 
 // --- Router ------------------------------------------------------------
