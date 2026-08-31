@@ -139,11 +139,10 @@
       radial-gradient(circle at 50% 20%, rgba(255,255,255,0.4), rgba(255,255,255,0.08) 35%, transparent 55%),
       radial-gradient(circle at 50% 85%, rgba(0,0,0,0.35), transparent 50%),
       conic-gradient(from 0deg,
-        #C41E3A 0deg 36deg, #C99A2E 36deg 72deg,
-        #1C6B3A 72deg 108deg, #1450A3 108deg 144deg,
-        #7B2FBF 144deg 180deg, #B8562F 180deg 216deg,
-        #0E7C7B 216deg 252deg, #A31545 252deg 288deg,
-        #2E4172 288deg 324deg, #8C6A1F 324deg 360deg);
+        #C41E3A 0deg 51.43deg, #C99A2E 51.43deg 102.86deg,
+        #1C6B3A 102.86deg 154.29deg, #1450A3 154.29deg 205.71deg,
+        #7B2FBF 205.71deg 257.14deg, #B8562F 257.14deg 308.57deg,
+        #0E7C7B 308.57deg 360deg);
     border:7px solid #2b3a8f;
     box-shadow:
       0 0 0 4px #f5c94a,
@@ -892,6 +891,7 @@ let activeTag = null;
 let searchTerm = "";
 let sortMode = "title-asc";
 let requestedMap = {};
+let spinEnabled = true;
 
 async function loadSongs(){
   if(!BIN_ID){
@@ -904,6 +904,7 @@ async function loadSongs(){
     const record = data.record || {};
     songs = record.songs || [];
     prices = { ...DEFAULT_PRICES, ...(record.prices || {}) };
+    spinEnabled = record.spinEnabled !== false;
     ALL_TAGS = [...new Set(songs.flatMap(s => s.tags || []))].sort();
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('homeScreen').style.display = 'block';
@@ -969,7 +970,7 @@ function escapeHtml(str){return(str||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<'
 document.getElementById('search').addEventListener('input',e=>{searchTerm=e.target.value;updateResultsLabel();renderList();});
 document.getElementById('sortSelect').addEventListener('change',e=>{sortMode=e.target.value;renderList();});
 
-const WHEEL_SLICES=['FREE','BOGO','FREE','BOGO','FREE','BOGO','FREE','BOGO','FREE','BOGO'];
+const WHEEL_SLICES=['FREE','BOGO','BOGO','BOGO','BOGO','BOGO','BOGO'];
 let wheelSpinning=false;let wheelRotationTotal=0;const SPIN_COOLDOWN_MS=4*60*60*1000;
 function getSpinLockRemainingMs(){const last=parseInt(localStorage.getItem('rp_lastSpinAt')||'0',10);if(!last)return 0;return Math.max(0,SPIN_COOLDOWN_MS-(Date.now()-last));}
 function lockSpinForThisDevice(){localStorage.setItem('rp_lastSpinAt',String(Date.now()));}
@@ -984,15 +985,15 @@ function openSheet(id){
   const price=prices.general;const tierLineHtml=`<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
   const wheelWrapPx=Math.round(Math.max(210,Math.min(320,window.innerWidth*.72,window.innerHeight*.40)));const wheelScale=(wheelWrapPx/280).toFixed(4);const wheelGlowPad=Math.round(14*wheelScale);const wheelOuterPx=wheelWrapPx+wheelGlowPad*2;
   const spinLockRemaining=getSpinLockRemainingMs();let stepTwoHtml;
-  if(spinLockRemaining>0){const songLabelForPay=`${s.t}${s.a?' - '+s.a:''}`;const payUrl=`/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabelForPay)}`;stepTwoHtml=`<div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>`;}
+  if(!spinEnabled||spinLockRemaining>0){const songLabelForPay=`${s.t}${s.a?' - '+s.a:''}`;const payUrl=`/pay/?mode=song&amount=${price}&song=${encodeURIComponent(songLabelForPay)}`;stepTwoHtml=`<div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${payUrl}" target="_top">Continue to Payment — $${price}</a>`;}
   else{stepTwoHtml=`<div class="section-label" id="step2Label">STEP 2 — ONE SPIN PER SHOW TO WIN A FREE REQUEST</div><div class="wheel-wrap" style="width:${wheelOuterPx}px;height:${wheelOuterPx}px;"><div class="wheel-scale-inner" style="transform:scale(${wheelScale});top:${wheelGlowPad}px;left:${wheelGlowPad}px;"><div class="wheel-pointer">▼</div><div class="wheel-glow"></div><div class="wheel" id="spinWheel">${buildWheelLabels(price)}${buildWheelSparkles()}${buildWheelRivets()}</div><div class="wheel-center-dot"></div></div></div><button class="btn btn-text" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">🎡 Spin to Win!</button><div id="spinResultArea"></div>`;}
   document.getElementById('sheetTierLine').innerHTML=tierLineHtml;document.getElementById('sheetBody').innerHTML=nameFieldHtml+stepTwoHtml;wheelSpinning=false;wheelRotationTotal=0;if(document.getElementById('spinWheel'))document.getElementById('spinWheel').style.transform='rotate(0deg)';document.getElementById('overlay').classList.add('show');document.getElementById('sheet').classList.add('show');document.body.style.overflow='hidden';fitWheelToViewport();
 }
 function stackedLetters(word,outerRadius){const boxWidth=44,targetWidthStart=70,targetWidthEnd=50,stretchStart=targetWidthStart/boxWidth,stretchEnd=targetWidthEnd/boxWidth,baseFontSize=26,shrinkAmount=5;let html='';for(let i=0;i<word.length;i++){const t=word.length>1?i/(word.length-1):0,fontSize=baseFontSize-shrinkAmount*t,stretch=(stretchStart+(stretchEnd-stretchStart)*t).toFixed(3);html+=`<span style="font-size:${fontSize.toFixed(1)}px; transform:scaleX(${stretch});">${word[i]}</span>`;}return html;}
-function buildWheelLabels(price){const outerRadius=122;return WHEEL_SLICES.map((label,i)=>{const angle=i*36+18,word=label==='FREE'?'FREE':label==='BOGO'?'BOGO':'PAID';return `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);"><div class="wheel-label" style="transform: translate(-50%, -${outerRadius}px);">${stackedLetters(word,outerRadius)}</div></div>`;}).join('');}
+function buildWheelLabels(price){const outerRadius=122;const sliceDeg=360/WHEEL_SLICES.length;return WHEEL_SLICES.map((label,i)=>{const angle=i*sliceDeg+sliceDeg/2,word=label==='FREE'?'FREE':label==='BOGO'?'BOGO':'PAID';return `<div class="wheel-label-arm" style="transform: rotate(${angle}deg);"><div class="wheel-label" style="transform: translate(-50%, -${outerRadius}px);">${stackedLetters(word,outerRadius)}</div></div>`;}).join('');}
 function buildWheelRivets(){let out='';for(let i=0;i<20;i++){const angle=i*18;out+=`<div class="wheel-label-arm" style="transform: rotate(${angle}deg);"><div class="wheel-rivet" style="transform: translate(0, -133px);"></div></div>`;}return out;}
 function buildWheelSparkles(){let out='';for(let i=0;i<16;i++){const angle=Math.random()*360,radius=20+Math.random()*95,delay=(Math.random()*1.6).toFixed(2),size=10+Math.round(Math.random()*10);out+=`<div class="wheel-label-arm" style="transform: rotate(${angle}deg);"><span class="sparkle" style="transform: translate(-50%, -${radius}px); font-size:${size}px; animation-delay:${delay}s;">✨</span></div>`;}return out;}
-function spinWheel(songId,price){const spinLockRemaining=getSpinLockRemainingMs();if(spinLockRemaining>0){const area=document.getElementById('spinResultArea');if(area)area.innerHTML='<div class="spin-result">You already used your spin on this device. Try again in '+formatSpinLockRemaining(spinLockRemaining)+' — or <a href="#" onclick="skipSpinToPayment(\''+songId+'\', '+price+'); return false;" style="color:var(--accent);text-decoration:underline;">send this request now for $'+price+'</a>.</div>';return;}if(wheelSpinning)return;wheelSpinning=true;lockSpinForThisDevice();const wheel=document.getElementById('spinWheel'),spinBtn=document.getElementById('spinBtn');spinBtn.disabled=true;spinBtn.style.opacity='.6';const resultIndex=Math.floor(Math.random()*WHEEL_SLICES.length),targetSliceCenter=resultIndex*36+18,extraSpins=5*360;wheelRotationTotal+=extraSpins+(360-targetSliceCenter)-(wheelRotationTotal%360);wheel.style.transform=`rotate(${wheelRotationTotal}deg)`;setTimeout(()=>revealSpinResult(WHEEL_SLICES[resultIndex],songId,price),4300);}
+function spinWheel(songId,price){const spinLockRemaining=getSpinLockRemainingMs();if(spinLockRemaining>0){const area=document.getElementById('spinResultArea');if(area)area.innerHTML='<div class="spin-result">You already used your spin on this device. Try again in '+formatSpinLockRemaining(spinLockRemaining)+' — or <a href="#" onclick="skipSpinToPayment(\''+songId+'\', '+price+'); return false;" style="color:var(--accent);text-decoration:underline;">send this request now for $'+price+'</a>.</div>';return;}if(wheelSpinning)return;wheelSpinning=true;lockSpinForThisDevice();const wheel=document.getElementById('spinWheel'),spinBtn=document.getElementById('spinBtn');spinBtn.disabled=true;spinBtn.style.opacity='.6';const resultIndex=Math.floor(Math.random()*WHEEL_SLICES.length),sliceDeg=360/WHEEL_SLICES.length,targetSliceCenter=resultIndex*sliceDeg+sliceDeg/2,extraSpins=5*360;wheelRotationTotal+=extraSpins+(360-targetSliceCenter)-(wheelRotationTotal%360);wheel.style.transform=`rotate(${wheelRotationTotal}deg)`;setTimeout(()=>revealSpinResult(WHEEL_SLICES[resultIndex],songId,price),4300);}
 const colorPalette=['#FF3B3B','#FFD700','#3BA1FF','#39FF6A','#FF3BE0','#B23BFF','#3BFFF0','#FFFFFF','#FF8C3B'];
 function launchFirework(x,apexY,color,isFinale,finaleText){const rocket=document.createElement('div');rocket.className='firework-rocket'+(isFinale?' firework-rocket-big':'');rocket.style.left=x+'px';rocket.style.background=color;rocket.style.color=color;document.body.appendChild(rocket);const riseDuration=isFinale?1100:850+Math.random()*450;const anim=rocket.animate([{transform:'translateY(0)',opacity:1},{transform:`translateY(-${apexY}px)`,opacity:1}],{duration:riseDuration,easing:'cubic-bezier(0.22,0.5,0.35,1)',fill:'forwards'});anim.onfinish=()=>{const rect=rocket.getBoundingClientRect(),burstX=isFinale?window.innerWidth/2:rect.left,burstY=isFinale?window.innerHeight*.42:rect.top;rocket.remove();if(isFinale){screenFlash();burstAt(burstX,burstY,color,true);setTimeout(()=>burstAt(burstX,burstY,'#FFFFFF',true),90);setTimeout(()=>burstAt(burstX,burstY,colorPalette[Math.floor(Math.random()*colorPalette.length)],true),200);setTimeout(()=>showFreeText(burstX,burstY,finaleText),160);}else burstAt(burstX,burstY,color,false);};}
 function screenFlash(){const flash=document.createElement('div');flash.className='screen-flash';document.body.appendChild(flash);setTimeout(()=>flash.remove(),500);}
