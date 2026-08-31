@@ -77,7 +77,7 @@
     const price=prices.general;
     const tierLineHtml=`<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
     const spinLockRemaining=getSpinLockRemainingMs();let stepTwoHtml;
-    if(spinLockRemaining>0){
+    if(!spinEnabled||spinLockRemaining>0){
       const songLabelForPay=`${s.t}${s.a?' - '+s.a:''}`;
       stepTwoHtml=`<div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${paymentUrl(songLabelForPay,price)}" target="_top">Continue to Payment — $${price}</a>`;
     }else{
@@ -93,7 +93,7 @@
     const spinLockRemaining=getSpinLockRemainingMs();
     if(spinLockRemaining>0){const area=document.getElementById('spinResultArea');if(area)area.innerHTML='<div class="spin-result">You already used your spin on this device. Try again in '+formatSpinLockRemaining(spinLockRemaining)+' — or <a href="#" onclick="skipSpinToPayment(\''+songId+'\', '+price+'); return false;" style="color:#7de2ff;text-decoration:underline;">send this request now for $'+price+'</a>.</div>';return;}
     if(wheelSpinning)return;wheelSpinning=true;lockSpinForThisDevice();
-    const outcome=Math.random()<0.5?'FREE':'BOGO',video=document.getElementById('rouletteVideo'),stage=document.getElementById('rouletteStage'),btn=document.getElementById('spinBtn'),status=document.getElementById('rouletteVideoStatus');
+    const outcome=Math.random()<(1/7)?'FREE':'BOGO',video=document.getElementById('rouletteVideo'),stage=document.getElementById('rouletteStage'),btn=document.getElementById('spinBtn'),status=document.getElementById('rouletteVideoStatus');
     if(!video||!stage||!btn){wheelSpinning=false;return;}
     btn.disabled=true;btn.style.opacity='.68';btn.textContent='SPINNING…';if(status)status.textContent='Good luck…';video.src=outcome==='FREE'?FREE_VIDEO:BOGO_VIDEO;video.currentTime=0;stage.classList.add('playing');
     let finished=false;const complete=()=>{if(finished)return;finished=true;wheelSpinning=false;finishVideoResult(outcome,songId,price)};video.onended=complete;
