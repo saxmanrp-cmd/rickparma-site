@@ -43,8 +43,13 @@
         <article class="stat"><span>Other sales</span><strong id="statOther">$0.00</strong><small id="statOtherCount">0 sales</small></article>
       </section>
 
+      <section class="view-switch" aria-label="View">
+        <button id="listViewBtn" class="view-btn active">☰ List</button>
+        <button id="calendarViewBtn" class="view-btn">▦ Calendar</button>
+      </section>
+
       <section class="panel filters-panel">
-        <div class="filters-head"><h2>Transactions</h2><span id="resultCount" class="pill">0</span></div>
+        <div class="filters-head"><h2 id="viewHeading">Transactions</h2><span id="resultCount" class="pill">0</span></div>
         <div class="filters">
           <input id="searchInput" type="search" placeholder="Search name, note, song, ID…">
           <select id="typeFilter"><option value="">All types</option><option value="tip">Tips</option><option value="song_request">Song requests</option><option value="invoice">Invoices</option><option value="vocal_tutorial">Vocal tutorial</option></select>
@@ -56,7 +61,7 @@
         </div>
       </section>
 
-      <section class="panel table-panel">
+      <section id="listView" class="panel table-panel">
         <div class="table-wrap">
           <table>
             <thead><tr><th>Date</th><th>Type / details</th><th>Customer</th><th>Amount</th><th>Paid with</th><th>Status</th></tr></thead>
@@ -65,6 +70,23 @@
         </div>
         <div id="transactionCards" class="transaction-cards"></div>
         <div id="emptyState" class="empty hidden">No transactions match these filters.</div>
+      </section>
+
+      <section id="calendarView" class="panel calendar-panel hidden">
+        <div class="calendar-toolbar">
+          <div>
+            <p class="eyebrow">Monthly sales</p>
+            <h2 id="calendarMonth">Month</h2>
+            <p id="calendarSummary" class="muted calendar-summary"></p>
+          </div>
+          <div class="calendar-actions">
+            <button id="calendarPrev" class="icon-btn" aria-label="Previous month">‹</button>
+            <button id="calendarToday" class="ghost">Today</button>
+            <button id="calendarNext" class="icon-btn" aria-label="Next month">›</button>
+          </div>
+        </div>
+        <div class="calendar-weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+        <div id="calendarGrid" class="calendar-grid"></div>
       </section>
     </main>
   </div>
@@ -86,11 +108,9 @@
   </section>
 
   <dialog id="detailDialog">
-    <div class="dialog-head"><div><p class="eyebrow">Transaction details</p><h2 id="detailTitle">Sale</h2></div><button id="closeDialog" class="icon-btn">×</button></div>
+    <div class="dialog-head"><div><p class="eyebrow" id="detailEyebrow">Transaction details</p><h2 id="detailTitle">Sale</h2></div><button id="closeDialog" class="icon-btn">×</button></div>
     <div id="detailBody" class="detail-grid"></div>
   </dialog>
-
-  <template id="rowTemplate"><tr class="clickable"><td data-date></td><td><strong data-type></strong><small data-desc></small></td><td><strong data-name></strong><small data-contact></small></td><td class="money" data-amount></td><td data-method></td><td><span class="status" data-status></span></td></tr></template>
 
   <script src="./app.js" defer></script>
 </body>
