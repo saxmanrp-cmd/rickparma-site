@@ -275,8 +275,20 @@ async function fulfillInvoice(env, intent) {
 // now only once the Payment Hub has confirmed the payment actually completed
 // (Square/PayPal synchronous response or verified webhook), instead of trusting
 // the browser to report a successful payment.
+async function songRequestSmsEnabled() {
+  try {
+    const res = await fetch(`${PROXY_BASE}/songs`);
+    const data = await res.json();
+    return (data && data.record && data.record.smsRequestsEnabled) !== false;
+  } catch (err) {
+    return true;
+  }
+}
+
 async function fulfillSongRequest(env, intent) {
   try {
+    const smsOn = await songRequestSmsEnabled();
+    if (!smsOn) return "FULFILLED";
     const params = new URLSearchParams();
     params.append("name", intent.customerName || "Someone");
     params.append("song", (intent.metadata && intent.metadata.song) || intent.description || "Song request");
