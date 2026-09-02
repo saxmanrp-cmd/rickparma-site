@@ -285,8 +285,38 @@ async function songRequestSmsEnabled() {
   }
 }
 
+// Appends one entry to the Requests tab log in Song Manager. Runs regardless of
+// the smsRequestsEnabled toggle — muting texts should not stop Rick from seeing
+// the request land in the app.
+async function logSongRequestEntry(entry) {
+  try {
+    const res = await fetch(`${PROXY_BASE}/song-requests-log`);
+    const data = await res.json();
+    const log = (data && data.record) || { requests: [] };
+    log.requests = log.requests || [];
+    log.requests.push(entry);
+    if (log.requests.length > 200) log.requests = log.requests.slice(-200);
+    await fetch(`${PROXY_BASE}/song-requests-log`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(log)
+    });
+  } catch (err) {
+    console.error("logSongRequestEntry error", err);
+  }
+}
+
 async function fulfillSongRequest(env, intent) {
   try {
+    const songLabel = (intent.metadata && intent.metadata.song) || intent.description || "Song request";
+    await logSongRequestEntry({
+      id: "r" + intent.id,
+      name: intent.customerName || "Someone",
+      song: songLabel,
+      artist: "",
+      outcome: "PAID",
+      ts: Date.now()
+    });
     const smsOn = await songRequestSmsEnabled();
     if (!smsOn) return "FULFILLED";
     const params = new URLSearchParams();
