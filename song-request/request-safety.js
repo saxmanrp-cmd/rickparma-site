@@ -100,6 +100,45 @@
     return false;
   };
 
+  // Paid requests need the exact song IDs to survive the trip through checkout.
+  // Add them to every song-payment link immediately before navigation. The
+  // Payment Hub already stores songRequestId in intent metadata, and the paid
+  // lock endpoint uses it only after the intent has actually reached PAID.
+  function normalizeLabel(value){
+    return String(value || '').trim().replace(/\s+/g,' ').toLowerCase();
+  }
+
+  function songLabel(song){
+    return `${song.t || ''}${song.a ? ' - ' + song.a : ''}`.trim();
+  }
+
+  function idsForPaidLabel(value){
+    if(!Array.isArray(window.songs || songs)) return [];
+    const parts = String(value || '').split(/\s+\+\s+BOGO:\s+/i).map(x => normalizeLabel(x)).filter(Boolean);
+    const ids = [];
+    parts.forEach(function(part){
+      const match = songs.find(function(song){ return normalizeLabel(songLabel(song)) === part; }) ||
+                    songs.find(function(song){ return normalizeLabel(song.t) === part; });
+      if(match && match.id && !ids.includes(String(match.id))) ids.push(String(match.id));
+    });
+    return ids;
+  }
+
+  document.addEventListener('click', function(event){
+    const link = event.target && event.target.closest ? event.target.closest('a[href]') : null;
+    if(!link) return;
+    try{
+      const url = new URL(link.href, location.href);
+      if(url.searchParams.get('mode') !== 'song' || !url.searchParams.get('song')) return;
+      if(url.searchParams.get('songRequestId')) return;
+      const ids = idsForPaidLabel(url.searchParams.get('song'));
+      if(ids.length){
+        url.searchParams.set('songRequestId', ids.join(','));
+        link.href = url.toString();
+      }
+    }catch(_){}
+  }, true);
+
   // The original roulette code used Math.random() < 1/7 on every spin. That is
   // a 1-in-7 probability, not a one-per-seven limit. Ask the server for the next
   // position in a shared seven-spin cycle, then feed that controlled outcome into
