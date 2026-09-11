@@ -132,8 +132,6 @@
     const overlay = document.getElementById('songRequestsClosedOverlay');
     if(overlay) overlay.classList.add('show');
 
-    // Stop any currently visible roulette video immediately. The overlay blocks
-    // the rest of the UI, but pausing media prevents a hidden spin from continuing.
     const rouletteVideo = document.getElementById('rouletteVideo');
     if(rouletteVideo){
       try{ rouletteVideo.pause(); }catch(_){}
@@ -152,29 +150,24 @@
     if(checking) return;
     checking = true;
     try{
-      const res = await fetch(`${PROXY_BASE}/songs?liveStatus=${Date.now()}`, { cache:'no-store' });
+      const res = await fetch(`${PROXY_BASE}/songs`, { cache:'no-store' });
       if(!res.ok) throw new Error('status ' + res.status);
       const data = await res.json();
       const record = (data && data.record) || {};
       if(record.songRequestLive === false) showClosed();
       else showOpen();
     }catch(err){
-      // A temporary network failure should not falsely shut the app down.
       console.warn('Song request live-status check failed', err);
     }finally{
       checking = false;
     }
   }
 
-  // If Rick closes requests while this page is in the background, update it as
-  // soon as the guest comes back instead of waiting for the next polling tick.
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState === 'visible') checkStatus();
   });
   window.addEventListener('focus', checkStatus);
 
-  // Defense in depth: once the page knows requests are closed, swallow any click
-  // that somehow lands outside the full-screen overlay.
   document.addEventListener('click', function(event){
     if(!requestsClosed) return;
     const overlay = document.getElementById('songRequestsClosedOverlay');
