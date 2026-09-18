@@ -1,0 +1,29 @@
+name: Install EPK show option flyers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'epk-show-assets-trigger.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact show option flyers
+        run: |
+          curl -L --fail --retry 3 -o epk-show-midnight-soul.png "https://at.adobe.com/TWzYD9zLF6kMd5g4"
+          curl -L --fail --retry 3 -o epk-show-live-top40.png "https://at.adobe.com/tSR6X8AaI5psiX43"
+          file epk-show-midnight-soul.png epk-show-live-top40.png
+          ls -lh epk-show-midnight-soul.png epk-show-live-top40.png
+      - name: Commit flyers
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add epk-show-midnight-soul.png epk-show-live-top40.png
+          git diff --cached --quiet || git commit -m "Add EPK current show option flyers"
+          git push
