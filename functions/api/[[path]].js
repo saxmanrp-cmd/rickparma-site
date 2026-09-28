@@ -335,21 +335,26 @@ async function fulfillSongRequest(env, intent) {
   }
 }
 
-// Sends Rick an SMS only after a tip payment is confirmed PAID. Reuses the
-// same proven Twilio alert endpoint as Song Request, so no new credentials or
-// browser-side trust are introduced.
+// Sends Rick an SMS only after a tip payment is confirmed PAID. This uses the
+// exact-message SMS service so Song Request's formatter remains untouched.
 async function fulfillTip(env, intent) {
   try {
-    const params = new URLSearchParams();
+    if (!env.SMS_BLAST_ADMIN_TOKEN || !env.TIP_NOTIFICATION_PHONE) {
+      throw new Error("Tip SMS is not configured");
+    }
+
     const dollars = (Number(intent.amountCents || 0) / 100).toFixed(2);
     const amount = `$${dollars.endsWith(".00") ? dollars.slice(0, -3) : dollars}`;
     const tipper = intent.customerName || "Someone";
-    params.append("type", "tip");
-    params.append("message", `${tipper} sent a ${amount} Tip.`);
+    const message = `${tipper} sent a ${amount} Tip.`;
 
-    const response = await fetch(SONG_ALERT_URL, {
+    const response = await fetch(`${SMS_BLAST_URL}/api/conversations/reply`, {
       method: "POST",
-      body: params
+      headers: {
+        "content-type": "application/json",
+        "X-Admin-Token": env.SMS_BLAST_ADMIN_TOKEN
+      },
+      body: JSON.stringify({ phone: env.TIP_NOTIFICATION_PHONE, message })
     });
     if (!response.ok) throw new Error(`Tip SMS alert failed with ${response.status}`);
     return "FULFILLED";
