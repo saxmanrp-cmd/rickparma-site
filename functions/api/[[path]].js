@@ -358,7 +358,10 @@ async function fulfillTip(env, intent) {
       },
       body: JSON.stringify({ phone, message })
     });
-    if (!response.ok) throw new Error(`Tip SMS alert failed with ${response.status}`);
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error(`Tip SMS alert failed with ${response.status}: ${detail}`);
+    }
     return "FULFILLED";
   } catch (err) {
     console.error("fulfillTip error", intent.id, err);
