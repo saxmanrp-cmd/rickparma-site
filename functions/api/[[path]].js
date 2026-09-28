@@ -337,7 +337,7 @@ async function fulfillSongRequest(env, intent) {
 
 // Sends Rick an SMS only after a tip payment is confirmed PAID. This uses the
 // exact-message SMS service so Song Request's formatter remains untouched.
-async function fulfillTip(env, intent) {
+async function fulfillTip(env, intent, rethrow = false) {
   try {
     if (!env.SMS_BLAST_ADMIN_TOKEN || !env.TIP_NOTIFICATION_PHONE) {
       throw new Error("Tip SMS is not configured");
@@ -365,6 +365,7 @@ async function fulfillTip(env, intent) {
     return "FULFILLED";
   } catch (err) {
     console.error("fulfillTip error", intent.id, err);
+    if (rethrow) throw err;
     return "ERROR";
   }
 }
@@ -380,7 +381,15 @@ async function retryFulfillment(request, env) {
     return json({ error: "No failed paid fulfillment found." }, 409);
   }
 
-  await runFulfillment(env, intent);
+  await fulfillTip(env, intent, true);
+  await insertEvent(env, {
+    intentId: intent.id,
+    eventType: "FULFILLMENT_FULFILLED",
+    provider: intent.provider,
+    amountCents: intent.amountCents,
+    payload: { type: intent.type, source: "secure_retry" }
+  });
+  await markFulfillment(env, intent.id, "FULFILLED");
   const updated = await getIntent(env, intent.id);
   return json({ ok: updated.fulfillmentStatus === "FULFILLED", fulfillmentStatus: updated.fulfillmentStatus });
 }
