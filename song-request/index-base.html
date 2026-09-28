@@ -881,6 +881,7 @@ const APPLE_GPAY_NUMBER = "773-209-1124";
 let DEFAULT_PRICES = { general: 5 };
 let prices = { ...DEFAULT_PRICES };
 let songs = [];
+let powerSongsAvailable = false;
 let ALL_TAGS = [];
 const POLL_BIN_ID = "6a65070cda38895dfe8f39bf";
 let pollPollingTimer = null;
@@ -893,6 +894,30 @@ let sortMode = "title-asc";
 let requestedMap = {};
 let spinEnabled = true;
 let smsRequestsEnabled = true;
+let songRefreshTimer = null;
+
+function applySongRecord(record){
+  powerSongsAvailable = record.powerSongsAvailable === true;
+  songs = (record.songs || []).filter(song => powerSongsAvailable || song.powerSong !== true);
+  prices = { ...DEFAULT_PRICES, ...(record.prices || {}) };
+  spinEnabled = record.spinEnabled !== false;
+  smsRequestsEnabled = record.smsRequestsEnabled !== false;
+  ALL_TAGS = [...new Set(songs.flatMap(s => s.tags || []))].sort();
+  if(activeTag && !ALL_TAGS.includes(activeTag)) activeTag = null;
+  renderBubbles();
+  renderChips();
+  renderList();
+}
+
+async function refreshSongs(){
+  try{
+    const res = await fetch(`${PROXY_BASE}/songs`, { cache: 'no-store' });
+    const data = await res.json();
+    applySongRecord(data.record || {});
+  } catch(err){
+    console.error('Song availability refresh failed:', err);
+  }
+}
 
 async function loadSongs(){
   if(!BIN_ID){
@@ -903,18 +928,13 @@ async function loadSongs(){
     const res = await fetch(`${PROXY_BASE}/songs`);
     const data = await res.json();
     const record = data.record || {};
-    songs = record.songs || [];
-    prices = { ...DEFAULT_PRICES, ...(record.prices || {}) };
-    spinEnabled = record.spinEnabled !== false; smsRequestsEnabled = record.smsRequestsEnabled !== false;
-    ALL_TAGS = [...new Set(songs.flatMap(s => s.tags || []))].sort();
+    applySongRecord(record);
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('homeScreen').style.display = 'block';
-    renderBubbles();
-    renderChips();
-    renderList();
     startPollChecking();
     loadRequestedSongs();
     setInterval(loadRequestedSongs, 20000);
+    if(!songRefreshTimer) songRefreshTimer = setInterval(refreshSongs, 10000);
   } catch(err){
     console.error(err);
     document.getElementById('loadingState').innerHTML = `Couldn't load the song list. Check your connection and refresh.`;
@@ -1016,7 +1036,7 @@ function startPollChecking(){if(!POLL_BIN_ID)return;checkForLivePoll();pollPolli
 async function fetchPollData(){const res=await fetch(`${PROXY_BASE}/polls`);const data=await res.json();return data.record||{polls:[],activePollId:null};}
 async function checkForLivePoll(){try{const record=await fetchPollData();const activePoll=(record.polls||[]).find(p=>p.id===record.activePollId&&p.status==='live');if(!activePoll){currentPollId=null;pollDismissed=false;document.getElementById('pollTakeover').style.display='none';return;}if(activePoll.id!==currentPollId)pollDismissed=false;currentPollId=activePoll.id;hasVotedThisPoll=!!localStorage.getItem('voted_poll_'+activePoll.id);renderPollTakeover(activePoll);if(!pollDismissed)document.getElementById('pollTakeover').style.display='flex';}catch(err){console.error('Poll check failed:',err);}}
 function dismissPollTakeover(){pollDismissed=true;document.getElementById('pollTakeover').style.display='none';}
-function renderPollTakeover(poll){document.getElementById('pollQuestionText').textContent=poll.question;const area=document.getElementById('pollOptionsArea'),totalVotes=poll.options.reduce((sum,o)=>sum+(o.votes||0),0);const optionsHtml=poll.options.map((opt,i)=>{const song=songs.find(s=>s.id===opt.songId),label=opt.label||(song?song.t+(song.a?' — '+song.a:''):'Unknown song'),pct=totalVotes>0?Math.round(((opt.votes||0)/totalVotes)*100):0,votedForThis=hasVotedThisPoll&&localStorage.getItem('voted_poll_'+poll.id)===String(i),showResults=hasVotedThisPoll,fillHtml=showResults?`<div class="poll-option-fill" style="width:${pct}%;"></div>`:'',pctHtml=showResults?`<span class="poll-option-pct">${pct}%</span>`:'',clickAttr=hasVotedThisPoll?'':`onclick="castVote('${poll.id}', ${i})"`,requestLinkText=opt.label?`Want a specific song instead? Request one — $${prices.general}`:`Want this one anyway? Request it — $${prices.general}`;return `<div class="poll-option${votedForThis?' voted-for':''}" ${clickAttr}>${fillHtml}<div class="poll-option-content"><span class="poll-option-label">${escapeHtml(label)}</span>${pctHtml}</div></div>${hasVotedThisPoll&&opt.songId?`<div class="poll-request-link" onclick="event.stopPropagation(); openSheet('${opt.songId}')">${requestLinkText}</div>`:''}`;}).join('');area.innerHTML=optionsHtml+(hasVotedThisPoll?`<div class="poll-voted-note">✓ Your vote is in — thanks!</div><div class="poll-continue-btn" onclick="dismissPollTakeover()">Continue Browsing</div>`:'');}
+function renderPollTakeover(poll){document.getElementById('pollQuestionText').textContent=poll.question;const area=document.getElementById('pollOptionsArea'),visibleOptions=poll.options.map((opt,i)=>({opt,i})).filter(({opt})=>!opt.songId||songs.some(s=>s.id===opt.songId)),totalVotes=visibleOptions.reduce((sum,item)=>sum+(item.opt.votes||0),0);const optionsHtml=visibleOptions.map(({opt,i})=>{const song=songs.find(s=>s.id===opt.songId),label=opt.label||(song?song.t+(song.a?' — '+song.a:''):'Unknown song'),pct=totalVotes>0?Math.round(((opt.votes||0)/totalVotes)*100):0,votedForThis=hasVotedThisPoll&&localStorage.getItem('voted_poll_'+poll.id)===String(i),showResults=hasVotedThisPoll,fillHtml=showResults?`<div class="poll-option-fill" style="width:${pct}%;"></div>`:'',pctHtml=showResults?`<span class="poll-option-pct">${pct}%</span>`:'',clickAttr=hasVotedThisPoll?'':`onclick="castVote('${poll.id}', ${i})"`,requestLinkText=opt.label?`Want a specific song instead? Request one — $${prices.general}`:`Want this one anyway? Request it — $${prices.general}`;return `<div class="poll-option${votedForThis?' voted-for':''}" ${clickAttr}>${fillHtml}<div class="poll-option-content"><span class="poll-option-label">${escapeHtml(label)}</span>${pctHtml}</div></div>${hasVotedThisPoll&&opt.songId?`<div class="poll-request-link" onclick="event.stopPropagation(); openSheet('${opt.songId}')">${requestLinkText}</div>`:''}`;}).join('');area.innerHTML=optionsHtml+(hasVotedThisPoll?`<div class="poll-voted-note">✓ Your vote is in — thanks!</div><div class="poll-continue-btn" onclick="dismissPollTakeover()">Continue Browsing</div>`:'');}
 async function castVote(pollId,optionIndex){if(hasVotedThisPoll)return;hasVotedThisPoll=true;localStorage.setItem('voted_poll_'+pollId,String(optionIndex));try{const record=await fetchPollData(),poll=(record.polls||[]).find(p=>p.id===pollId);if(poll&&poll.status==='live'){poll.options[optionIndex].votes=(poll.options[optionIndex].votes||0)+1;await fetch(`${PROXY_BASE}/polls`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(record)});}}catch(err){console.error('Vote failed to save:',err);}checkForLivePoll();}
 loadSongs();
 </script>
