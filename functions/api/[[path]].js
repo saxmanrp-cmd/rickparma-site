@@ -347,6 +347,8 @@ async function fulfillTip(env, intent) {
     const amount = `$${dollars.endsWith(".00") ? dollars.slice(0, -3) : dollars}`;
     const tipper = intent.customerName || "Someone";
     const message = `${tipper} sent a ${amount} Tip.`;
+    const phoneDigits = String(env.TIP_NOTIFICATION_PHONE).replace(/\D/g, "");
+    const phone = phoneDigits.length === 10 ? `+1${phoneDigits}` : `+${phoneDigits}`;
 
     const response = await fetch(`${SMS_BLAST_URL}/api/conversations/reply`, {
       method: "POST",
@@ -354,7 +356,7 @@ async function fulfillTip(env, intent) {
         "content-type": "application/json",
         "X-Admin-Token": env.SMS_BLAST_ADMIN_TOKEN
       },
-      body: JSON.stringify({ phone: env.TIP_NOTIFICATION_PHONE, message })
+      body: JSON.stringify({ phone, message })
     });
     if (!response.ok) throw new Error(`Tip SMS alert failed with ${response.status}`);
     return "FULFILLED";
@@ -362,6 +364,22 @@ async function fulfillTip(env, intent) {
     console.error("fulfillTip error", intent.id, err);
     return "ERROR";
   }
+}
+
+async function retryFulfillment(request, env) {
+  if (!requireBearer(request, env.FULFILLMENT_RETRY_TOKEN)) {
+    return json({ error: "Unauthorized." }, 401);
+  }
+
+  const body = await request.json();
+  const intent = await getIntent(env, safeString(body.intentId, 100));
+  if (!intent || intent.status !== "PAID" || intent.fulfillmentStatus !== "ERROR") {
+    return json({ error: "No failed paid fulfillment found." }, 409);
+  }
+
+  await runFulfillment(env, intent);
+  const updated = await getIntent(env, intent.id);
+  return json({ ok: updated.fulfillmentStatus === "FULFILLED", fulfillmentStatus: updated.fulfillmentStatus });
 }
 
 // Creates the Diamond Method student account only once payment is confirmed —
@@ -1153,6 +1171,10 @@ export async function onRequest(context) {
 
     if (path === "/admin/transactions" && request.method === "GET") {
       return await listTransactions(request, env);
+    }
+
+    if (path === "/admin/retry-fulfillment" && request.method === "POST") {
+      return await retryFulfillment(request, env);
     }
 
     return json({ error: "Not found." }, 404);
