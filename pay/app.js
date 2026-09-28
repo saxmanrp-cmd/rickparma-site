@@ -16,7 +16,9 @@ const passwordInput = $("#password");
 const confirmPasswordFieldWrap = $("#confirm-password-field-wrap");
 const confirmPasswordInput = $("#confirm-password");
 const nameInput = $("#customer-name");
+const emailFieldWrap = $("#email-field-wrap");
 const emailInput = $("#customer-email");
+const noteFieldWrap = $("#note-field-wrap");
 const noteInput = $("#note");
 const continueButton = $("#continue-button");
 const statusEl = $("#status");
@@ -82,12 +84,16 @@ function setModeUI(mode) {
   songFieldWrap.classList.add("hidden");
   passwordFieldWrap.classList.add("hidden");
   confirmPasswordFieldWrap.classList.add("hidden");
+  emailFieldWrap.classList.remove("hidden");
+  noteFieldWrap.classList.remove("hidden");
   emailInput.required = false;
 
   if (mode === "tip") {
     pageTitle.textContent = "TIP RICK";
     pageSubtitle.textContent = "Thank you for supporting the music.";
     quickAmounts.classList.add("hidden");
+    emailFieldWrap.classList.add("hidden");
+    noteFieldWrap.classList.add("hidden");
   } else if (mode === "song") {
     pageTitle.textContent = "SONG REQUEST";
     pageSubtitle.textContent = "Send your request and payment together.";
@@ -142,10 +148,13 @@ function escapeHtml(value) {
 async function createPublicIntent(mode) {
   const body = {
     type: mode === "song" ? "song_request" : mode === "vocal" ? "vocal_tutorial" : "tip",
-    customerName: nameInput.value.trim(),
-    customerEmail: emailInput.value.trim(),
-    note: noteInput.value.trim()
+    customerName: nameInput.value.trim()
   };
+
+  if (mode !== "tip") {
+    body.customerEmail = emailInput.value.trim();
+    body.note = noteInput.value.trim();
+  }
 
   if (mode === "tip" || mode === "song") {
     body.amountCents = dollarsToCents(amountInput.value);

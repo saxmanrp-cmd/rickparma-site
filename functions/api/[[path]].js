@@ -341,14 +341,11 @@ async function fulfillSongRequest(env, intent) {
 async function fulfillTip(env, intent) {
   try {
     const params = new URLSearchParams();
-    const amount = `$${(Number(intent.amountCents || 0) / 100).toFixed(2)}`;
+    const dollars = (Number(intent.amountCents || 0) / 100).toFixed(2);
+    const amount = `$${dollars.endsWith(".00") ? dollars.slice(0, -3) : dollars}`;
     const tipper = intent.customerName || "Someone";
-    const provider = intent.provider ? ` via ${intent.provider === "square" ? "Square" : intent.provider === "paypal" ? "PayPal" : intent.provider}` : "";
-    const note = intent.description ? ` — ${intent.description}` : "";
-
-    params.append("name", `TIP from ${tipper}`);
-    params.append("song", `${amount} TIP${provider}${note}`);
-    params.append("outcome", "PAID");
+    params.append("type", "tip");
+    params.append("message", `${tipper} sent a ${amount} Tip.`);
 
     const response = await fetch(SONG_ALERT_URL, {
       method: "POST",
