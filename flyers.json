@@ -59,10 +59,13 @@
     ]
   },
   {
-    "src": "https://rickparma.com/media/1788642768295-copy_A1C11C76-D279-4FAB-8EE5-FEF53E4CAD42.mp4",
-    "name": "Gardena",
-    "dates": [
-      "2026-09-26"
-    ]
+    "src": "https://rickparma.com/media/1791400512709-copy_62F9F145-4105-45B4-852B-A7454BE5C2BD.mp4",
+    "name": "Toga NY",
+    "dates": []
+  },
+  {
+    "src": "https://rickparma.com/media/1791400677912-copy_C3490A48-DBC2-4FF0-BA7F-F3DA17F968CF.mp4",
+    "name": "Toga SD",
+    "dates": []
   }
 ]
