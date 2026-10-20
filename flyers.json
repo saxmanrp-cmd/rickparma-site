@@ -40,14 +40,6 @@
     ]
   },
   {
-    "src": "https://saxmanrp-cmd.github.io/rickparma-site/media/1785967951446-copy_68120930-D5F7-4C36-A242-808B2C45CFCF.mov",
-    "name": "Tommy",
-    "dates": [
-      "2026-11-15",
-      "2026-11-22"
-    ]
-  },
-  {
     "src": "https://rickparma.com/media/1791400512709-copy_62F9F145-4105-45B4-852B-A7454BE5C2BD.mp4",
     "name": "Toga NY",
     "dates": [
@@ -59,6 +51,21 @@
     "name": "Toga SD",
     "dates": [
       "2026-10-27"
+    ]
+  },
+  {
+    "src": "https://rickparma.com/media/1792531720004-copy_81E241E4-33C7-475C-8870-56F15AAD254D.mp4",
+    "name": "Jazzy Blu",
+    "dates": [
+      "2026-11-22"
+    ]
+  },
+  {
+    "src": "https://rickparma.com/media/1792533204052-copy_D6BCF8F2-CF3F-4EDD-9AA0-6708E7696A45.mp4",
+    "name": "Tommy",
+    "dates": [
+      "2026-11-15",
+      "2026-11-22"
     ]
   }
 ]
