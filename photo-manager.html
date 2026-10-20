@@ -810,7 +810,14 @@
     if (!GH_TOKEN) throw new Error("Connect your GitHub token first (tap the sync status at top).");
     var base = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO;
     var path = "flyers.json";
-    var payload = photos.map(function(p) { return { src: p.src, name: p.name || "", dates: p.dates || [] }; });
+    var payload = photos.map(function(p) {
+      return {
+        src: p.src,
+        name: p.name || "",
+        dates: p.dates || [],
+        eventIds: Array.isArray(p.eventIds) ? p.eventIds : []
+      };
+    });
     var content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
     var sha = null;
