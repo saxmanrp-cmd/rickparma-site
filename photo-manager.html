@@ -212,8 +212,8 @@
   // ── Calendar config (same public-restricted API key used on the live site) ──
   var CAL_API_KEY = "AIzaSyCea0FN28V6xlJtKaKYJhwLI3xa9v8Pr6s";
   var CAL_ID = "ee79e1557e817dd0e6986fac5545e97cf36f3a9537862731c7e9adc12ea58186@group.calendar.google.com";
-  var calendarEvents = []; // [{dateKey:'YYYY-MM-DD', label:'JUL 31 · Soundz Seafood Bar'}]
-  var selectedDates = [];  // dateKeys currently checked in the picker for the item being added
+  var calendarEvents = []; // [{id, dateKey, label}] — event IDs keep same-day shows distinct
+  var selectedEventIds = []; // Google Calendar event IDs currently checked
 
   var photos = [];
   var dragSrcIndex = null;
@@ -342,8 +342,11 @@
           d = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
         }
         if (!d) return null;
-        var shortTitle = (ev.summary || "Show").trim().split(/\s+/).slice(0, 2).join(" ");
-        return { dateKey: fmtDateKey(d), label: MONTHS[d.getMonth()] + " " + d.getDate() + " · " + shortTitle };
+        var shortTitle = (ev.summary || "Show").trim();
+        var timeLabel = ev.start && ev.start.dateTime
+          ? d.toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" })
+          : "All day";
+        return { id: String(ev.id || ""), dateKey: fmtDateKey(d), label: MONTHS[d.getMonth()] + " " + d.getDate() + " · " + timeLabel + " · " + shortTitle };
       }).filter(Boolean);
     } catch(e) {
       calendarEvents = [];
@@ -357,13 +360,13 @@
       return;
     }
     el.innerHTML = calendarEvents.map(function(ev) {
-      var sel = selectedDates.indexOf(ev.dateKey) !== -1;
-      return '<span class="date-chip' + (sel ? " selected" : "") + '" onclick="toggleDateChip(\'' + ev.dateKey + '\')">' + ev.label + "</span>";
+      var sel = selectedEventIds.indexOf(ev.id) !== -1;
+      return '<span class="date-chip' + (sel ? " selected" : "") + '" onclick="toggleDateChip(\'' + ev.id.replace(/'/g, "\\'") + '\')">' + ev.label + "</span>";
     }).join("");
   }
-  function toggleDateChip(dateKey) {
-    var idx = selectedDates.indexOf(dateKey);
-    if (idx === -1) selectedDates.push(dateKey); else selectedDates.splice(idx, 1);
+  function toggleDateChip(eventId) {
+    var idx = selectedEventIds.indexOf(eventId);
+    if (idx === -1) selectedEventIds.push(eventId); else selectedEventIds.splice(idx, 1);
     renderDatePicker();
   }
 
@@ -594,7 +597,7 @@
         wrap.innerHTML = '<img src="' + url + '" alt="" onerror="showPreviewError()" style="width:100%;max-height:280px;object-fit:contain;display:block;border-radius:8px;">';
       }
             document.getElementById("input-name").value = "";
-      selectedDates = [];
+      selectedEventIds = [];
       renderDatePicker();
       document.getElementById("previewArea").classList.add("visible");
       setPickingMode(true);
@@ -625,7 +628,7 @@
       wrap.innerHTML = '<img src="' + src + '" alt="" onerror="showPreviewError()" style="width:100%;max-height:280px;object-fit:contain;display:block;border-radius:8px;">';
     }
     document.getElementById("previewArea").classList.add("visible");
-    selectedDates = [];
+    selectedEventIds = [];
     renderDatePicker();
     setPickingMode(true);
     document.getElementById("input-name").focus();
@@ -645,7 +648,9 @@
    wrap.innerHTML = '<img src="' + p.src + '" alt="" onerror="showPreviewError()" style="width:100%;max-height:280px;object-fit:contain;display:block;border-radius:8px;">';
   }
   document.getElementById("input-name").value = p.name || "";
-  selectedDates = (p.dates || []).slice();
+  selectedEventIds = Array.isArray(p.eventIds) && p.eventIds.length
+    ? p.eventIds.slice()
+    : calendarEvents.filter(function(ev) { return (p.dates || []).indexOf(ev.dateKey) !== -1; }).map(function(ev) { return ev.id; });
   renderDatePicker();
   document.getElementById("previewArea").classList.add("visible");
   setPickingMode(true);
@@ -666,7 +671,7 @@
     pendingSrc = "";
    editingIndex = null;
    document.getElementById("btnSave").textContent = "Save";
-    selectedDates = [];
+    selectedEventIds = [];
     renderDatePicker();
     setPickingMode(false);
   }
@@ -676,16 +681,18 @@
     if (!src) { alert("No image to save."); return; }
     if (editingIndex !== null && editingIndex >= 0 && editingIndex < photos.length) {
      photos[editingIndex].name = name;
-     photos[editingIndex].dates = selectedDates.slice();
+     photos[editingIndex].eventIds = selectedEventIds.slice();
+     photos[editingIndex].dates = calendarEvents.filter(function(ev) { return selectedEventIds.indexOf(ev.id) !== -1; }).map(function(ev) { return ev.dateKey; }).filter(function(date, i, all) { return all.indexOf(date) === i; });
     } else {
      for (var j=0; j<photos.length; j++) { if (photos[j].src===src) { alert("Already in gallery."); return; } }
-     photos.push({ src: src, name: name, dates: selectedDates.slice() });
+     var selectedDates = calendarEvents.filter(function(ev) { return selectedEventIds.indexOf(ev.id) !== -1; }).map(function(ev) { return ev.dateKey; }).filter(function(date, i, all) { return all.indexOf(date) === i; });
+     photos.push({ src: src, name: name, dates: selectedDates, eventIds: selectedEventIds.slice() });
     }
     document.getElementById("input-url").value = "";
     document.getElementById("input-name").value = "";
     document.getElementById("previewArea").classList.remove("visible");
     pendingSrc = "";
-    selectedDates = [];
+    selectedEventIds = [];
     renderDatePicker();
     setPickingMode(false);
    editingIndex = null;

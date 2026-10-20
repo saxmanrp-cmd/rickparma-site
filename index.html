@@ -940,7 +940,7 @@
         if (shareTimeStr) shareLines.push(shareTimeStr);
         if (e.description) shareLines.push(e.description);
         var shareText = shareLines.join('\n');
-        var flyerSrc = currentFlyerMap[fmtDateKey(e.start)];
+        var flyerSrc = flyerForEvent(currentFlyerMap, e);
         var canTryFileShare = !!(flyerSrc && navigator.share && navigator.canShare);
 
         function shareTextOnly() {
@@ -988,11 +988,21 @@
     function buildFlyerMap(flyers) {
       var map = {};
       (flyers || []).forEach(function(f) {
-        (f.dates || []).forEach(function(dateKey) {
-          if (!map[dateKey]) map[dateKey] = f.src;
-        });
+        if (Array.isArray(f.eventIds) && f.eventIds.length) {
+          f.eventIds.forEach(function(eventId) {
+            if (!map['event:' + eventId]) map['event:' + eventId] = f.src;
+          });
+        } else {
+          (f.dates || []).forEach(function(dateKey) {
+            if (!map['date:' + dateKey]) map['date:' + dateKey] = f.src;
+          });
+        }
       });
       return map;
+    }
+
+    function flyerForEvent(flyerMap, event) {
+      return flyerMap['event:' + event.id] || flyerMap['date:' + fmtDateKey(event.start)] || '';
     }
 
     function fetchEvents() {
@@ -1009,6 +1019,7 @@
         var data = results[0], flyers = results[1];
         var events = (data.items || []).map(function(ev) {
           return {
+            id: String(ev.id || ''),
             title: ev.summary || 'Show',
             location: ev.location || '',
             description: ev.description || '',
@@ -1042,7 +1053,7 @@
         var metaParts = [dow];
         if (timeStr) metaParts.push(timeStr);
         if (e.location) metaParts.push(e.location);
-        var flyer = flyerMap[fmtDateKey(d)];
+        var flyer = flyerForEvent(flyerMap, e);
         var flyerIsVideo = flyer && isVideoSrc(flyer);
         var flyerMedia = flyer
           ? (flyerIsVideo
@@ -1107,7 +1118,7 @@
     function openFlyerFull() {
       var e = currentEvents[currentDetailIdx];
       if (!e) return;
-      var flyer = currentFlyerMap[fmtDateKey(e.start)];
+      var flyer = flyerForEvent(currentFlyerMap, e);
       if (!flyer) return;
       var overlay = ensureFlyerFullOverlay();
       var isVideo = isVideoSrc(flyer);
@@ -1206,7 +1217,7 @@
       var dow = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()];
       var dateStr = MONTH_NAMES[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
       var timeStr = e.allDay ? '' : d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) + (e.end && e.end.getTime() !== d.getTime() ? ' – ' + e.end.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) : '');
-      var flyer = currentFlyerMap[fmtDateKey(d)];
+      var flyer = flyerForEvent(currentFlyerMap, e);
       var flyerIsVideo = flyer && isVideoSrc(flyer);
       body.innerHTML =
         (flyer ? '<div class="cal-detail-flyer">' + (flyerIsVideo
