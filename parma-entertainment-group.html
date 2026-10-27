@@ -43,7 +43,7 @@ section{padding:62px 0;border-bottom:1px solid rgba(255,255,255,.06)}
 .rate-group{border:1px solid var(--line);border-radius:16px;padding:18px;background:rgba(255,255,255,.02)}
 .rate-group h4{font-size:1.1rem;margin:0 0 2px}.rate-minimum{font-size:.8rem;color:var(--gold2);font-weight:700;margin-bottom:10px}
 .rate-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;border-top:1px solid var(--line);padding:10px 0;font-size:.92rem}
-.rate-row strong{white-space:nowrap;color:var(--gold2)}.rate-note{font-size:.9rem}.small-venue{margin-top:14px}
+.rate-row strong{white-space:nowrap;color:var(--gold2)}.rate-note{font-size:.9rem}.small-venue{grid-column:1/-1}.small-venue .rate-note{margin-top:10px}
 .contact{background:linear-gradient(180deg,transparent,rgba(213,173,102,.08));padding-bottom:72px}
 .contact-box{border:1px solid rgba(213,173,102,.34);border-radius:24px;padding:32px;background:linear-gradient(145deg,#111821,#090c11)}
 .contact-box h2{font-size:clamp(2.3rem,5vw,4.5rem);line-height:.94;letter-spacing:-.045em;margin:8px 0 12px}
@@ -113,9 +113,14 @@ footer{padding:28px 0 38px;color:var(--muted);font-size:.75rem;text-align:center
     </div>
     <div class="rate-sheet">
       <div class="kicker">Basic Package Rates</div>
-      <h3>DJ & MC Packages</h3>
-      <p class="rate-intro">Starting package rates for private events, weddings and corporate events. All packages have a 3-hour minimum.</p>
+      <h3>Musician/DJ/MC Packages</h3>
+      <p class="rate-intro">Starting package rates for private events, weddings and corporate events.</p>
       <div class="rate-grid">
+        <div class="rate-group small-venue">
+          <h4>Small Venues</h4>
+          <div class="rate-row"><span>Bars, lounges and restaurants</span><strong>$300–$500</strong></div>
+          <p class="rate-note">Depending on the day and frequency of booking.</p>
+        </div>
         <div class="rate-group">
           <h4>Private Parties & Social Events</h4>
           <div class="rate-minimum">3-hour minimum</div>
@@ -134,11 +139,6 @@ footer{padding:28px 0 38px;color:var(--muted);font-size:.75rem;text-align:center
         </div>
       </div>
       <p class="rate-note">Equipment package pricing varies based on venue size, guest count, sound requirements, lighting, setup needs and production requirements. Rates are starting guidelines and may vary based on event size, location, travel and specific client needs.</p>
-    </div>
-    <div class="rate-sheet small-venue">
-      <h3>Small Venues</h3>
-      <div class="rate-row"><span>Bars, lounges and restaurants</span><strong>$300–$500</strong></div>
-      <p class="rate-note">Depending on the day and frequency of booking.</p>
     </div>
   </div>
 </section>
