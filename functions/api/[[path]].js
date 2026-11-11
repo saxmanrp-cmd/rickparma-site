@@ -627,7 +627,7 @@ async function syncBookingInvoice(request, env) {
 // wires up: it lets a client pay a real invoice by Card/Apple Pay/PayPal through
 // Square/PayPal (verified, webhook-confirmed) instead of only the honor-system
 // Zelle/Venmo/CashApp deep links Invoice Creator already has.
-async function createInvoicePayLink(request, env) {
+async function createInvoicePayLink(request, env, requiredProfile = null) {
   const body = await request.json().catch(() => ({}));
   const invoiceId = safeString(body.invoiceId, 100);
   if (!invoiceId) return corsJson({ error: "Missing invoiceId." }, 400);
@@ -647,6 +647,7 @@ async function createInvoicePayLink(request, env) {
 
   const businessProfile = "parma-entertainment-group-llc";
   const issuerProfileId = invoice.profileId === businessProfile ? businessProfile : "rick-parma";
+  if (requiredProfile && issuerProfileId !== requiredProfile) return corsJson({ error: "Invoice belongs to a different payment profile." }, 400);
   if (body.profileId && body.profileId !== issuerProfileId) return corsJson({ error: "Invoice profile does not match." }, 400);
 
   const balanceCents = invoiceBalanceCents(invoice);
@@ -1117,7 +1118,7 @@ export async function onRequest(context) {
   const path = url.pathname.replace(/^\/api/, "") || "/";
 
   try {
-    if (path === "/invoices/pay-link" && request.method === "OPTIONS") {
+    if (["/invoices/pay-link", "/invoices/business-pay-link"].includes(path) && request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
           "access-control-allow-origin": "*",
@@ -1128,7 +1129,11 @@ export async function onRequest(context) {
     }
 
     if (path === "/invoices/pay-link" && request.method === "POST") {
-      return await createInvoicePayLink(request, env);
+      return await createInvoicePayLink(request, env, "rick-parma");
+    }
+
+    if (path === "/invoices/business-pay-link" && request.method === "POST") {
+      return await createInvoicePayLink(request, env, "parma-entertainment-group-llc");
     }
 
         if (path === "/invoices/booking-sync" && request.method === "OPTIONS") {
