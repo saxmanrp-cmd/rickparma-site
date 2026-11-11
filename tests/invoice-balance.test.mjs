@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
 
-const source = fs.readFileSync(new URL('./[[path]].js', import.meta.url), 'utf8');
+const source = fs.readFileSync(new URL('../functions/api/[[path]].js', import.meta.url), 'utf8');
 const context = vm.createContext({});
 vm.runInContext(source.replace('export async function onRequest', 'async function onRequest'), context);
 const invoiceBalanceCents = (invoice) => context.invoiceBalanceCents(invoice);
