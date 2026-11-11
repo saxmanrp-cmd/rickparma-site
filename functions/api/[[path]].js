@@ -645,10 +645,34 @@ async function createInvoicePayLink(request, env) {
   const invoice = invoices.find((inv) => inv.id === invoiceId);
   if (!invoice) return corsJson({ error: "Invoice not found." }, 404);
 
+  const businessProfile = "parma-entertainment-group-llc";
+  const issuerProfileId = invoice.profileId === businessProfile ? businessProfile : "rick-parma";
+  if (body.profileId && body.profileId !== issuerProfileId) return corsJson({ error: "Invoice profile does not match." }, 400);
+
   const balanceCents = invoiceBalanceCents(invoice);
 
   if (balanceCents <= 0) return corsJson({ error: "This invoice is already paid in full." }, 409);
   if (amountCents > balanceCents) amountCents = balanceCents;
+
+  if (issuerProfileId === businessProfile) {
+    // The saved invoice determines the issuer and charge amount. The integration
+    // key is never sent to the invoice creator or customer browser.
+    if (!env.BUSINESS_INTEGRATION_API_KEY) return corsJson({ error: "Business checkout is not configured yet." }, 503);
+    const base = "https://parma-ticket-payhub.pages.dev";
+    const hubResponse = await fetch(`${base}/api/integrations/intents`, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${env.BUSINESS_INTEGRATION_API_KEY}` },
+      body: JSON.stringify({
+        requestId: crypto.randomUUID(), type: "invoice", issuerProfileId: businessProfile,
+        amountCents, currency: "USD", title: `Invoice payment — ${invoice.clientName || "Client"}`,
+        description: invoice.eventName || "Entertainment services", reference: invoice.id,
+        customerName: invoice.clientName, customerEmail: invoice.clientEmail
+      })
+    });
+    const result = await hubResponse.json().catch(() => ({}));
+    if (!hubResponse.ok || !result.checkoutUrl) return corsJson({ error: result.error || "Business checkout is unavailable. Please try again later." }, hubResponse.ok ? 503 : hubResponse.status);
+    return corsJson({ checkoutUrl: `${base}${result.checkoutUrl}`, intent: result.intent }, 201);
+  }
 
   const intent = await insertIntent(env, {
     type: "invoice",
@@ -672,10 +696,12 @@ async function createInvoicePayLink(request, env) {
   // Builds the same message text Invoice Creator has always used for each share kind,
 // plus a link back to the client-facing invoice-creator.html view for that invoice.
 function buildInvoiceShareText(kind, invoice) {
-    const link = `${TOOLS_BASE_URL}?${kind}=${encodeURIComponent(invoice.id)}`;
-    if (kind === "sign") return `Please review and sign your invoice from Rick Parma: ${link}`;
-    if (kind === "receipt") return `Here is your invoice receipt from Rick Parma: ${link}`;
-    return `Tap to make a payment on your invoice from Rick Parma: ${link}`;
+    const profileId = invoice.profileId === "parma-entertainment-group-llc" ? invoice.profileId : "rick-parma";
+    const issuer = profileId === "rick-parma" ? "Rick Parma" : "Parma Entertainment Group LLC";
+    const link = `${TOOLS_BASE_URL}?${kind}=${encodeURIComponent(invoice.id)}&profile=${encodeURIComponent(profileId)}`;
+    if (kind === "sign") return `Please review and sign your invoice from ${issuer}: ${link}`;
+    if (kind === "receipt") return `Here is your invoice receipt from ${issuer}: ${link}`;
+    return `Tap to make a payment on your invoice from ${issuer}: ${link}`;
 }
 
 // Called directly from invoice-creator.html's Send Payment Link / Send Receipt /
@@ -697,6 +723,8 @@ async function sendInvoiceText(request, env) {
     const invoices = (data && data.record && data.record.invoices) || [];
     const invoice = invoices.find((inv) => inv.id === invoiceId);
     if (!invoice) return corsJson({ error: "Invoice not found." }, 404);
+    const profileId = invoice.profileId === "parma-entertainment-group-llc" ? invoice.profileId : "rick-parma";
+    if (body.profileId && body.profileId !== profileId) return corsJson({ error: "Invoice profile does not match." }, 400);
 
     const phone = safeString(invoice.clientPhone, 40);
     if (!phone) return corsJson({ error: "This invoice has no client phone number on file." }, 400);
