@@ -221,6 +221,13 @@ async function markFulfillment(env, intentId, status) {
   ).bind(status, nowIso(), intentId).run();
 }
 
+// Match Invoice Creator's total: event prices plus additional charges.
+// Legacy invoices without events store their amounts in lineItems alone.
+function invoiceBalanceCents(invoice) {
+  const cents = (items) => (items || []).reduce((sum, item) => sum + Math.round((Number(item.amount) || 0) * 100), 0);
+  return cents(invoice.events) + cents(invoice.lineItems) - cents(invoice.payments);
+}
+
 // Records a completed Payment Hub charge back onto the matching invoice in the
 // Invoice Manager's KV store, so Rick sees it in Invoice Creator without any
 // manual re-entry. NOTE: the KV proxy wraps reads in {record:{invoices:[...]}}
@@ -253,10 +260,10 @@ async function fulfillInvoice(env, intent) {
 
   // If this payment brings the invoice to a zero balance, text the client a
   // paid-in-full receipt at the phone number already on file for the invoice.
-  const total = (invoice.lineItems || []).reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
-  const paidSoFar = invoice.payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
-  const balance = total - paidSoFar;
-  if (balance <= 0.01 && invoice.clientPhone) {
+  const balanceCents = invoiceBalanceCents(invoice);
+  if (balanceCents <= 0 && invoice.clientPhone) {
+    const total = ((invoice.events || []).reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)
+      + (invoice.lineItems || []).reduce((s, i) => s + (parseFloat(i.amount) || 0), 0));
     try {
       const params = new URLSearchParams();
       params.append("to", invoice.clientPhone);
@@ -638,9 +645,7 @@ async function createInvoicePayLink(request, env) {
   const invoice = invoices.find((inv) => inv.id === invoiceId);
   if (!invoice) return corsJson({ error: "Invoice not found." }, 404);
 
-  const total = (invoice.lineItems || []).reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-  const paidSoFar = (invoice.payments || []).reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
-  const balanceCents = Math.round((total - paidSoFar) * 100);
+  const balanceCents = invoiceBalanceCents(invoice);
 
   if (balanceCents <= 0) return corsJson({ error: "This invoice is already paid in full." }, 409);
   if (amountCents > balanceCents) amountCents = balanceCents;
