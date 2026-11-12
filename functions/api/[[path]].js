@@ -10,6 +10,7 @@
 // server-side. The public /pay page only ever receives env.SQUARE_APP_ID,
 // env.SQUARE_LOCATION_ID and env.PAYPAL_CLIENT_ID via /api/config — none of those are secret,
 // they are meant to be public (Square/PayPal's own SDKs require them client-side).
+import { createBusinessCheckout, reconcileBusinessInvoice } from '../../lib/business-invoice.js';
 
 const ALLOWED_PUBLIC_TYPES = new Set(["tip", "song_request", "vocal_tutorial"]);
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
@@ -650,30 +651,18 @@ async function createInvoicePayLink(request, env, requiredProfile = null) {
   if (requiredProfile && issuerProfileId !== requiredProfile) return corsJson({ error: "Invoice belongs to a different payment profile." }, 400);
   if (body.profileId && body.profileId !== issuerProfileId) return corsJson({ error: "Invoice profile does not match." }, 400);
 
+  if (issuerProfileId === businessProfile) {
+    try {
+      return corsJson(await createBusinessCheckout(env, invoiceId, amountCents), 201);
+    } catch (error) {
+      return corsJson({ error: error.message || 'Business checkout is unavailable.' }, error.status || 503);
+    }
+  }
+
   const balanceCents = invoiceBalanceCents(invoice);
 
   if (balanceCents <= 0) return corsJson({ error: "This invoice is already paid in full." }, 409);
   if (amountCents > balanceCents) amountCents = balanceCents;
-
-  if (issuerProfileId === businessProfile) {
-    // The saved invoice determines the issuer and charge amount. The integration
-    // key is never sent to the invoice creator or customer browser.
-    if (!env.BUSINESS_INTEGRATION_API_KEY) return corsJson({ error: "Business checkout is not configured yet." }, 503);
-    const base = "https://parma-ticket-payhub.pages.dev";
-    const hubResponse = await fetch(`${base}/api/integrations/intents`, {
-      method: "POST",
-      headers: { "content-type": "application/json", authorization: `Bearer ${env.BUSINESS_INTEGRATION_API_KEY}` },
-      body: JSON.stringify({
-        requestId: crypto.randomUUID(), type: "invoice", issuerProfileId: businessProfile,
-        amountCents, currency: "USD", title: `Invoice payment — ${invoice.clientName || "Client"}`,
-        description: invoice.eventName || "Entertainment services", reference: invoice.id,
-        customerName: invoice.clientName, customerEmail: invoice.clientEmail
-      })
-    });
-    const result = await hubResponse.json().catch(() => ({}));
-    if (!hubResponse.ok || !result.checkoutUrl) return corsJson({ error: result.error || "Business checkout is unavailable. Please try again later." }, hubResponse.ok ? 503 : hubResponse.status);
-    return corsJson({ checkoutUrl: `${base}${result.checkoutUrl}`, intent: result.intent }, 201);
-  }
 
   const intent = await insertIntent(env, {
     type: "invoice",
@@ -1118,11 +1107,11 @@ export async function onRequest(context) {
   const path = url.pathname.replace(/^\/api/, "") || "/";
 
   try {
-    if (["/invoices/pay-link", "/invoices/business-pay-link"].includes(path) && request.method === "OPTIONS") {
+    if (["/invoices/pay-link", "/invoices/business-pay-link", "/invoices/business-status"].includes(path) && request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
           "access-control-allow-origin": "*",
-          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-allow-methods": "GET, POST, OPTIONS",
           "access-control-allow-headers": "Content-Type"
         }
       });
@@ -1134,6 +1123,16 @@ export async function onRequest(context) {
 
     if (path === "/invoices/business-pay-link" && request.method === "POST") {
       return await createInvoicePayLink(request, env, "parma-entertainment-group-llc");
+    }
+
+    if (path === "/invoices/business-status" && request.method === "GET") {
+      const invoiceId = safeString(new URL(request.url).searchParams.get('invoiceId'), 100);
+      if (!invoiceId) return corsJson({ error: 'Missing invoiceId.' }, 400);
+      try {
+        return corsJson(await reconcileBusinessInvoice(env, invoiceId));
+      } catch (error) {
+        return corsJson({ error: error.message || 'Business payment status is unavailable.' }, error.status || 503);
+      }
     }
 
         if (path === "/invoices/booking-sync" && request.method === "OPTIONS") {
