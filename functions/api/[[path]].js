@@ -744,6 +744,84 @@ async function sendInvoiceText(request, env) {
     return corsJson({ ok: true, phone, message });
 }
 
+// The client signs through this endpoint so the notification follows a saved
+// signature, rather than relying on an untrusted browser-side SMS request.
+export async function signInvoice(request, env, fetcher = fetch) {
+  const body = await request.json().catch(() => ({}));
+  const invoiceId = safeString(body.invoiceId, 100);
+  const profileId = safeString(body.profileId, 80) || 'rick-parma';
+  const dateId = safeString(body.dateId, 100);
+  const name = safeString(body.name, 100);
+  const date = safeString(body.date, 10);
+  const image = body.signature;
+  if (!invoiceId || !name || !/^\d{4}-\d{2}-\d{2}$/.test(date || '') ||
+      typeof image !== 'string' || !/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(image) || image.length > 250000) {
+    return corsJson({ error: 'Valid signature, name, and date are required.' }, 400);
+  }
+
+  const response = await fetcher(`${PROXY_BASE}/invoices`);
+  if (!response.ok) return corsJson({ error: 'Could not load invoice.' }, 503);
+  const data = await response.json();
+  const invoices = (data?.record?.invoices || []);
+  const invoice = invoices.find(inv => inv.id === invoiceId &&
+    (inv.profileId === 'parma-entertainment-group-llc' ? inv.profileId : 'rick-parma') === profileId);
+  if (!invoice) return corsJson({ error: 'Invoice not found.' }, 404);
+
+  let slot = invoice;
+  let eventDate = null;
+  if (dateId) {
+    const event = (invoice.events || []).find(item => item.dateId === dateId);
+    if (!event) return corsJson({ error: 'Invoice date not found.' }, 404);
+    invoice.dateSignatures ||= {};
+    slot = invoice.dateSignatures[dateId] ||= {};
+    eventDate = event.eventDate;
+  }
+  if (slot.clientSignatureImg) return corsJson({ ok: true, alreadySigned: true, invoice });
+
+  Object.assign(slot, { clientSignatureImg: image, clientSignDate: date, clientSignedName: name });
+  const saved = await fetcher(`${PROXY_BASE}/invoices`, {
+    method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ invoices })
+  });
+  if (!saved.ok) return corsJson({ error: 'Could not save signature.' }, 503);
+
+  // A unique claim prevents double taps and repeated requests from texting twice.
+  // The table is created lazily, like the site's song spin state table.
+  try {
+    if (!env.SMS_BLAST_ADMIN_TOKEN || !env.TIP_NOTIFICATION_PHONE) throw new Error('Signature SMS is not configured');
+    await env.PAYMENT_DB.prepare(`CREATE TABLE IF NOT EXISTS invoice_signature_alerts (
+      signature_key TEXT PRIMARY KEY, status TEXT NOT NULL, created_at TEXT NOT NULL
+    )`).run();
+    const key = `${invoiceId}:${dateId || 'whole'}`;
+    const claim = await env.PAYMENT_DB.prepare(
+      "INSERT OR IGNORE INTO invoice_signature_alerts (signature_key, status, created_at) VALUES (?, 'sending', ?)"
+    ).bind(key, nowIso()).run();
+    if (claim.meta?.changes) {
+      try {
+        const phoneDigits = String(env.TIP_NOTIFICATION_PHONE).replace(/\D/g, '');
+        const phone = phoneDigits.length === 10 ? `+1${phoneDigits}` : `+${phoneDigits}`;
+        const label = invoice.invoiceNumber ? `Invoice #${invoice.invoiceNumber}` : 'An invoice';
+        const dateLabel = eventDate ? ` for ${eventDate}` : '';
+        const sms = await fetcher(`${SMS_BLAST_URL}/api/conversations/reply`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'X-Admin-Token': env.SMS_BLAST_ADMIN_TOKEN },
+          body: JSON.stringify({ phone, message: `${label}${dateLabel} was signed by ${name} (${invoice.clientName || 'client'}).` })
+        });
+        if (!sms.ok) throw new Error(`Signature SMS failed: ${sms.status}`);
+        await env.PAYMENT_DB.prepare("UPDATE invoice_signature_alerts SET status = 'sent' WHERE signature_key = ?")
+          .bind(key).run();
+      } catch (error) {
+        await env.PAYMENT_DB.prepare("DELETE FROM invoice_signature_alerts WHERE signature_key = ? AND status = 'sending'")
+          .bind(key).run();
+        throw error;
+      }
+    }
+  } catch (error) {
+    console.error('Invoice signature SMS error', invoiceId, error);
+    return corsJson({ ok: true, invoice, notificationFailed: true });
+  }
+  return corsJson({ ok: true, invoice });
+}
+
 
 // --- Square --------------------------------------------------------------
 
@@ -1107,7 +1185,7 @@ export async function onRequest(context) {
   const path = url.pathname.replace(/^\/api/, "") || "/";
 
   try {
-    if (["/invoices/pay-link", "/invoices/business-pay-link", "/invoices/business-status"].includes(path) && request.method === "OPTIONS") {
+    if (["/invoices/pay-link", "/invoices/business-pay-link", "/invoices/business-status", "/invoices/sign"].includes(path) && request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
           "access-control-allow-origin": "*",
@@ -1119,6 +1197,10 @@ export async function onRequest(context) {
 
     if (path === "/invoices/pay-link" && request.method === "POST") {
       return await createInvoicePayLink(request, env, "rick-parma");
+    }
+
+    if (path === "/invoices/sign" && request.method === "POST") {
+      return await signInvoice(request, env);
     }
 
     if (path === "/invoices/business-pay-link" && request.method === "POST") {
