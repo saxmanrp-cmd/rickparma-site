@@ -479,7 +479,7 @@
   #resultsScreen,
   #sheet{position:relative;z-index:1;}
   #modeChooser,#djRequestScreen,#modeUnavailable{position:relative;z-index:1;width:min(100% - 32px,700px);margin:22px auto;}
-  .mode-choice{display:block;width:100%;padding:25px 20px;margin:14px 0;border-radius:20px;border:1px solid var(--accent);background:var(--card-solid);color:var(--white);font:800 21px 'Lato',sans-serif;text-align:left;cursor:pointer;}
+  .mode-choice{display:block;width:100%;padding:25px 20px;margin:14px 0;border-radius:20px;border:1px solid var(--accent);background:var(--card-solid);color:var(--white);font:800 21px 'Lato',sans-serif;text-align:center;cursor:pointer;}
   .mode-choice small{display:block;margin-top:7px;font-size:14px;font-weight:500;color:var(--dim);}
   .dj-card{padding:22px;border:1px solid var(--accent);border-radius:20px;background:var(--card-solid);}
   .dj-card h2{margin:8px 0 18px;font:800 25px 'Josefin Sans',sans-serif;color:var(--white);}
@@ -845,8 +845,8 @@
 <div id="loadingState">Loading song list…</div>
 
 <div id="modeChooser" style="display:none;">
-  <button class="mode-choice" type="button" onclick="chooseRequestMode('performance')">Rick Parma performs these songs<small>Browse the performance song list by genre.</small></button>
-  <button class="mode-choice" type="button" onclick="chooseRequestMode('dj')">DJ request songs<small>Tell Rick what you want to hear.</small></button>
+  <button class="mode-choice" type="button" onclick="chooseRequestMode('performance')">Rick's Performance Set List<small>Browse the performance song list by genre.</small></button>
+  <button class="mode-choice" type="button" onclick="chooseRequestMode('dj')">DJ REQUESTS<small>Tell Rick what you want to hear.</small></button>
 </div>
 <div id="modeUnavailable" style="display:none;" class="empty-state">Song requests are unavailable right now.</div>
 <div id="djRequestScreen" style="display:none;">
@@ -861,9 +861,9 @@
     <p class="field-hint">Online artist suggestions appear as you type. You can also enter the artist yourself.</p>
     <label for="djSong">Song name *</label>
     <input id="djSong" type="text" maxlength="80" required placeholder="Song title">
-    <label for="djLink">YouTube or Spotify link (optional)</label>
+    <label for="djLink">SONG URL</label>
     <input id="djLink" type="url" maxlength="500" inputmode="url" placeholder="Paste a shared link here">
-    <p class="field-hint">On YouTube or Spotify, tap Share, copy the link, then paste it here. This is just a reference for Rick; it won't open another page.</p>
+    <p class="field-hint">If your song is on YouTube or any other online service, share the link here. Optional.</p>
     <button class="btn" type="submit" id="djSubmitBtn">Continue to Payment</button>
   </form>
 </div>
@@ -1029,7 +1029,7 @@ function submitDjRequest(event){
   if(!artist || !song){ alert('Please enter the artist and song name.'); return; }
   if(link){
     try { if(!['https:','http:'].includes(new URL(link).protocol)) throw new Error(); }
-    catch(_){ alert('Please paste a valid YouTube or Spotify share link.'); return; }
+    catch(_){ alert('Please paste a valid song URL.'); return; }
   }
   const params = new URLSearchParams({ mode:'song', dj:'1', amount:String(prices.general),
     song:`DJ: ${song} — ${artist}`.slice(0,100), djSong:song, djArtist:artist });
