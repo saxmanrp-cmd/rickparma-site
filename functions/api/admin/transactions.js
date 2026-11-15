@@ -6,7 +6,8 @@ export async function onRequestGet({request,env}){
   if(!bearer(request,env.ADMIN_API_KEY))return json({error:'Unauthorized.'},401);
   try{
     const url=new URL(request.url);const requestedLimit=Number(url.searchParams.get('limit')||200);const requestedOffset=Number(url.searchParams.get('offset')||0);const limit=Number.isFinite(requestedLimit)?Math.min(Math.max(Math.trunc(requestedLimit),1),500):200;const offset=Number.isFinite(requestedOffset)?Math.max(Math.trunc(requestedOffset),0):0;
-    const [rows,countRow]=await Promise.all([env.PAYMENT_DB.prepare('SELECT * FROM payment_intents ORDER BY created_at DESC LIMIT ? OFFSET ?').bind(limit,offset).all(),env.PAYMENT_DB.prepare('SELECT COUNT(*) AS total FROM payment_intents').first()]);
+    const paidSales="status = 'PAID' AND (type != 'song_request' OR (provider IN ('square', 'paypal') AND provider_payment_id IS NOT NULL AND provider_payment_id != ''))";
+    const [rows,countRow]=await Promise.all([env.PAYMENT_DB.prepare(`SELECT * FROM payment_intents WHERE ${paidSales} ORDER BY paid_at DESC LIMIT ? OFFSET ?`).bind(limit,offset).all(),env.PAYMENT_DB.prepare(`SELECT COUNT(*) AS total FROM payment_intents WHERE ${paidSales}`).first()]);
     const transactions=(rows.results||[]).map(serialize);
     // Payment-method enrichment is best-effort. A malformed/legacy event must never block the manager.
     try{
