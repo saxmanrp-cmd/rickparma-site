@@ -194,7 +194,10 @@ async function claimWebhookEvent(env, { id, provider, eventType, intentId, paylo
 async function markIntentPaid(env, { intentId, provider, paymentId = null, orderId = null }) {
   const existing = await getIntent(env, intentId);
   if (!existing) throw new Error("Payment intent not found.");
-  if (existing.status === "PAID") return existing;
+  if (existing.status === "PAID") {
+    if (existing.fulfillmentStatus === "ERROR") await runFulfillment(env, existing);
+    return existing;
+  }
 
   const paidAt = nowIso();
   await env.PAYMENT_DB.prepare(`
@@ -296,21 +299,19 @@ async function songRequestSmsEnabled() {
 // the smsRequestsEnabled toggle — muting texts should not stop Rick from seeing
 // the request land in the app.
 async function logSongRequestEntry(entry) {
-  try {
-    const res = await fetch(`${PROXY_BASE}/song-requests-log`);
-    const data = await res.json();
-    const log = (data && data.record) || { requests: [] };
-    log.requests = log.requests || [];
-    log.requests.push(entry);
-    if (log.requests.length > 200) log.requests = log.requests.slice(-200);
-    await fetch(`${PROXY_BASE}/song-requests-log`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(log)
-    });
-  } catch (err) {
-    console.error("logSongRequestEntry error", err);
-  }
+  const res = await fetch(`${PROXY_BASE}/song-requests-log`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Request log read failed: ${res.status}`);
+  const data = await res.json();
+  const log = (data && data.record) || { requests: [] };
+  log.requests = log.requests || [];
+  if (!log.requests.some(request => request.id === entry.id)) log.requests.push(entry);
+  if (log.requests.length > 200) log.requests = log.requests.slice(-200);
+  const saved = await fetch(`${PROXY_BASE}/song-requests-log`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(log)
+  });
+  if (!saved.ok) throw new Error(`Request log write failed: ${saved.status}`);
 }
 
 async function sendOwnerText(env, message) {
@@ -1167,9 +1168,9 @@ async function listTransactions(request, env) {
 
   const [rows, countRow] = await Promise.all([
     env.PAYMENT_DB.prepare(`
-      SELECT * FROM payment_intents ORDER BY created_at DESC LIMIT ? OFFSET ?
+      SELECT * FROM payment_intents WHERE status = 'PAID' ORDER BY paid_at DESC LIMIT ? OFFSET ?
     `).bind(limit, offset).all(),
-    env.PAYMENT_DB.prepare(`SELECT COUNT(*) AS total FROM payment_intents`).first()
+    env.PAYMENT_DB.prepare(`SELECT COUNT(*) AS total FROM payment_intents WHERE status = 'PAID'`).first()
   ]);
 
   const transactions = (rows.results || []).map(serializeIntent);
