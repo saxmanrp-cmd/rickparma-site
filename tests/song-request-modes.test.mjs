@@ -49,3 +49,28 @@ test('DJ form requires artist and song and carries optional link through checkou
   values.djArtist='';
   assert.throws(() => context.submitDjRequest({preventDefault(){}}),/artist and song/);
 });
+
+test('artist suggestions show familiar matches immediately and add live matches as spelling changes', async () => {
+  const children = [];
+  const artist = { value:'Bru', attributes:{}, setAttribute(key,value){ this.attributes[key]=value; } };
+  const box = { replaceChildren(){ children.length=0; }, appendChild(node){ children.push(node); } };
+  let timer;
+  const context = vm.createContext({
+    familiarArtists:['Bruno Mars','Stevie Wonder'], URLSearchParams, AbortController,
+    document:{
+      getElementById(id){ return id==='djArtist' ? artist : id==='artistSuggestions' ? box : {focus(){}}; },
+      createElement(){ return { setAttribute(){}, appendChild(){}, textContent:'' }; }
+    },
+    clearTimeout(){}, setTimeout(fn){ timer=fn; },
+    async fetch(){ return {ok:true,async json(){ return {search:[{label:'Bruce Springsteen',description:'American rock singer'}]}; }}; }
+  });
+  vm.runInContext(script.slice(script.indexOf('let artistSearchTimer ='),script.indexOf('function submitDjRequest(event)')),context);
+  context.suggestArtists();
+  assert.deepEqual(children.map(node => node.textContent),['Bruno Mars']);
+  await timer();
+  assert.deepEqual(children.map(node => node.textContent),['Bruno Mars','Bruce Springsteen']);
+  artist.value='Bruno';
+  context.suggestArtists();
+  assert.deepEqual(children.map(node => node.textContent),['Bruno Mars']);
+  assert.equal(artist.attributes['aria-expanded'],'true');
+});
