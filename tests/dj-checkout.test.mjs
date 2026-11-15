@@ -126,3 +126,38 @@ test('tip text has only its heading, optional name, and amount', async () => {
     assert.deepEqual(messages,['TIP\nAlex\n$12','TIP\n$5.50']);
   } finally { globalThis.fetch=originalFetch; }
 });
+
+test('a failed request-log write does not mark a paid DJ request fulfilled', async () => {
+  const originalFetch=globalThis.fetch;
+  globalThis.fetch=async (url,options={}) => {
+    if(url.endsWith('/song-requests-log')) return options.method === 'PUT'
+      ? new Response('unavailable',{status:503}) : Response.json({record:{requests:[]}});
+    throw new Error('An alert must wait until the request is logged');
+  };
+  try {
+    const result=await fulfillSongRequest({SMS_BLAST_ADMIN_TOKEN:'test',TIP_NOTIFICATION_PHONE:'7732091124'},
+      {id:'dj-retry',metadata:{requestType:'dj',djArtist:'Bruno Mars',djSong:'Treasure'}});
+    assert.equal(result,'ERROR');
+  } finally { globalThis.fetch=originalFetch; }
+});
+
+test('retrying a paid DJ request leaves one request-list entry', async () => {
+  const originalFetch=globalThis.fetch;
+  const requests=[];
+  globalThis.fetch=async (url,options={}) => {
+    if(url.endsWith('/song-requests-log')) {
+      if(options.method === 'PUT') { requests.splice(0,requests.length,...JSON.parse(options.body).requests); return Response.json({ok:true}); }
+      return Response.json({record:{requests}});
+    }
+    if(url.endsWith('/songs')) return Response.json({record:{smsRequestsEnabled:false}});
+    throw new Error('Unexpected request');
+  };
+  try {
+    const intent={id:'dj-retry',metadata:{requestType:'dj',djArtist:'Bruno Mars',djSong:'Treasure'}};
+    assert.equal(await fulfillSongRequest({},intent),'FULFILLED');
+    assert.equal(await fulfillSongRequest({},intent),'FULFILLED');
+    assert.equal(requests.length,1);
+    assert.equal(requests[0].song,'Treasure');
+  } finally { globalThis.fetch=originalFetch; }
+});
+
