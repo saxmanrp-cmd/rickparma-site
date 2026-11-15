@@ -7,7 +7,7 @@ const html = fs.readFileSync(new URL('../song-request/index-base.html', import.m
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 
 test('guest catalog shows only marked dinner songs while mode is active', () => {
-  const context = vm.createContext({});
+  const context = vm.createContext({ document:{ getElementById(){ return {style:{display:'none'}}; } } });
   const code = script.slice(script.indexOf('let powerSongsAvailable ='), script.indexOf('async function refreshSongs()'));
   vm.runInContext(`let songs=[]; let prices={}; let DEFAULT_PRICES={};
     function renderBubbles(){} function renderChips(){} function renderList(){}; ${code}`, context);
