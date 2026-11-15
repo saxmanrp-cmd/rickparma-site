@@ -6,12 +6,13 @@ import { onRequest } from '../functions/api/[[path]].js';
 test('Pay Hub lists completed requests and excludes abandoned checkouts from totals and pages', async () => {
   const sql=new DatabaseSync(':memory:');
   sql.exec(`CREATE TABLE payment_intents (id TEXT, type TEXT, status TEXT, amount_cents INTEGER,
-    currency TEXT, metadata_json TEXT, created_at TEXT, paid_at TEXT);
+    currency TEXT, metadata_json TEXT, created_at TEXT, paid_at TEXT, provider TEXT, provider_payment_id TEXT);
     CREATE TABLE payment_events (intent_id TEXT, event_type TEXT, provider TEXT, payload_json TEXT, created_at TEXT);
     INSERT INTO payment_intents VALUES
-      ('open-dj','song_request','OPEN',1200,'USD','{}','2026-11-15T12:00:00Z',NULL),
-      ('paid-dj','song_request','PAID',1200,'USD','{"requestType":"dj"}','2026-11-15T11:00:00Z','2026-11-15T11:05:00Z'),
-      ('paid-tip','tip','PAID',500,'USD','{}','2026-11-15T10:00:00Z','2026-11-15T10:05:00Z');`);
+      ('open-dj','song_request','OPEN',1200,'USD','{}','2026-11-15T12:00:00Z',NULL,NULL,NULL),
+      ('unverified-song','song_request','PAID',2000,'USD','{}','2026-11-15T11:30:00Z','2026-11-15T11:31:00Z',NULL,NULL),
+      ('paid-dj','song_request','PAID',1200,'USD','{"requestType":"dj"}','2026-11-15T11:00:00Z','2026-11-15T11:05:00Z','square','square-payment-1'),
+      ('paid-tip','tip','PAID',500,'USD','{}','2026-11-15T10:00:00Z','2026-11-15T10:05:00Z','square','square-payment-2');`);
   const env={ADMIN_API_KEY:'test-key',PAYMENT_DB:{prepare(query){return {
     bind(...values){const stmt=sql.prepare(query);return {
       async all(){return {results:stmt.all(...values)};},async first(){return stmt.get(...values);}
