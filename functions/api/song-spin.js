@@ -62,8 +62,24 @@ export async function onRequest(context) {
   }
 
   try {
+    const body = await request.json().catch(() => ({}));
+    const songId = String(body.songId || '').trim().slice(0, 100);
+    if (!songId) return json({ error: 'Song is required.' }, 400);
     const position = await nextSpinPosition(env);
-    return json({ outcome: position === 7 ? "FREE" : "BOGO" });
+    if (position !== 7) return json({ outcome: 'BOGO' });
+    await env.PAYMENT_DB.prepare(`
+      CREATE TABLE IF NOT EXISTS song_free_spin_claims (
+        token TEXT PRIMARY KEY,
+        song_id TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        claimed_at TEXT
+      )
+    `).run();
+    const token = crypto.randomUUID();
+    await env.PAYMENT_DB.prepare(`
+      INSERT INTO song_free_spin_claims (token, song_id, created_at) VALUES (?, ?, ?)
+    `).bind(token, songId, new Date().toISOString()).run();
+    return json({ outcome: 'FREE', token });
   } catch (error) {
     console.error("Song spin error", error);
     return json({ error: error.message || "Unable to determine spin outcome." }, 500);
