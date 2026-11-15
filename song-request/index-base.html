@@ -882,6 +882,7 @@ let DEFAULT_PRICES = { general: 5 };
 let prices = { ...DEFAULT_PRICES };
 let songs = [];
 let powerSongsAvailable = false;
+let dinnerMusicOnly = false;
 let ALL_TAGS = [];
 const POLL_BIN_ID = "6a65070cda38895dfe8f39bf";
 let pollPollingTimer = null;
@@ -898,7 +899,9 @@ let songRefreshTimer = null;
 
 function applySongRecord(record){
   powerSongsAvailable = record.powerSongsAvailable === true;
-  songs = (record.songs || []).filter(song => powerSongsAvailable || song.powerSong !== true);
+  dinnerMusicOnly = record.dinnerMusicOnly === true;
+  songs = (record.songs || []).filter(song =>
+    (powerSongsAvailable || song.powerSong !== true) && (!dinnerMusicOnly || song.dinnerMusic === true));
   prices = { ...DEFAULT_PRICES, ...(record.prices || {}) };
   spinEnabled = record.spinEnabled !== false;
   smsRequestsEnabled = record.smsRequestsEnabled !== false;
@@ -984,7 +987,7 @@ async function markRequested(id){try{const res=await fetch(PROXY_BASE+'/requeste
 async function logSongRequest(entry){try{const res=await fetch(PROXY_BASE+'/song-requests-log',{cache:'no-store'});const data=await res.json();const log=(data&&data.record)||{requests:[]};log.requests=log.requests||[];log.requests.push(entry);if(log.requests.length>200)log.requests=log.requests.slice(-200);await fetch(PROXY_BASE+'/song-requests-log',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(log)});}catch(e){}}
 function renderList(){
   const listEl=document.getElementById('list');const term=searchTerm.trim().toLowerCase();let filtered=songs.filter(s=>{const matchesTag=!activeTag||(s.tags||[]).includes(activeTag);const matchesTerm=!term||s.t.toLowerCase().includes(term)||(s.a||'').toLowerCase().includes(term);return matchesTag&&matchesTerm;});filtered=sortSongs(filtered);document.getElementById('countRow').textContent=`${filtered.length} song${filtered.length===1?'':'s'}`;
-  if(filtered.length===0){listEl.innerHTML=`<div class="empty-state">No songs match — try a different search or filter.</div>`;return;}
+  if(filtered.length===0){listEl.innerHTML=`<div class="empty-state">${dinnerMusicOnly && !songs.length ? 'No dinner music requests are available right now.' : 'No songs match — try a different search or filter.'}</div>`;return;}
   listEl.innerHTML=filtered.map(s=>`<div class="song-row${isLocked(s.id)?' locked':''}" data-id="${s.id}"><div class="song-info"><div class="song-title">${escapeHtml(s.t)}</div><div class="song-artist">${escapeHtml(s.a||'')}</div></div>${isLocked(s.id)?'<span class="badge requested">Requested</span>':tierBadge()}</div>`).join('');
   [...listEl.querySelectorAll('.song-row')].forEach(row=>{if(!isLocked(row.dataset.id))row.addEventListener('click',()=>openSheet(row.dataset.id));});
 }
