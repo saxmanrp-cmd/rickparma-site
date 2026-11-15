@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import test from 'node:test';
-import { createPublicIntent, fulfillSongRequest } from '../functions/api/[[path]].js';
+import { createPublicIntent, fulfillSongRequest, fulfillTip } from '../functions/api/[[path]].js';
 
 test('DJ checkout is gated by mode and retains artist, song, and pasted link', async () => {
   const sql = new DatabaseSync(':memory:');
@@ -41,6 +41,11 @@ test('DJ checkout is gated by mode and retains artist, song, and pasted link', a
     const performance=await create();
     assert.equal(performance.status,201);
     assert.equal((await performance.json()).intent.amountCents,700);
+    const bogoLabel=`${'A'.repeat(75)} + BOGO: ${'B'.repeat(75)}`;
+    body.song=bogoLabel;
+    const bogo=await create();
+    assert.equal(bogo.status,201);
+    assert.equal((await bogo.json()).intent.metadata.song,bogoLabel);
     body.djRequest=true;
     body.amountCents=500;
     settings = {...settings,songRequestLive:false};
@@ -48,7 +53,7 @@ test('DJ checkout is gated by mode and retains artist, song, and pasted link', a
     settings = {songRequestLive:true,performanceModeEnabled:false,djModeEnabled:true,prices:{general:7,dj:12}};
     body.djRequest=false;
     assert.equal((await create()).status,409);
-    assert.equal(sql.prepare('SELECT COUNT(*) AS n FROM payment_intents').get().n,2);
+    assert.equal(sql.prepare('SELECT COUNT(*) AS n FROM payment_intents').get().n,3);
   } finally { globalThis.fetch=originalFetch; sql.close(); }
 });
 
@@ -93,18 +98,31 @@ test('DJ text omits the link line when no URL was provided', async () => {
   } finally { globalThis.fetch=originalFetch; }
 });
 
-test('performance requests keep the existing song alert format', async () => {
+test('paid and BOGO requests use short texts with the songs and optional name', async () => {
   const originalFetch=globalThis.fetch;
-  let alert;
+  const messages=[];
   globalThis.fetch=async (url,options={}) => {
     if(url.endsWith('/songs')) return Response.json({record:{smsRequestsEnabled:true}});
     if(url.endsWith('/song-requests-log')) return Response.json({record:{requests:[]}});
-    if(url.includes('/song-alert')) { alert=new URLSearchParams(options.body); return Response.json({ok:true}); }
+    if(url.endsWith('/api/conversations/reply')) { messages.push(JSON.parse(options.body).message); return Response.json({ok:true}); }
     throw new Error('Unexpected request');
   };
   try {
-    assert.equal(await fulfillSongRequest({}, {id:'performance-1',customerName:'Guest',metadata:{song:'September'}}),'FULFILLED');
-    assert.equal(alert.get('song'),'September');
-    assert.equal(alert.get('outcome'),'PAID');
+    const env={SMS_BLAST_ADMIN_TOKEN:'test-token',TIP_NOTIFICATION_PHONE:'7732091124'};
+    assert.equal(await fulfillSongRequest(env, {id:'performance-1',customerName:'Guest',metadata:{song:'September - EWF'}}),'FULFILLED');
+    assert.equal(await fulfillSongRequest(env, {id:'bogo-1',metadata:{song:'September - EWF + BOGO: Superstition - Stevie Wonder'}}),'FULFILLED');
+    assert.deepEqual(messages,['PAID\nSeptember - EWF\nName: Guest','BOGO\nSeptember - EWF\nSuperstition - Stevie Wonder']);
+  } finally { globalThis.fetch=originalFetch; }
+});
+
+test('tip text has only its heading, optional name, and amount', async () => {
+  const originalFetch=globalThis.fetch;
+  const messages=[];
+  globalThis.fetch=async (_url,options={}) => { messages.push(JSON.parse(options.body).message); return Response.json({ok:true}); };
+  try {
+    const env={SMS_BLAST_ADMIN_TOKEN:'test-token',TIP_NOTIFICATION_PHONE:'7732091124'};
+    assert.equal(await fulfillTip(env,{id:'tip-1',customerName:'Alex',amountCents:1200}),'FULFILLED');
+    assert.equal(await fulfillTip(env,{id:'tip-2',amountCents:550}),'FULFILLED');
+    assert.deepEqual(messages,['TIP\nAlex\n$12','TIP\n$5.50']);
   } finally { globalThis.fetch=originalFetch; }
 });

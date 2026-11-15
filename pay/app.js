@@ -502,7 +502,7 @@ async function boot() {
   if (mode === "song" && params.get("song")) {
     songInput.value = params.get("song");
   }
-  if (mode === "song" && params.get("dj") === "1" && params.get("name")) {
+  if (mode === "song" && params.get("name")) {
     nameInput.value = params.get("name");
   }
 }

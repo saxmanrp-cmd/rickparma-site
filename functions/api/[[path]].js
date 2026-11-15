@@ -14,7 +14,6 @@ import { createBusinessCheckout, reconcileBusinessInvoice } from '../../lib/busi
 
 const ALLOWED_PUBLIC_TYPES = new Set(["tip", "song_request", "vocal_tutorial"]);
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
-const SONG_ALERT_URL = "https://rickparma-booking-8582.twil.io/song-alert";
 const INVOICE_RECEIPT_URL = "https://rickparma-booking-8582.twil.io/invoice-receipt";
 const SMS_BLAST_URL = "https://sms-blast.saxmanrp.workers.dev";
 const TOOLS_BASE_URL = "https://saxmanrp-cmd.github.io/rickparma-tools/invoice-creator.html";
@@ -314,6 +313,25 @@ async function logSongRequestEntry(entry) {
   }
 }
 
+async function sendOwnerText(env, message) {
+  if (!env.SMS_BLAST_ADMIN_TOKEN || !env.TIP_NOTIFICATION_PHONE) throw new Error('Text alerts are not configured');
+  const digits = String(env.TIP_NOTIFICATION_PHONE).replace(/\D/g, '');
+  const phone = digits.length === 10 ? `+1${digits}` : `+${digits}`;
+  const response = await fetch(`${SMS_BLAST_URL}/api/conversations/reply`, {
+    method: 'POST',
+    headers: { 'content-type':'application/json', 'X-Admin-Token':env.SMS_BLAST_ADMIN_TOKEN },
+    body: JSON.stringify({ phone, message })
+  });
+  if (!response.ok) throw new Error(`Text alert failed with ${response.status}`);
+}
+
+function paidSongMessage(intent) {
+  const song = intent.metadata?.song || intent.description || 'Song request';
+  const parts = song.split(/\s+\+\s+BOGO:\s+/i);
+  return [parts.length > 1 ? 'BOGO' : 'PAID', ...parts, intent.customerName ? `Name: ${intent.customerName}` : '']
+    .filter(Boolean).join('\n');
+}
+
 export async function fulfillSongRequest(env, intent) {
   try {
     const meta = intent.metadata || {};
@@ -332,34 +350,16 @@ export async function fulfillSongRequest(env, intent) {
     const smsOn = await songRequestSmsEnabled();
     if (!smsOn) return "FULFILLED";
     if (isDj) {
-      if (!env.SMS_BLAST_ADMIN_TOKEN || !env.TIP_NOTIFICATION_PHONE) {
-        throw new Error('DJ request SMS is not configured');
-      }
-      const phoneDigits = String(env.TIP_NOTIFICATION_PHONE).replace(/\D/g, '');
-      const phone = phoneDigits.length === 10 ? `+1${phoneDigits}` : `+${phoneDigits}`;
       const message = [
         'DJ request',
         `Artist: ${meta.djArtist}`,
         `Song: ${meta.djSong}`,
         meta.requestLink || ''
       ].filter(Boolean).join('\n');
-      const response = await fetch(`${SMS_BLAST_URL}/api/conversations/reply`, {
-        method: 'POST',
-        headers: { 'content-type':'application/json', 'X-Admin-Token':env.SMS_BLAST_ADMIN_TOKEN },
-        body: JSON.stringify({ phone, message })
-      });
-      if (!response.ok) throw new Error(`DJ request SMS failed with ${response.status}`);
+      await sendOwnerText(env, message);
       return "FULFILLED";
     }
-    const params = new URLSearchParams();
-    params.append("name", intent.customerName || "Someone");
-    params.append("song", songLabel);
-    params.append("outcome", "PAID");
-
-    await fetch(SONG_ALERT_URL, {
-      method: "POST",
-      body: params
-    });
+    await sendOwnerText(env, paidSongMessage(intent));
     return "FULFILLED";
   } catch (err) {
     console.error("fulfillSongRequest error", intent.id, err);
@@ -367,39 +367,55 @@ export async function fulfillSongRequest(env, intent) {
   }
 }
 
-// Sends Rick an SMS only after a tip payment is confirmed PAID. This uses the
-// exact-message SMS service so Song Request's formatter remains untouched.
-async function fulfillTip(env, intent, rethrow = false) {
+// Sends Rick an SMS only after a tip payment is confirmed PAID.
+export async function fulfillTip(env, intent, rethrow = false) {
   try {
-    if (!env.SMS_BLAST_ADMIN_TOKEN || !env.TIP_NOTIFICATION_PHONE) {
-      throw new Error("Tip SMS is not configured");
-    }
-
     const dollars = (Number(intent.amountCents || 0) / 100).toFixed(2);
     const amount = `$${dollars.endsWith(".00") ? dollars.slice(0, -3) : dollars}`;
-    const tipper = intent.customerName || "Someone";
-    const message = `${tipper} sent a ${amount} Tip.`;
-    const phoneDigits = String(env.TIP_NOTIFICATION_PHONE).replace(/\D/g, "");
-    const phone = phoneDigits.length === 10 ? `+1${phoneDigits}` : `+${phoneDigits}`;
-
-    const response = await fetch(`${SMS_BLAST_URL}/api/conversations/reply`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "X-Admin-Token": env.SMS_BLAST_ADMIN_TOKEN
-      },
-      body: JSON.stringify({ phone, message })
-    });
-    if (!response.ok) {
-      const detail = await response.text();
-      throw new Error(`Tip SMS alert failed with ${response.status}: ${detail}`);
-    }
+    await sendOwnerText(env, ['TIP', intent.customerName || '', amount].filter(Boolean).join('\n'));
     return "FULFILLED";
   } catch (err) {
     console.error("fulfillTip error", intent.id, err);
     if (rethrow) throw err;
     return "ERROR";
   }
+}
+
+export async function sendFreeSongAlert(request, env) {
+  const body = await request.json();
+  const token = safeString(body.token, 100);
+  const songId = safeString(body.songId, 100);
+  const name = safeString(body.name, 100);
+  if (!token || !songId) return json({ error:'Free spin details are missing.' }, 400);
+
+  const settingsResponse = await fetch(`${PROXY_BASE}/songs`, { cache:'no-store' });
+  if (!settingsResponse.ok) return json({ error:'Song requests are temporarily unavailable.' }, 503);
+  const settings = (await settingsResponse.json()).record || {};
+  if (settings.songRequestLive === false || settings.performanceModeEnabled === false) {
+    return json({ error:'Performance requests are closed.' }, 409);
+  }
+  const song = (settings.songs || []).find(item => item.id === songId);
+  if (!song) return json({ error:'Song not found.' }, 404);
+
+  const claimedAt = nowIso();
+  const cutoff = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
+  const claim = await env.PAYMENT_DB.prepare(`
+    UPDATE song_free_spin_claims SET claimed_at = ?
+    WHERE token = ? AND song_id = ? AND claimed_at IS NULL AND created_at >= ?
+    RETURNING song_id
+  `).bind(claimedAt, token, songId, cutoff).first();
+  if (!claim) return json({ error:'This free spin has already been used or has expired.' }, 409);
+
+  if (settings.smsRequestsEnabled !== false) {
+    try {
+      await sendOwnerText(env, ['FREE', `${song.t}${song.a ? ` - ${song.a}` : ''}`, name ? `Name: ${name}` : ''].filter(Boolean).join('\n'));
+    } catch (error) {
+      await env.PAYMENT_DB.prepare('UPDATE song_free_spin_claims SET claimed_at = NULL WHERE token = ? AND claimed_at = ?')
+        .bind(token, claimedAt).run();
+      throw error;
+    }
+  }
+  return json({ ok:true });
 }
 
 async function retryFulfillment(request, env) {
@@ -536,7 +552,7 @@ export async function createPublicIntent(request, env) {
       : positiveInteger(body.amountCents);
     const min = Number(env.SONG_REQUEST_MIN_CENTS || 500);
     if (amountCents < min) return json({ error: `Minimum song request is $${(min / 100).toFixed(2)}.` }, 400);
-    const song = safeString(body.song, 100);
+    const song = safeString(body.song, 250);
     if (!song) return json({ error: "Song request is required." }, 400);
     title = "Song Request";
     description = song;
@@ -1319,6 +1335,10 @@ export async function onRequest(context) {
 
     if (path === "/intents/public" && request.method === "POST") {
       return await createPublicIntent(request, env);
+    }
+
+    if (path === "/song-free-alert" && request.method === "POST") {
+      return await sendFreeSongAlert(request, env);
     }
 
     if (path === "/integrations/intents" && request.method === "POST") {
