@@ -4,6 +4,7 @@
   const SUBMIT_LOCK_MS = 4 * 60 * 60 * 1000;
   const activeSubmissions = new Set();
   let spinOutcomePending = false;
+  let freeSpinToken = null;
 
   function submitKey(songId){
     return 'rp_song_submit_' + songId;
@@ -55,10 +56,10 @@
     }
 
     activeSubmissions.add(id);
-    rememberSubmitted(id);
     disableSubmitButton(el, 'Sending...');
 
-    const name = (document.getElementById('reqName') ? document.getElementById('reqName').value.trim() : '') || 'Someone';
+    const enteredName = document.getElementById('reqName') ? document.getElementById('reqName').value.trim() : '';
+    const name = enteredName || 'Someone';
     const outcome = outcomeType || 'FREE';
     const entry = {
       id: 'r' + Date.now() + Math.random().toString(36).slice(2,7),
@@ -70,25 +71,22 @@
     };
 
     try{
-      // Mark the song requested first so the shared four-hour lock begins as
-      // soon as the submission starts, then append exactly one request record.
+      if(typeof smsRequestsEnabled === 'undefined' || smsRequestsEnabled){
+        const response = await fetch('/api/song-free-alert', {
+          method:'POST',
+          headers:{'content-type':'application/json'},
+          body:JSON.stringify({token:freeSpinToken,songId:id,name:enteredName})
+        });
+        if(!response.ok) throw new Error('Free request alert failed');
+      }
+      rememberSubmitted(id);
       if(typeof markRequested === 'function') await markRequested(id);
       if(typeof logSongRequest === 'function') await logSongRequest(entry);
-
-      if(typeof smsRequestsEnabled === 'undefined' || smsRequestsEnabled){
-        const p = new URLSearchParams();
-        p.append('name', name);
-        p.append('song', s.t);
-        p.append('artist', s.a || '');
-        p.append('outcome', outcome);
-        await fetch('https://rickparma-booking-8582.twil.io/song-alert', {
-          method:'POST',
-          mode:'no-cors',
-          body:p
-        }).catch(function(){});
-      }
     }catch(err){
       console.error('Song request submit failed', err);
+      activeSubmissions.delete(id);
+      if(el){ el.dataset.requestSubmitting = '0'; el.removeAttribute('aria-disabled'); el.style.pointerEvents = ''; el.style.opacity = ''; el.textContent = 'Could not send — try again'; }
+      return false;
     }
 
     if(el){
@@ -130,12 +128,13 @@
     try{
       const url = new URL(link.href, location.href);
       if(url.searchParams.get('mode') !== 'song' || !url.searchParams.get('song')) return;
-      if(url.searchParams.get('songRequestId')) return;
+      const enteredName = document.getElementById('reqName')?.value.trim();
+      if(enteredName && !url.searchParams.has('name')) url.searchParams.set('name', enteredName);
       const ids = idsForPaidLabel(url.searchParams.get('song'));
-      if(ids.length){
+      if(ids.length && !url.searchParams.has('songRequestId')){
         url.searchParams.set('songRequestId', ids.join(','));
-        link.href = url.toString();
       }
+      link.href = url.toString();
     }catch(_){}
   }, true);
 
@@ -165,16 +164,20 @@
         const res = await fetch('/api/song-spin', {
           method:'POST',
           headers:{'content-type':'application/json'},
+          body:JSON.stringify({songId}),
           cache:'no-store'
         });
         if(!res.ok) throw new Error('song-spin ' + res.status);
         const data = await res.json();
         if(data.outcome !== 'FREE' && data.outcome !== 'BOGO') throw new Error('Invalid song-spin outcome');
+        if(data.outcome === 'FREE' && !data.token) throw new Error('Missing free-spin token');
+        freeSpinToken = data.outcome === 'FREE' ? data.token : null;
         outcome = data.outcome;
       }catch(err){
         // Fail closed: if the server cannot be reached, never accidentally give
         // away an extra FREE request. The guest still gets the BOGO path.
         console.error('Controlled song spin failed; using BOGO fallback', err);
+        freeSpinToken = null;
         outcome = 'BOGO';
       }
 
