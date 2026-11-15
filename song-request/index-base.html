@@ -856,7 +856,7 @@
     <label for="djGuestName">Your name (optional)</label>
     <input id="djGuestName" type="text" maxlength="100" autocomplete="name" placeholder="Your name">
     <label for="djArtist">Artist name *</label>
-    <input id="djArtist" type="text" maxlength="80" required autocomplete="off" placeholder="Start typing an artist" oninput="suggestArtists()" onblur="hideArtistSuggestionsSoon()" role="combobox" aria-autocomplete="list" aria-controls="artistSuggestions">
+    <input id="djArtist" type="text" maxlength="80" required autocomplete="off" placeholder="Start typing an artist" oninput="suggestArtists()" onblur="hideArtistSuggestionsSoon()" role="combobox" aria-autocomplete="list" aria-controls="artistSuggestions" aria-expanded="false">
     <div id="artistSuggestions" role="listbox"></div>
     <p class="field-hint">Online artist suggestions appear as you type. You can also enter the artist yourself.</p>
     <label for="djSong">Song name *</label>
@@ -919,6 +919,7 @@ const APPLE_GPAY_NUMBER = "773-209-1124";
 let DEFAULT_PRICES = { general: 5 };
 let prices = { ...DEFAULT_PRICES };
 let songs = [];
+let familiarArtists = [];
 let powerSongsAvailable = false;
 let dinnerMusicOnly = false;
 let performanceModeEnabled = true;
@@ -939,6 +940,7 @@ let smsRequestsEnabled = true;
 let songRefreshTimer = null;
 
 function applySongRecord(record){
+  familiarArtists = [...new Set((record.songs || []).map(song => (song.a || '').trim()).filter(Boolean))];
   powerSongsAvailable = record.powerSongsAvailable === true;
   dinnerMusicOnly = record.dinnerMusicOnly === true;
   performanceModeEnabled = record.performanceModeEnabled !== false;
@@ -983,40 +985,51 @@ function chooseRequestMode(mode){
 let artistSearchTimer = null;
 let artistSearchController = null;
 const artistSearchCache = new Map();
-function hideArtistSuggestionsSoon(){ setTimeout(() => { document.getElementById('artistSuggestions').replaceChildren(); }, 180); }
+function hideArtistSuggestionsSoon(){ setTimeout(() => { document.getElementById('artistSuggestions').replaceChildren(); document.getElementById('djArtist').setAttribute('aria-expanded','false'); }, 180); }
+function renderArtistSuggestions(query, onlineMatches = []){
+  const box = document.getElementById('artistSuggestions');
+  if(document.getElementById('djArtist').value.trim().toLowerCase() !== query.toLowerCase()) return;
+  const seen = new Set();
+  const matches = [...familiarArtists.map(label => ({label})), ...onlineMatches]
+    .filter(item => item.label && item.label.toLowerCase().startsWith(query.toLowerCase()))
+    .filter(item => { const name = item.label.toLowerCase(); if(seen.has(name)) return false; seen.add(name); return true; })
+    .slice(0,8);
+  box.replaceChildren();
+  matches.forEach(item => {
+    const button = document.createElement('button');
+    button.type = 'button'; button.setAttribute('role','option');
+    button.textContent = item.label;
+    if(item.description){ const detail=document.createElement('small'); detail.textContent=item.description; button.appendChild(detail); }
+    button.onclick = () => { document.getElementById('djArtist').value=item.label; box.replaceChildren(); document.getElementById('djArtist').setAttribute('aria-expanded','false'); document.getElementById('djSong').focus(); };
+    box.appendChild(button);
+  });
+  document.getElementById('djArtist').setAttribute('aria-expanded',matches.length ? 'true' : 'false');
+}
 function suggestArtists(){
   clearTimeout(artistSearchTimer);
   if(artistSearchController) artistSearchController.abort();
   const query = document.getElementById('djArtist').value.trim();
   const box = document.getElementById('artistSuggestions');
   box.replaceChildren();
+  if(query.length < 2){ document.getElementById('djArtist').setAttribute('aria-expanded','false'); return; }
+  renderArtistSuggestions(query);
   if(query.length < 3) return;
   artistSearchTimer = setTimeout(async () => {
     try {
       let matches = artistSearchCache.get(query.toLowerCase());
       if(!matches){
         artistSearchController = new AbortController();
-        const params = new URLSearchParams({ action:'wbsearchentities', search:query, language:'en', limit:'12', format:'json', origin:'*' });
+        const params = new URLSearchParams({ action:'wbsearchentities', search:query, language:'en', limit:'50', format:'json', origin:'*' });
         const response = await fetch(`https://www.wikidata.org/w/api.php?${params}`, {
-          headers:{ 'Api-User-Agent':'RickParmaSongRequests/1.0 (https://rickparma.com)' },
           signal:artistSearchController.signal
         });
         if(!response.ok) throw new Error('Artist lookup unavailable');
         const data = await response.json();
-        matches = (data.search || []).filter(item => /singer|musician|band|rapper|composer|dj|recording artist|music group|vocalist|performer/i.test(item.description || '')).slice(0,7);
+        matches = (data.search || []).filter(item => /singer|musician|band|rapper|composer|dj|recording artist|music group|vocalist|performer/i.test(item.description || '') && item.label?.toLowerCase().startsWith(query.toLowerCase()));
         artistSearchCache.set(query.toLowerCase(), matches);
       }
-      if(document.getElementById('djArtist').value.trim() !== query) return;
-      box.replaceChildren();
-      matches.forEach(item => {
-        const button = document.createElement('button');
-        button.type = 'button'; button.setAttribute('role','option');
-        button.textContent = item.label;
-        if(item.description){ const detail=document.createElement('small'); detail.textContent=item.description; button.appendChild(detail); }
-        button.onclick = () => { document.getElementById('djArtist').value=item.label; box.replaceChildren(); document.getElementById('djSong').focus(); };
-        box.appendChild(button);
-      });
-    } catch(error){ if(error.name !== 'AbortError') box.replaceChildren(); }
+      renderArtistSuggestions(query, matches);
+    } catch(error){ if(error.name !== 'AbortError') renderArtistSuggestions(query); }
   }, 500);
 }
 function submitDjRequest(event){
