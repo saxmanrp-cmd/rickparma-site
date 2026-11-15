@@ -1168,9 +1168,14 @@ async function listTransactions(request, env) {
 
   const [rows, countRow] = await Promise.all([
     env.PAYMENT_DB.prepare(`
-      SELECT * FROM payment_intents WHERE status = 'PAID' ORDER BY paid_at DESC LIMIT ? OFFSET ?
+      SELECT * FROM payment_intents
+      WHERE status = 'PAID'
+        AND (type != 'song_request' OR (provider IN ('square', 'paypal') AND provider_payment_id IS NOT NULL AND provider_payment_id != ''))
+      ORDER BY paid_at DESC LIMIT ? OFFSET ?
     `).bind(limit, offset).all(),
-    env.PAYMENT_DB.prepare(`SELECT COUNT(*) AS total FROM payment_intents WHERE status = 'PAID'`).first()
+    env.PAYMENT_DB.prepare(`SELECT COUNT(*) AS total FROM payment_intents
+      WHERE status = 'PAID'
+        AND (type != 'song_request' OR (provider IN ('square', 'paypal') AND provider_payment_id IS NOT NULL AND provider_payment_id != ''))`).first()
   ]);
 
   const transactions = (rows.results || []).map(serializeIntent);
