@@ -61,16 +61,50 @@ test('paid DJ request reaches the request list and text with the shared link', a
       if(options.method === 'PUT'){ logged=JSON.parse(options.body).requests[0]; return Response.json({ok:true}); }
       return Response.json({record:{requests:[]}});
     }
-    if(url.includes('/song-alert')) { alert=new URLSearchParams(options.body); return Response.json({ok:true}); }
+    if(url.endsWith('/api/conversations/reply')) { alert=JSON.parse(options.body); return Response.json({ok:true}); }
     throw new Error('Unexpected request');
   };
   try {
-    const result=await fulfillSongRequest({}, {id:'dj-1',customerName:'Someone',
+    const result=await fulfillSongRequest({SMS_BLAST_ADMIN_TOKEN:'test-token',TIP_NOTIFICATION_PHONE:'7732091124'}, {id:'dj-1',customerName:'Someone',
       metadata:{song:'DJ: September',requestType:'dj',djSong:'September',djArtist:'Earth, Wind & Fire',requestLink:'https://youtu.be/example'}});
     assert.equal(result,'FULFILLED');
     assert.equal(logged.requestType,'dj');
     assert.equal(logged.artist,'Earth, Wind & Fire');
     assert.equal(logged.requestLink,'https://youtu.be/example');
-    assert.match(alert.get('song'),/DJ request: September.*Link: https:\/\/youtu.be\/example/);
+    assert.equal(alert.phone,'+17732091124');
+    assert.equal(alert.message,'DJ request\nArtist: Earth, Wind & Fire\nSong: September\nhttps://youtu.be/example');
+  } finally { globalThis.fetch=originalFetch; }
+});
+
+test('DJ text omits the link line when no URL was provided', async () => {
+  const originalFetch=globalThis.fetch;
+  let message;
+  globalThis.fetch=async (url,options={}) => {
+    if(url.endsWith('/songs')) return Response.json({record:{smsRequestsEnabled:true}});
+    if(url.endsWith('/song-requests-log')) return Response.json({record:{requests:[]}});
+    if(url.endsWith('/api/conversations/reply')) { message=JSON.parse(options.body).message; return Response.json({ok:true}); }
+    throw new Error('Unexpected request');
+  };
+  try {
+    const result=await fulfillSongRequest({SMS_BLAST_ADMIN_TOKEN:'test-token',TIP_NOTIFICATION_PHONE:'7732091124'}, {id:'dj-2',
+      metadata:{requestType:'dj',djSong:'September',djArtist:'Earth, Wind & Fire'}});
+    assert.equal(result,'FULFILLED');
+    assert.equal(message,'DJ request\nArtist: Earth, Wind & Fire\nSong: September');
+  } finally { globalThis.fetch=originalFetch; }
+});
+
+test('performance requests keep the existing song alert format', async () => {
+  const originalFetch=globalThis.fetch;
+  let alert;
+  globalThis.fetch=async (url,options={}) => {
+    if(url.endsWith('/songs')) return Response.json({record:{smsRequestsEnabled:true}});
+    if(url.endsWith('/song-requests-log')) return Response.json({record:{requests:[]}});
+    if(url.includes('/song-alert')) { alert=new URLSearchParams(options.body); return Response.json({ok:true}); }
+    throw new Error('Unexpected request');
+  };
+  try {
+    assert.equal(await fulfillSongRequest({}, {id:'performance-1',customerName:'Guest',metadata:{song:'September'}}),'FULFILLED');
+    assert.equal(alert.get('song'),'September');
+    assert.equal(alert.get('outcome'),'PAID');
   } finally { globalThis.fetch=originalFetch; }
 });
