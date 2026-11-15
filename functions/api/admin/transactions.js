@@ -1,9 +1,9 @@
+import { isPayHubAdmin } from './passkey.js';
 function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'}})}
 function parse(v,f={}){try{return JSON.parse(v)}catch{return f}}
-function bearer(request,expected){if(!expected)return false;const h=request.headers.get('authorization')||'';return h.startsWith('Bearer ')&&h.slice(7)===expected}
 function serialize(row){return {id:row.id,type:row.type,originApp:row.origin_app,status:row.status,fulfillmentStatus:row.fulfillment_status,amountCents:row.amount_cents,currency:row.currency,title:row.title,description:row.description,reference:row.reference,customerName:row.customer_name,customerEmail:row.customer_email,customerPhone:row.customer_phone,metadata:parse(row.metadata_json,{}),createdAt:row.created_at,paidAt:row.paid_at,provider:row.provider,providerPaymentId:row.provider_payment_id,providerOrderId:row.provider_order_id}}
 export async function onRequestGet({request,env}){
-  if(!bearer(request,env.ADMIN_API_KEY))return json({error:'Unauthorized.'},401);
+  if(!await isPayHubAdmin(request,env))return json({error:'Unauthorized.'},401);
   try{
     const url=new URL(request.url);const requestedLimit=Number(url.searchParams.get('limit')||200);const requestedOffset=Number(url.searchParams.get('offset')||0);const limit=Number.isFinite(requestedLimit)?Math.min(Math.max(Math.trunc(requestedLimit),1),500):200;const offset=Number.isFinite(requestedOffset)?Math.max(Math.trunc(requestedOffset),0):0;
     const paidSales="status = 'PAID' AND (type != 'song_request' OR (provider IN ('square', 'paypal') AND provider_payment_id IS NOT NULL AND provider_payment_id != ''))";

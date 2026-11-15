@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/icon-180.png">
   <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=5">
+  <link rel="stylesheet" href="./styles.css?v=7">
 </head>
 <body>
   <div class="app-shell">
@@ -33,8 +33,9 @@
           <h1>Sales Dashboard</h1>
           <p class="muted" id="lastUpdated">Loading transactions…</p>
         </div>
-        <button id="exportBtn" class="primary">Export CSV</button>
+        <div class="manager-actions"><button id="setupSafariBtn" class="ghost" type="button">Set Up Face ID in Safari</button><button id="addPasskeyBtn" class="ghost" type="button">Add Passkey Here</button><button id="exportBtn" class="primary">Export CSV</button></div>
       </section>
+      <p class="muted" id="setupStatus" role="status"></p>
 
       <section class="stats-grid">
         <article class="stat accent"><span>Paid revenue</span><strong id="statRevenue">$0.00</strong><small id="statPaidCount">0 paid sales</small></article>
@@ -103,6 +104,9 @@
         <button class="primary full" type="submit">Open Manager</button>
         <p id="loginError" class="error"></p>
       </form>
+      <button id="passkeyLoginBtn" class="primary full" type="button">Sign in with Face ID / Passkey</button>
+      <button id="setupFromLinkBtn" class="primary full hidden" type="button">Create Safari Passkey</button>
+      <p id="passkeyMessage" class="muted" role="status"></p>
       <p class="install-note">On iPhone: open this page in Safari → Share → Add to Home Screen.</p>
     </div>
   </section>
@@ -112,6 +116,7 @@
     <div id="detailBody" class="detail-grid"></div>
   </dialog>
 
-  <script src="./app.js?v=6" defer></script>
+  <script src="./passkey.js?v=7" defer></script>
+  <script src="./app.js?v=7" defer></script>
 </body>
 </html>
