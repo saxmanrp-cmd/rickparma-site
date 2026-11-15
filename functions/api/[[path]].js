@@ -314,14 +314,18 @@ async function logSongRequestEntry(entry) {
   }
 }
 
-async function fulfillSongRequest(env, intent) {
+export async function fulfillSongRequest(env, intent) {
   try {
-    const songLabel = (intent.metadata && intent.metadata.song) || intent.description || "Song request";
+    const meta = intent.metadata || {};
+    const songLabel = meta.song || intent.description || "Song request";
+    const isDj = meta.requestType === 'dj';
     await logSongRequestEntry({
       id: "r" + intent.id,
       name: intent.customerName || "Someone",
-      song: songLabel,
-      artist: "",
+      song: isDj ? meta.djSong : songLabel,
+      artist: isDj ? meta.djArtist : "",
+      requestType: isDj ? 'dj' : 'performance',
+      requestLink: isDj ? meta.requestLink || '' : '',
       outcome: "PAID",
       ts: Date.now()
     });
@@ -329,7 +333,7 @@ async function fulfillSongRequest(env, intent) {
     if (!smsOn) return "FULFILLED";
     const params = new URLSearchParams();
     params.append("name", intent.customerName || "Someone");
-    params.append("song", (intent.metadata && intent.metadata.song) || intent.description || "Song request");
+    params.append("song", isDj ? `DJ request: ${meta.djSong} — ${meta.djArtist}${meta.requestLink ? ` | Link: ${meta.requestLink}` : ''}` : songLabel);
     params.append("outcome", "PAID");
 
     await fetch(SONG_ALERT_URL, {
@@ -474,7 +478,7 @@ async function runFulfillment(env, intent) {
 
 // --- Public + trusted-integration intent creation ------------------------
 
-async function createPublicIntent(request, env) {
+export async function createPublicIntent(request, env) {
   const body = await request.json();
   const type = safeString(body.type, 40);
 
@@ -495,6 +499,18 @@ async function createPublicIntent(request, env) {
   }
 
   if (type === "song_request") {
+    // The master switch and the selected request mode both apply at checkout.
+    // This also prevents an old payment link from bypassing a closed mode.
+    let availability;
+    try {
+      const settings = await fetch(`${PROXY_BASE}/songs`, { cache:'no-store' });
+      if (!settings.ok) throw new Error('Song settings unavailable');
+      availability = (await settings.json()).record || {};
+    } catch (_) { return json({ error:'Song requests are temporarily unavailable. Please try again.' }, 503); }
+    if (availability.songRequestLive === false ||
+        (body.djRequest === true ? availability.djModeEnabled !== true : availability.performanceModeEnabled === false)) {
+      return json({ error:'This song request mode is closed right now.' }, 409);
+    }
     amountCents = positiveInteger(body.amountCents);
     const min = Number(env.SONG_REQUEST_MIN_CENTS || 500);
     if (amountCents < min) return json({ error: `Minimum song request is $${(min / 100).toFixed(2)}.` }, 400);
@@ -504,6 +520,20 @@ async function createPublicIntent(request, env) {
     description = song;
     metadata.song = song;
     metadata.note = safeString(body.note, 120);
+    if (body.djRequest === true) {
+      const djSong = safeString(body.djSong, 80);
+      const djArtist = safeString(body.djArtist, 80);
+      if (!djSong || !djArtist) return json({ error: "DJ requests need a song and artist." }, 400);
+      const requestLink = safeString(body.requestLink, 500);
+      if (requestLink) {
+        try { if (!['https:', 'http:'].includes(new URL(requestLink).protocol)) throw new Error('Invalid link'); }
+        catch (_) { return json({ error: 'Invalid shared song link.' }, 400); }
+      }
+      metadata.requestType = 'dj';
+      metadata.djSong = djSong;
+      metadata.djArtist = djArtist;
+      metadata.requestLink = requestLink || '';
+    }
     if (body.songRequestId) metadata.songRequestId = safeString(body.songRequestId, 100);
   }
 

@@ -478,6 +478,20 @@
   #homeScreen,
   #resultsScreen,
   #sheet{position:relative;z-index:1;}
+  #modeChooser,#djRequestScreen,#modeUnavailable{position:relative;z-index:1;width:min(100% - 32px,700px);margin:22px auto;}
+  .mode-choice{display:block;width:100%;padding:25px 20px;margin:14px 0;border-radius:20px;border:1px solid var(--accent);background:var(--card-solid);color:var(--white);font:800 21px 'Lato',sans-serif;text-align:left;cursor:pointer;}
+  .mode-choice small{display:block;margin-top:7px;font-size:14px;font-weight:500;color:var(--dim);}
+  .dj-card{padding:22px;border:1px solid var(--accent);border-radius:20px;background:var(--card-solid);}
+  .dj-card h2{margin:8px 0 18px;font:800 25px 'Josefin Sans',sans-serif;color:var(--white);}
+  .dj-card label{display:block;margin-top:15px;font-weight:700;font-size:14px;color:var(--white);}
+  .dj-card input{display:block;width:100%;margin-top:7px;padding:13px 14px;border:1px solid var(--accent);border-radius:10px;background:#090d17;color:var(--white);font:16px 'Lato',sans-serif;}
+  .dj-card .field-hint{font-size:13px;line-height:1.4;color:var(--dim);margin:6px 0 0;}
+  .dj-card .btn{display:block;width:100%;margin-top:22px;padding:16px;border:0;border-radius:12px;background:var(--accent);color:#07111e;font-size:17px;font-weight:900;cursor:pointer;}
+  .dj-back{border:0;background:none;color:var(--accent);font-size:15px;font-weight:700;padding:8px 0;cursor:pointer;}
+  #artistSuggestions{border:1px solid var(--line);border-radius:10px;margin-top:4px;max-height:220px;overflow-y:auto;}
+  #artistSuggestions:empty{display:none;}
+  #artistSuggestions button{display:block;width:100%;text-align:left;padding:11px 13px;border:0;border-bottom:1px solid var(--line);background:#101825;color:var(--white);font-size:15px;cursor:pointer;}
+  #artistSuggestions button small{display:block;color:var(--dim);font-size:12px;margin-top:2px;}
   .page-title{
     padding:34px 16px 10px;
     font-size:clamp(2.25rem,6vw,3.35rem);
@@ -830,6 +844,30 @@
 
 <div id="loadingState">Loading song list…</div>
 
+<div id="modeChooser" style="display:none;">
+  <button class="mode-choice" type="button" onclick="chooseRequestMode('performance')">Rick Parma performs these songs<small>Browse the performance song list by genre.</small></button>
+  <button class="mode-choice" type="button" onclick="chooseRequestMode('dj')">DJ request songs<small>Tell Rick what you want to hear.</small></button>
+</div>
+<div id="modeUnavailable" style="display:none;" class="empty-state">Song requests are unavailable right now.</div>
+<div id="djRequestScreen" style="display:none;">
+  <button type="button" class="dj-back" id="djBackBtn" onclick="chooseRequestMode('choose')">← Back to request choices</button>
+  <form id="djRequestForm" class="dj-card" onsubmit="submitDjRequest(event)">
+    <h2>DJ Song Request</h2>
+    <label for="djGuestName">Your name (optional)</label>
+    <input id="djGuestName" type="text" maxlength="100" autocomplete="name" placeholder="Your name">
+    <label for="djArtist">Artist name *</label>
+    <input id="djArtist" type="text" maxlength="80" required autocomplete="off" placeholder="Start typing an artist" oninput="suggestArtists()" onblur="hideArtistSuggestionsSoon()" role="combobox" aria-autocomplete="list" aria-controls="artistSuggestions">
+    <div id="artistSuggestions" role="listbox"></div>
+    <p class="field-hint">Online artist suggestions appear as you type. You can also enter the artist yourself.</p>
+    <label for="djSong">Song name *</label>
+    <input id="djSong" type="text" maxlength="80" required placeholder="Song title">
+    <label for="djLink">YouTube or Spotify link (optional)</label>
+    <input id="djLink" type="url" maxlength="500" inputmode="url" placeholder="Paste a shared link here">
+    <p class="field-hint">On YouTube or Spotify, tap Share, copy the link, then paste it here. This is just a reference for Rick; it won't open another page.</p>
+    <button class="btn" type="submit" id="djSubmitBtn">Continue to Payment</button>
+  </form>
+</div>
+
 <div id="homeScreen" style="display:none;">
   <div class="bubble-grid" id="bubbleGrid"></div>
 </div>
@@ -883,6 +921,9 @@ let prices = { ...DEFAULT_PRICES };
 let songs = [];
 let powerSongsAvailable = false;
 let dinnerMusicOnly = false;
+let performanceModeEnabled = true;
+let djModeEnabled = false;
+let requestView = 'choose';
 let ALL_TAGS = [];
 const POLL_BIN_ID = "6a65070cda38895dfe8f39bf";
 let pollPollingTimer = null;
@@ -900,6 +941,8 @@ let songRefreshTimer = null;
 function applySongRecord(record){
   powerSongsAvailable = record.powerSongsAvailable === true;
   dinnerMusicOnly = record.dinnerMusicOnly === true;
+  performanceModeEnabled = record.performanceModeEnabled !== false;
+  djModeEnabled = record.djModeEnabled === true;
   songs = (record.songs || []).filter(song =>
     (powerSongsAvailable || song.powerSong !== true) && (!dinnerMusicOnly || song.dinnerMusic === true));
   prices = { ...DEFAULT_PRICES, ...(record.prices || {}) };
@@ -910,6 +953,89 @@ function applySongRecord(record){
   renderBubbles();
   renderChips();
   renderList();
+  renderRequestMode();
+}
+
+function renderRequestMode(){
+  const both = performanceModeEnabled && djModeEnabled;
+  if(!performanceModeEnabled && !djModeEnabled) requestView = 'choose';
+  else if(!performanceModeEnabled) requestView = 'dj';
+  else if(!djModeEnabled) requestView = 'performance';
+  else if(requestView !== 'performance' && requestView !== 'dj') requestView = 'choose';
+  const active = document.getElementById('loadingState').style.display === 'none';
+  document.getElementById('modeChooser').style.display = active && both && requestView === 'choose' ? 'block' : 'none';
+  document.getElementById('modeUnavailable').style.display = active && !performanceModeEnabled && !djModeEnabled ? 'block' : 'none';
+  document.getElementById('djRequestScreen').style.display = active && requestView === 'dj' && djModeEnabled ? 'block' : 'none';
+  document.getElementById('djBackBtn').style.display = both ? 'block' : 'none';
+  const performanceVisible = active && requestView === 'performance' && performanceModeEnabled;
+  document.getElementById('homeScreen').style.display = performanceVisible && document.getElementById('resultsScreen').style.display === 'none' ? 'block' : 'none';
+  if(!performanceVisible) document.getElementById('resultsScreen').style.display = 'none';
+}
+function chooseRequestMode(mode){
+  if(mode === 'performance' && !performanceModeEnabled) return;
+  if(mode === 'dj' && !djModeEnabled) return;
+  requestView = mode;
+  document.getElementById('resultsScreen').style.display = 'none';
+  renderRequestMode();
+  window.scrollTo(0,0);
+}
+
+let artistSearchTimer = null;
+let artistSearchController = null;
+const artistSearchCache = new Map();
+function hideArtistSuggestionsSoon(){ setTimeout(() => { document.getElementById('artistSuggestions').replaceChildren(); }, 180); }
+function suggestArtists(){
+  clearTimeout(artistSearchTimer);
+  if(artistSearchController) artistSearchController.abort();
+  const query = document.getElementById('djArtist').value.trim();
+  const box = document.getElementById('artistSuggestions');
+  box.replaceChildren();
+  if(query.length < 3) return;
+  artistSearchTimer = setTimeout(async () => {
+    try {
+      let matches = artistSearchCache.get(query.toLowerCase());
+      if(!matches){
+        artistSearchController = new AbortController();
+        const params = new URLSearchParams({ action:'wbsearchentities', search:query, language:'en', limit:'12', format:'json', origin:'*' });
+        const response = await fetch(`https://www.wikidata.org/w/api.php?${params}`, {
+          headers:{ 'Api-User-Agent':'RickParmaSongRequests/1.0 (https://rickparma.com)' },
+          signal:artistSearchController.signal
+        });
+        if(!response.ok) throw new Error('Artist lookup unavailable');
+        const data = await response.json();
+        matches = (data.search || []).filter(item => /singer|musician|band|rapper|composer|dj|recording artist|music group|vocalist|performer/i.test(item.description || '')).slice(0,7);
+        artistSearchCache.set(query.toLowerCase(), matches);
+      }
+      if(document.getElementById('djArtist').value.trim() !== query) return;
+      box.replaceChildren();
+      matches.forEach(item => {
+        const button = document.createElement('button');
+        button.type = 'button'; button.setAttribute('role','option');
+        button.textContent = item.label;
+        if(item.description){ const detail=document.createElement('small'); detail.textContent=item.description; button.appendChild(detail); }
+        button.onclick = () => { document.getElementById('djArtist').value=item.label; box.replaceChildren(); document.getElementById('djSong').focus(); };
+        box.appendChild(button);
+      });
+    } catch(error){ if(error.name !== 'AbortError') box.replaceChildren(); }
+  }, 500);
+}
+function submitDjRequest(event){
+  event.preventDefault();
+  if(!djModeEnabled) return;
+  const artist = document.getElementById('djArtist').value.trim();
+  const song = document.getElementById('djSong').value.trim();
+  const name = document.getElementById('djGuestName').value.trim();
+  const link = document.getElementById('djLink').value.trim();
+  if(!artist || !song){ alert('Please enter the artist and song name.'); return; }
+  if(link){
+    try { if(!['https:','http:'].includes(new URL(link).protocol)) throw new Error(); }
+    catch(_){ alert('Please paste a valid YouTube or Spotify share link.'); return; }
+  }
+  const params = new URLSearchParams({ mode:'song', dj:'1', amount:String(prices.general),
+    song:`DJ: ${song} — ${artist}`.slice(0,100), djSong:song, djArtist:artist });
+  if(name) params.set('name',name);
+  if(link) params.set('requestLink',link);
+  window.location.href = `/pay/?${params}`;
 }
 
 async function refreshSongs(){
@@ -933,7 +1059,7 @@ async function loadSongs(){
     const record = data.record || {};
     applySongRecord(record);
     document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('homeScreen').style.display = 'block';
+    renderRequestMode();
     startPollChecking();
     loadRequestedSongs();
     setInterval(loadRequestedSongs, 20000);
@@ -968,12 +1094,14 @@ function updateResultsLabel(){
   else label.textContent = 'All Songs';
 }
 function goResults(){
+  if(!performanceModeEnabled) return;
+  requestView = 'performance';
   document.getElementById('homeScreen').style.display = 'none';
   document.getElementById('resultsScreen').style.display = 'block';
   document.getElementById('search').value = searchTerm;
   updateResultsLabel(); renderChips(); renderList(); window.scrollTo(0,0);
 }
-function goHome(){document.getElementById('resultsScreen').style.display='none';document.getElementById('homeScreen').style.display='block';window.scrollTo(0,0);}
+function goHome(){document.getElementById('resultsScreen').style.display='none';renderRequestMode();window.scrollTo(0,0);}
 function renderChips(){
   const chipsEl=document.getElementById('chips');chipsEl.innerHTML='';
   const allChip=document.createElement('div');allChip.className='chip'+(activeTag===null?' active':'');allChip.textContent='All';allChip.onclick=()=>{activeTag=null;updateResultsLabel();renderChips();renderList();};chipsEl.appendChild(allChip);
@@ -1037,7 +1165,7 @@ function closeSheet(){document.getElementById('overlay').classList.remove('show'
 const POLL_COLORS=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#B983FF','#FF9F45'];
 function startPollChecking(){if(!POLL_BIN_ID)return;checkForLivePoll();pollPollingTimer=setInterval(checkForLivePoll,4000);}
 async function fetchPollData(){const res=await fetch(`${PROXY_BASE}/polls`);const data=await res.json();return data.record||{polls:[],activePollId:null};}
-async function checkForLivePoll(){try{const record=await fetchPollData();const activePoll=(record.polls||[]).find(p=>p.id===record.activePollId&&p.status==='live');if(!activePoll){currentPollId=null;pollDismissed=false;document.getElementById('pollTakeover').style.display='none';return;}if(activePoll.id!==currentPollId)pollDismissed=false;currentPollId=activePoll.id;hasVotedThisPoll=!!localStorage.getItem('voted_poll_'+activePoll.id);renderPollTakeover(activePoll);if(!pollDismissed)document.getElementById('pollTakeover').style.display='flex';}catch(err){console.error('Poll check failed:',err);}}
+async function checkForLivePoll(){try{if(!performanceModeEnabled || requestView !== 'performance'){document.getElementById('pollTakeover').style.display='none';return;}const record=await fetchPollData();const activePoll=(record.polls||[]).find(p=>p.id===record.activePollId&&p.status==='live');if(!activePoll){currentPollId=null;pollDismissed=false;document.getElementById('pollTakeover').style.display='none';return;}if(activePoll.id!==currentPollId)pollDismissed=false;currentPollId=activePoll.id;hasVotedThisPoll=!!localStorage.getItem('voted_poll_'+activePoll.id);renderPollTakeover(activePoll);if(!pollDismissed)document.getElementById('pollTakeover').style.display='flex';}catch(err){console.error('Poll check failed:',err);}}
 function dismissPollTakeover(){pollDismissed=true;document.getElementById('pollTakeover').style.display='none';}
 function renderPollTakeover(poll){document.getElementById('pollQuestionText').textContent=poll.question;const area=document.getElementById('pollOptionsArea'),visibleOptions=poll.options.map((opt,i)=>({opt,i})).filter(({opt})=>!opt.songId||songs.some(s=>s.id===opt.songId)),totalVotes=visibleOptions.reduce((sum,item)=>sum+(item.opt.votes||0),0);const optionsHtml=visibleOptions.map(({opt,i})=>{const song=songs.find(s=>s.id===opt.songId),label=opt.label||(song?song.t+(song.a?' — '+song.a:''):'Unknown song'),pct=totalVotes>0?Math.round(((opt.votes||0)/totalVotes)*100):0,votedForThis=hasVotedThisPoll&&localStorage.getItem('voted_poll_'+poll.id)===String(i),showResults=hasVotedThisPoll,fillHtml=showResults?`<div class="poll-option-fill" style="width:${pct}%;"></div>`:'',pctHtml=showResults?`<span class="poll-option-pct">${pct}%</span>`:'',clickAttr=hasVotedThisPoll?'':`onclick="castVote('${poll.id}', ${i})"`,requestLinkText=opt.label?`Want a specific song instead? Request one — $${prices.general}`:`Want this one anyway? Request it — $${prices.general}`;return `<div class="poll-option${votedForThis?' voted-for':''}" ${clickAttr}>${fillHtml}<div class="poll-option-content"><span class="poll-option-label">${escapeHtml(label)}</span>${pctHtml}</div></div>${hasVotedThisPoll&&opt.songId?`<div class="poll-request-link" onclick="event.stopPropagation(); openSheet('${opt.songId}')">${requestLinkText}</div>`:''}`;}).join('');area.innerHTML=optionsHtml+(hasVotedThisPoll?`<div class="poll-voted-note">✓ Your vote is in — thanks!</div><div class="poll-continue-btn" onclick="dismissPollTakeover()">Continue Browsing</div>`:'');}
 async function castVote(pollId,optionIndex){if(hasVotedThisPoll)return;hasVotedThisPoll=true;localStorage.setItem('voted_poll_'+pollId,String(optionIndex));try{const record=await fetchPollData(),poll=(record.polls||[]).find(p=>p.id===pollId);if(poll&&poll.status==='live'){poll.options[optionIndex].votes=(poll.options[optionIndex].votes||0)+1;await fetch(`${PROXY_BASE}/polls`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(record)});}}catch(err){console.error('Vote failed to save:',err);}checkForLivePoll();}

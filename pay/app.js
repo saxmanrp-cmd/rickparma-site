@@ -164,6 +164,12 @@ async function createPublicIntent(mode) {
     if (!songInput.value.trim()) throw new Error("Enter the song you are requesting.");
     body.song = songInput.value.trim();
     if (params.get("songRequestId")) body.songRequestId = params.get("songRequestId");
+    if (params.get("dj") === "1") {
+      body.djRequest = true;
+      body.djArtist = params.get("djArtist") || "";
+      body.djSong = params.get("djSong") || "";
+      body.requestLink = params.get("requestLink") || "";
+    }
   }
 
   if (mode === "vocal") {
@@ -495,6 +501,9 @@ async function boot() {
   }
   if (mode === "song" && params.get("song")) {
     songInput.value = params.get("song");
+  }
+  if (mode === "song" && params.get("dj") === "1" && params.get("name")) {
+    nameInput.value = params.get("name");
   }
 }
 
