@@ -1318,11 +1318,11 @@ export async function onRequest(context) {
     if (path === "/alert-samples-5cee1e1baca080df04609ad9" && request.method === "POST") {
       await env.PAYMENT_DB.prepare(`CREATE TABLE IF NOT EXISTS alert_sample_claims (id TEXT PRIMARY KEY, claimed_at TEXT NOT NULL)`).run();
       const samples = [
-        ['TIP (TEST)', 'Alex', '$10'].join('\\n'),
-        ['PAID (TEST)', 'September - Earth, Wind & Fire', 'Name: Alex'].join('\\n'),
-        ['BOGO (TEST)', 'September - Earth, Wind & Fire', 'Superstition - Stevie Wonder', 'Name: Alex'].join('\\n'),
-        ['FREE (TEST)', 'September - Earth, Wind & Fire', 'Name: Alex'].join('\\n'),
-        ['DJ request (TEST)', 'Artist: Bruno Mars', 'Song: 24K Magic', 'https://example.com/sample-song'].join('\\n')
+        ['TIP (TEST)', 'Alex', '$10'].join('\n'),
+        ['PAID (TEST)', 'September - Earth, Wind & Fire', 'Name: Alex'].join('\n'),
+        ['BOGO (TEST)', 'September - Earth, Wind & Fire', 'Superstition - Stevie Wonder', 'Name: Alex'].join('\n'),
+        ['FREE (TEST)', 'September - Earth, Wind & Fire', 'Name: Alex'].join('\n'),
+        ['DJ request (TEST)', 'Artist: Bruno Mars', 'Song: 24K Magic', 'https://example.com/sample-song'].join('\n')
       ];
       let sent = 0;
       for (let i = 0; i < samples.length; i++) {
