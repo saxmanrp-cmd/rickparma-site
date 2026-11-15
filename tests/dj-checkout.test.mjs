@@ -18,7 +18,7 @@ test('DJ checkout is gated by mode and retains artist, song, and pasted link', a
     const statement=sql.prepare(query);
     return { async run(){ return statement.run(...values); }, async first(){ return statement.get(...values); } };
   } }; } } };
-  let settings = { songRequestLive:true, performanceModeEnabled:true, djModeEnabled:false };
+  let settings = { songRequestLive:true, performanceModeEnabled:true, djModeEnabled:false, prices:{general:7,dj:12} };
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => Response.json({record:settings});
   const body = { type:'song_request', amountCents:500, customerName:'', song:'DJ: September — Earth, Wind & Fire',
@@ -31,16 +31,24 @@ test('DJ checkout is gated by mode and retains artist, song, and pasted link', a
     const result=await create();
     assert.equal(result.status,201);
     const intent=(await result.json()).intent;
+    assert.equal(intent.amountCents,1200);
     assert.equal(intent.metadata.requestType,'dj');
     assert.equal(intent.metadata.djArtist,'Earth, Wind & Fire');
     assert.equal(intent.metadata.djSong,'September');
     assert.equal(intent.metadata.requestLink,'https://youtu.be/example');
+    body.djRequest=false;
+    body.amountCents=700;
+    const performance=await create();
+    assert.equal(performance.status,201);
+    assert.equal((await performance.json()).intent.amountCents,700);
+    body.djRequest=true;
+    body.amountCents=500;
     settings = {...settings,songRequestLive:false};
     assert.equal((await create()).status,409);
-    settings = {songRequestLive:true,performanceModeEnabled:false,djModeEnabled:true};
+    settings = {songRequestLive:true,performanceModeEnabled:false,djModeEnabled:true,prices:{general:7,dj:12}};
     body.djRequest=false;
     assert.equal((await create()).status,409);
-    assert.equal(sql.prepare('SELECT COUNT(*) AS n FROM payment_intents').get().n,1);
+    assert.equal(sql.prepare('SELECT COUNT(*) AS n FROM payment_intents').get().n,2);
   } finally { globalThis.fetch=originalFetch; sql.close(); }
 });
 
