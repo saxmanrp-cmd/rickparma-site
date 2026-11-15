@@ -331,9 +331,29 @@ export async function fulfillSongRequest(env, intent) {
     });
     const smsOn = await songRequestSmsEnabled();
     if (!smsOn) return "FULFILLED";
+    if (isDj) {
+      if (!env.SMS_BLAST_ADMIN_TOKEN || !env.TIP_NOTIFICATION_PHONE) {
+        throw new Error('DJ request SMS is not configured');
+      }
+      const phoneDigits = String(env.TIP_NOTIFICATION_PHONE).replace(/\D/g, '');
+      const phone = phoneDigits.length === 10 ? `+1${phoneDigits}` : `+${phoneDigits}`;
+      const message = [
+        'DJ request',
+        `Artist: ${meta.djArtist}`,
+        `Song: ${meta.djSong}`,
+        meta.requestLink || ''
+      ].filter(Boolean).join('\n');
+      const response = await fetch(`${SMS_BLAST_URL}/api/conversations/reply`, {
+        method: 'POST',
+        headers: { 'content-type':'application/json', 'X-Admin-Token':env.SMS_BLAST_ADMIN_TOKEN },
+        body: JSON.stringify({ phone, message })
+      });
+      if (!response.ok) throw new Error(`DJ request SMS failed with ${response.status}`);
+      return "FULFILLED";
+    }
     const params = new URLSearchParams();
     params.append("name", intent.customerName || "Someone");
-    params.append("song", isDj ? `DJ request: ${meta.djSong} — ${meta.djArtist}${meta.requestLink ? ` | Link: ${meta.requestLink}` : ''}` : songLabel);
+    params.append("song", songLabel);
     params.append("outcome", "PAID");
 
     await fetch(SONG_ALERT_URL, {
