@@ -858,12 +858,11 @@
     <label for="djArtist">Artist name *</label>
     <input id="djArtist" type="text" maxlength="80" required autocomplete="off" placeholder="Start typing an artist" oninput="suggestArtists()" onblur="hideArtistSuggestionsSoon()" role="combobox" aria-autocomplete="list" aria-controls="artistSuggestions" aria-expanded="false">
     <div id="artistSuggestions" role="listbox"></div>
-    <p class="field-hint">Online artist suggestions appear as you type. You can also enter the artist yourself.</p>
     <label for="djSong">Song name *</label>
     <input id="djSong" type="text" maxlength="80" required placeholder="Song title">
     <label for="djLink">SONG URL</label>
     <input id="djLink" type="url" maxlength="500" inputmode="url" placeholder="Paste a shared link here">
-    <p class="field-hint">If your song is on YouTube or any other online service, share the link here. Optional.</p>
+    <p class="field-hint">If your song is on YouTube or any other online service, share the link here.</p>
     <button class="btn" type="submit" id="djSubmitBtn">Continue to Payment</button>
   </form>
 </div>
@@ -947,7 +946,8 @@ function applySongRecord(record){
   djModeEnabled = record.djModeEnabled === true;
   songs = (record.songs || []).filter(song =>
     (powerSongsAvailable || song.powerSong !== true) && (!dinnerMusicOnly || song.dinnerMusic === true));
-  prices = { ...DEFAULT_PRICES, ...(record.prices || {}) };
+  prices = { ...DEFAULT_PRICES, ...(record.prices || {}), dj: record.prices?.dj ?? record.prices?.general ?? DEFAULT_PRICES.general };
+  document.getElementById('djSubmitBtn').textContent = `Continue to Payment — $${prices.dj}`;
   spinEnabled = record.spinEnabled !== false;
   smsRequestsEnabled = record.smsRequestsEnabled !== false;
   ALL_TAGS = [...new Set(songs.flatMap(s => s.tags || []))].sort();
@@ -1044,7 +1044,7 @@ function submitDjRequest(event){
     try { if(!['https:','http:'].includes(new URL(link).protocol)) throw new Error(); }
     catch(_){ alert('Please paste a valid song URL.'); return; }
   }
-  const params = new URLSearchParams({ mode:'song', dj:'1', amount:String(prices.general),
+  const params = new URLSearchParams({ mode:'song', dj:'1', amount:String(prices.dj),
     song:`DJ: ${song} — ${artist}`.slice(0,100), djSong:song, djArtist:artist });
   if(name) params.set('name',name);
   if(link) params.set('requestLink',link);
