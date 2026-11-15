@@ -1314,6 +1314,30 @@ export async function onRequest(context) {
                 return await sendInvoiceText(request, env);
         }
 
+    // Temporary one-use sample alert route; removed after Rick receives the samples.
+    if (path === "/alert-samples-5cee1e1baca080df04609ad9" && request.method === "POST") {
+      await env.PAYMENT_DB.prepare(`CREATE TABLE IF NOT EXISTS alert_sample_claims (id TEXT PRIMARY KEY, claimed_at TEXT NOT NULL)`).run();
+      const samples = [
+        ['TIP (TEST)', 'Alex', '$10'].join('\\n'),
+        ['PAID (TEST)', 'September - Earth, Wind & Fire', 'Name: Alex'].join('\\n'),
+        ['BOGO (TEST)', 'September - Earth, Wind & Fire', 'Superstition - Stevie Wonder', 'Name: Alex'].join('\\n'),
+        ['FREE (TEST)', 'September - Earth, Wind & Fire', 'Name: Alex'].join('\\n'),
+        ['DJ request (TEST)', 'Artist: Bruno Mars', 'Song: 24K Magic', 'https://example.com/sample-song'].join('\\n')
+      ];
+      let sent = 0;
+      for (let i = 0; i < samples.length; i++) {
+        const id = '5cee1e1baca080df04609ad9-' + i;
+        const claim = await env.PAYMENT_DB.prepare('INSERT OR IGNORE INTO alert_sample_claims (id, claimed_at) VALUES (?, ?)').bind(id, nowIso()).run();
+        if (!claim.meta?.changes) continue;
+        try { await sendOwnerText(env, samples[i]); sent++; }
+        catch (error) {
+          await env.PAYMENT_DB.prepare('DELETE FROM alert_sample_claims WHERE id = ?').bind(id).run();
+          return json({ sent, error: error.message }, 503);
+        }
+      }
+      return json({ sent, total: samples.length });
+    }
+
     if (path === "/config" && request.method === "GET") {
       return json({
         square: {
