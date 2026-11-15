@@ -37,7 +37,7 @@ test('DJ form requires artist and song and carries optional link through checkou
     document:{ getElementById(id){ return { value:values[id] || '' }; } },
     window:{ location:{href:''} },
     alert(message){ throw new Error(message); },
-    prices:{general:5}, djModeEnabled:true
+    prices:{general:5,dj:12}, djModeEnabled:true
   });
   vm.runInContext(script.slice(script.indexOf('function submitDjRequest(event)'),script.indexOf('async function refreshSongs()')),context);
   context.submitDjRequest({preventDefault(){}});
@@ -46,6 +46,7 @@ test('DJ form requires artist and song and carries optional link through checkou
   assert.equal(url.searchParams.get('djSong'),'September');
   assert.equal(url.searchParams.get('djArtist'),'Earth, Wind & Fire');
   assert.equal(url.searchParams.get('requestLink'),'https://youtu.be/example');
+  assert.equal(url.searchParams.get('amount'),'12');
   values.djArtist='';
   assert.throws(() => context.submitDjRequest({preventDefault(){}}),/artist and song/);
 });
