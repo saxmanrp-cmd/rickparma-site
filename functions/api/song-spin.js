@@ -103,10 +103,10 @@ export async function onRequest({ request, env }) {
       await env.PAYMENT_DB.prepare(`INSERT OR IGNORE INTO song_spin_cycles (cycle_id, position) VALUES (?, 0)`).bind(cycleId).run();
       // This single update assigns one shared position, even for concurrent guests.
       const row = await env.PAYMENT_DB.prepare(`UPDATE song_spin_cycles
-        SET position = CASE WHEN position >= 10 THEN 1 ELSE position + 1 END
+        SET position = CASE WHEN position >= 10 THEN 11 ELSE position + 1 END
         WHERE cycle_id = ? RETURNING position`).bind(cycleId).first();
       if (!row) throw new Error('Could not advance song spin cycle.');
-      const outcome = Number(row.position) === 10 ? 'FREE' : 'BOGO';
+      const outcome = Number(row.position) === 10 ? 'FREE' : Number(row.position) < 10 ? 'BOGO' : 'PAID';
       let token = null;
       if (outcome === 'FREE') {
         await env.PAYMENT_DB.prepare(`CREATE TABLE IF NOT EXISTS song_free_spin_claims (
