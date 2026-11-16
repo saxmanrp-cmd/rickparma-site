@@ -79,13 +79,12 @@
     const nameFieldHtml=`<div class="section-label">🎤 Step 1 — What's your name?</div><input type="text" id="reqName" class="name-input" placeholder="So I can give you a shout-out on the mic!">`;
     const price=prices.general;
     const tierLineHtml=`<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
-    const spinLockRemaining=getSpinLockRemainingMs();let stepTwoHtml;
+    let stepTwoHtml;
     if(!spinEnabled){
       const songLabelForPay=`${s.t}${s.a?' - '+s.a:''}`;
       stepTwoHtml=`<div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${paymentUrl(songLabelForPay,price)}" target="_top">Continue to Payment — $${price}</a>`;
     }else{
-      const usedSpin=spinLockRemaining>0;
-      stepTwoHtml=`<div class="roulette-video-card"><div class="section-label" id="step2Label">${usedSpin?'EVERY FIFTH PAID PERFORMANCE REQUEST EARNS A FREE SONG':'STEP 2 — SPIN TO WIN'}</div><div class="roulette-video-stage" id="rouletteStage"><div class="roulette-video-poster"><div class="roulette-video-poster-inner">${usedSpin?'RICK PARMA<br>SAX & SOUL':'VEGAS<br>ROULETTE'}<small>Tap Spin to see your result</small></div></div><video id="rouletteVideo" playsinline preload="auto" disablepictureinpicture muted></video></div><button class="btn btn-text roulette-spin-button" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">SPIN TO WIN</button><div class="roulette-video-status" id="rouletteVideoStatus"></div><div id="spinResultArea"></div></div>`;
+      stepTwoHtml=`<div class="roulette-video-card"><div class="section-label" id="step2Label">STEP 2 — SPIN TO SEE WHAT YOU GET</div><div class="roulette-video-stage" id="rouletteStage"><div class="roulette-video-poster"><div class="roulette-video-poster-inner">GOOD<br>LUCK!<small>FREE SONG • BOGO • FULL PRICE<br>Spin to see what comes up</small></div></div><video id="rouletteVideo" playsinline preload="auto" disablepictureinpicture muted></video></div><button class="btn btn-text roulette-spin-button" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">SPIN TO WIN</button><div class="roulette-video-status" id="rouletteVideoStatus"></div><div id="spinResultArea"></div></div>`;
     }
     document.getElementById('sheetTierLine').innerHTML=tierLineHtml;
     document.getElementById('sheetBody').innerHTML=nameFieldHtml+stepTwoHtml;
