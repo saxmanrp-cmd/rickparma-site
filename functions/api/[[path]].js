@@ -559,6 +559,12 @@ export async function createPublicIntent(request, env) {
     description = song;
     metadata.song = song;
     metadata.note = safeString(body.note, 120);
+    // Count only verified paid performance requests for the same phone and gig.
+    const spinDeviceId = String(body.spinDeviceId || '').trim();
+    if (body.djRequest !== true && /^[0-9a-f-]{36}$/i.test(spinDeviceId)) {
+      metadata.spinDeviceId = spinDeviceId;
+      metadata.spinCycleId = String(availability.spinCycleId || 'legacy').slice(0, 100);
+    }
     if (body.djRequest === true) {
       const djSong = safeString(body.djSong, 80);
       const djArtist = safeString(body.djArtist, 80);

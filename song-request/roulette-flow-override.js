@@ -85,7 +85,7 @@
       stepTwoHtml=`<div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${paymentUrl(songLabelForPay,price)}" target="_top">Continue to Payment — $${price}</a>`;
     }else{
       const usedSpin=spinLockRemaining>0;
-      stepTwoHtml=`<div class="roulette-video-card"><div class="section-label" id="step2Label">${usedSpin?'ONE SPIN PER PHONE PER SHOW — FULL PRICE':'STEP 2 — SPIN TO WIN'}</div><div class="roulette-video-stage" id="rouletteStage"><div class="roulette-video-poster"><div class="roulette-video-poster-inner">${usedSpin?'RICK PARMA<br>SAX & SOUL':'VEGAS<br>ROULETTE'}<small>${usedSpin?'Tap to see your paid request':'Tap Spin to Win'}</small></div></div><video id="rouletteVideo" playsinline preload="auto" disablepictureinpicture muted></video></div><button class="btn btn-text roulette-spin-button" id="spinBtn" onclick="${usedSpin?'playPaidSpin':'spinWheel'}('${s.id}', ${price})">${usedSpin?'CONTINUE — FULL PRICE':'SPIN TO WIN'}</button><div class="roulette-video-status" id="rouletteVideoStatus"></div><div id="spinResultArea"></div></div>`;
+      stepTwoHtml=`<div class="roulette-video-card"><div class="section-label" id="step2Label">${usedSpin?'EVERY FIFTH PAID PERFORMANCE REQUEST EARNS A FREE SONG':'STEP 2 — SPIN TO WIN'}</div><div class="roulette-video-stage" id="rouletteStage"><div class="roulette-video-poster"><div class="roulette-video-poster-inner">${usedSpin?'RICK PARMA<br>SAX & SOUL':'VEGAS<br>ROULETTE'}<small>Tap Spin to see your result</small></div></div><video id="rouletteVideo" playsinline preload="auto" disablepictureinpicture muted></video></div><button class="btn btn-text roulette-spin-button" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">SPIN TO WIN</button><div class="roulette-video-status" id="rouletteVideoStatus"></div><div id="spinResultArea"></div></div>`;
     }
     document.getElementById('sheetTierLine').innerHTML=tierLineHtml;
     document.getElementById('sheetBody').innerHTML=nameFieldHtml+stepTwoHtml;
@@ -93,9 +93,9 @@
     document.getElementById('overlay').classList.add('show');document.getElementById('sheet').classList.add('show');document.getElementById('sheet').scrollTop=0;document.body.style.overflow='hidden';
   };
 
-  window.spinWheel=function(songId,price){
+  window.spinWheel=function(songId,price,serverApproved=false){
     const spinLockRemaining=getSpinLockRemainingMs();
-    if(spinLockRemaining>0){const area=document.getElementById('spinResultArea');if(area)area.innerHTML='<div class="spin-result">You already used your spin on this device. Try again in '+formatSpinLockRemaining(spinLockRemaining)+' — or <a href="#" onclick="skipSpinToPayment(\''+songId+'\', '+price+'); return false;" style="color:#7de2ff;text-decoration:underline;">send this request now for $'+price+'</a>.</div>';return;}
+    if(spinLockRemaining>0&&!serverApproved){const area=document.getElementById('spinResultArea');if(area)area.innerHTML='<div class="spin-result">This spin needs to be checked for your free-song reward. Please refresh the page and try again.</div>';return;}
     if(wheelSpinning)return;wheelSpinning=true;lockSpinForThisDevice();
     const outcome=Math.random()<(1/7)?'FREE':'BOGO',video=document.getElementById('rouletteVideo'),stage=document.getElementById('rouletteStage'),btn=document.getElementById('spinBtn'),status=document.getElementById('rouletteVideoStatus');
     if(!video||!stage||!btn){wheelSpinning=false;return;}

@@ -22,6 +22,57 @@ async function createTables(db) {
     token TEXT, created_at TEXT NOT NULL,
     PRIMARY KEY (cycle_id, device_id)
   )`).run();
+  await db.prepare(`CREATE TABLE IF NOT EXISTS song_spin_rewards (
+    cycle_id TEXT NOT NULL, device_id TEXT NOT NULL, milestone INTEGER NOT NULL,
+    request_id TEXT NOT NULL, song_id TEXT NOT NULL, token TEXT NOT NULL,
+    created_at TEXT NOT NULL, PRIMARY KEY (cycle_id, device_id, milestone)
+  )`).run();
+}
+
+async function repeatSpin(db, { cycleId, deviceId, requestId, songId, now }) {
+  const previous = await db.prepare(`SELECT request_id, outcome, token FROM song_spin_devices
+    WHERE cycle_id = ? AND device_id = ?`).bind(cycleId, deviceId).first();
+  if (previous?.request_id === requestId && previous.outcome !== 'PENDING')
+    return { outcome: previous.outcome, token: previous.token || undefined, cycleId };
+
+  const replay = await db.prepare(`SELECT token FROM song_spin_rewards
+    WHERE cycle_id = ? AND device_id = ? AND request_id = ?`)
+    .bind(cycleId, deviceId, requestId).first();
+  if (replay) return { outcome: 'FREE', token: replay.token, cycleId };
+
+  // Only completed performance checkouts count. A BOGO checkout is one paid
+  // request, even though it contains two songs. DJ checkouts never count.
+  const paid = await db.prepare(`SELECT COUNT(*) AS total FROM payment_intents
+    WHERE type = 'song_request' AND status = 'PAID'
+      AND provider IN ('square', 'paypal') AND provider_payment_id IS NOT NULL AND provider_payment_id != ''
+      AND json_extract(metadata_json, '$.spinDeviceId') = ?
+      AND json_extract(metadata_json, '$.spinCycleId') = ?
+      AND COALESCE(json_extract(metadata_json, '$.requestType'), '') != 'dj'`)
+    .bind(deviceId, cycleId).first();
+  const earned = Math.floor(Number(paid?.total || 0) / 4);
+  if (!earned) return { outcome: 'PAID', cycleId };
+  const claimed = await db.prepare(`SELECT COUNT(*) AS total FROM song_spin_rewards
+    WHERE cycle_id = ? AND device_id = ?`).bind(cycleId, deviceId).first();
+  const milestone = Number(claimed?.total || 0) + 1;
+  if (milestone > earned) return { outcome: 'PAID', cycleId };
+
+  const token = crypto.randomUUID();
+  const inserted = await db.prepare(`INSERT OR IGNORE INTO song_spin_rewards
+    (cycle_id, device_id, milestone, request_id, song_id, token, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)`).bind(cycleId, deviceId, milestone, requestId, songId, token, now).run();
+  if (inserted.meta?.changes !== 1) return { outcome: 'PAID', cycleId };
+  try {
+    await db.prepare(`CREATE TABLE IF NOT EXISTS song_free_spin_claims (
+      token TEXT PRIMARY KEY, song_id TEXT NOT NULL, created_at TEXT NOT NULL, claimed_at TEXT
+    )`).run();
+    await db.prepare(`INSERT INTO song_free_spin_claims (token, song_id, created_at) VALUES (?, ?, ?)`)
+      .bind(token, songId, now).run();
+    return { outcome: 'FREE', token, cycleId };
+  } catch (error) {
+    await db.prepare(`DELETE FROM song_spin_rewards WHERE cycle_id = ? AND device_id = ? AND milestone = ?`)
+      .bind(cycleId, deviceId, milestone).run();
+    throw error;
+  }
 }
 
 export async function onRequest({ request, env }) {
@@ -45,11 +96,7 @@ export async function onRequest({ request, env }) {
       (cycle_id, device_id, request_id, song_id, created_at) VALUES (?, ?, ?, ?, ?)`)
       .bind(cycleId, deviceId, requestId, songId, now).run();
     if (inserted.meta?.changes !== 1) {
-      const previous = await env.PAYMENT_DB.prepare(`SELECT request_id, outcome, token FROM song_spin_devices
-        WHERE cycle_id = ? AND device_id = ?`).bind(cycleId, deviceId).first();
-      if (previous?.request_id === requestId && previous.outcome !== 'PENDING')
-        return json({ outcome: previous.outcome, token: previous.token || undefined, cycleId });
-      return json({ outcome: 'PAID', cycleId });
+      return json(await repeatSpin(env.PAYMENT_DB, { cycleId, deviceId, requestId, songId, now }));
     }
 
     try {

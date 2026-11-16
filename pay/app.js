@@ -164,6 +164,14 @@ async function createPublicIntent(mode) {
     if (!songInput.value.trim()) throw new Error("Enter the song you are requesting.");
     body.song = songInput.value.trim();
     if (params.get("songRequestId")) body.songRequestId = params.get("songRequestId");
+    if (params.get("dj") !== "1") {
+      let deviceId = localStorage.getItem('rp_spinDeviceId');
+      if (!deviceId) {
+        deviceId = crypto.randomUUID();
+        localStorage.setItem('rp_spinDeviceId', deviceId);
+      }
+      body.spinDeviceId = deviceId;
+    }
     if (params.get("dj") === "1") {
       body.djRequest = true;
       body.djArtist = params.get("djArtist") || "";
