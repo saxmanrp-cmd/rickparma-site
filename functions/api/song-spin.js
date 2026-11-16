@@ -1,87 +1,85 @@
+const SETTINGS_URL = 'https://rickparma-jsonbin-proxy.saxmanrp.workers.dev/songs';
+
 function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store"
-    }
-  });
+  return new Response(JSON.stringify(data), { status, headers: {
+    'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store'
+  }});
 }
 
-async function nextSpinPosition(env) {
-  if (!env.PAYMENT_DB) throw new Error("PAYMENT_DB is not configured.");
-
-  await env.PAYMENT_DB.prepare(`
-    CREATE TABLE IF NOT EXISTS song_spin_state (
-      id INTEGER PRIMARY KEY,
-      position INTEGER NOT NULL DEFAULT 0,
-      updated_at TEXT NOT NULL
-    )
-  `).run();
-
-  const now = new Date().toISOString();
-  await env.PAYMENT_DB.prepare(`
-    INSERT OR IGNORE INTO song_spin_state (id, position, updated_at)
-    VALUES (1, 0, ?)
-  `).bind(now).run();
-
-  // One shared seven-spin cycle for the live site. The first six positions are
-  // BOGO and position seven is FREE, then the cycle starts over at one.
-  // UPDATE ... RETURNING keeps the increment and returned position atomic even
-  // when multiple guests spin at nearly the same time.
-  const row = await env.PAYMENT_DB.prepare(`
-    UPDATE song_spin_state
-    SET position = CASE WHEN position >= 7 THEN 1 ELSE position + 1 END,
-        updated_at = ?
-    WHERE id = 1
-    RETURNING position
-  `).bind(now).first();
-
-  const position = Number(row && row.position);
-  if (!Number.isInteger(position) || position < 1 || position > 7) {
-    throw new Error("Could not advance song spin cycle.");
-  }
-  return position;
+async function spinSettings() {
+  const response = await fetch(SETTINGS_URL, { cache: 'no-store' });
+  if (!response.ok) throw new Error('Song settings unavailable.');
+  return (await response.json()).record || {};
 }
 
-export async function onRequest(context) {
-  const { request, env } = context;
+async function createTables(db) {
+  await db.prepare(`CREATE TABLE IF NOT EXISTS song_spin_cycles (
+    cycle_id TEXT PRIMARY KEY, position INTEGER NOT NULL DEFAULT 0
+  )`).run();
+  await db.prepare(`CREATE TABLE IF NOT EXISTS song_spin_devices (
+    cycle_id TEXT NOT NULL, device_id TEXT NOT NULL, request_id TEXT NOT NULL,
+    song_id TEXT NOT NULL, outcome TEXT NOT NULL DEFAULT 'PENDING',
+    token TEXT, created_at TEXT NOT NULL,
+    PRIMARY KEY (cycle_id, device_id)
+  )`).run();
+}
 
-  if (request.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        "allow": "POST, OPTIONS",
-        "cache-control": "no-store"
-      }
-    });
-  }
-
-  if (request.method !== "POST") {
-    return json({ error: "Method not allowed." }, 405);
-  }
-
+export async function onRequest({ request, env }) {
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: { allow: 'POST, OPTIONS', 'cache-control': 'no-store' } });
+  if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
   try {
+    if (!env.PAYMENT_DB) throw new Error('PAYMENT_DB is not configured.');
     const body = await request.json().catch(() => ({}));
     const songId = String(body.songId || '').trim().slice(0, 100);
-    if (!songId) return json({ error: 'Song is required.' }, 400);
-    const position = await nextSpinPosition(env);
-    if (position !== 7) return json({ outcome: 'BOGO' });
-    await env.PAYMENT_DB.prepare(`
-      CREATE TABLE IF NOT EXISTS song_free_spin_claims (
-        token TEXT PRIMARY KEY,
-        song_id TEXT NOT NULL,
-        created_at TEXT NOT NULL,
-        claimed_at TEXT
-      )
-    `).run();
-    const token = crypto.randomUUID();
-    await env.PAYMENT_DB.prepare(`
-      INSERT INTO song_free_spin_claims (token, song_id, created_at) VALUES (?, ?, ?)
-    `).bind(token, songId, new Date().toISOString()).run();
-    return json({ outcome: 'FREE', token });
+    const deviceId = String(body.deviceId || '').trim();
+    const requestId = String(body.requestId || '').trim();
+    if (!songId || !/^[0-9a-f-]{36}$/i.test(deviceId) || !/^[0-9a-f-]{36}$/i.test(requestId)) return json({ error: 'Invalid spin request.' }, 400);
+
+    const settings = await spinSettings();
+    if (settings.songRequestLive === false || settings.performanceModeEnabled === false || settings.spinEnabled === false) return json({ error: 'Spins are closed.' }, 403);
+    if (!(settings.songs || []).some(song => String(song.id) === songId)) return json({ error: 'Song is unavailable.' }, 400);
+    const cycleId = String(settings.spinCycleId || 'legacy').slice(0, 100);
+    await createTables(env.PAYMENT_DB);
+    const now = new Date().toISOString();
+    const inserted = await env.PAYMENT_DB.prepare(`INSERT OR IGNORE INTO song_spin_devices
+      (cycle_id, device_id, request_id, song_id, created_at) VALUES (?, ?, ?, ?, ?)`)
+      .bind(cycleId, deviceId, requestId, songId, now).run();
+    if (inserted.meta?.changes !== 1) {
+      const previous = await env.PAYMENT_DB.prepare(`SELECT request_id, outcome, token FROM song_spin_devices
+        WHERE cycle_id = ? AND device_id = ?`).bind(cycleId, deviceId).first();
+      if (previous?.request_id === requestId && previous.outcome !== 'PENDING')
+        return json({ outcome: previous.outcome, token: previous.token || undefined, cycleId });
+      return json({ outcome: 'PAID', cycleId });
+    }
+
+    try {
+      await env.PAYMENT_DB.prepare(`INSERT OR IGNORE INTO song_spin_cycles (cycle_id, position) VALUES (?, 0)`).bind(cycleId).run();
+      // This single update assigns one shared position, even for concurrent guests.
+      const row = await env.PAYMENT_DB.prepare(`UPDATE song_spin_cycles
+        SET position = CASE WHEN position >= 10 THEN 1 ELSE position + 1 END
+        WHERE cycle_id = ? RETURNING position`).bind(cycleId).first();
+      if (!row) throw new Error('Could not advance song spin cycle.');
+      const outcome = Number(row.position) === 10 ? 'FREE' : 'BOGO';
+      let token = null;
+      if (outcome === 'FREE') {
+        await env.PAYMENT_DB.prepare(`CREATE TABLE IF NOT EXISTS song_free_spin_claims (
+          token TEXT PRIMARY KEY, song_id TEXT NOT NULL, created_at TEXT NOT NULL, claimed_at TEXT
+        )`).run();
+        token = crypto.randomUUID();
+        await env.PAYMENT_DB.prepare(`INSERT INTO song_free_spin_claims (token, song_id, created_at) VALUES (?, ?, ?)`)
+          .bind(token, songId, now).run();
+      }
+      await env.PAYMENT_DB.prepare(`UPDATE song_spin_devices SET outcome = ?, token = ?
+        WHERE cycle_id = ? AND device_id = ?`).bind(outcome, token, cycleId, deviceId).run();
+      return json({ outcome, token: token || undefined, cycleId });
+    } catch (error) {
+      // The claim can be retried when the cycle could not be advanced.
+      await env.PAYMENT_DB.prepare(`DELETE FROM song_spin_devices WHERE cycle_id = ? AND device_id = ? AND outcome = 'PENDING'`)
+        .bind(cycleId, deviceId).run();
+      throw error;
+    }
   } catch (error) {
-    console.error("Song spin error", error);
-    return json({ error: error.message || "Unable to determine spin outcome." }, 500);
+    console.error('Song spin error', error);
+    return json({ error: 'Unable to determine spin outcome. Please try again.' }, 503);
   }
 }

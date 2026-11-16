@@ -138,10 +138,8 @@
     }catch(_){}
   }, true);
 
-  // The original roulette code used Math.random() < 1/7 on every spin. That is
-  // a 1-in-7 probability, not a one-per-seven limit. Ask the server for the next
-  // position in a shared seven-spin cycle, then feed that controlled outcome into
-  // the existing roulette animation/video code without rewriting the UI flow.
+  // The server assigns the shared ten-request cycle and enforces one spin per
+  // phone per gig. The animation consumes that result; it never chooses it.
   const originalSpinWheel = window.spinWheel;
   if(typeof originalSpinWheel === 'function'){
     window.spinWheel = async function(songId, price){
@@ -159,26 +157,42 @@
         btn.textContent = 'SPINNING…';
       }
 
-      let outcome = 'BOGO';
+      let outcome;
       try{
+        let deviceId = localStorage.getItem('rp_spinDeviceId');
+        if(!deviceId){deviceId=crypto.randomUUID();localStorage.setItem('rp_spinDeviceId',deviceId);}
+        const requestKey='rp_spinPending_'+spinCycleId;
+        let requestId=localStorage.getItem(requestKey);
+        if(!requestId){requestId=crypto.randomUUID();localStorage.setItem(requestKey,requestId);}
         const res = await fetch('/api/song-spin', {
           method:'POST',
           headers:{'content-type':'application/json'},
-          body:JSON.stringify({songId}),
+          body:JSON.stringify({songId,deviceId,requestId}),
           cache:'no-store'
         });
         if(!res.ok) throw new Error('song-spin ' + res.status);
         const data = await res.json();
-        if(data.outcome !== 'FREE' && data.outcome !== 'BOGO') throw new Error('Invalid song-spin outcome');
+        if(!['FREE','BOGO','PAID'].includes(data.outcome)) throw new Error('Invalid song-spin outcome');
+        if(data.cycleId !== spinCycleId) throw new Error('The show reset. Please try again.');
         if(data.outcome === 'FREE' && !data.token) throw new Error('Missing free-spin token');
         freeSpinToken = data.outcome === 'FREE' ? data.token : null;
         outcome = data.outcome;
+        localStorage.removeItem(requestKey);
       }catch(err){
-        // Fail closed: if the server cannot be reached, never accidentally give
-        // away an extra FREE request. The guest still gets the BOGO path.
-        console.error('Controlled song spin failed; using BOGO fallback', err);
-        freeSpinToken = null;
-        outcome = 'BOGO';
+        console.error('Controlled song spin failed', err);
+        if(btn){btn.disabled=false;btn.style.opacity='1';btn.textContent='TRY SPIN AGAIN';}
+        const status=document.getElementById('rouletteVideoStatus');
+        if(status)status.textContent='Could not reach the spin service. Please try again.';
+        spinOutcomePending=false;
+        return;
+      }
+
+      if(outcome === 'PAID'){
+        lockSpinForThisDevice();
+        spinOutcomePending=false;
+        if(typeof window.playPaidSpin === 'function') window.playPaidSpin(songId,price);
+        else skipSpinToPayment(songId,price);
+        return;
       }
 
       const originalRandom = Math.random;

@@ -936,10 +936,12 @@ let searchTerm = "";
 let sortMode = "title-asc";
 let requestedMap = {};
 let spinEnabled = true;
+let spinCycleId = 'legacy';
 let smsRequestsEnabled = true;
 let songRefreshTimer = null;
 
 function applySongRecord(record){
+  spinCycleId = String(record.spinCycleId || 'legacy');
   familiarArtists = [...new Set((record.songs || []).map(song => (song.a || '').trim()).filter(Boolean))];
   powerSongsAvailable = record.powerSongsAvailable === true;
   dinnerMusicOnly = record.dinnerMusicOnly === true;
@@ -1138,10 +1140,10 @@ document.getElementById('search').addEventListener('input',e=>{searchTerm=e.targ
 document.getElementById('sortSelect').addEventListener('change',e=>{sortMode=e.target.value;renderList();});
 
 const WHEEL_SLICES=['FREE','BOGO','BOGO','BOGO','BOGO','BOGO','BOGO'];
-let wheelSpinning=false;let wheelRotationTotal=0;const SPIN_COOLDOWN_MS=4*60*60*1000;
-function getSpinLockRemainingMs(){const last=parseInt(localStorage.getItem('rp_lastSpinAt')||'0',10);if(!last)return 0;return Math.max(0,SPIN_COOLDOWN_MS-(Date.now()-last));}
-function lockSpinForThisDevice(){localStorage.setItem('rp_lastSpinAt',String(Date.now()));}
-function formatSpinLockRemaining(ms){const mins=Math.ceil(ms/60000);if(mins<60)return mins+' minute'+(mins===1?'':'s');const hrs=Math.floor(mins/60);const remMins=mins%60;return hrs+' hour'+(hrs===1?'':'s')+(remMins?' '+remMins+'m':'');}
+let wheelSpinning=false;let wheelRotationTotal=0;
+function getSpinLockRemainingMs(){return localStorage.getItem('rp_lastSpinAt') && localStorage.getItem('rp_lastSpinCycle')===spinCycleId ? 1 : 0;}
+function lockSpinForThisDevice(){localStorage.setItem('rp_lastSpinAt',String(Date.now()));localStorage.setItem('rp_lastSpinCycle',spinCycleId);}
+function formatSpinLockRemaining(){return 'this show';}
 function skipSpinToPayment(songId,price){const s=songs.find(x=>x.id===songId);if(!s)return;const songLabel=s.t+(s.a?' - '+s.a:'');window.top.location.href='/pay/?mode=song&amount='+price+'&song='+encodeURIComponent(songLabel);}
 function fitWheelToViewport(){const sheetEl=document.getElementById('sheet');const wrap=document.querySelector('.wheel-wrap');const inner=document.querySelector('.wheel-scale-inner');if(!sheetEl||!wrap||!inner)return;let guard=0;while(sheetEl.scrollHeight>sheetEl.clientHeight&&guard<25){const curOuter=parseFloat(wrap.style.width)||280;const nextOuter=Math.max(150,curOuter-8);if(nextOuter===curOuter)break;const curPad=parseFloat(inner.style.left)||0;const nextWheelPx=Math.max(130,nextOuter-curPad*2);const nextScale=(nextWheelPx/280).toFixed(4);const nextPad=Math.round(14*nextScale);const finalOuter=nextWheelPx+nextPad*2;wrap.style.width=finalOuter+'px';wrap.style.height=finalOuter+'px';inner.style.transform='scale('+nextScale+')';inner.style.top=nextPad+'px';inner.style.left=nextPad+'px';guard++;}}
 function openSheet(id){
