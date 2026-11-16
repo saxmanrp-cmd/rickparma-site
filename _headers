@@ -6,3 +6,15 @@
 
 /pay/styles.css
   Cache-Control: no-cache, no-store, must-revalidate
+
+/song-request/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/song-request/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/song-request/index-base.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/song-request/*.js
+  Cache-Control: no-cache, no-store, must-revalidate
