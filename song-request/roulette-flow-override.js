@@ -1,6 +1,9 @@
 (function(){
   const FREE_VIDEO='./video/roulette-free.mp4';
   const BOGO_VIDEO='./video/roulette-bogo.mp4';
+  const SLOT_FREE='./video/slot-free.mp4';
+  const SLOT_BOGO='./video/slot-bogo.mp4';
+  const SLOT_PAID='./video/slot-paid.mp4';
   const LIVE_PAY_BASE='https://rickparma.com/pay/';
 
   const style=document.createElement('style');
@@ -56,7 +59,7 @@
   `;
   document.head.appendChild(style);
 
-  [FREE_VIDEO,BOGO_VIDEO].forEach(src=>{const v=document.createElement('video');v.preload='auto';v.playsInline=true;v.src=src;v.load();});
+  [FREE_VIDEO,BOGO_VIDEO,SLOT_FREE,SLOT_BOGO,SLOT_PAID].forEach(src=>{const v=document.createElement('video');v.preload='metadata';v.playsInline=true;v.muted=true;v.src=src;});
 
   function paymentUrl(songLabel,price){return LIVE_PAY_BASE+'?mode=song&amount='+price+'&song='+encodeURIComponent(songLabel);}
 
@@ -77,11 +80,12 @@
     const price=prices.general;
     const tierLineHtml=`<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
     const spinLockRemaining=getSpinLockRemainingMs();let stepTwoHtml;
-    if(!spinEnabled||spinLockRemaining>0){
+    if(!spinEnabled){
       const songLabelForPay=`${s.t}${s.a?' - '+s.a:''}`;
       stepTwoHtml=`<div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${paymentUrl(songLabelForPay,price)}" target="_top">Continue to Payment — $${price}</a>`;
     }else{
-      stepTwoHtml=`<div class="roulette-video-card"><div class="section-label" id="step2Label">STEP 2 — SPIN THE ROULETTE FOR A CHANCE TO WIN</div><div class="roulette-video-stage" id="rouletteStage"><div class="roulette-video-poster"><div class="roulette-video-poster-inner">VEGAS<br>ROULETTE<small>Tap Spin to Win</small></div></div><video id="rouletteVideo" playsinline preload="auto" disablepictureinpicture></video></div><button class="btn btn-text roulette-spin-button" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">SPIN TO WIN</button><div class="roulette-video-status" id="rouletteVideoStatus"></div><div id="spinResultArea"></div></div>`;
+      const usedSpin=spinLockRemaining>0;
+      stepTwoHtml=`<div class="roulette-video-card"><div class="section-label" id="step2Label">${usedSpin?'ONE SPIN PER PHONE PER SHOW — FULL PRICE':'STEP 2 — SPIN TO WIN'}</div><div class="roulette-video-stage" id="rouletteStage"><div class="roulette-video-poster"><div class="roulette-video-poster-inner">${usedSpin?'RICK PARMA<br>SAX & SOUL':'VEGAS<br>ROULETTE'}<small>${usedSpin?'Tap to see your paid request':'Tap Spin to Win'}</small></div></div><video id="rouletteVideo" playsinline preload="auto" disablepictureinpicture muted></video></div><button class="btn btn-text roulette-spin-button" id="spinBtn" onclick="${usedSpin?'playPaidSpin':'spinWheel'}('${s.id}', ${price})">${usedSpin?'CONTINUE — FULL PRICE':'SPIN TO WIN'}</button><div class="roulette-video-status" id="rouletteVideoStatus"></div><div id="spinResultArea"></div></div>`;
     }
     document.getElementById('sheetTierLine').innerHTML=tierLineHtml;
     document.getElementById('sheetBody').innerHTML=nameFieldHtml+stepTwoHtml;
@@ -95,10 +99,25 @@
     if(wheelSpinning)return;wheelSpinning=true;lockSpinForThisDevice();
     const outcome=Math.random()<(1/7)?'FREE':'BOGO',video=document.getElementById('rouletteVideo'),stage=document.getElementById('rouletteStage'),btn=document.getElementById('spinBtn'),status=document.getElementById('rouletteVideoStatus');
     if(!video||!stage||!btn){wheelSpinning=false;return;}
-    btn.disabled=true;btn.style.opacity='.68';btn.textContent='SPINNING…';if(status)status.textContent='Good luck…';video.src=outcome==='FREE'?FREE_VIDEO:BOGO_VIDEO;video.currentTime=0;stage.classList.add('playing');
+    const slotScene=crypto.getRandomValues(new Uint8Array(1))[0]<128;
+    btn.disabled=true;btn.style.opacity='.68';btn.textContent='SPINNING…';if(status)status.textContent='Good luck…';video.src=outcome==='FREE'?(slotScene?SLOT_FREE:FREE_VIDEO):(slotScene?SLOT_BOGO:BOGO_VIDEO);video.currentTime=0;stage.classList.add('playing');
     let finished=false;const complete=()=>{if(finished)return;finished=true;wheelSpinning=false;finishVideoResult(outcome,songId,price)};video.onended=complete;
-    video.onerror=()=>{if(finished)return;finished=true;wheelSpinning=false;localStorage.removeItem('rp_lastSpinAt');stage.classList.remove('playing');video.removeAttribute('src');video.load();btn.disabled=false;btn.style.opacity='1';btn.textContent='SPIN TO WIN';if(status)status.textContent='The roulette video did not load. Please try again.'};
-    const playPromise=video.play();if(playPromise&&typeof playPromise.catch==='function')playPromise.catch(()=>{wheelSpinning=false;localStorage.removeItem('rp_lastSpinAt');stage.classList.remove('playing');btn.disabled=false;btn.style.opacity='1';btn.textContent='SPIN TO WIN';if(status)status.textContent='Tap SPIN TO WIN again to allow video playback.'});
+    video.onerror=complete;
+    const playPromise=video.play();if(playPromise&&typeof playPromise.catch==='function')playPromise.catch(complete);
+  };
+
+  window.playPaidSpin=function(songId,price){
+    const video=document.getElementById('rouletteVideo'),stage=document.getElementById('rouletteStage'),btn=document.getElementById('spinBtn');
+    if(!video||!stage||!btn)return skipSpinToPayment(songId,price);
+    btn.disabled=true;btn.style.opacity='.68';btn.textContent='PLAYING…';stage.classList.add('playing');
+    video.src=SLOT_PAID;video.currentTime=0;
+    let finished=false;
+    const complete=()=>{if(finished)return;finished=true;stage.style.display='none';btn.style.display='none';
+      const s=songs.find(x=>x.id===songId);if(!s)return;
+      document.getElementById('spinResultArea').innerHTML=`<div class="spin-result">This request is full price. Your spin was used earlier this show.</div><a class="btn btn-text" href="${paymentUrl(s.t+(s.a?' - '+s.a:''),price)}" target="_top">Continue to Payment — $${price}</a>`;
+    };
+    video.onended=complete;video.onerror=complete;
+    const playing=video.play();if(playing&&playing.catch)playing.catch(complete);
   };
 
   window.finishVideoResult=function(outcome,songId,price){
