@@ -145,10 +145,6 @@
     window.spinWheel = async function(songId, price){
       if(spinOutcomePending) return;
 
-      if(typeof getSpinLockRemainingMs === 'function' && getSpinLockRemainingMs() > 0){
-        return originalSpinWheel.call(this, songId, price);
-      }
-
       spinOutcomePending = true;
       const btn = document.getElementById('spinBtn');
       if(btn){
@@ -198,7 +194,7 @@
       const originalRandom = Math.random;
       Math.random = outcome === 'FREE' ? function(){ return 0.01; } : function(){ return 0.99; };
       try{
-        return originalSpinWheel.call(this, songId, price);
+        return originalSpinWheel.call(this, songId, price, true);
       }finally{
         Math.random = originalRandom;
         spinOutcomePending = false;
