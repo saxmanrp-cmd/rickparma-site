@@ -1,12 +1,6 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import test from 'node:test';
-import vm from 'node:vm';
-
-const source = fs.readFileSync(new URL('../functions/api/[[path]].js', import.meta.url), 'utf8');
-const context = vm.createContext({});
-vm.runInContext(source.replace('export async function onRequest', 'async function onRequest'), context);
-const invoiceBalanceCents = (invoice) => context.invoiceBalanceCents(invoice);
+import { invoiceBalanceCents } from '../functions/api/[[path]].js';
 
 test('new event invoices retain a payable balance for partial checkout', () => {
   const invoice = {

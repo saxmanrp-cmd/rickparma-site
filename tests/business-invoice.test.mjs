@@ -3,7 +3,7 @@ import { DatabaseSync } from 'node:sqlite';
 import test from 'node:test';
 import { createBusinessCheckout, reconcileBusinessInvoice, LLC_PROFILE } from '../lib/business-invoice.js';
 
-function setup() {
+function setup({ alerts = false } = {}) {
   const sql = new DatabaseSync(':memory:');
   sql.exec(`CREATE TABLE payment_intents (
     id TEXT PRIMARY KEY, type TEXT, status TEXT, amount_cents INTEGER, currency TEXT,
@@ -13,12 +13,14 @@ function setup() {
   )`);
   const env = {
     BUSINESS_INTEGRATION_API_KEY: 'test-server-only-key',
+    ...(alerts ? { SMS_BLAST_ADMIN_TOKEN: 'sms-key', TIP_NOTIFICATION_PHONE: '7732091124' } : {}),
     PAYMENT_DB: { prepare(query) { return {
       bind(...values) { const statement = sql.prepare(query); return {
-        async run() { return statement.run(...values); },
+        async run() { const result = statement.run(...values); return { ...result, meta: { changes: result.changes } }; },
         async all() { return { results: statement.all(...values) }; },
         async first() { return statement.get(...values); }
       }; }
+      , async run() { const result = sql.prepare(query).run(); return { ...result, meta: { changes: result.changes } }; }
     }; } }
   };
   const invoice = { id: 'llc-test', profileId: LLC_PROFILE, invoiceNumber: 2001,
@@ -28,8 +30,14 @@ function setup() {
     lineItems: [{ amount: '10.00' }], payments: [] };
   let records = [invoice, personal];
   const intents = new Map();
+  const texts = [];
   let hubCreates = 0;
   const fetcher = async (url, options = {}) => {
+    if (url.includes('/api/conversations/reply')) {
+      assert.equal(options.headers['X-Admin-Token'], 'sms-key');
+      texts.push(JSON.parse(options.body));
+      return Response.json({ ok: true });
+    }
     if (url.startsWith('https://rickparma-jsonbin-proxy.saxmanrp.workers.dev/invoices')) {
       if (options.method === 'PUT') { records = structuredClone(JSON.parse(options.body).invoices); return Response.json({ ok: true }); }
       return Response.json({ record: { invoices: structuredClone(records) } });
@@ -51,8 +59,30 @@ function setup() {
     const intent = [...intents.values()].find(item => url.endsWith(item.id));
     return intent ? Response.json({ intent }) : Response.json({ error: 'missing' }, { status: 404 });
   };
-  return { sql, env, fetcher, intents, invoice: () => records[0], personal: () => records[1], hubCreates: () => hubCreates };
+  return { sql, env, fetcher, intents, texts, invoice: () => records[0], personal: () => records[1], hubCreates: () => hubCreates };
 }
+
+test('LLC sends one partial and one paid-in-full alert, none on refresh or refund', async () => {
+  const app = setup({ alerts: true });
+  await createBusinessCheckout(app.env, 'llc-test', 100, app.fetcher);
+  const first = [...app.intents.values()][0];
+  first.status = 'PAID'; first.provider = 'square'; first.providerPaymentId = 'sq-llc-one';
+  await reconcileBusinessInvoice(app.env, 'llc-test', app.fetcher);
+  await reconcileBusinessInvoice(app.env, 'llc-test', app.fetcher);
+  assert.equal(app.texts.length, 1);
+  assert.match(app.texts[0].message, /Parma Entertainment Group LLC #2001\nTest Buyer\nReceived \$1\.00\nPartial payment · Balance \$2\.00/);
+  await createBusinessCheckout(app.env, 'llc-test', 200, app.fetcher);
+  const second = [...app.intents.values()][1];
+  second.status = 'PAID'; second.provider = 'square'; second.providerPaymentId = 'sq-llc-two';
+  await reconcileBusinessInvoice(app.env, 'llc-test', app.fetcher);
+  await reconcileBusinessInvoice(app.env, 'llc-test', app.fetcher);
+  assert.equal(app.texts.length, 2);
+  assert.match(app.texts[1].message, /Received \$2\.00\nPaid in full/);
+  first.status = 'REFUNDED'; first.refundedCents = 100;
+  await reconcileBusinessInvoice(app.env, 'llc-test', app.fetcher);
+  assert.equal(app.texts.length, 2);
+  app.sql.close();
+});
 
 test('stable request UUID, partial payments, duplicates, and refunds', async () => {
   const app = setup();
