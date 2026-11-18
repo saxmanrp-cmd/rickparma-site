@@ -11,6 +11,7 @@
 // env.SQUARE_LOCATION_ID and env.PAYPAL_CLIENT_ID via /api/config — none of those are secret,
 // they are meant to be public (Square/PayPal's own SDKs require them client-side).
 import { createBusinessCheckout, reconcileBusinessInvoice } from '../../lib/business-invoice.js';
+import { notifyInvoicePayment } from '../../lib/invoice-payment-alert.js';
 
 const ALLOWED_PUBLIC_TYPES = new Set(["tip", "song_request", "vocal_tutorial"]);
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
@@ -226,7 +227,7 @@ async function markFulfillment(env, intentId, status) {
 
 // Match Invoice Creator's total: event prices plus additional charges.
 // Legacy invoices without events store their amounts in lineItems alone.
-function invoiceBalanceCents(invoice) {
+export function invoiceBalanceCents(invoice) {
   const cents = (items) => (items || []).reduce((sum, item) => sum + Math.round((Number(item.amount) || 0) * 100), 0);
   return cents(invoice.events) + cents(invoice.lineItems) - cents(invoice.payments);
 }
@@ -236,9 +237,10 @@ function invoiceBalanceCents(invoice) {
 // manual re-entry. NOTE: the KV proxy wraps reads in {record:{invoices:[...]}}
 // (jsonbin.io-compatibility shape) and only accepts GET/PUT — invoice-creator.html
 // itself reads/writes the exact same way, so this mirrors that contract exactly.
-async function fulfillInvoice(env, intent) {
+export async function fulfillInvoice(env, intent) {
   if (!intent.reference) return "SKIPPED_NO_REFERENCE";
   const res = await fetch(`${PROXY_BASE}/invoices`);
+  if (!res.ok) throw new Error(`Invoice storage read failed: ${res.status}`);
   const data = await res.json();
   const invoices = (data && data.record && data.record.invoices) || [];
   const idx = invoices.findIndex((inv) => inv.id === intent.reference);
@@ -246,25 +248,32 @@ async function fulfillInvoice(env, intent) {
 
   const invoice = invoices[idx];
   invoice.payments = invoice.payments || [];
-  invoice.payments.push({
-    date: nowIso().slice(0, 10),
-    amount: intent.amountCents / 100,
-    method: intent.provider === "square" ? "Card" : intent.provider === "paypal" ? "PayPal" : (intent.provider || "Card"),
-    source: "payment_hub",
-    transactionId: intent.providerPaymentId || intent.providerOrderId || null
-  });
-  invoices[idx] = invoice;
-
-  await fetch(`${PROXY_BASE}/invoices`, {
-    method: "PUT",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ invoices })
-  });
+  const transactionId = intent.providerPaymentId || intent.providerOrderId || intent.id;
+  const existing = invoice.payments.find(payment => payment.source === 'payment_hub' &&
+    (payment.paymentIntentId === intent.id || payment.transactionId === transactionId));
+  const newPayment = !existing;
+  if (newPayment) {
+    invoice.payments.push({
+      date: nowIso().slice(0, 10),
+      amount: intent.amountCents / 100,
+      method: intent.provider === "square" ? "Card" : intent.provider === "paypal" ? "PayPal" : (intent.provider || "Card"),
+      source: "payment_hub",
+      transactionId,
+      paymentIntentId: intent.id
+    });
+    invoices[idx] = invoice;
+    const saved = await fetch(`${PROXY_BASE}/invoices`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ invoices })
+    });
+    if (!saved.ok) throw new Error(`Invoice storage write failed: ${saved.status}`);
+  }
 
   // If this payment brings the invoice to a zero balance, text the client a
   // paid-in-full receipt at the phone number already on file for the invoice.
   const balanceCents = invoiceBalanceCents(invoice);
-  if (balanceCents <= 0 && invoice.clientPhone) {
+  if (newPayment && balanceCents <= 0 && invoice.clientPhone) {
     const total = ((invoice.events || []).reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)
       + (invoice.lineItems || []).reduce((s, i) => s + (parseFloat(i.amount) || 0), 0));
     try {
@@ -277,6 +286,13 @@ async function fulfillInvoice(env, intent) {
     } catch (err) {
       console.error("invoice receipt SMS error", intent.id, err);
     }
+  }
+  try {
+    await notifyInvoicePayment(env, { invoice, source:'personal', paymentId:transactionId,
+      amountCents:intent.amountCents, balanceCents, newPayment });
+  } catch (err) {
+    console.error('Invoice payment SMS error', intent.id, err);
+    return 'ERROR'; // The ledger is already saved; a fulfillment retry sends only the pending text.
   }
   return "FULFILLED";
 }
