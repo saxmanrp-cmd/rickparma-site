@@ -157,6 +157,6 @@ test('business checkout uses the standard invoice price for a partial or full ch
   await createBusinessCheckout(app.env, 'llc-test', 100, app.fetcher);
   await createBusinessCheckout(app.env, 'llc-test', 999, app.fetcher);
   assert.deepEqual(app.sql.prepare("SELECT amount_cents FROM payment_intents WHERE origin_app='business_invoice' ORDER BY amount_cents").all().map(row => row.amount_cents),
-    [100, 340]); // $3 base becomes $3.40 standard price.
+    [100, 309]); // $3 base becomes $3.09 with a flat 2.9% adjustment.
   app.sql.close();
 });
