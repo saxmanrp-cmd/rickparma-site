@@ -150,3 +150,13 @@ test('simultaneous checkout requests use one persisted UUID and Hub intent', asy
   assert.equal(app.sql.prepare("SELECT COUNT(*) AS total FROM payment_intents WHERE origin_app='business_invoice'").get().total, 1);
   app.sql.close();
 });
+
+test('business checkout uses the standard invoice price for a partial or full charge', async () => {
+  const app = setup();
+  app.invoice().priceOption = { onlinePriceEnabled:true, cashDiscountApplied:false };
+  await createBusinessCheckout(app.env, 'llc-test', 100, app.fetcher);
+  await createBusinessCheckout(app.env, 'llc-test', 999, app.fetcher);
+  assert.deepEqual(app.sql.prepare("SELECT amount_cents FROM payment_intents WHERE origin_app='business_invoice' ORDER BY amount_cents").all().map(row => row.amount_cents),
+    [100, 340]); // $3 base becomes $3.40 standard price.
+  app.sql.close();
+});

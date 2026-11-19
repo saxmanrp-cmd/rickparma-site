@@ -12,6 +12,7 @@
 // they are meant to be public (Square/PayPal's own SDKs require them client-side).
 import { createBusinessCheckout, reconcileBusinessInvoice } from '../../lib/business-invoice.js';
 import { notifyInvoicePayment } from '../../lib/invoice-payment-alert.js';
+import { invoiceAmountCents } from '../../lib/invoice-price.js';
 
 const ALLOWED_PUBLIC_TYPES = new Set(["tip", "song_request", "vocal_tutorial"]);
 const PROXY_BASE = "https://rickparma-jsonbin-proxy.saxmanrp.workers.dev";
@@ -229,7 +230,7 @@ async function markFulfillment(env, intentId, status) {
 // Legacy invoices without events store their amounts in lineItems alone.
 export function invoiceBalanceCents(invoice) {
   const cents = (items) => (items || []).reduce((sum, item) => sum + Math.round((Number(item.amount) || 0) * 100), 0);
-  return cents(invoice.events) + cents(invoice.lineItems) - cents(invoice.payments);
+  return invoiceAmountCents(invoice) - cents(invoice.payments);
 }
 
 // Records a completed Payment Hub charge back onto the matching invoice in the
@@ -274,8 +275,7 @@ export async function fulfillInvoice(env, intent) {
   // paid-in-full receipt at the phone number already on file for the invoice.
   const balanceCents = invoiceBalanceCents(invoice);
   if (newPayment && balanceCents <= 0 && invoice.clientPhone) {
-    const total = ((invoice.events || []).reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)
-      + (invoice.lineItems || []).reduce((s, i) => s + (parseFloat(i.amount) || 0), 0));
+    const total = invoiceAmountCents(invoice) / 100;
     try {
       const params = new URLSearchParams();
       params.append("to", invoice.clientPhone);
@@ -736,6 +736,8 @@ async function createInvoicePayLink(request, env, requiredProfile = null) {
   const invoices = (data && data.record && data.record.invoices) || [];
   const invoice = invoices.find((inv) => inv.id === invoiceId);
   if (!invoice) return corsJson({ error: "Invoice not found." }, 404);
+  if (invoice.priceOption?.onlinePriceEnabled && invoice.priceOption.cashDiscountApplied)
+    return corsJson({ error: "The cash/bank price is arranged directly with the invoice issuer." }, 409);
 
   const businessProfile = "parma-entertainment-group-llc";
   const issuerProfileId = invoice.profileId === businessProfile ? businessProfile : "rick-parma";
