@@ -105,9 +105,6 @@
   .calendar-panel button.secondary, .calendar-edit-link { background:#0d0505; border:1px solid rgba(141,178,229,0.5); color:#8DB2E5; }
   .calendar-edit-link { display:inline-flex; align-items:center; text-decoration:none; margin:4px 0 6px; }
   .calendar-panel [hidden] { display:none!important; }
-  .calendar-panel .calendar-date-list { margin-top:12px; max-height:260px; overflow:auto; }
-  .calendar-panel .calendar-date-entry { border-top:1px solid rgba(141,178,229,0.2); padding:9px 0; font-size:13px; }
-  .calendar-panel .calendar-date-entry span { display:block; color:rgba(255,255,255,0.7); margin-top:4px; white-space:pre-wrap; }
   #photo-list.hidden-while-picking { display:none; }
   .btn-cancel-preview { display:block; width:100%; margin-top:14px; background:none; border:none; color:rgba(255,255,255,0.4); font-size:13px; padding:10px; cursor:pointer; text-align:center; }
   .btn-cancel-preview:active { color:rgba(255,255,255,0.7); }
@@ -214,8 +211,9 @@
     <h2>Show Dates</h2>
     <p>Add a date or copy an existing show. The description is the regular Google Calendar description.</p>
     <label for="calendar-copy-source">Copy information from</label>
-    <select id="calendar-copy-source"><option value="">Choose a previous date…</option></select>
+    <select id="calendar-copy-source" onchange="updateCalendarEditLink()"><option value="">Choose a previous date…</option></select>
     <div class="calendar-actions"><button type="button" onclick="openCalendarForm()">Add Date</button><button type="button" class="secondary" onclick="duplicateCalendarDate()">Duplicate Date</button></div>
+    <a id="calendar-edit-selected" class="calendar-edit-link" hidden target="_blank" rel="noopener noreferrer">Edit selected date in Google Calendar</a>
     <form id="calendar-date-form" hidden onsubmit="saveCalendarDate(event)">
       <h2 id="calendar-form-heading">Add Date</h2>
       <label>Title<input id="calendar-title" required maxlength="200"></label>
@@ -228,7 +226,6 @@
       <div class="calendar-actions"><button type="submit">Continue to Google Calendar</button><button type="button" class="secondary" onclick="closeCalendarForm()">Cancel</button></div>
     </form>
     <div class="calendar-actions"><button type="button" class="secondary" onclick="refreshCalendarDates()">↻ Refresh Dates</button></div>
-    <div id="calendar-date-list" class="calendar-date-list"></div>
   </section>
   <div id="photo-list"></div>
   <button class="btn-generate" onclick="pushToWebsite()">⬆ Push to Website</button>
@@ -403,8 +400,7 @@
   }
   function renderCalendarManager(keepId) {
     var select = document.getElementById("calendar-copy-source");
-    var list = document.getElementById("calendar-date-list");
-    if (!select || !list) return;
+    if (!select) return;
     var currentId = keepId || "";
     select.innerHTML = '<option value="">Choose a previous date…</option>' + calendarEvents.map(function(ev, index) {
       return '<option value="' + index + '">' + escapeCalendarText(ev.label) + '</option>';
@@ -413,13 +409,16 @@
       var currentIndex = calendarEvents.findIndex(function(ev) { return ev.id === currentId; });
       if (currentIndex >= 0) select.value = String(currentIndex);
     }
-    list.innerHTML = calendarEvents.map(function(ev, index) {
-      var link = /^https:\/\/(?:calendar\.google\.com|www\.google\.com\/calendar)\//.test(ev.htmlLink)
-        ? '<a class="calendar-edit-link" href="' + escapeCalendarText(ev.htmlLink) + '" target="_blank" rel="noopener noreferrer">Edit in Google Calendar</a>' : '';
-      return '<div class="calendar-date-entry"><strong>' + escapeCalendarText(ev.label) + '</strong>' +
-        (ev.description ? '<span>' + escapeCalendarText(ev.description) + '</span>' : '') +
-        '<div class="calendar-actions"><button type="button" class="secondary" onclick="openCalendarForm(calendarEvents[' + index + '])">Duplicate</button>' + link + '</div></div>';
-    }).join("") || '<p>No upcoming dates found.</p>';
+    updateCalendarEditLink();
+  }
+  function updateCalendarEditLink() {
+    var selected = document.getElementById("calendar-copy-source").value;
+    var event = selected === "" ? null : calendarEvents[Number(selected)];
+    var link = document.getElementById("calendar-edit-selected");
+    var valid = event && /^https:\/\/(?:calendar\.google\.com|www\.google\.com\/calendar)\//.test(event.htmlLink);
+    link.hidden = !valid;
+    if (valid) link.href = event.htmlLink;
+    else link.removeAttribute("href");
   }
   async function refreshCalendarDates() {
     var select = document.getElementById("calendar-copy-source");
