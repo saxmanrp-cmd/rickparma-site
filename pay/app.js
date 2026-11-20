@@ -507,6 +507,13 @@ async function boot() {
     const presetAmt = Number(params.get("amount"));
     if (Number.isFinite(presetAmt) && presetAmt > 0) amountInput.value = presetAmt.toFixed(2);
   }
+  if (mode === "song") {
+    const preset = Number(amountInput.value);
+    const minimum = Math.max(Number(config.products.songRequestMinCents || 500),
+      Number.isFinite(preset) ? Math.round(preset * 100) : 0);
+    document.getElementById("amount-label").textContent = `Minimum $${centsToDollars(minimum)}`;
+    document.getElementById("song-amount-hint").classList.remove("hidden");
+  }
   if (mode === "song" && params.get("song")) {
     songInput.value = params.get("song");
   }

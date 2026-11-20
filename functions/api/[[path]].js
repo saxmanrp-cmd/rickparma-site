@@ -564,10 +564,12 @@ export async function createPublicIntent(request, env) {
         (body.djRequest === true ? availability.djModeEnabled !== true : availability.performanceModeEnabled === false)) {
       return json({ error:'This song request mode is closed right now.' }, 409);
     }
-    amountCents = body.djRequest === true
-      ? positiveInteger(Math.round(Number(availability.prices?.dj ?? availability.prices?.general ?? 5) * 100))
-      : positiveInteger(body.amountCents);
-    const min = Number(env.SONG_REQUEST_MIN_CENTS || 500);
+    amountCents = positiveInteger(body.amountCents);
+    const configuredPrice = body.djRequest === true
+      ? availability.prices?.dj ?? availability.prices?.general ?? 5
+      : availability.prices?.general ?? 5;
+    const configuredMin = Math.round(Number(configuredPrice) * 100);
+    const min = Math.max(Number(env.SONG_REQUEST_MIN_CENTS || 500), Number.isSafeInteger(configuredMin) ? configuredMin : 500);
     if (amountCents < min) return json({ error: `Minimum song request is $${(min / 100).toFixed(2)}.` }, 400);
     const song = safeString(body.song, 250);
     if (!song) return json({ error: "Song request is required." }, 400);
