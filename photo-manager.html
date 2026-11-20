@@ -90,6 +90,24 @@
   .date-chip { display:block; width:100%; box-sizing:border-box; background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:10px; padding:14px 16px; font-size:15px; color:rgba(255,255,255,0.75); cursor:pointer; user-select:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .date-chip.selected { background:#8DB2E5; border-color:#8DB2E5; color:#0d0505; font-weight:700; }
   .date-chip-empty { font-size:12px; color:rgba(255,255,255,0.3); }
+  .calendar-panel { background:#1a0808; border-radius:10px; padding:14px; margin-bottom:16px; }
+  .calendar-panel h2 { font-size:15px; color:#8DB2E5; margin-bottom:6px; }
+  .calendar-panel p { font-size:12px; color:rgba(255,255,255,0.6); line-height:1.5; margin-bottom:12px; }
+  .calendar-panel select, .calendar-panel input, .calendar-panel textarea { width:100%; background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:8px; color:#fff; font:inherit; font-size:15px; padding:11px 12px; min-width:0; }
+  .calendar-panel label { display:block; color:rgba(255,255,255,0.75); font-size:12px; margin:10px 0; }
+  .calendar-panel label input, .calendar-panel label textarea { display:block; margin-top:5px; }
+  .calendar-panel textarea { min-height:110px; resize:vertical; }
+  .calendar-panel .calendar-all-day { display:flex; align-items:center; gap:10px; }
+  .calendar-panel .calendar-all-day input { width:20px; height:20px; }
+  .calendar-panel .calendar-times { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .calendar-panel .calendar-actions { display:flex; gap:8px; margin-top:10px; }
+  .calendar-panel button, .calendar-edit-link { min-height:44px; background:#8DB2E5; border:0; border-radius:8px; color:#0d0505; font-size:13px; font-weight:800; padding:10px 12px; cursor:pointer; }
+  .calendar-panel button.secondary, .calendar-edit-link { background:#0d0505; border:1px solid rgba(141,178,229,0.5); color:#8DB2E5; }
+  .calendar-edit-link { display:inline-flex; align-items:center; text-decoration:none; margin:4px 0 6px; }
+  .calendar-panel [hidden] { display:none!important; }
+  .calendar-panel .calendar-date-list { margin-top:12px; max-height:260px; overflow:auto; }
+  .calendar-panel .calendar-date-entry { border-top:1px solid rgba(141,178,229,0.2); padding:9px 0; font-size:13px; }
+  .calendar-panel .calendar-date-entry span { display:block; color:rgba(255,255,255,0.7); margin-top:4px; white-space:pre-wrap; }
   #photo-list.hidden-while-picking { display:none; }
   .btn-cancel-preview { display:block; width:100%; margin-top:14px; background:none; border:none; color:rgba(255,255,255,0.4); font-size:13px; padding:10px; cursor:pointer; text-align:center; }
   .btn-cancel-preview:active { color:rgba(255,255,255,0.7); }
@@ -192,6 +210,26 @@
       <button type="button" class="btn-cancel-preview" onclick="cancelPreview()">Cancel</button>
     </div>
   </div>
+  <section class="calendar-panel" aria-label="Manage show dates">
+    <h2>Show Dates</h2>
+    <p>Add a date or copy an existing show. The description is the regular Google Calendar description.</p>
+    <label for="calendar-copy-source">Copy information from</label>
+    <select id="calendar-copy-source"><option value="">Choose a previous date…</option></select>
+    <div class="calendar-actions"><button type="button" onclick="openCalendarForm()">Add Date</button><button type="button" class="secondary" onclick="duplicateCalendarDate()">Duplicate Date</button></div>
+    <form id="calendar-date-form" hidden onsubmit="saveCalendarDate(event)">
+      <h2 id="calendar-form-heading">Add Date</h2>
+      <label>Title<input id="calendar-title" required maxlength="200"></label>
+      <label>Location<input id="calendar-location" maxlength="500"></label>
+      <label>Date<input id="calendar-date" type="date" required></label>
+      <label class="calendar-all-day"><input id="calendar-all-day" type="checkbox" onchange="toggleCalendarTime()"> All-day event</label>
+      <div id="calendar-time-fields" class="calendar-times"><label>Start time<input id="calendar-start" type="time" required></label><label>End time<input id="calendar-end" type="time" required></label></div>
+      <label>Description<textarea id="calendar-description" placeholder="Anything you would write in the Google Calendar description"></textarea></label>
+      <p>Continue to Google Calendar, choose your Rick Parma Shows calendar, and tap Save. Come back here and refresh the dates to attach the flyer.</p>
+      <div class="calendar-actions"><button type="submit">Continue to Google Calendar</button><button type="button" class="secondary" onclick="closeCalendarForm()">Cancel</button></div>
+    </form>
+    <div class="calendar-actions"><button type="button" class="secondary" onclick="refreshCalendarDates()">↻ Refresh Dates</button></div>
+    <div id="calendar-date-list" class="calendar-date-list"></div>
+  </section>
   <div id="photo-list"></div>
   <button class="btn-generate" onclick="pushToWebsite()">⬆ Push to Website</button>
   <p class="copy-confirm" id="copy-confirm"></p>
@@ -212,7 +250,7 @@
   // ── Calendar config (same public-restricted API key used on the live site) ──
   var CAL_API_KEY = "AIzaSyCea0FN28V6xlJtKaKYJhwLI3xa9v8Pr6s";
   var CAL_ID = "ee79e1557e817dd0e6986fac5545e97cf36f3a9537862731c7e9adc12ea58186@group.calendar.google.com";
-  var calendarEvents = []; // [{id, dateKey, label}] — event IDs keep same-day shows distinct
+  var calendarEvents = []; // Google events; IDs keep same-day shows distinct
   var selectedEventIds = []; // Google Calendar event IDs currently checked
 
   var photos = [];
@@ -325,6 +363,11 @@
     var d = new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
     return d.toLocaleDateString("en-US", { month:"short", day:"numeric" });
   }
+  function escapeCalendarText(value) {
+    return String(value || "").replace(/[&<>"']/g, function(c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; });
+  }
+  function eventWallDate(value) { return String(value || "").slice(0, 10); }
+  function eventWallTime(value) { return String(value || "").slice(11, 16); }
   async function fetchCalendarEvents() {
     try {
       var timeMin = new Date().toISOString();
@@ -346,11 +389,112 @@
         var timeLabel = ev.start && ev.start.dateTime
           ? d.toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" })
           : "All day";
-        return { id: String(ev.id || ""), dateKey: fmtDateKey(d), label: MONTHS[d.getMonth()] + " " + d.getDate() + " · " + timeLabel + " · " + shortTitle };
+        return {
+          id: String(ev.id || ""), dateKey: ev.start.date || eventWallDate(ev.start.dateTime),
+          label: MONTHS[d.getMonth()] + " " + d.getDate() + " · " + timeLabel + " · " + shortTitle,
+          title: shortTitle, location: String(ev.location || ""), description: String(ev.description || ""),
+          start: ev.start.dateTime || ev.start.date, end: ev.end?.dateTime || ev.end?.date || "",
+          allDay: !ev.start.dateTime, htmlLink: String(ev.htmlLink || "")
+        };
       }).filter(Boolean);
     } catch(e) {
       calendarEvents = [];
     }
+  }
+  function renderCalendarManager(keepId) {
+    var select = document.getElementById("calendar-copy-source");
+    var list = document.getElementById("calendar-date-list");
+    if (!select || !list) return;
+    var currentId = keepId || "";
+    select.innerHTML = '<option value="">Choose a previous date…</option>' + calendarEvents.map(function(ev, index) {
+      return '<option value="' + index + '">' + escapeCalendarText(ev.label) + '</option>';
+    }).join("");
+    if (currentId) {
+      var currentIndex = calendarEvents.findIndex(function(ev) { return ev.id === currentId; });
+      if (currentIndex >= 0) select.value = String(currentIndex);
+    }
+    list.innerHTML = calendarEvents.map(function(ev, index) {
+      var link = /^https:\/\/(?:calendar\.google\.com|www\.google\.com\/calendar)\//.test(ev.htmlLink)
+        ? '<a class="calendar-edit-link" href="' + escapeCalendarText(ev.htmlLink) + '" target="_blank" rel="noopener noreferrer">Edit in Google Calendar</a>' : '';
+      return '<div class="calendar-date-entry"><strong>' + escapeCalendarText(ev.label) + '</strong>' +
+        (ev.description ? '<span>' + escapeCalendarText(ev.description) + '</span>' : '') +
+        '<div class="calendar-actions"><button type="button" class="secondary" onclick="openCalendarForm(calendarEvents[' + index + '])">Duplicate</button>' + link + '</div></div>';
+    }).join("") || '<p>No upcoming dates found.</p>';
+  }
+  async function refreshCalendarDates() {
+    var select = document.getElementById("calendar-copy-source");
+    var keepId = select && select.value !== "" ? calendarEvents[Number(select.value)]?.id : "";
+    await fetchCalendarEvents();
+    renderDatePicker();
+    renderCalendarManager(keepId);
+  }
+  function toggleCalendarTime() {
+    var allDay = document.getElementById("calendar-all-day").checked;
+    document.getElementById("calendar-time-fields").hidden = allDay;
+    document.getElementById("calendar-start").required = !allDay;
+    document.getElementById("calendar-end").required = !allDay;
+  }
+  function openCalendarForm(source) {
+    var form = document.getElementById("calendar-date-form");
+    form.reset();
+    document.getElementById("calendar-form-heading").textContent = source ? "Duplicate Date" : "Add Date";
+    if (source) {
+      document.getElementById("calendar-title").value = source.title;
+      document.getElementById("calendar-location").value = source.location;
+      document.getElementById("calendar-description").value = source.description;
+      document.getElementById("calendar-date").value = source.dateKey;
+      document.getElementById("calendar-all-day").checked = source.allDay;
+      if (!source.allDay) {
+        document.getElementById("calendar-start").value = eventWallTime(source.start);
+        document.getElementById("calendar-end").value = eventWallTime(source.end);
+      }
+    }
+    toggleCalendarTime();
+    form.hidden = false;
+    form.scrollIntoView({behavior:"smooth", block:"center"});
+    document.getElementById("calendar-date").focus();
+  }
+  function duplicateCalendarDate() {
+    var value = document.getElementById("calendar-copy-source").value;
+    if (value === "" || !calendarEvents[Number(value)]) return alert("Choose a date to duplicate first.");
+    openCalendarForm(calendarEvents[Number(value)]);
+  }
+  function closeCalendarForm() { document.getElementById("calendar-date-form").hidden = true; }
+  function calendarTemplateUrl(event) {
+    var date = event.date;
+    var compact = function(value) { return value.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""); };
+    var dates;
+    if (event.allDay) {
+      var next = new Date(date + "T12:00:00");
+      next.setDate(next.getDate() + 1);
+      dates = date.replace(/-/g, "") + "/" + fmtDateKey(next).replace(/-/g, "");
+    } else {
+      var start = new Date(date + "T" + event.start + ":00");
+      var end = new Date(date + "T" + event.end + ":00");
+      if (end <= start) end.setDate(end.getDate() + 1);
+      dates = compact(start) + "/" + compact(end);
+    }
+    var url = new URL("https://calendar.google.com/calendar/render");
+    url.searchParams.set("action", "TEMPLATE");
+    url.searchParams.set("text", event.title);
+    url.searchParams.set("dates", dates);
+    url.searchParams.set("location", event.location);
+    url.searchParams.set("details", event.description);
+    return url.toString();
+  }
+  function saveCalendarDate(e) {
+    e.preventDefault();
+    var event = {
+      title: document.getElementById("calendar-title").value.trim(),
+      location: document.getElementById("calendar-location").value.trim(),
+      description: document.getElementById("calendar-description").value,
+      date: document.getElementById("calendar-date").value,
+      allDay: document.getElementById("calendar-all-day").checked,
+      start: document.getElementById("calendar-start").value,
+      end: document.getElementById("calendar-end").value
+    };
+    if (!event.title || !event.date || (!event.allDay && (!event.start || !event.end))) return;
+    window.open(calendarTemplateUrl(event), "_blank", "noopener");
   }
   function renderDatePicker() {
     var el = document.getElementById("datePickerList");
@@ -361,7 +505,7 @@
     }
     el.innerHTML = calendarEvents.map(function(ev) {
       var sel = selectedEventIds.indexOf(ev.id) !== -1;
-      return '<span class="date-chip' + (sel ? " selected" : "") + '" onclick="toggleDateChip(\'' + ev.id.replace(/'/g, "\\'") + '\')">' + ev.label + "</span>";
+      return '<span class="date-chip' + (sel ? " selected" : "") + '" onclick="toggleDateChip(\'' + ev.id.replace(/'/g, "\\'") + '\')">' + escapeCalendarText(ev.label) + "</span>";
     }).join("");
   }
   function toggleDateChip(eventId) {
@@ -864,7 +1008,8 @@
   document.getElementById("input-token").addEventListener("keydown", function(e){ if(e.key==="Enter") saveToken(); });
   // ── Init ────────────────────────────────────────────────────
   setSyncStatus("syncing", "Loading…");
-  fetchCalendarEvents().then(renderDatePicker);
+  refreshCalendarDates();
+  window.addEventListener("focus", function() { refreshCalendarDates(); });
   load().then(function() {
     document.getElementById("loadingScreen").style.display = "none";
     document.getElementById("appWrap").style.display = "block";
