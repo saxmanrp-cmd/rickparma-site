@@ -28,6 +28,8 @@ test('DJ checkout is gated by mode and retains artist, song, and pasted link', a
   try {
     assert.equal((await create()).status,409);
     settings = {...settings,djModeEnabled:true};
+    assert.equal((await create()).status,400);
+    body.amountCents=1200;
     const result=await create();
     assert.equal(result.status,201);
     const intent=(await result.json()).intent;
@@ -36,7 +38,13 @@ test('DJ checkout is gated by mode and retains artist, song, and pasted link', a
     assert.equal(intent.metadata.djArtist,'Earth, Wind & Fire');
     assert.equal(intent.metadata.djSong,'September');
     assert.equal(intent.metadata.requestLink,'https://youtu.be/example');
+    body.amountCents=2000;
+    const extra=await create();
+    assert.equal(extra.status,201);
+    assert.equal((await extra.json()).intent.amountCents,2000);
     body.djRequest=false;
+    body.amountCents=600;
+    assert.equal((await create()).status,400);
     body.amountCents=700;
     const performance=await create();
     assert.equal(performance.status,201);
@@ -53,7 +61,7 @@ test('DJ checkout is gated by mode and retains artist, song, and pasted link', a
     settings = {songRequestLive:true,performanceModeEnabled:false,djModeEnabled:true,prices:{general:7,dj:12}};
     body.djRequest=false;
     assert.equal((await create()).status,409);
-    assert.equal(sql.prepare('SELECT COUNT(*) AS n FROM payment_intents').get().n,3);
+    assert.equal(sql.prepare('SELECT COUNT(*) AS n FROM payment_intents').get().n,4);
   } finally { globalThis.fetch=originalFetch; sql.close(); }
 });
 

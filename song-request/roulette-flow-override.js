@@ -69,7 +69,7 @@
     const sA=songs.find(x=>x.id===songAId),sB=songs.find(x=>x.id===songBId);
     const labelA=sA?`${sA.t}${sA.a?' - '+sA.a:''}`:'',labelB=sB?`${sB.t}${sB.a?' - '+sB.a:''}`:'';
     const songLabel=`${labelA} + BOGO: ${labelB}`;
-    document.getElementById('bogoNextSteps').innerHTML=`<div class="section-label">Step 4 — Pay $${price} (songs won't be added until paid)</div><a class="btn btn-text" href="${paymentUrl(songLabel,price)}" target="_top">Continue to Payment — $${price}</a>`;
+    document.getElementById('bogoNextSteps').innerHTML=`<div class="section-label">Step 4 — Minimum $${price} (songs won't be added until paid)</div><a class="btn btn-text" href="${paymentUrl(songLabel,price)}" target="_top">Continue to Payment</a>`;
   };
 
   window.openSheet=function(id){
@@ -78,11 +78,11 @@
     document.getElementById('sheetArtist').textContent=s.a||'';
     const nameFieldHtml=`<div class="section-label">🎤 Step 1 — What's your name?</div><input type="text" id="reqName" class="name-input" placeholder="So I can give you a shout-out on the mic!">`;
     const price=prices.general;
-    const tierLineHtml=`<span class="badge general"> Song Request</span> <span class="price-tag">$${price}</span>`;
+    const tierLineHtml=`<span class="badge general"> Song Request</span> <span class="price-tag">Minimum $${price}</span>`;
     let stepTwoHtml;
     if(!spinEnabled){
       const songLabelForPay=`${s.t}${s.a?' - '+s.a:''}`;
-      stepTwoHtml=`<div class="section-label">Step 2 — Pay $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${paymentUrl(songLabelForPay,price)}" target="_top">Continue to Payment — $${price}</a>`;
+      stepTwoHtml=`<div class="section-label">Step 2 — Minimum $${price} (song won't be added until paid)</div><a class="btn btn-text" href="${paymentUrl(songLabelForPay,price)}" target="_top">Continue to Payment</a>`;
     }else{
       stepTwoHtml=`<div class="roulette-video-card"><div class="section-label" id="step2Label">STEP 2 — SPIN TO SEE WHAT YOU GET</div><div class="roulette-video-stage" id="rouletteStage"><div class="roulette-video-poster"><div class="roulette-video-poster-inner">GOOD<br>LUCK!<small>FREE SONG • BOGO • FULL PRICE<br>Spin to see what comes up</small></div></div><video id="rouletteVideo" playsinline preload="auto" disablepictureinpicture muted></video></div><button class="btn btn-text roulette-spin-button" id="spinBtn" onclick="spinWheel('${s.id}', ${price})">SPIN TO WIN</button><div class="roulette-video-status" id="rouletteVideoStatus"></div><div id="spinResultArea"></div></div>`;
     }
@@ -113,7 +113,7 @@
     let finished=false;
     const complete=()=>{if(finished)return;finished=true;stage.style.display='none';btn.style.display='none';
       const s=songs.find(x=>x.id===songId);if(!s)return;
-      document.getElementById('spinResultArea').innerHTML=`<div class="spin-result">This request is full price. Your spin was used earlier this show.</div><a class="btn btn-text" href="${paymentUrl(s.t+(s.a?' - '+s.a:''),price)}" target="_top">Continue to Payment — $${price}</a>`;
+      document.getElementById('spinResultArea').innerHTML=`<div class="spin-result">This request is full price. Your spin was used earlier this show.</div><a class="btn btn-text" href="${paymentUrl(s.t+(s.a?' - '+s.a:''),price)}" target="_top">Continue to Payment</a>`;
     };
     video.onended=complete;video.onerror=complete;
     const playing=video.play();if(playing&&playing.catch)playing.catch(complete);
