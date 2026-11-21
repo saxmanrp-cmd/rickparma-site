@@ -98,6 +98,8 @@ function setModeUI(mode) {
     pageTitle.textContent = "SONG REQUEST";
     pageSubtitle.textContent = "Send your request and payment together.";
     songFieldWrap.classList.remove("hidden");
+    emailFieldWrap.classList.add("hidden");
+    noteFieldWrap.classList.add("hidden");
     quickAmounts.classList.add("hidden");
   } else if (mode === "vocal") {
     pageTitle.textContent = "VOCAL TUTORIAL";
@@ -151,7 +153,7 @@ async function createPublicIntent(mode) {
     customerName: nameInput.value.trim()
   };
 
-  if (mode !== "tip") {
+  if (mode === "vocal") {
     body.customerEmail = emailInput.value.trim();
     body.note = noteInput.value.trim();
   }
