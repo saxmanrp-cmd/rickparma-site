@@ -42,24 +42,6 @@
     "eventIds": []
   },
   {
-    "src": "https://rickparma.com/media/1791400512709-copy_62F9F145-4105-45B4-852B-A7454BE5C2BD.mp4",
-    "name": "Toga NY",
-    "dates": [
-      "2026-11-27"
-    ],
-    "eventIds": [
-      "272sbh9ar6dsggfk0g99lb0lb0"
-    ]
-  },
-  {
-    "src": "https://rickparma.com/media/1791400677912-copy_C3490A48-DBC2-4FF0-BA7F-F3DA17F968CF.mp4",
-    "name": "Toga SD",
-    "dates": [
-      "2026-10-27"
-    ],
-    "eventIds": []
-  },
-  {
     "src": "https://rickparma.com/media/1792531720004-copy_81E241E4-33C7-475C-8870-56F15AAD254D.mp4",
     "name": "Jazzy Blu",
     "dates": [
@@ -94,6 +76,16 @@
     "eventIds": [
       "6v8o11ljtsrdali70esph04un8",
       "_88r3gchp610j8b9m8h33ib9k6gojiba268o44ba584s34ghi8orjeh1g64"
+    ]
+  },
+  {
+    "src": "https://rickparma.com/media/1795223157883-copy_6B025E39-0C03-4191-BD2E-B947E433FC32.mp4",
+    "name": "Toga",
+    "dates": [
+      "2026-12-19"
+    ],
+    "eventIds": [
+      "272sbh9ar6dsggfk0g99lb0lb0"
     ]
   }
 ]
