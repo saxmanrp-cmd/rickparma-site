@@ -1123,7 +1123,7 @@ function renderChips(){
   const allChip=document.createElement('div');allChip.className='chip'+(activeTag===null?' active':'');allChip.textContent='All';allChip.onclick=()=>{activeTag=null;updateResultsLabel();renderChips();renderList();};chipsEl.appendChild(allChip);
   ALL_TAGS.forEach(tag=>{const chip=document.createElement('div');chip.className='chip'+(activeTag===tag?' active':'');chip.textContent=tag;chip.onclick=()=>{activeTag=(activeTag===tag?null:tag);updateResultsLabel();renderChips();renderList();};chipsEl.appendChild(chip);});
 }
-function tierBadge(){return `<span class="badge general">Minimum $${prices.general}</span>`;}
+function tierBadge(){return `<span class="badge general">$${prices.general}</span>`;}
 function sortSongs(list){const sorted=[...list];sorted.sort((a,b)=>{if(sortMode==='title-asc')return a.t.localeCompare(b.t);if(sortMode==='title-desc')return b.t.localeCompare(a.t);if(sortMode==='artist-asc')return(a.a||'').localeCompare(b.a||'');if(sortMode==='artist-desc')return(b.a||'').localeCompare(a.a||'');return 0;});return sorted;}
 function isLocked(id){const ts=requestedMap[id];return !!ts && (Date.now()-ts) < 4*60*60*1000;}
 async function loadRequestedSongs(){try{const res=await fetch(PROXY_BASE+'/requested-songs',{cache:'no-store'});const data=await res.json();requestedMap=(data&&data.record)||{};renderList();}catch(e){}}

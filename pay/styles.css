@@ -47,7 +47,7 @@ h1 {
   font-weight: 900;
 }
 .sub { color: var(--muted); margin: 13px auto 0; max-width: 430px; line-height: 1.45; }
-.amount-hint { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+.amount-hint { color: var(--text); font-size: clamp(18px, 4.5vw, 21px); font-weight: 800; line-height: 1.25; margin: 14px 0 4px; }
 .hidden { display: none !important; }
 
 .mode-picker { display: grid; gap: 10px; }
