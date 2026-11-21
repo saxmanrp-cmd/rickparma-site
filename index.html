@@ -121,6 +121,8 @@
 
   .button-row{display:flex;flex-direction:column;align-items:center;gap:16px;margin:8px 0 0;}
   .button-col{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .button-row.song-only #songRequestCol{width:100%;}
+  .button-row.song-only .song-request-button{width:min(100%,560px);}
   .glow-btn{
     display:inline-block;
     padding:16px 32px;
@@ -495,7 +497,7 @@
     </div>
   </div>
 
-  <script>(function(){var heroEl=document.getElementById('heroBand');var songCol=document.getElementById('songRequestCol');var camCol=document.getElementById('fanCamCol');var row=document.querySelector('#heroBand .button-row');function hide(el){if(el){el.style.setProperty('display','none','important');}}fetch('https://rickparma-jsonbin-proxy.saxmanrp.workers.dev/songs').then(function(r){return r.json();}).then(function(data){data=(data&&data.record)||{};var songLive=!(data&&data.songRequestLive===false);var camLive=!(data&&data.fanCamLive===false);if(songCol&&!songLive){hide(songCol);}if(camCol&&!camLive){hide(camCol);}var onlyOne=(songLive&&!camLive)?songCol:((camLive&&!songLive)?camCol:null);if(row&&onlyOne){onlyOne.style.setProperty('max-width','50%','important');onlyOne.style.setProperty('margin','0 auto','important');row.style.setProperty('justify-content','center','important');}if(heroEl&&!songLive&&!camLive){heroEl.style.setProperty('display','none','important');}}).catch(function(err){console.error('hero-status check failed',err);});})();</script><div class="band band-tipjar band-tight reveal-fade">
+  <script>(function(){var heroEl=document.getElementById('heroBand');var songCol=document.getElementById('songRequestCol');var camCol=document.getElementById('fanCamCol');var row=document.querySelector('#heroBand .button-row');function hide(el){if(el){el.style.setProperty('display','none','important');}}fetch('https://rickparma-jsonbin-proxy.saxmanrp.workers.dev/songs').then(function(r){return r.json();}).then(function(data){data=(data&&data.record)||{};var songLive=!(data&&data.songRequestLive===false);var camLive=!(data&&data.fanCamLive===false);if(songCol&&!songLive){hide(songCol);}if(camCol&&!camLive){hide(camCol);}if(row&&songLive&&!camLive){row.classList.add('song-only');}if(row&&camLive&&!songLive){camCol.style.setProperty('max-width','50%','important');camCol.style.setProperty('margin','0 auto','important');}if(heroEl&&!songLive&&!camLive){heroEl.style.setProperty('display','none','important');}}).catch(function(err){console.error('hero-status check failed',err);});})();</script><div class="band band-tipjar band-tight reveal-fade">
     <div class="band-inner">
       <div class="rp-card-panel">
       <div class="tip-amounts" id="tipAmounts">
