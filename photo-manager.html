@@ -109,6 +109,9 @@
   .preview-area .date-picker { margin-top:14px; border-top:1px solid rgba(141,178,229,.2); padding-top:10px; }
   .preview-area .date-picker summary { color:#8DB2E5; font-size:13px; font-weight:700; cursor:pointer; padding:8px 0; }
   .calendar-panel .calendar-actions { flex-wrap:wrap; }
+  .preview-area .btn-save { background:transparent; border:1px solid #8DB2E5; color:#8DB2E5; }
+  .calendar-panel label select { display:block; margin-top:5px; }
+  #preview-calendar-slot:empty { display:none; }
   #photo-list.hidden-while-picking { display:none; }
   .btn-cancel-preview { display:block; width:100%; margin-top:14px; background:none; border:none; color:rgba(255,255,255,0.4); font-size:13px; padding:10px; cursor:pointer; text-align:center; }
   .btn-cancel-preview:active { color:rgba(255,255,255,0.7); }
@@ -204,7 +207,7 @@
         <input type="text" id="input-name" placeholder="Flyer name (optional)…" autocorrect="off" autocapitalize="words" spellcheck="false">
         <button class="btn-save" id="btnSave" onclick="savePhoto()">Save Flyer Only</button>
       </div>
-      <div id="preview-calendar-slot"></div>
+      <div id="preview-calendar-slot" class="calendar-panel"></div>
       <details class="date-picker" id="existing-date-picker">
         <summary>Already have this calendar date? Attach an existing show</summary>
         <div class="date-chip-list" id="datePickerList"><span class="date-chip-empty">Loading calendar…</span></div>
