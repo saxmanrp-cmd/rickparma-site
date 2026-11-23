@@ -81,6 +81,7 @@ async function runSave(mode) {
     },
     save:async()=>{calls.push({kind:'save'});return true;},
     pushFlyersJson:async()=>{calls.push({kind:'publish'});},
+    render:()=>{},
     showConfirm:(message,isError)=>confirmations.push({message,isError}),
     setUploadStatus:()=>{}
   });
