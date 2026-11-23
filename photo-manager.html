@@ -104,7 +104,11 @@
   .calendar-panel button, .calendar-edit-link { min-height:44px; background:#8DB2E5; border:0; border-radius:8px; color:#0d0505; font-size:13px; font-weight:800; padding:10px 12px; cursor:pointer; }
   .calendar-panel button.secondary, .calendar-edit-link { background:#0d0505; border:1px solid rgba(141,178,229,0.5); color:#8DB2E5; }
   .calendar-edit-link { display:inline-flex; align-items:center; text-decoration:none; margin:4px 0 6px; }
-  .calendar-panel [hidden] { display:none!important; }
+  .calendar-panel [hidden], .preview-area [hidden] { display:none!important; }
+  #preview-calendar-slot:not(:empty) { margin-top:14px; padding:12px; border:1px solid rgba(141,178,229,.4); border-radius:10px; background:#180b0b; }
+  .preview-area .date-picker { margin-top:14px; border-top:1px solid rgba(141,178,229,.2); padding-top:10px; }
+  .preview-area .date-picker summary { color:#8DB2E5; font-size:13px; font-weight:700; cursor:pointer; padding:8px 0; }
+  .calendar-panel .calendar-actions { flex-wrap:wrap; }
   #photo-list.hidden-while-picking { display:none; }
   .btn-cancel-preview { display:block; width:100%; margin-top:14px; background:none; border:none; color:rgba(255,255,255,0.4); font-size:13px; padding:10px; cursor:pointer; text-align:center; }
   .btn-cancel-preview:active { color:rgba(255,255,255,0.7); }
@@ -198,12 +202,13 @@
       </div>
       <div class="name-save-row">
         <input type="text" id="input-name" placeholder="Flyer name (optional)…" autocorrect="off" autocapitalize="words" spellcheck="false">
-        <button class="btn-save" id="btnSave" onclick="savePhoto()">Save</button>
+        <button class="btn-save" id="btnSave" onclick="savePhoto()">Save Flyer Only</button>
       </div>
-      <div class="date-picker">
-        <div class="date-picker-label">Attach to show date(s) — optional, tap all that apply</div>
+      <div id="preview-calendar-slot"></div>
+      <details class="date-picker" id="existing-date-picker">
+        <summary>Already have this calendar date? Attach an existing show</summary>
         <div class="date-chip-list" id="datePickerList"><span class="date-chip-empty">Loading calendar…</span></div>
-      </div>
+      </details>
       <button type="button" class="btn-cancel-preview" onclick="cancelPreview()">Cancel</button>
     </div>
   </div>
@@ -217,9 +222,9 @@
       <button type="button" class="secondary" onclick="changeCalendarCopyMonth(1)" aria-label="Next month">›</button>
     </div>
     <select id="calendar-copy-source" onchange="updateCalendarEditLink()"><option value="">Choose a previous date…</option></select>
-    <div class="calendar-actions"><button type="button" onclick="openCalendarForm()">Add Date</button><button type="button" class="secondary" onclick="duplicateCalendarDate()">Duplicate Date</button></div>
+    <div class="calendar-actions"><button type="button" onclick="openCalendarForm()">Add Date</button><button type="button" class="secondary" onclick="duplicateCalendarDate()">Duplicate Date</button><button type="button" class="secondary" onclick="editSelectedCalendarDate()">Edit Date</button></div>
     <a id="calendar-edit-selected" class="calendar-edit-link" hidden target="_blank" rel="noopener noreferrer">Edit selected date in Google Calendar</a>
-    <form id="calendar-date-form" hidden onsubmit="saveCalendarDate(event)">
+    <div id="calendar-form-home"><form id="calendar-date-form" hidden onsubmit="saveCalendarDate(event)">
       <h2 id="calendar-form-heading">Add Date</h2>
       <label>Title<input id="calendar-title" required maxlength="200"></label>
       <label>Location<input id="calendar-location" maxlength="500"></label>
@@ -227,9 +232,11 @@
       <label class="calendar-all-day"><input id="calendar-all-day" type="checkbox" onchange="toggleCalendarTime()"> All-day event</label>
       <div id="calendar-time-fields" class="calendar-times"><label>Start time<input id="calendar-start" type="time" required></label><label>End time<input id="calendar-end" type="time" required></label></div>
       <label>Description<textarea id="calendar-description" placeholder="Anything you would write in the Google Calendar description"></textarea></label>
+      <label>Ticket / payment link (optional)<input type="url" id="calendar-payment-link" placeholder="https://…" inputmode="url"></label>
+      <label>Flyer for this show<select id="calendar-flyer"><option value="">No flyer selected</option></select></label>
       <p id="calendar-save-status" role="status">Save directly to Rick Parma Shows. The first time, connect your Google account below.</p>
-      <div class="calendar-actions"><button type="submit" id="calendar-save-button">Save to Calendar</button><button type="button" class="secondary" onclick="closeCalendarForm()">Cancel</button></div>
-    </form>
+      <div class="calendar-actions"><button type="submit" id="calendar-save-button">Save Show + Flyer</button><button type="button" class="secondary" onclick="saveCalendarDate(event,true)">Save + Another Date</button><button type="button" class="secondary" onclick="closeCalendarForm()">Cancel</button></div>
+    </form></div>
     <details id="calendar-connection"><summary>Google Calendar connection</summary>
       <p>Enter a Google OAuth web client ID once for this device. Its authorized JavaScript origin must include this site's address. Google will ask you to allow calendar event access.</p>
       <label for="calendar-client-id">OAuth client ID</label>
