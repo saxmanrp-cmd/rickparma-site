@@ -1107,7 +1107,10 @@
     if (editingIndex !== null && editingIndex >= 0 && editingIndex < photos.length) {
      photos[editingIndex].name = name;
      photos[editingIndex].eventIds = selectedEventIds.slice();
-     photos[editingIndex].dates = calendarEvents.filter(function(ev) { return selectedEventIds.indexOf(ev.id) !== -1; }).map(function(ev) { return ev.dateKey; }).filter(function(date, i, all) { return all.indexOf(date) === i; });
+     var displayedDates = calendarEvents.map(function(ev) { return ev.dateKey; });
+     var retainedDates = (photos[editingIndex].dates || []).filter(function(date) { return displayedDates.indexOf(date) === -1; });
+     var linkedDates = calendarEvents.filter(function(ev) { return selectedEventIds.indexOf(ev.id) !== -1; }).map(function(ev) { return ev.dateKey; });
+     photos[editingIndex].dates = retainedDates.concat(linkedDates).filter(function(date,i,all) { return all.indexOf(date) === i; });
     } else {
      for (var j=0; j<photos.length; j++) { if (photos[j].src===src) { alert("Already in gallery."); return; } }
      var selectedDates = calendarEvents.filter(function(ev) { return selectedEventIds.indexOf(ev.id) !== -1; }).map(function(ev) { return ev.dateKey; }).filter(function(date, i, all) { return all.indexOf(date) === i; });
@@ -1121,9 +1124,13 @@
     renderDatePicker();
     setPickingMode(false);
    editingIndex = null;
-   document.getElementById("btnSave").textContent = "Save";
+   document.getElementById("btnSave").textContent = "Save Flyer Only";
+    closeCalendarForm();
     render();
-    await save();
+    if (await save() && GH_TOKEN) {
+      try { await pushFlyersJson(); showConfirm("✓ Flyer saved and published.",false); }
+      catch(e) { showConfirm("Flyer saved; tap Push to Website to retry publishing.",true); }
+    }
   }
   // ── Full image/video overlay ────────────────────────────────
   function openOverlay(src) {
@@ -1218,7 +1225,7 @@
         '<span class="drag-handle">⠿</span>' +
         thumbHtml +
         '<div class="photo-info"><div class="photo-num">PHOTO ' + (i+1) + '</div>' + nameHtml + '<div class="photo-url">' + truncUrl(p.src) + '</div>' + datesHtml + '</div>' +
-              '<button class="btn-edit" onclick="editPhoto(' + i + ')">✏️</button>' + '<button class="btn-share" onclick="shareItem(' + i + ')">🔗</button>' + '<button class="btn-delete" onclick="removePhoto(' + i + ')">×</button>';
+              '<button class="btn-edit" title="Edit flyer" onclick="editPhoto(' + i + ')">✏️</button>' + '<button class="btn-edit" title="Add date with this flyer" aria-label="Add date with this flyer" onclick="addDateToExistingFlyer(' + i + ')">📅+</button>' + '<button class="btn-share" onclick="shareItem(' + i + ')">🔗</button>' + '<button class="btn-delete" onclick="removePhoto(' + i + ')">×</button>';
       var handle = item.querySelector(".drag-handle");
       initTouchDrag(handle, i);
       list.appendChild(item);
