@@ -838,28 +838,28 @@
     if (!event || !event.id) return alert("Select the show date you want to delete first.");
     var dateText = event.label || (event.dateKey + " · " + event.title);
     if (!confirm("Delete this performance from Google Calendar and your website?\n\n" + dateText + "\n\nThe flyer will remain in Photo Manager and other show dates will not be deleted.")) return;
+    var useBackground = calendarBackendConnected;
     var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
-    if (!clientId) {
+    if (!useBackground && !clientId) {
       document.getElementById("manager-settings").open = true;
       document.getElementById("calendar-connection").open = true;
-      showConfirm("Connect Google Calendar before deleting this date.",true);
+      showConfirm("Connect Google Calendar in Settings before deleting this date.",true);
       return;
     }
-    if (!window.google?.accounts?.oauth2) {
+    if (!useBackground && !window.google?.accounts?.oauth2) {
       showConfirm("Google sign-in has not loaded. Try again.",true);
       return;
     }
     var button = document.getElementById("calendar-delete-selected");
     calendarSaveInFlight = true;
     if (button) { button.disabled = true; button.textContent = "Deleting…"; }
-    // Request OAuth while still inside the user click for mobile popup support.
-    requestCalendarWriteToken(clientId).then(async function(token) {
-      var url = "https://www.googleapis.com/calendar/v3/calendars/" +
-        encodeURIComponent(CAL_ID) + "/events/" + encodeURIComponent(event.id) + "?sendUpdates=none";
-      var response = await fetch(url,{method:"DELETE",headers:{"Authorization":"Bearer " + token}});
+    // Only the legacy flow opens an OAuth popup; connected sessions use Pages.
+    calendarAuthPromise(clientId,useBackground).then(async function(token) {
+      var response = await calendarWriteRequest("DELETE",event.id,null,token,useBackground);
       if (!response.ok) {
+        invalidateCalendarAuthorization(response,useBackground);
         var body = await response.json().catch(function() { return {}; });
-        throw new Error(body.error?.message || "Google Calendar could not delete that show (" + response.status + ").");
+        throw new Error(body.error?.message || body.error || "Google Calendar could not delete that show (" + response.status + ").");
       }
       var warning = "";
       try {
@@ -913,14 +913,15 @@
       status.textContent = "Choose a new performance date before duplicating.";
       return;
     }
+    var useBackground = calendarBackendConnected;
     var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
-    if (!clientId) {
+    if (!useBackground && !clientId) {
       document.getElementById("manager-settings").open = true;
       document.getElementById("calendar-connection").open = true;
-      status.textContent = "Connect Google Calendar in Settings first. You only need to enter the OAuth client ID once on this device.";
+      status.textContent = "Connect Google Calendar in Settings first.";
       return;
     }
-    if (!window.google?.accounts?.oauth2) {
+    if (!useBackground && !window.google?.accounts?.oauth2) {
       status.textContent = "Google sign-in has not loaded. Check your connection and try again.";
       return;
     }
@@ -934,23 +935,16 @@
     var anotherButton = document.getElementById("calendar-save-another");
     if (anotherButton) anotherButton.disabled = true;
     status.textContent = "Connecting to Google…";
-    // Start authorization within the user tap so mobile browsers permit Google's popup.
-    requestCalendarWriteToken(clientId).then(async function(token) {
+    // An active server session needs no Google popup, even for many dates.
+    calendarAuthPromise(clientId,useBackground).then(async function(token) {
       status.textContent = mode === "edit" ? "Updating show…" : "Creating show…";
-      var url = "https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(CAL_ID) + "/events";
-      var method = "POST";
-      if (mode === "edit" && sourceEvent?.id) {
-        url += "/" + encodeURIComponent(sourceEvent.id);
-        method = "PATCH";
-      }
-      var response = await fetch(url + "?sendUpdates=none", {
-        method:method,
-        headers:{"Authorization":"Bearer " + token,"Content-Type":"application/json"},
-        body:JSON.stringify(calendarEventBody(event))
-      });
+      var method = mode === "edit" && sourceEvent?.id ? "PATCH" : "POST";
+      var eventId = method === "PATCH" ? sourceEvent.id : null;
+      var response = await calendarWriteRequest(method,eventId,calendarEventBody(event),token,useBackground);
       if (!response.ok) {
+        invalidateCalendarAuthorization(response,useBackground);
         var error = await response.json().catch(function() { return {}; });
-        throw new Error(error.error?.message || "Google Calendar could not save this date (" + response.status + ").");
+        throw new Error(error.error?.message || error.error || "Google Calendar could not save this date (" + response.status + ").");
       }
       var saved = await response.json();
       // Calendar writes may succeed even if flyer publishing fails. Never resubmit
@@ -1567,6 +1561,7 @@
   // ── Init ────────────────────────────────────────────────────
   setSyncStatus("syncing", "Loading…");
   document.getElementById("calendar-client-id").value = localStorage.getItem("rp_calendar_oauth_client_id") || "";
+  refreshCalendarBackgroundStatus();
   refreshCalendarDates();
   window.addEventListener("focus", function() { refreshCalendarDates(); });
   load().then(function() {
