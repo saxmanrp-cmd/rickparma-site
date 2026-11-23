@@ -529,7 +529,8 @@
       var name = String(item.p.name || "").toLowerCase().replace(/[^a-z0-9]/g,"");
       return name.length >= 3 && title.length >= 3 && (title.includes(name) || name.includes(title));
     });
-    return venueMatches.length === 1 ? String(venueMatches[0].i) : (matches.length === 1 ? String(matches[0].i) : "");
+    // Never guess from date alone: the same day may have multiple venues.
+    return venueMatches.length === 1 ? String(venueMatches[0].i) : "";
   }
   function renderCalendarFlyers(preferred) {
     var select = document.getElementById("calendar-flyer");
