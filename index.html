@@ -994,11 +994,12 @@
           f.eventIds.forEach(function(eventId) {
             if (!map['event:' + eventId]) map['event:' + eventId] = f.src;
           });
-        } else {
-          (f.dates || []).forEach(function(dateKey) {
-            if (!map['date:' + dateKey]) map['date:' + dateKey] = f.src;
-          });
         }
+        // Keep legacy date mappings even after this reusable flyer gets its
+        // first event ID. Event-specific links still take priority.
+        (f.dates || []).forEach(function(dateKey) {
+          if (!map['date:' + dateKey]) map['date:' + dateKey] = f.src;
+        });
       });
       return map;
     }
