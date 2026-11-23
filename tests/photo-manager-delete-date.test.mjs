@@ -11,6 +11,12 @@ test('Delete Date control exists and Photo Manager code parses', () => {
   assert.doesNotThrow(() => new vm.Script(script));
   assert.match(html, /id="calendar-delete-selected"/);
   assert.match(html, /onclick="deleteSelectedCalendarDate\(\)"/);
+  const settingsStart = html.indexOf('id="manager-settings"');
+  const settingsEnd = html.indexOf('<!-- New venue flow -->');
+  assert.ok(settingsStart > -1 && settingsEnd > settingsStart);
+  assert.match(html.slice(settingsStart,settingsEnd),/id="connectPanel"/);
+  assert.match(html.slice(settingsStart,settingsEnd),/id="calendar-connection"/);
+  assert.doesNotMatch(html, /class="sync-badge" onclick="showConnectPanel\(\)"/);
 });
 
 async function deleteScenario({confirmed=true,authorized=true,apiOK=true,publishOK=true}={}) {
@@ -24,7 +30,8 @@ async function deleteScenario({confirmed=true,authorized=true,apiOK=true,publish
   const controls = new Map([
     ['calendar-copy-source',{value:'0'}],
     ['calendar-delete-selected',{disabled:false,textContent:'Delete Date'}],
-    ['calendar-connection',{open:false}]
+    ['calendar-connection',{open:false}],
+    ['manager-settings',{open:false}]
   ]);
   const context=vm.createContext({
     Date,encodeURIComponent,photos,calendarEvents:[fake,actual],copyCalendarEvents:[fake],
