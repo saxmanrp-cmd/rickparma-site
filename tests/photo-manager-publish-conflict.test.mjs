@@ -63,6 +63,36 @@ test('retries a stale SHA 409 and publishes both TOGA dates without a second cal
   assert.equal(calls.some(x=>x.url.includes('googleapis.com')),false);
 });
 
+test('first TOGA date publishes, second gets 409 then saves both links after retry',async()=>{
+  let getNumber=0;
+  let putNumber=0;
+  const {context,calls,photos}=makeHarness([200,409,200]);
+  // The server can return the prior file SHA immediately after a successful write.
+  context.fetch = async (url,options={})=>{
+    const method=options.method || 'GET';
+    calls.push({method,url,body:options.body && JSON.parse(options.body)});
+    if(method==='GET'){
+      getNumber++;
+      return {ok:true,status:200,json:async()=>({sha:getNumber<3?'first-sha':'second-sha'})};
+    }
+    putNumber++;
+    const status=[200,409,200][putNumber-1];
+    return {ok:status===200,status,json:async()=>({message:'SHA conflict'})};
+  };
+  photos[0].dates=['2026-11-24'];
+  photos[0].eventIds=['toga-nov24'];
+  await context.pushFlyersJson();
+  photos[0].dates.push('2026-11-26');
+  photos[0].eventIds.push('toga-nov26');
+  await context.pushFlyersJson();
+  assert.deepEqual(calls.map(c=>c.method),['GET','PUT','GET','PUT','GET','PUT']);
+  assert.equal(calls[3].body.sha,'first-sha');
+  assert.equal(calls[5].body.sha,'second-sha');
+  const published=JSON.parse(Buffer.from(calls[5].body.content,'base64').toString('utf8'));
+  assert.deepEqual(published[0].dates,['2026-11-24','2026-11-26']);
+  assert.deepEqual(published[0].eventIds,['toga-nov24','toga-nov26']);
+});
+
 test('two quick Save + Another Date publishes serialize instead of racing',async()=>{
   const {context,calls}=makeHarness([200,200]);
   await Promise.all([context.pushFlyersJson(),context.pushFlyersJson()]);
