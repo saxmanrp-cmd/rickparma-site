@@ -238,7 +238,7 @@
       <label>Ticket / payment link (optional)<input type="url" id="calendar-payment-link" placeholder="https://…" inputmode="url"></label>
       <label>Flyer for this show<select id="calendar-flyer"><option value="">No flyer selected</option></select></label>
       <p id="calendar-save-status" role="status">Save directly to Rick Parma Shows. The first time, connect your Google account below.</p>
-      <div class="calendar-actions"><button type="submit" id="calendar-save-button">Save Show + Flyer</button><button type="button" class="secondary" onclick="saveCalendarDate(event,true)">Save + Another Date</button><button type="button" class="secondary" onclick="closeCalendarForm()">Cancel</button></div>
+      <div class="calendar-actions"><button type="submit" id="calendar-save-button">Save Show + Flyer</button><button type="button" class="secondary" id="calendar-save-another" onclick="saveCalendarDate(event,true)">Save + Another Date</button><button type="button" class="secondary" onclick="closeCalendarForm()">Cancel</button></div>
     </form></div>
     <details id="calendar-connection"><summary>Google Calendar connection</summary>
       <p>Enter a Google OAuth web client ID once for this device. Its authorized JavaScript origin must include this site's address. Google will ask you to allow calendar event access.</p>
@@ -381,6 +381,8 @@
   var calendarFormMode = "new";
   var calendarSourceEvent = null;
   var calendarFormPreview = false;
+  var calendarSaveInFlight = false;
+  var calendarDuplicateSourceDate = "";
   function fmtDateKey(d) {
     return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
   }
@@ -554,6 +556,7 @@
     calendarFormMode = mode === "edit" ? "edit" : (source ? "duplicate" : "new");
     calendarSourceEvent = calendarFormMode === "edit" ? source : null;
     calendarFormPreview = preview;
+    calendarDuplicateSourceDate = calendarFormMode === "duplicate" ? String(source?.dateKey || "") : "";
     document.getElementById("calendar-form-heading").textContent = calendarFormMode === "edit" ? "Edit Show Date" : source ? "Duplicate Show — change the date" : preview ? "New Show — flyer and date together" : "Add Show Date";
     var preferred = flyerChoice !== undefined && flyerChoice !== null ? String(flyerChoice)
       : source ? findPhotoForEvent(source) : (preview && pendingSrc && editingIndex === null ? "pending" : "");
@@ -601,6 +604,7 @@
     calendarFormPreview = false;
     calendarFormMode = "new";
     calendarSourceEvent = null;
+    calendarDuplicateSourceDate = "";
   }
   function calendarEventBody(event) {
     var start, end;
@@ -689,6 +693,9 @@
   }
   function saveCalendarDate(e,another) {
     e.preventDefault();
+    if (calendarSaveInFlight) return;
+    var form = document.getElementById("calendar-date-form");
+    if (form?.reportValidity && !form.reportValidity()) return;
     var event = {
       title:document.getElementById("calendar-title").value.trim(),
       location:document.getElementById("calendar-location").value.trim(),
@@ -701,6 +708,10 @@
     };
     if (!event.title || !event.date || (!event.allDay && (!event.start || !event.end))) return;
     var status = document.getElementById("calendar-save-status");
+    if (calendarFormMode === "duplicate" && calendarDuplicateSourceDate && event.date === calendarDuplicateSourceDate) {
+      status.textContent = "Choose a new performance date before duplicating.";
+      return;
+    }
     var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
     if (!clientId) {
       document.getElementById("calendar-connection").open = true;
@@ -716,7 +727,10 @@
     var sourceEvent = calendarSourceEvent;
     var mode = calendarFormMode;
     var wasPreview = calendarFormPreview;
+    calendarSaveInFlight = true;
     button.disabled = true;
+    var anotherButton = document.getElementById("calendar-save-another");
+    if (anotherButton) anotherButton.disabled = true;
     status.textContent = "Connecting to Google…";
     // Start authorization within the user tap so mobile browsers permit Google's popup.
     requestCalendarWriteToken(clientId).then(async function(token) {
@@ -755,11 +769,19 @@
       }
       closeCalendarForm();
       if (wasPreview) cancelPreview();
-      await chooseCalendarCopyMonth(event.date.slice(0,7));
-      await refreshCalendarDates();
-      renderCalendarManager(saved.id);
-      if (syncWarning) showConfirm("Google saved, but flyer publishing needs attention: " + syncWarning, true);
-      else showConfirm(mode === "edit" ? "✓ Show and flyer updated." : "✓ Show and flyer saved together.", false);
+      try {
+        await chooseCalendarCopyMonth(event.date.slice(0,7));
+        await refreshCalendarDates();
+        renderCalendarManager(saved.id);
+      } catch(refreshError) {
+        // A refresh failure must not imply that the calendar write failed.
+        syncWarning = syncWarning || "Saved, but refreshing the show list failed; tap Refresh Dates.";
+      }
+      var message = syncWarning
+        ? "Calendar saved, but flyer publishing needs attention: " + syncWarning
+        : (mode === "edit" ? "✓ Show and flyer updated." : "✓ Show and flyer saved together.");
+      showConfirm(message, !!syncWarning);
+      if (wasPreview) setUploadStatus(message, !!syncWarning);
       if (another) {
         var repeat = {
           title:event.title, location:event.location, description:calendarEventBody(event).description,
@@ -772,7 +794,11 @@
       }
     }).catch(function(error) {
       status.textContent = error.message || "Calendar save failed. Try again.";
-    }).finally(function() { button.disabled = false; });
+    }).finally(function() {
+      calendarSaveInFlight = false;
+      button.disabled = false;
+      if (anotherButton) anotherButton.disabled = false;
+    });
   }
   function renderDatePicker() {
     var el = document.getElementById("datePickerList");
