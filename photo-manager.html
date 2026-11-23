@@ -793,7 +793,7 @@
       if (another) {
         var repeat = {
           title:event.title, location:event.location, description:calendarEventBody(event).description,
-          dateKey:"", allDay:event.allDay,
+          dateKey:event.date, allDay:event.allDay,
           start:event.date + "T" + event.start, end:event.date + "T" + event.end
         };
         openCalendarForm(repeat,selectedIndex >= 0 ? String(selectedIndex) : "",false,"duplicate");
@@ -1143,7 +1143,15 @@
     if (!src) { alert("No image to save."); return; }
     if (editingIndex !== null && editingIndex >= 0 && editingIndex < photos.length) {
      photos[editingIndex].name = name;
-     photos[editingIndex].eventIds = selectedEventIds.slice();
+     // Keep event links outside the current upcoming-date window. Only the
+     // events currently offered in the picker can be added/removed here.
+     var visibleEventIds = calendarEvents.map(function(ev) { return ev.id; });
+     var retainedEventIds = (photos[editingIndex].eventIds || []).filter(function(id) {
+       return visibleEventIds.indexOf(id) === -1;
+     });
+     photos[editingIndex].eventIds = retainedEventIds.concat(selectedEventIds).filter(function(id,i,all) {
+       return all.indexOf(id) === i;
+     });
      var displayedDates = calendarEvents.map(function(ev) { return ev.dateKey; });
      var retainedDates = (photos[editingIndex].dates || []).filter(function(date) { return displayedDates.indexOf(date) === -1; });
      var linkedDates = calendarEvents.filter(function(ev) { return selectedEventIds.indexOf(ev.id) !== -1; }).map(function(ev) { return ev.dateKey; });
