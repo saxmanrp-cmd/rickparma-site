@@ -1005,8 +1005,7 @@
 
       var url = await uploadFileToGitHub(fileToUpload, function(msg) { setUploadStatus(msg); });
 
-      // Drop the uploaded file into the same preview + date-picker flow as a pasted URL,
-      // so it isn't saved to the gallery until show date(s) are picked and Save is tapped.
+      // Upload and schedule together; the flyer is already selected for the new date.
       pendingSrc = url;
       var name = chosenFile.name.replace(/\.[^.]+$/, "");
       var wrap = document.getElementById("previewImgWrap");
@@ -1015,18 +1014,21 @@
       } else {
         wrap.innerHTML = '<img src="' + url + '" alt="" onerror="showPreviewError()" style="width:100%;max-height:280px;object-fit:contain;display:block;border-radius:8px;">';
       }
-            document.getElementById("input-name").value = "";
+      editingIndex = null;
+      document.getElementById("btnSave").textContent = "Save Flyer Only";
+      document.getElementById("input-name").value = "";
       selectedEventIds = [];
       renderDatePicker();
       document.getElementById("previewArea").classList.add("visible");
       setPickingMode(true);
+      openCalendarForm(null,"pending",true);
 
       chosenFile = null;
       document.getElementById("input-file").value = "";
       var pickerBtn = document.getElementById("filePickerBtn");
       pickerBtn.textContent = "Choose photo or video…";
       pickerBtn.classList.remove("has-file");
-      setUploadStatus("Uploaded ✓ — pick show date(s) below, then hit Save.");
+      setUploadStatus("Uploaded ✓ — save the show and flyer together, or choose Save Flyer Only.");
     } catch(err) {
       setUploadStatus(err.message || "Upload failed", true);
     }
@@ -1036,7 +1038,7 @@
   // ── Preview flow (URL paste path) ────────────────────────────
   function loadPreview() {
      editingIndex = null;
-   document.getElementById("btnSave").textContent = "Save";
+   document.getElementById("btnSave").textContent = "Save Flyer Only";
     var src = document.getElementById("input-url").value.trim();
     if (!src) { alert("Paste an image or video URL first."); return; }
     pendingSrc = src;
@@ -1050,12 +1052,13 @@
     selectedEventIds = [];
     renderDatePicker();
     setPickingMode(true);
-    document.getElementById("input-name").focus();
+    openCalendarForm(null,"pending",true);
   }
   function showPreviewError() {
     document.getElementById("previewImgWrap").innerHTML = '<div class="preview-error">⚠️ Could not load media.<br>Check the URL and try again.</div>';
   }
  function editPhoto(index) {
+  closeCalendarForm();
   var p = photos[index];
   if (!p) return;
   editingIndex = index;
@@ -1071,6 +1074,7 @@
     ? p.eventIds.slice()
     : calendarEvents.filter(function(ev) { return (p.dates || []).indexOf(ev.dateKey) !== -1; }).map(function(ev) { return ev.id; });
   renderDatePicker();
+  document.getElementById("existing-date-picker").open = true;
   document.getElementById("previewArea").classList.add("visible");
   setPickingMode(true);
   document.getElementById("btnSave").textContent = "Update";
@@ -1084,12 +1088,14 @@
     document.getElementById("photo-list").classList.toggle("hidden-while-picking", active);
   }
   function cancelPreview() {
+    closeCalendarForm();
+    document.getElementById("existing-date-picker").open = false;
     document.getElementById("input-url").value = "";
     document.getElementById("input-name").value = "";
     document.getElementById("previewArea").classList.remove("visible");
     pendingSrc = "";
    editingIndex = null;
-   document.getElementById("btnSave").textContent = "Save";
+   document.getElementById("btnSave").textContent = "Save Flyer Only";
     selectedEventIds = [];
     renderDatePicker();
     setPickingMode(false);
