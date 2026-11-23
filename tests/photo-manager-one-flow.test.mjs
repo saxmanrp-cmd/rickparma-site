@@ -30,8 +30,8 @@ test('copying a legacy Westgate date reuses the existing undated flyer', () => {
   assert.equal(ctx.findPhotoForEvent({id:'older',title:'Rick Parma Live at Westgate',dateKey:'2026-11-01'}), '0');
   assert.equal(ctx.attachSavedEventToFlyer({id:'new-gig'}, {title:'Westgate',date:'2027-05-02'}, '0', null), true);
   assert.equal(photos.length, 1);
-  assert.deepEqual(photos[0].dates, ['2026-11-01','2027-01-17','2027-05-02']);
-  assert.deepEqual(photos[0].eventIds, ['new-gig']);
+  assert.deepEqual(Array.from(photos[0].dates), ['2026-11-01','2027-01-17','2027-05-02']);
+  assert.deepEqual(Array.from(photos[0].eventIds), ['new-gig']);
 });
 
 test('new venue flyer is saved and linked when the event is created', () => {
@@ -40,8 +40,8 @@ test('new venue flyer is saved and linked when the event is created', () => {
   assert.equal(ctx.attachSavedEventToFlyer({id:'show-123'}, {title:'New Venue',date:'2027-06-01'}, 'pending', null), true);
   assert.equal(photos.length, 1);
   assert.equal(photos[0].name, 'New Venue');
-  assert.deepEqual(photos[0].eventIds, ['show-123']);
-  assert.deepEqual(photos[0].dates, ['2027-06-01']);
+  assert.deepEqual(Array.from(photos[0].eventIds), ['show-123']);
+  assert.deepEqual(Array.from(photos[0].dates), ['2027-06-01']);
 });
 
 test('editing a show retains its Google event ID and updates linked date', () => {
@@ -50,7 +50,7 @@ test('editing a show retains its Google event ID and updates linked date', () =>
   assert.equal(ctx.attachSavedEventToFlyer({id:'show-123'}, {title:'Westgate',date:'2026-12-01'}, '0',
     {id:'show-123',dateKey:'2026-11-01'}), true);
   assert.deepEqual(photos[0].eventIds, ['show-123']);
-  assert.deepEqual(photos[0].dates, ['2026-12-01']);
+  assert.deepEqual(Array.from(photos[0].dates), ['2026-12-01']);
 });
 
 async function runSave(mode) {
