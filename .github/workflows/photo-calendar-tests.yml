@@ -1,0 +1,31 @@
+name: Photo Manager calendar checks
+
+on:
+  pull_request:
+    paths:
+      - 'photo-manager.html'
+      - 'functions/api/photo-calendar/**'
+      - 'tests/photo-manager-*.test.mjs'
+      - '.github/workflows/photo-calendar-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'photo-manager.html'
+      - 'functions/api/photo-calendar/**'
+      - 'tests/photo-manager-*.test.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Photo Manager server syntax
+        run: node --check 'functions/api/photo-calendar/[[path]].js'
+      - name: Check client script and Google Calendar flows
+        run: node --test tests/photo-manager-*.test.mjs
