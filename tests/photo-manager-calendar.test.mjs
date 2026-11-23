@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const html = fs.readFileSync(new URL('../photo-manager.html', import.meta.url), 'utf8');
 const script = html.split('<script>', 2)[1].split('</script>', 1)[0];
-const calendarCode = script.slice(script.indexOf('  function fmtDateKey('), script.indexOf('  function renderDatePicker()'));
+const calendarCode = script.slice(script.indexOf('  var calendarFormMode = "new";'), script.indexOf('  function renderDatePicker()'));
 
 test('past month loads shows from that month, not only upcoming events', async () => {
   const calls = [];
@@ -57,9 +57,15 @@ test('Save sends the event directly to the selected Google calendar', async () =
   const elements = new Map(Object.entries(values).map(([id,value]) => [id,{value,checked:false}]));
   elements.set('calendar-save-status',{textContent:''});
   elements.set('calendar-save-button',{disabled:false});
+  elements.set('calendar-save-another',{disabled:false});
+  elements.set('calendar-date-form',{hidden:false,reportValidity:()=>true});
+  elements.set('calendar-form-home',{appendChild(){}});
+  elements.set('calendar-flyer',{value:''});
+  elements.set('calendar-payment-link',{value:''});
   const context = vm.createContext({
     Date, URL, encodeURIComponent, CAL_ID:'rick-calendar', CAL_API_KEY:'test-key',
-    calendarCopyMonth:new Date(2026,10,1), copyCalendarEvents:[],
+    calendarCopyMonth:new Date(2026,10,1), copyCalendarEvents:[], calendarEvents:[],
+    photos:[],GH_TOKEN:'test-token', pendingSrc:'',
     document:{getElementById:id=>elements.get(id)},
     localStorage:{getItem:()=> '123-example.apps.googleusercontent.com'},
     window:{google:{accounts:{oauth2:{}}}},
@@ -69,7 +75,7 @@ test('Save sends the event directly to the selected Google calendar', async () =
       return {ok:true,json:async()=>({id:'saved-event'})};
     },
     closeCalendarForm:()=>{}, chooseCalendarCopyMonth:async()=>{}, refreshCalendarDates:async()=>{},
-    showConfirm:()=>{},
+    showConfirm:()=>{},render:()=>{},save:async()=>true,
   });
   vm.runInContext(calendarCode, context);
   // Replace the refresh functions so this test only exercises the save path.
