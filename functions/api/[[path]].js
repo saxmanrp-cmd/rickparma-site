@@ -238,7 +238,7 @@ export function invoiceBalanceCents(invoice) {
 // manual re-entry. NOTE: the KV proxy wraps reads in {record:{invoices:[...]}}
 // (jsonbin.io-compatibility shape) and only accepts GET/PUT — invoice-creator.html
 // itself reads/writes the exact same way, so this mirrors that contract exactly.
-export async function fulfillInvoice(env, intent) {
+export async function fulfillInvoice(env, intent, { sendNotifications = true } = {}) {
   if (!intent.reference) return "SKIPPED_NO_REFERENCE";
   const res = await fetch(`${PROXY_BASE}/invoices`);
   if (!res.ok) throw new Error(`Invoice storage read failed: ${res.status}`);
@@ -248,6 +248,8 @@ export async function fulfillInvoice(env, intent) {
   if (idx === -1) return "SKIPPED_NOT_FOUND";
 
   const invoice = invoices[idx];
+  if (intent.originApp === 'invoice_manager' && invoice.profileId === 'parma-entertainment-group-llc')
+    throw new Error('Invoice belongs to a different payment profile.');
   invoice.payments = invoice.payments || [];
   const transactionId = intent.providerPaymentId || intent.providerOrderId || intent.id;
   const existing = invoice.payments.find(payment => payment.source === 'payment_hub' &&
@@ -270,6 +272,8 @@ export async function fulfillInvoice(env, intent) {
     });
     if (!saved.ok) throw new Error(`Invoice storage write failed: ${saved.status}`);
   }
+
+  if (!sendNotifications) return 'RECONCILED';
 
   // If this payment brings the invoice to a zero balance, text the client a
   // paid-in-full receipt at the phone number already on file for the invoice.
@@ -295,6 +299,36 @@ export async function fulfillInvoice(env, intent) {
     return 'ERROR'; // The ledger is already saved; a fulfillment retry sends only the pending text.
   }
   return "FULFILLED";
+}
+
+// Repair a personal invoice from paid Square/PayPal intents when a later edit
+// or another device has overwritten the shared invoice document. Pending and
+// failed checkouts are never copied into the invoice ledger.
+export async function reconcilePersonalInvoice(env, invoiceId) {
+  if (!env.PAYMENT_DB) throw new Error('Payment status is unavailable.');
+  const response = await fetch(`${PROXY_BASE}/invoices?t=${Date.now()}`, { cache:'no-store' });
+  if (!response.ok) throw new Error('Invoice storage is unavailable.');
+  const invoices = (await response.json()).record?.invoices;
+  const invoice = Array.isArray(invoices) && invoices.find(item => item.id === invoiceId);
+  if (!invoice || invoice.profileId === 'parma-entertainment-group-llc') {
+    const error = new Error('Personal invoice not found.'); error.status = 404; throw error;
+  }
+  const rows = await env.PAYMENT_DB.prepare(`
+    SELECT * FROM payment_intents
+    WHERE origin_app='invoice_manager' AND type='invoice' AND reference=?
+      AND status='PAID' AND currency='USD' AND amount_cents>0
+      AND provider IN ('square','paypal') AND provider_payment_id IS NOT NULL
+    ORDER BY paid_at ASC
+  `).bind(invoiceId).all();
+  for (const row of rows.results || []) {
+    if (!Number.isSafeInteger(row.amount_cents) || !row.provider_payment_id || !row.id) continue;
+    await fulfillInvoice(env, serializeIntent(row), { sendNotifications:false });
+  }
+  const latest = await fetch(`${PROXY_BASE}/invoices?t=${Date.now()}`, { cache:'no-store' });
+  if (!latest.ok) throw new Error('Invoice storage is unavailable.');
+  const saved = (await latest.json()).record?.invoices?.find(item => item.id === invoiceId);
+  if (!saved || saved.profileId === 'parma-entertainment-group-llc') throw new Error('Personal invoice not found.');
+  return { invoice:saved };
 }
 
 // Fires the same SMS alert the Song Request app used to send on submit — but
@@ -1285,7 +1319,7 @@ export async function onRequest(context) {
   const path = url.pathname.replace(/^\/api/, "") || "/";
 
   try {
-    if (["/invoices/pay-link", "/invoices/business-pay-link", "/invoices/business-status", "/invoices/sign"].includes(path) && request.method === "OPTIONS") {
+    if (["/invoices/pay-link", "/invoices/business-pay-link", "/invoices/business-status", "/invoices/personal-status", "/invoices/sign"].includes(path) && request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
           "access-control-allow-origin": "*",
@@ -1314,6 +1348,16 @@ export async function onRequest(context) {
         return corsJson(await reconcileBusinessInvoice(env, invoiceId));
       } catch (error) {
         return corsJson({ error: error.message || 'Business payment status is unavailable.' }, error.status || 503);
+      }
+    }
+
+    if (path === "/invoices/personal-status" && request.method === "GET") {
+      const invoiceId = safeString(new URL(request.url).searchParams.get('invoiceId'), 100);
+      if (!invoiceId) return corsJson({ error: 'Missing invoiceId.' }, 400);
+      try {
+        return corsJson(await reconcilePersonalInvoice(env, invoiceId));
+      } catch (error) {
+        return corsJson({ error: error.message || 'Payment status is unavailable.' }, error.status || 503);
       }
     }
 
