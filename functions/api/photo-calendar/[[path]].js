@@ -24,9 +24,11 @@ function b64(bytes) {
   return btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
 }
 function un64(value) {
-  const str=String(value||"");
-  if(!/^[A-Za-z0-9_-]{1,8192}$/.test(str)) throw new Error("Invalid encoded value");
-  const bytes=atob(str.replace(/-/g,"+").replace(/_/g,"/")+"=".repeat((4-str.length%4)%4));
+  // Accept both padded standard Base64 (openssl rand -base64 32) and base64url.
+  const str=String(value||"").trim().replace(/=+$/,"");
+  if(!/^[A-Za-z0-9+/_-]{1,8192}$/.test(str)) throw new Error("Invalid encoded value");
+  const normalized=str.replace(/-/g,"+").replace(/_/g,"/");
+  const bytes=atob(normalized+"=".repeat((4-normalized.length%4)%4));
   return Uint8Array.from(bytes,c=>c.charCodeAt(0));
 }
 function random(size=32){return b64(crypto.getRandomValues(new Uint8Array(size)));}
