@@ -47,16 +47,6 @@
     "eventIds": []
   },
   {
-    "src": "https://rickparma.com/media/1792531720004-copy_81E241E4-33C7-475C-8870-56F15AAD254D.mp4",
-    "name": "Jazzy Blu",
-    "dates": [
-      "2026-11-22"
-    ],
-    "eventIds": [
-      "_6d13ah238p132b9l6gq3cb9k64p34b9p6kqjaba284s4cgq58koj4dq160"
-    ]
-  },
-  {
     "src": "https://rickparma.com/media/1792533204052-copy_D6BCF8F2-CF3F-4EDD-9AA0-6708E7696A45.mp4",
     "name": "Tommy",
     "dates": [
@@ -92,7 +82,8 @@
     ],
     "eventIds": [
       "272sbh9ar6dsggfk0g99lb0lb0",
-      "in2ila50n4c3q3sk6346f0u16g"
+      "in2ila50n4c3q3sk6346f0u16g",
+      "k4is037ljrkrkt4bk12egnpg6o"
     ]
   }
 ]
