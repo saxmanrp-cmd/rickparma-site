@@ -93,8 +93,18 @@ async function accessToken(env){
   const record=await env.PAYMENT_DB.prepare("SELECT refresh_cipher FROM rp_calendar_oauth_credentials WHERE id=1").first();
   if(!record?.refresh_cipher)throw Object.assign(new Error("Connect Google once in Photo Manager Settings."),{status:401});
   const refresh=await decryptToken(record.refresh_cipher,env.PHOTO_CALENDAR_TOKEN_KEY);
-  const data=await tokenRequest({grant_type:"refresh_token",refresh_token:refresh,
-    client_id:env.PHOTO_CALENDAR_GOOGLE_CLIENT_ID,client_secret:env.PHOTO_CALENDAR_GOOGLE_CLIENT_SECRET});
+  let data;
+  try {
+    data=await tokenRequest({grant_type:"refresh_token",refresh_token:refresh,
+      client_id:env.PHOTO_CALENDAR_GOOGLE_CLIENT_ID,client_secret:env.PHOTO_CALENDAR_GOOGLE_CLIENT_SECRET});
+  } catch(error) {
+    if(error.status===401) {
+      // Invalid offline permission must terminate browser sessions. Otherwise
+      // /status would misleadingly show an unusable connection.
+      await env.PAYMENT_DB.prepare("DELETE FROM rp_calendar_oauth_sessions").run();
+    }
+    throw error;
+  }
   if(!data.access_token)throw Object.assign(new Error("Google access token was unavailable."),{status:502});
   if(data.refresh_token && data.refresh_token!==refresh){
     const newCipher=await encryptToken(data.refresh_token,env.PHOTO_CALENDAR_TOKEN_KEY);
