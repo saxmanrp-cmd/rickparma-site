@@ -1393,37 +1393,67 @@
     await save();
   }
   // ── Push to Website ──────────────────────────────────────────
-  async function pushFlyersJson() {
-    if (!GH_TOKEN) throw new Error("Connect your GitHub token first (tap the sync status at top).");
+  // Keep publishing serialized within this browser, including back-to-back
+  // Save + Another Date operations and an accidental manual Push tap.
+  var flyerPublishQueue = Promise.resolve();
+  function pushFlyersJson() {
+    var task = flyerPublishQueue.catch(function() {}).then(publishFlyersJsonWithRetry);
+    flyerPublishQueue = task.catch(function() {});
+    return task;
+  }
+  async function publishFlyersJsonWithRetry() {
+    if (!GH_TOKEN) throw new Error("Connect your GitHub token in Settings first.");
     var base = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO;
     var path = "flyers.json";
-    var payload = photos.map(function(p) {
-      return {
-        src: p.src,
-        name: p.name || "",
-        dates: p.dates || [],
-        eventIds: Array.isArray(p.eventIds) ? p.eventIds : []
-      };
-    });
-    var content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-
-    var sha = null;
-    var getRes = await fetch(base + "/contents/" + path + "?ref=" + GH_BRANCH, { headers: ghHeaders() });
-    if (getRes.ok) {
-      var info = await getRes.json();
-      sha = info.sha;
-    } else if (getRes.status !== 404) {
-      throw new Error("Could not read flyers.json (" + getRes.status + ")");
+    // The Photo Manager list is the source of truth. Rebuild it immediately
+    // before each attempt, so the newest show-date associations are included.
+    var maxAttempts = 4;
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      var payload = photos.map(function(p) {
+        return {
+          src:p.src,
+          name:p.name || "",
+          dates:p.dates || [],
+          eventIds:Array.isArray(p.eventIds) ? p.eventIds : []
+        };
+      });
+      var content = btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
+      // GitHub's /contents response can be briefly stale on iOS after a prior
+      // write. A unique URL plus no-store forces a fresh SHA on every attempt.
+      var fresh = "?ref=" + encodeURIComponent(GH_BRANCH) +
+        "&fresh=" + Date.now() + "-" + attempt + "-" + Math.random().toString(36).slice(2);
+      var getRes = await fetch(base + "/contents/" + path + fresh, {
+        headers:ghHeaders(),
+        cache:"no-store"
+      });
+      var sha = null;
+      if (getRes.ok) {
+        var info = await getRes.json();
+        sha = info.sha;
+      } else if (getRes.status !== 404) {
+        throw new Error("Could not read latest flyers.json (" + getRes.status + ").");
+      }
+      var body = {message:"Update flyers.json",content:content,branch:GH_BRANCH};
+      if (sha) body.sha = sha;
+      var putRes = await fetch(base + "/contents/" + path, {
+        method:"PUT",
+        headers:Object.assign({"Content-Type":"application/json"},ghHeaders()),
+        body:JSON.stringify(body),
+        cache:"no-store"
+      });
+      if (putRes.ok) return;
+      var error = await putRes.json().catch(function() { return {}; });
+      var detail = String(error.message || "");
+      var staleSha = putRes.status === 409 ||
+        (putRes.status === 422 && /sha|conflict|out.of.date|does not match|being updated/i.test(detail));
+      if (staleSha && attempt < maxAttempts - 1) {
+        await new Promise(function(resolve) { setTimeout(resolve,180 * (attempt + 1)); });
+        continue;
+      }
+      throw new Error("Publish failed (" + putRes.status + ")" +
+        (detail ? ": " + detail.slice(0,200) : "") +
+        (staleSha ? ". Please retry Push to Website." : ""));
     }
-
-    var body = { message: "Update flyers.json", content: content, branch: GH_BRANCH };
-    if (sha) body.sha = sha;
-    var putRes = await fetch(base + "/contents/" + path, {
-      method: "PUT",
-      headers: Object.assign({ "Content-Type": "application/json" }, ghHeaders()),
-      body: JSON.stringify(body)
-    });
-    if (!putRes.ok) throw new Error("Publish failed (" + putRes.status + ")");
   }
   async function pushToWebsite() {
     if (photos.length === 0) { alert("Add at least one photo first."); return; }
