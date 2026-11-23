@@ -26,7 +26,7 @@
   @keyframes spin   { to { transform:rotate(360deg); } }
   .header-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
   h1 { font-size:17px; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#8DB2E5; }
-  .sync-badge { font-size:10px; color:rgba(255,255,255,0.4); display:flex; align-items:center; gap:5px; cursor:pointer; }
+  .sync-badge { font-size:10px; color:rgba(255,255,255,0.4); display:flex; align-items:center; gap:5px; }
   .sync-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.3); flex-shrink:0; }
   .sync-dot.synced  { background:#4caf7d; }
   .sync-dot.syncing { background:#8DB2E5; animation:pulse 1s ease-in-out infinite; }
@@ -41,6 +41,15 @@
   .connect-status { font-size:11px; color:#e57a7a; margin-top:8px; min-height:14px; }
   .token-linked-row { display:flex; align-items:center; justify-content:space-between; background:#1a0808; border-radius:8px; padding:10px 14px; margin-bottom:16px; font-size:12px; color:rgba(255,255,255,0.5); }
   .token-linked-row button { background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); border-radius:6px; font-size:11px; padding:5px 10px; cursor:pointer; }
+  .settings-panel { margin-bottom:16px; }
+  .settings-panel > summary { font-size:13px; font-weight:800; color:#8DB2E5; cursor:pointer; padding:4px 0; }
+  .settings-panel > summary:focus-visible { outline:2px solid #8DB2E5; outline-offset:5px; }
+  .settings-panel .settings-content { border-top:1px solid rgba(141,178,229,.18); margin-top:12px; padding-top:12px; }
+  .settings-panel .settings-content > h2 { margin:10px 0; }
+  .settings-panel #calendar-connection { margin:10px 0; }
+  .settings-panel #calendar-connection > summary { color:#8DB2E5; font-size:13px; font-weight:700; cursor:pointer; min-height:32px; }
+  .settings-panel .token-linked-row { margin-bottom:8px; }
+  .settings-panel .connect-panel { margin-bottom:8px; }
   /* ── Add panel ── */
   .add-panel { background:#1a0808; border-radius:10px; padding:14px; margin-bottom:16px; }
   .add-panel h2 { font-size:16px; color:#8DB2E5; margin-bottom:6px; }
@@ -166,13 +175,17 @@
 <div id="appWrap" style="display:none">
   <div class="header-top">
     <h1>📷 Photo Manager</h1>
-    <div class="sync-badge" onclick="showConnectPanel()" title="Tap to change GitHub token">
+    <div class="sync-badge" aria-label="Photo Manager sync status">
       <div class="sync-dot" id="syncDot"></div>
       <span id="syncLabel">Loading…</span>
     </div>
   </div>
   <div id="lastUpdated" style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.06em;margin-bottom:12px;"></div>
 
+  <details id="manager-settings" class="calendar-panel settings-panel">
+    <summary>⚙️ Settings — connections</summary>
+    <div class="settings-content">
+      <h2>GitHub connection</h2>
   <!-- GitHub connect panel — shown when no token is saved yet -->
   <div class="connect-panel" id="connectPanel" style="display:none">
     <h2>Connect to GitHub</h2>
@@ -186,6 +199,17 @@
     <span>✓ GitHub connected</span>
     <button onclick="showConnectPanel()">Change token</button>
   </div>
+
+
+      <h2>Google Calendar connection</h2>
+    <details id="calendar-connection"><summary>Google Calendar connection</summary>
+      <p>Enter a Google OAuth web client ID once for this device. Its authorized JavaScript origin must include this site's address. Google will ask you to allow calendar event access.</p>
+      <label for="calendar-client-id">OAuth client ID</label>
+      <input id="calendar-client-id" type="text" placeholder="…apps.googleusercontent.com" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button type="button" class="secondary" onclick="saveCalendarClientId()">Save connection settings</button>
+    </details>
+    </div>
+  </details>
 
   <!-- New venue flow -->
   <div class="add-panel">
@@ -246,12 +270,6 @@
       <p id="calendar-save-status" role="status">Save directly to Rick Parma Shows. The first time, connect your Google account below.</p>
       <div class="calendar-actions"><button type="submit" id="calendar-save-button">Save Show + Flyer</button><button type="button" class="secondary" id="calendar-save-another" onclick="saveCalendarDate(event,true)">Save + Another Date</button><button type="button" class="secondary" onclick="closeCalendarForm()">Cancel</button></div>
     </form></div>
-    <details id="calendar-connection"><summary>Google Calendar connection</summary>
-      <p>Enter a Google OAuth web client ID once for this device. Its authorized JavaScript origin must include this site's address. Google will ask you to allow calendar event access.</p>
-      <label for="calendar-client-id">OAuth client ID</label>
-      <input id="calendar-client-id" type="text" placeholder="…apps.googleusercontent.com" autocomplete="off" autocapitalize="none" spellcheck="false">
-      <button type="button" class="secondary" onclick="saveCalendarClientId()">Save connection settings</button>
-    </details>
     <div class="calendar-actions"><button type="button" class="secondary" onclick="refreshCalendarDates()">↻ Refresh Dates</button></div>
   </section>
   <div id="photo-list"></div>
@@ -294,6 +312,7 @@
 
   // ── Token connect flow ──────────────────────────────────────
   function showConnectPanel() {
+    document.getElementById("manager-settings").open = true;
     document.getElementById("connectPanel").style.display = "block";
     document.getElementById("tokenLinkedRow").style.display = "none";
     document.getElementById("input-token").focus();
@@ -312,6 +331,7 @@
     hideConnectPanel();
   }
   function refreshConnectUI() {
+    if (!GH_TOKEN) document.getElementById("manager-settings").open = true;
     if (GH_TOKEN) {
       document.getElementById("connectPanel").style.display = "none";
       document.getElementById("tokenLinkedRow").style.display = "flex";
@@ -736,6 +756,7 @@
     if (!confirm("Delete this performance from Google Calendar and your website?\n\n" + dateText + "\n\nThe flyer will remain in Photo Manager and other show dates will not be deleted.")) return;
     var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
     if (!clientId) {
+      document.getElementById("manager-settings").open = true;
       document.getElementById("calendar-connection").open = true;
       showConfirm("Connect Google Calendar before deleting this date.",true);
       return;
@@ -810,8 +831,9 @@
     }
     var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
     if (!clientId) {
+      document.getElementById("manager-settings").open = true;
       document.getElementById("calendar-connection").open = true;
-      status.textContent = "Connect Google Calendar below first. You only need to enter the OAuth client ID once on this device.";
+      status.textContent = "Connect Google Calendar in Settings first. You only need to enter the OAuth client ID once on this device.";
       return;
     }
     if (!window.google?.accounts?.oauth2) {
