@@ -43,6 +43,8 @@
   .token-linked-row button { background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); border-radius:6px; font-size:11px; padding:5px 10px; cursor:pointer; }
   /* ── Add panel ── */
   .add-panel { background:#1a0808; border-radius:10px; padding:14px; margin-bottom:16px; }
+  .add-panel h2 { font-size:16px; color:#8DB2E5; margin-bottom:6px; }
+  .add-panel .workflow-note { font-size:12px; color:rgba(255,255,255,.65); line-height:1.5; margin-bottom:14px; }
   /* URL row */
   .url-row { display:flex; gap:8px; margin-bottom:0; }
   .url-row input { flex:1; background:#0d0505; border:1.5px solid rgba(141,178,229,0.3); border-radius:8px; color:#fff; font-size:16px; padding:11px 12px; outline:none; min-width:0; }
@@ -183,8 +185,10 @@
     <button onclick="showConnectPanel()">Change token</button>
   </div>
 
-  <!-- Add panel -->
+  <!-- New venue flow -->
   <div class="add-panel">
+    <h2>New venue — new flyer + show date</h2>
+    <p class="workflow-note">Upload your flyer once. Then create the show date directly below it and save both together.</p>
     <div class="url-row">
       <input type="url" id="input-url" placeholder="Paste image URL…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
       <button class="btn-preview" onclick="loadPreview()">Preview</button>
@@ -216,8 +220,8 @@
     </div>
   </div>
   <section class="calendar-panel" aria-label="Manage show dates">
-    <h2>Show Dates</h2>
-    <p>Add a date or copy an existing show. The description is the regular Google Calendar description.</p>
+    <h2>Returning venue — duplicate or edit a show</h2>
+    <p>Choose the month and previous show. Duplicate its details and reuse the same flyer, or edit the original date without opening Google Calendar.</p>
     <label for="calendar-copy-source">Copy information from</label>
     <div class="calendar-actions" style="align-items:center">
       <button type="button" class="secondary" onclick="changeCalendarCopyMonth(-1)" aria-label="Previous month">‹</button>
