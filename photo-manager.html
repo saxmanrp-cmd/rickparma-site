@@ -205,7 +205,7 @@
       <strong style="font-size:13px;color:#8DB2E5">Background Google Calendar</strong>
       <p id="calendar-background-status" role="status" style="margin:8px 0;font-size:12px">Checking connection…</p>
       <a id="calendar-background-connect" href="/api/photo-calendar/connect" hidden
-         style="display:inline-block;background:#8DB2E5;color:#0d0505;font-size:13px;font-weight:800;padding:10px 12px;border-radius:8px;text-decoration:none">
+         style="display:none;background:#8DB2E5;color:#0d0505;font-size:13px;font-weight:800;padding:10px 12px;border-radius:8px;text-decoration:none">
          Connect Google once
       </a>
     </div>
@@ -842,6 +842,11 @@
     var dateText = event.label || (event.dateKey + " · " + event.title);
     if (!confirm("Delete this performance from Google Calendar and your website?\n\n" + dateText + "\n\nThe flyer will remain in Photo Manager and other show dates will not be deleted.")) return;
     var useBackground = calendarBackendConnected;
+    if(calendarBackendConfigured && !useBackground) {
+      document.getElementById("manager-settings").open = true;
+      showConfirm("Tap Connect Google once in Settings to activate background Calendar.",true);
+      return;
+    }
     var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
     if (!useBackground && !clientId) {
       document.getElementById("manager-settings").open = true;
@@ -917,6 +922,11 @@
       return;
     }
     var useBackground = calendarBackendConnected;
+    if(calendarBackendConfigured && !useBackground) {
+      document.getElementById("manager-settings").open = true;
+      status.textContent = "Tap Connect Google once in Settings to activate background Calendar.";
+      return;
+    }
     var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
     if (!useBackground && !clientId) {
       document.getElementById("manager-settings").open = true;
