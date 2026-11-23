@@ -758,8 +758,11 @@
     if(response.status !== 401) return;
     if(useBackground) {
       calendarBackendConnected = false;
-      refreshCalendarBackgroundStatus();
       document.getElementById("manager-settings").open = true;
+      var message=document.getElementById("calendar-background-status");
+      var connect=document.getElementById("calendar-background-connect");
+      if(message) message.textContent="Google needs one new connection. Tap Connect Google once.";
+      if(connect) {connect.hidden=false;connect.style.display="inline-block";}
     } else {
       cachedGoogleAccessToken = "";
       cachedGoogleExpiresAt = 0;
