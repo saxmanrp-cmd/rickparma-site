@@ -599,8 +599,10 @@
   }
   function closeCalendarForm() {
     var form = document.getElementById("calendar-date-form");
-    form.hidden = true;
-    document.getElementById("calendar-form-home").appendChild(form);
+    if (form) {
+      form.hidden = true;
+      document.getElementById("calendar-form-home")?.appendChild(form);
+    }
     calendarFormPreview = false;
     calendarFormMode = "new";
     calendarSourceEvent = null;
