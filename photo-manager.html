@@ -764,6 +764,7 @@
       var selectedIndex = -1;
       try {
         var changed = attachSavedEventToFlyer(saved,event,flyerChoice,sourceEvent);
+        if (changed) render();
         if (flyerChoice === "pending") selectedIndex = photos.findIndex(function(p) { return p.src === pendingSrc; });
         else if (flyerChoice !== "") selectedIndex = Number(flyerChoice);
         if (changed) {
