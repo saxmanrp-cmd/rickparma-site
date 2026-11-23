@@ -643,16 +643,58 @@
       client.requestAccessToken();
     });
   }
-  function saveCalendarDate(e) {
+  function attachSavedEventToFlyer(saved,event,flyerChoice,sourceEvent) {
+    var id = String(saved.id || (sourceEvent && sourceEvent.id) || "");
+    if (!id) return false;
+    var index = -1;
+    if (flyerChoice === "pending" && pendingSrc) {
+      index = photos.findIndex(function(p) { return p.src === pendingSrc; });
+      if (index < 0) {
+        photos.push({src:pendingSrc,name:document.getElementById("input-name").value.trim() || event.title,dates:[],eventIds:[]});
+        index = photos.length - 1;
+      }
+    } else if (flyerChoice !== "") {
+      index = Number(flyerChoice);
+      if (!Number.isInteger(index) || index < 0 || index >= photos.length) index = -1;
+    }
+    var changed = false;
+    photos.forEach(function(p,i) {
+      if (!Array.isArray(p.eventIds)) p.eventIds = [];
+      if (!Array.isArray(p.dates)) p.dates = [];
+      if (i !== index && p.eventIds.indexOf(id) >= 0) {
+        p.eventIds = p.eventIds.filter(function(x) { return x !== id; });
+        changed = true;
+      }
+    });
+    if (index >= 0) {
+      var selected = photos[index];
+      if (selected.eventIds.indexOf(id) < 0) { selected.eventIds.push(id); changed = true; }
+      if (sourceEvent && sourceEvent.dateKey !== event.date && selected.dates.indexOf(sourceEvent.dateKey) >= 0) {
+        var anotherSameDay = selected.eventIds.some(function(otherId) {
+          return otherId !== id && calendarEvents.concat(copyCalendarEvents).some(function(ev) {
+            return ev.id === otherId && ev.dateKey === sourceEvent.dateKey;
+          });
+        });
+        if (!anotherSameDay) {
+          selected.dates = selected.dates.filter(function(d) { return d !== sourceEvent.dateKey; });
+          changed = true;
+        }
+      }
+      if (selected.dates.indexOf(event.date) < 0) { selected.dates.push(event.date); changed = true; }
+    }
+    return changed;
+  }
+  function saveCalendarDate(e,another) {
     e.preventDefault();
     var event = {
-      title: document.getElementById("calendar-title").value.trim(),
-      location: document.getElementById("calendar-location").value.trim(),
-      description: document.getElementById("calendar-description").value,
-      date: document.getElementById("calendar-date").value,
-      allDay: document.getElementById("calendar-all-day").checked,
-      start: document.getElementById("calendar-start").value,
-      end: document.getElementById("calendar-end").value
+      title:document.getElementById("calendar-title").value.trim(),
+      location:document.getElementById("calendar-location").value.trim(),
+      description:document.getElementById("calendar-description").value,
+      paymentLink:document.getElementById("calendar-payment-link")?.value.trim() || "",
+      date:document.getElementById("calendar-date").value,
+      allDay:document.getElementById("calendar-all-day").checked,
+      start:document.getElementById("calendar-start").value,
+      end:document.getElementById("calendar-end").value
     };
     if (!event.title || !event.date || (!event.allDay && (!event.start || !event.end))) return;
     var status = document.getElementById("calendar-save-status");
@@ -667,13 +709,24 @@
       return;
     }
     var button = document.getElementById("calendar-save-button");
+    var flyerChoice = document.getElementById("calendar-flyer")?.value || "";
+    var sourceEvent = calendarSourceEvent;
+    var mode = calendarFormMode;
+    var wasPreview = calendarFormPreview;
     button.disabled = true;
     status.textContent = "Connecting to Google…";
-    // Start authorization within the tap so mobile browsers permit Google's popup.
+    // Start authorization within the user tap so mobile browsers permit Google's popup.
     requestCalendarWriteToken(clientId).then(async function(token) {
-      status.textContent = "Saving to Rick Parma Shows…";
-      var response = await fetch("https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(CAL_ID) + "/events?sendUpdates=none", {
-        method:"POST", headers:{ "Authorization":"Bearer " + token, "Content-Type":"application/json" },
+      status.textContent = mode === "edit" ? "Updating show…" : "Creating show…";
+      var url = "https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(CAL_ID) + "/events";
+      var method = "POST";
+      if (mode === "edit" && sourceEvent?.id) {
+        url += "/" + encodeURIComponent(sourceEvent.id);
+        method = "PATCH";
+      }
+      var response = await fetch(url + "?sendUpdates=none", {
+        method:method,
+        headers:{"Authorization":"Bearer " + token,"Content-Type":"application/json"},
         body:JSON.stringify(calendarEventBody(event))
       });
       if (!response.ok) {
@@ -681,11 +734,39 @@
         throw new Error(error.error?.message || "Google Calendar could not save this date (" + response.status + ").");
       }
       var saved = await response.json();
+      // Calendar writes may succeed even if flyer publishing fails. Never resubmit
+      // the calendar event to retry the website synchronization.
+      var syncWarning = "";
+      var selectedIndex = -1;
+      try {
+        var changed = attachSavedEventToFlyer(saved,event,flyerChoice,sourceEvent);
+        if (flyerChoice === "pending") selectedIndex = photos.findIndex(function(p) { return p.src === pendingSrc; });
+        else if (flyerChoice !== "") selectedIndex = Number(flyerChoice);
+        if (changed) {
+          if (!await save()) throw new Error("Photo Manager could not sync its flyer list.");
+          if (!GH_TOKEN) throw new Error("Connect GitHub and tap Push to Website.");
+          await pushFlyersJson();
+        }
+      } catch (error) {
+        syncWarning = error.message || "Flyer sync failed.";
+      }
       closeCalendarForm();
+      if (wasPreview) cancelPreview();
       await chooseCalendarCopyMonth(event.date.slice(0,7));
       await refreshCalendarDates();
       renderCalendarManager(saved.id);
-      showConfirm("✓ Saved directly to Google Calendar.", false);
+      if (syncWarning) showConfirm("Google saved, but flyer publishing needs attention: " + syncWarning, true);
+      else showConfirm(mode === "edit" ? "✓ Show and flyer updated." : "✓ Show and flyer saved together.", false);
+      if (another) {
+        var repeat = {
+          title:event.title, location:event.location, description:calendarEventBody(event).description,
+          dateKey:"", allDay:event.allDay,
+          start:event.date + "T" + event.start, end:event.date + "T" + event.end
+        };
+        openCalendarForm(repeat,selectedIndex >= 0 ? String(selectedIndex) : "",false,"duplicate");
+        document.getElementById("calendar-date").value = "";
+        document.getElementById("calendar-save-status").textContent = "Same flyer and venue. Choose another performance date.";
+      }
     }).catch(function(error) {
       status.textContent = error.message || "Calendar save failed. Try again.";
     }).finally(function() { button.disabled = false; });
