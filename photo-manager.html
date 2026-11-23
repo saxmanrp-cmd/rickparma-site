@@ -26,7 +26,7 @@
   @keyframes spin   { to { transform:rotate(360deg); } }
   .header-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
   h1 { font-size:17px; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#8DB2E5; }
-  .sync-badge { font-size:10px; color:rgba(255,255,255,0.4); display:flex; align-items:center; gap:5px; cursor:pointer; }
+  .sync-badge { font-size:10px; color:rgba(255,255,255,0.4); display:flex; align-items:center; gap:5px; }
   .sync-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.3); flex-shrink:0; }
   .sync-dot.synced  { background:#4caf7d; }
   .sync-dot.syncing { background:#8DB2E5; animation:pulse 1s ease-in-out infinite; }
@@ -41,6 +41,15 @@
   .connect-status { font-size:11px; color:#e57a7a; margin-top:8px; min-height:14px; }
   .token-linked-row { display:flex; align-items:center; justify-content:space-between; background:#1a0808; border-radius:8px; padding:10px 14px; margin-bottom:16px; font-size:12px; color:rgba(255,255,255,0.5); }
   .token-linked-row button { background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); border-radius:6px; font-size:11px; padding:5px 10px; cursor:pointer; }
+  .settings-panel { margin-bottom:16px; }
+  .settings-panel > summary { font-size:13px; font-weight:800; color:#8DB2E5; cursor:pointer; padding:4px 0; }
+  .settings-panel > summary:focus-visible { outline:2px solid #8DB2E5; outline-offset:5px; }
+  .settings-panel .settings-content { border-top:1px solid rgba(141,178,229,.18); margin-top:12px; padding-top:12px; }
+  .settings-panel .settings-content > h2 { margin:10px 0; }
+  .settings-panel #calendar-connection { margin:10px 0; }
+  .settings-panel #calendar-connection > summary { color:#8DB2E5; font-size:13px; font-weight:700; cursor:pointer; min-height:32px; }
+  .settings-panel .token-linked-row { margin-bottom:8px; }
+  .settings-panel .connect-panel { margin-bottom:8px; }
   /* ── Add panel ── */
   .add-panel { background:#1a0808; border-radius:10px; padding:14px; margin-bottom:16px; }
   .add-panel h2 { font-size:16px; color:#8DB2E5; margin-bottom:6px; }
@@ -105,6 +114,8 @@
   .calendar-panel .calendar-actions { display:flex; gap:8px; margin-top:10px; }
   .calendar-panel button, .calendar-edit-link { min-height:44px; background:#8DB2E5; border:0; border-radius:8px; color:#0d0505; font-size:13px; font-weight:800; padding:10px 12px; cursor:pointer; }
   .calendar-panel button.secondary, .calendar-edit-link { background:#0d0505; border:1px solid rgba(141,178,229,0.5); color:#8DB2E5; }
+  .calendar-panel button.danger { color:#f4a4a4; border-color:rgba(238,113,113,.5); }
+  .calendar-panel button.danger:disabled { opacity:.4; cursor:not-allowed; }
   .calendar-edit-link { display:inline-flex; align-items:center; text-decoration:none; margin:4px 0 6px; }
   .calendar-panel [hidden], .preview-area [hidden] { display:none!important; }
   #preview-calendar-slot:not(:empty) { margin-top:14px; padding:12px; border:1px solid rgba(141,178,229,.4); border-radius:10px; background:#180b0b; }
@@ -164,13 +175,17 @@
 <div id="appWrap" style="display:none">
   <div class="header-top">
     <h1>📷 Photo Manager</h1>
-    <div class="sync-badge" onclick="showConnectPanel()" title="Tap to change GitHub token">
+    <div class="sync-badge" aria-label="Photo Manager sync status">
       <div class="sync-dot" id="syncDot"></div>
       <span id="syncLabel">Loading…</span>
     </div>
   </div>
   <div id="lastUpdated" style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.06em;margin-bottom:12px;"></div>
 
+  <details id="manager-settings" class="calendar-panel settings-panel">
+    <summary>⚙️ Settings — connections</summary>
+    <div class="settings-content">
+      <h2>GitHub connection</h2>
   <!-- GitHub connect panel — shown when no token is saved yet -->
   <div class="connect-panel" id="connectPanel" style="display:none">
     <h2>Connect to GitHub</h2>
@@ -184,6 +199,16 @@
     <span>✓ GitHub connected</span>
     <button onclick="showConnectPanel()">Change token</button>
   </div>
+
+
+      <details id="calendar-connection"><summary>Google Calendar connection</summary>
+      <p>Enter a Google OAuth web client ID once for this device. Its authorized JavaScript origin must include this site's address. Google will ask you to allow calendar event access.</p>
+      <label for="calendar-client-id">OAuth client ID</label>
+      <input id="calendar-client-id" type="text" placeholder="…apps.googleusercontent.com" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button type="button" class="secondary" onclick="saveCalendarClientId()">Save connection settings</button>
+    </details>
+    </div>
+  </details>
 
   <!-- New venue flow -->
   <div class="add-panel">
@@ -229,7 +254,7 @@
       <button type="button" class="secondary" onclick="changeCalendarCopyMonth(1)" aria-label="Next month">›</button>
     </div>
     <select id="calendar-copy-source" onchange="updateCalendarEditLink()"><option value="">Choose a previous date…</option></select>
-    <div class="calendar-actions"><button type="button" onclick="openCalendarForm()">Add Date</button><button type="button" class="secondary" onclick="duplicateCalendarDate()">Duplicate Date</button><button type="button" class="secondary" onclick="editSelectedCalendarDate()">Edit Date</button></div>
+    <div class="calendar-actions"><button type="button" onclick="openCalendarForm()">Add Date</button><button type="button" class="secondary" onclick="duplicateCalendarDate()">Duplicate Date</button><button type="button" class="secondary" onclick="editSelectedCalendarDate()">Edit Date</button><button type="button" class="secondary danger" id="calendar-delete-selected" onclick="deleteSelectedCalendarDate()" disabled>Delete Date</button></div>
     <a id="calendar-edit-selected" class="calendar-edit-link" hidden target="_blank" rel="noopener noreferrer">Edit selected date in Google Calendar</a>
     <div id="calendar-form-home"><form id="calendar-date-form" hidden onsubmit="saveCalendarDate(event)">
       <h2 id="calendar-form-heading">Add Date</h2>
@@ -244,12 +269,6 @@
       <p id="calendar-save-status" role="status">Save directly to Rick Parma Shows. The first time, connect your Google account below.</p>
       <div class="calendar-actions"><button type="submit" id="calendar-save-button">Save Show + Flyer</button><button type="button" class="secondary" id="calendar-save-another" onclick="saveCalendarDate(event,true)">Save + Another Date</button><button type="button" class="secondary" onclick="closeCalendarForm()">Cancel</button></div>
     </form></div>
-    <details id="calendar-connection"><summary>Google Calendar connection</summary>
-      <p>Enter a Google OAuth web client ID once for this device. Its authorized JavaScript origin must include this site's address. Google will ask you to allow calendar event access.</p>
-      <label for="calendar-client-id">OAuth client ID</label>
-      <input id="calendar-client-id" type="text" placeholder="…apps.googleusercontent.com" autocomplete="off" autocapitalize="none" spellcheck="false">
-      <button type="button" class="secondary" onclick="saveCalendarClientId()">Save connection settings</button>
-    </details>
     <div class="calendar-actions"><button type="button" class="secondary" onclick="refreshCalendarDates()">↻ Refresh Dates</button></div>
   </section>
   <div id="photo-list"></div>
@@ -292,6 +311,7 @@
 
   // ── Token connect flow ──────────────────────────────────────
   function showConnectPanel() {
+    document.getElementById("manager-settings").open = true;
     document.getElementById("connectPanel").style.display = "block";
     document.getElementById("tokenLinkedRow").style.display = "none";
     document.getElementById("input-token").focus();
@@ -310,6 +330,7 @@
     hideConnectPanel();
   }
   function refreshConnectUI() {
+    if (!GH_TOKEN) document.getElementById("manager-settings").open = true;
     if (GH_TOKEN) {
       document.getElementById("connectPanel").style.display = "none";
       document.getElementById("tokenLinkedRow").style.display = "flex";
@@ -497,6 +518,8 @@
     link.hidden = !valid;
     if (valid) link.href = event.htmlLink;
     else link.removeAttribute("href");
+    var deleteButton = document.getElementById("calendar-delete-selected");
+    if (deleteButton) deleteButton.disabled = !event || !event.id || calendarSaveInFlight;
   }
   async function refreshCalendarDates() {
     var select = document.getElementById("calendar-copy-source");
@@ -698,6 +721,92 @@
     }
     return changed;
   }
+  function unlinkDeletedCalendarDate(event) {
+    if (!event || !event.id) return false;
+    var deletedId = String(event.id);
+    var date = String(event.dateKey || "");
+    var linkedIndex = findPhotoForEvent(event);
+    var changed = false;
+    photos.forEach(function(photo,i) {
+      var eventIds = Array.isArray(photo.eventIds) ? photo.eventIds : [];
+      if (eventIds.indexOf(deletedId) >= 0) {
+        photo.eventIds = eventIds.filter(function(id) { return id !== deletedId; });
+        changed = true;
+      }
+      // Keep date-based fallback links belonging to *other* gigs or flyers.
+      if (String(i) !== linkedIndex || !date || !Array.isArray(photo.dates) || photo.dates.indexOf(date) < 0) return;
+      var anotherShowUsesFlyer = calendarEvents.concat(copyCalendarEvents).some(function(other) {
+        return other.id !== deletedId && other.dateKey === date && findPhotoForEvent(other) === String(i);
+      });
+      if (!anotherShowUsesFlyer) {
+        photo.dates = photo.dates.filter(function(d) { return d !== date; });
+        changed = true;
+      }
+    });
+    return changed;
+  }
+  function deleteSelectedCalendarDate() {
+    if (calendarSaveInFlight) return;
+    var select = document.getElementById("calendar-copy-source");
+    var position = select?.value;
+    var event = position === "" || position == null ? null : copyCalendarEvents[Number(position)];
+    if (!event || !event.id) return alert("Select the show date you want to delete first.");
+    var dateText = event.label || (event.dateKey + " · " + event.title);
+    if (!confirm("Delete this performance from Google Calendar and your website?\n\n" + dateText + "\n\nThe flyer will remain in Photo Manager and other show dates will not be deleted.")) return;
+    var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
+    if (!clientId) {
+      document.getElementById("manager-settings").open = true;
+      document.getElementById("calendar-connection").open = true;
+      showConfirm("Connect Google Calendar before deleting this date.",true);
+      return;
+    }
+    if (!window.google?.accounts?.oauth2) {
+      showConfirm("Google sign-in has not loaded. Try again.",true);
+      return;
+    }
+    var button = document.getElementById("calendar-delete-selected");
+    calendarSaveInFlight = true;
+    if (button) { button.disabled = true; button.textContent = "Deleting…"; }
+    // Request OAuth while still inside the user click for mobile popup support.
+    requestCalendarWriteToken(clientId).then(async function(token) {
+      var url = "https://www.googleapis.com/calendar/v3/calendars/" +
+        encodeURIComponent(CAL_ID) + "/events/" + encodeURIComponent(event.id) + "?sendUpdates=none";
+      var response = await fetch(url,{method:"DELETE",headers:{"Authorization":"Bearer " + token}});
+      if (!response.ok) {
+        var body = await response.json().catch(function() { return {}; });
+        throw new Error(body.error?.message || "Google Calendar could not delete that show (" + response.status + ").");
+      }
+      var warning = "";
+      try {
+        if (unlinkDeletedCalendarDate(event)) {
+          render();
+          if (!await save()) throw new Error("Could not save updated flyer associations.");
+          if (!GH_TOKEN) throw new Error("Connect GitHub and tap Push to Website to finish.");
+          await pushFlyersJson();
+        }
+      } catch (error) {
+        warning = error.message || "Flyer publication needs attention.";
+      }
+      // Do not show the deleted event while waiting for the API's next read.
+      copyCalendarEvents = copyCalendarEvents.filter(function(item) { return item.id !== event.id; });
+      calendarEvents = calendarEvents.filter(function(item) { return item.id !== event.id; });
+      renderCalendarManager();
+      renderDatePicker();
+      try { await refreshCalendarDates(); }
+      catch (error) { warning = warning || "Refresh Dates to reload the calendar."; }
+      if (warning) {
+        showConfirm("Date deleted from Google Calendar. Flyer sync needs attention: " + warning + " Do not delete the date again.",true);
+      } else {
+        showConfirm("✓ Show date deleted. Your reusable flyer and other dates are safe.",false);
+      }
+    }).catch(function(error) {
+      showConfirm(error.message || "Could not delete this event. Try again.",true);
+    }).finally(function() {
+      calendarSaveInFlight = false;
+      if (button) button.textContent = "Delete Date";
+      updateCalendarEditLink();
+    });
+  }
   function saveCalendarDate(e,another) {
     e.preventDefault();
     if (calendarSaveInFlight) return;
@@ -721,8 +830,9 @@
     }
     var clientId = localStorage.getItem("rp_calendar_oauth_client_id");
     if (!clientId) {
+      document.getElementById("manager-settings").open = true;
       document.getElementById("calendar-connection").open = true;
-      status.textContent = "Connect Google Calendar below first. You only need to enter the OAuth client ID once on this device.";
+      status.textContent = "Connect Google Calendar in Settings first. You only need to enter the OAuth client ID once on this device.";
       return;
     }
     if (!window.google?.accounts?.oauth2) {
